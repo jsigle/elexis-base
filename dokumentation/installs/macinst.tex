@@ -1,0 +1,21 @@
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+\section{MacOS X (Tiger) }
+Elexis selbst lässt sich ziemlich einfach installieren: Einfach das Verzeichnis herunterladen und an geeigneter Stelle entpacken. Schwieriger ist die Installation von OpenOffice, und, das muss leider gesagt werden, noch nicht korrekt möglich.
+
+Es gibt zwei Schwierigkeiten:
+\begin{itemize}
+ \item
+
+Die \textit{erste}: OpenOffice benötigt auf dem Mac X11. Und X11 wird bei Tiger zwar mitgeliefert, aber ziemlich versteckt auf der System-DVD 1. Legen Sie also die System-DVD 1 ein. Ignorieren Sie die Aufforderung, irgendetwas zu installieren (denn X11 wird da nicht angeboten), sondern benutzen Sie \textit{spotlight}, um X11User.pgk zu finden. Starten Sie dann diesen Installer (braucht Administratorrechte). Der Rest geht weitgehend automatisch.
+
+Sodann können Sie von \href{http://www.openoffice.org}{OpenOffice.org} (deutsch: http://de.openoffice.org/downloads/quick.html) die geeignete Datei für Ihr System herunterladen. Es wird eine Datei mit der Endung .dmg. Ein Doppelklick auf das Archiv entpackt es und mountet die Image-Datei, die das fertige OpenOffice.org enthält. Es erscheint eine Datei mit dem OpenOffice.org 2.0 - Symbol. Ziehen Sie die Datei in den Ordner \textit{Programme} (auf der linken Seite). Damit ist die OpenOffice-Installation beendet.
+
+Damit ist OpenOffice auf dem Mac als Standalone-Programm lauffähig.
+
+\item Die \textit{zweite Schwierigkeit} ist aber: OpenOffice kann noch nicht in Elexis eingebettet werden.
+\item  Dies geschieht mit einer Komponente namens SWT\_AWT-Bridge, welche unter
+Windows und Linux gut funktioniert, unter MacOS aber leider noch nicht. Man hofft aber, das mit einer der nächsten Releases
+von MacOS bzw. Java für MacOS zu beheben. Mehr dazu steht \href{https://bugs.eclipse.org/bugs/show_bug.cgi?id=67384}{hier}
+\end{itemize}
+
+Die bottomline ist: Elexis läuft auf Macintosh nur begrenzt, alle Textfunktionen (Briefe, Rezepte, Zeugnisse, Rechnungen) sind deaktiviert.

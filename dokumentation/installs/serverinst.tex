@@ -1,0 +1,43 @@
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+
+\section{Datenbank, Client/Server-System}
+Eine Elexis-Installation besteht aus zwei Teilen: Einem sogenannten \textit{Server}, auf dem die Daten abgelegt sind, und einem oder mehreren \textit{Clients}, welche auf die Daten zugreifen und diese darstellen und bearbeiten lassen. Server und Client können auf ein- und demselben oder auf verschiedenen Computern sein. Ein \textit{\textit{Server}} in einem weiteren Sinn ist ein eigener Computer, auf dem ein oder mehrere Server-Programme laufen.
+
+Als Server-Programm verwendet Elexis eine (im Prinzip beliebige) Datenbank, welche sich nach dem Industriestandard JDBC bedienen lässt. Die automatische Einrichtung ist vorkonfiguriert für folgende Datenbanksysteme:
+\begin{itemize}
+\item MySQL: Dies ist die verbreitetste Datenbank im Internet. Die allermeisten datenbank-basierten Web-Anwendungen verwenden
+ einen MySQL-Server im Hintergrund. MySQL gilt als schnell, ausgereift und ist unkompliziert zu installieren. Für kommerzielle Zwecke kostet ein MySQL-Server ca. Fr. 750.-. Für private Zwecke ist er kostenlos.
+
+\item PostgreSQL: Dies ist ein OpenSource Datenbankserver. Er beherrscht einen grösseren Befehlssatz als MySQL, gilt aber als etwas langsamer als dieser. Für unsere Zwecke sollte dies aber keine Rolle spielen, da die Geschwindigkeitsstests sich üblicherweise im Bereich von einigen zigtausend Zugriffen pro Sekunde bewegen; ein Wert, der wohl nur in den wenigsten Arztpraxen erreicht werden dürfte. PostgreSQL ist kostenlos für alle Zwecke.
+
+\item HSQLDB: Dies ist eine in Java geschriebene OpenSource-Datenbank. Sie kann sowohl als separater Server, als auch im Programm integriert verwendet werden. HSQL ist etwas langsamer, als die beiden erstgenannten Systeme, für kleinere Umgebungen aber durchaus genügend. HSQL ist kostenlos.
+
+\end{itemize}
+
+Elexis empfiehlt PostgreSQL für Installationen mit mehreren Clients und HSQLDB für Einzelplatzinstallationen. Die Demo-Installation basiert auf einem InProc HSQL-Server. Da Elexis nur einfache Standard-SQL-Befehle und Datentypen benutzt, sollte aber jede beliebige SQL-Datenbank, für die ein Jdbc-Treiber existiert, benutzt werden können (muss aber manuell eingerichtet werden).
+Falls Sie eine Client-Server Installation möchten (also mehrere Clients, die auf einen gemeinsamen Datenbestand zugreifen, dann sollten Sie als erstes den Server installieren
+\begin{itemize}
+ \item Wählen Sie am besten einen eigenen Computer als Server, an dem nicht direkt gearbeitet wird. Es dürfen aber ohne weiteres mehrere Serverprogramme darauflaufen (z.B. Mailserver, Fax-Server, Druck-Server etc.).
+\item Installieren Sie dort den Datenbankserver Ihrer Wahl (Wir empfehlen mysql oder PostgeSQL)
+\item Erstellen Sie auf der Datenbank einen User-Account mit dem Namen elexisuser
+\item Erstellen Sie eine (leere) Datenbank mit dem Namen elexis, auf den 'elexisuser' Vollzugriff hat
+\item Entscheiden Sie sich unbedingt für eine Backupstrategie. Mehr Informationen dazu weiter unten.
+\item Die weitere Konfiguration erfolgt von den Clients aus. Der Server braucht im Alltagsbetrieb auch nicht unbedingt Bildschirm und Tastatur, sondern er kann an irgendeiner kühlen Stelle der Praxis unauffällig aufgestellt werden.
+\end{itemize}
+
+\textbf{Wichtig!}
+
+\textit{Vergessen Sie nicht die Datensicherung!}
+
+Elexis speichert sämtliche Daten in dieser Datenbank. Eine Zerstörung der Datenbank ist keineswegs unmöglich. Ein Stromausfall kann die Festplatte  \textit{auf dem linken Fuss}  erwischen, ein mechanischer Schaden kann wichtige Sektoren der Platte vernichten und sie unlesbar machen, ein Fehler eines Programms kann die Daten löschen, ein Virus kann sich an Ihren Daten austoben. Es gibt viele Datensicherungsstrategien, einige wollen wir hier vorstellen:
+
+\begin{description}
+\item[ Replikation ] Einige Datenbanken, wie z.B. MySQL ab Version 4.0 können ihre Daten laufend auf einen auf einem anderen Computer laufenden Server kopieren. Da jeweils nur die geänderten Daten im Hintergrund übertragen werden, kostet das weniger Leistung, als man vielleicht zunächst denken würde. Dieses Verfahren nennt man \textit{Replikation} . Im Endeffekt hat man dadurch zwei Datenbanken mit identischem Inhalt. Wenn der Server kaputt geht, kann man innert weniger Minuten den zweiten Rechner zum Server ernennen und praktisch ohne Unterbruch weiterarbeiten.
+\item [Virtual Machine] Ein verwandtes Konzept: Man lässt den Datenbankserver auf einer hierfür reservierten virtuellen Maschine laufen (z.b. von \href{http://www.vmware.com/}{VMWare}) und sichert in regelmässigen Abständen die komplette virtuelle Maschine. Bei einem Serverausfall kann man ebenfalls innert Minuten die Sicherungs-VM auf demselben oder irgendeinem anderen Computer im Netz starten und weiterarbeiten.
+\item [Häufige Datensicherung] Man kann ein automatisiertes Backup alle paar Minuten durchführen (z.B. mit mysqldump), und die so gesicherten Daten in mehreren Generationen auf verschiedenen Datenträgern aufbewahren. Diese Methode braucht die wenigesten Ressourcen von den hier genannten und erzeugt die kleinsten Backup-Dateien. Dafür braucht man mehr Zeit, um bei einem Serverausfall weiterarbeiten zu können: Man muss zuerst den Datenbankserver auf einem Reservecomputer starten und dann dort die gesicherten Daten einspielen, anschliessend je nach Konfiguration alle Clients auf den neuen Server einstellen.
+\end{description}
+
+
+
+
+

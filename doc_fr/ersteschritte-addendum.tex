@@ -1,0 +1,60 @@
+% *******************************************************************************
+% * Copyright (c) 2008 by Elexis
+% * All rights reserved. This document and the accompanying materials
+% * are made available under the terms of the Eclipse Public License v1.0
+% * which accompanies this distribution, and is available at
+% * http://www.eclipse.org/legal/epl-v10.html
+% *
+% * Contributors:
+% *    G. Weirich
+% *
+% *  $Id: Laborimport-Unilabs.tex 859 2008-08-20 17:40:03Z  $
+% *******************************************************************************
+
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+
+\documentclass[a4paper]{scrartcl}
+\usepackage{german}
+\usepackage[utf8]{inputenc}
+\usepackage{makeidx}
+\makeindex
+% Hier ein etwas skurriler Block, der dazu dient, die Unterschiede
+% zwischen pdflatex und latex auszubügeln
+% Grafiken müssen als png oder gif (für pdflatex) und als eps (für Latex)
+% vorhanden sein. Die Endung kann man beim \includegraphics jeweils weglassen,
+% das System nimmt je nach Renderer die geeignete Variante.
+
+\newif\ifpdf
+\ifx\pdfoutput\undefined
+	\pdffalse              	%normales LaTeX wird ausgeführt
+\else
+	\pdfoutput=1
+	\pdftrue               	%pdfLaTeX wird ausgeführt
+\fi
+
+\ifpdf
+	\usepackage[pdftex]{graphicx}
+	\DeclareGraphicsExtensions{.pdf,.jpg,.png}
+\else
+	\usepackage[dvips]{graphicx}
+	\DeclareGraphicsExtensions{.eps}
+\fi
+
+\usepackage{floatflt}
+\usepackage[]{hyperref}
+\usepackage{color}
+\begin{document}
+\section{Premiers pas avec Elexis : Addendum}
+
+La base de données version démo ne sera plus intégrée dans l'installateur car ceci a provoqué souvent des problèmes chez des utilisateurs qui ne voulaient pas la version démo mais un Update. 
+
+Si vous voulez donc utiliser une version démo de Elexis veuillez procéder de façon suivante :
+
+\begin{enumerate}
+  \item Téléchargez Elexis pour votre système d'exploitation et installez le selon le manuel. 
+  \item Téléchargez la base de données version démo
+  \item Décompressez la base de données version démo dans le fichier de Elexis 
+\end{enumerate}
+
+
+\end{document} 

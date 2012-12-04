@@ -1,0 +1,13 @@
+#!/bin/bash -v
+cd ../..
+mkdir -p base/repositories
+cd base/repositories
+if [[ ! -h elexis-base ]] ; then ln -s ../../workspace/ elexis-base ; fi
+cd ../../workspace/BuildElexis
+cp -p local.properties.hudson.linux local.properties
+ant -Dos=linux -Dunplugged=true clean javadoc linux 2>&1 | tee hudson_linux.log
+cd .. 
+if [[ ! -h javadoc ]] ; then ln -s ../base/deploy//dokumentation/javadoc . ; fi
+if [[ ! -h dox ]] ; then ln -s ../base/deploy/dox . ; fi
+for j in dox javadoc ; do zip -r $j.zip $j/* ; done
+ls -lrth *.zip

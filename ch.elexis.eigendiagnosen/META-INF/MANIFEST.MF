@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Selbstdefinierte Diagnosen
+Bundle-SymbolicName: ch.elexis.eigendiagnosen;singleton:=true
+Bundle-Version: 2.0.2
+Bundle-Vendor: elexis.ch
+Require-Bundle: ch.elexis,
+ org.eclipse.core.runtime,
+ org.eclipse.ui,
+ ch.elexis.importer.div,
+ org.eclipse.ui.forms,
+ ch.rgw.utility,
+ ch.elexis.core;bundle-version="0.0.2"

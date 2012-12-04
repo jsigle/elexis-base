@@ -1,0 +1,15 @@
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+\section{Elexis-importateur-caisse des médecins}
+Importation des données des patients depuis le logiciel de la caisse des médecins.
+
+ Elexis est capable d'importer des données des patients depuis le logiciel Mediwin CBpro de la   \href{http://www.aerztekasse.ch}{caisse des médecins}.
+
+\subsection{Connexion}
+
+Ce Plugin se branche dans le menu principale  (Fichier - Importation)
+
+\subsection{Fonction}
+
+Les patients peuvent être exportés depuis Mediwin CBpro par un  \textit{Module/Exportation}. Il faudra sélectionner tous les champs et activer les titres de colonnes sous \textit{Options}. Par le moyen de cet importateur le fichier peut être importé. Des patients importés seront marqué spécifiquement de sorte que l'importateur puisse les reconnaitre. A tout moment les patients peuvent être importés de nouveau . Si jamais un patient ne devait plus être importé on peut marquer dans Elexis sous  \textit{remarques}  le texte  \textit{AEK:elexis}  de sorte qu'il sera ignoré. Si un patient a été déjà introduit dans Elexis et s'il existe déjà dans Mediwin CBpro sous le même numéro, un message d'avertissement sera donné et le patient ne sera pas importé. S'il devait par contre pourtant être importé on peut marquer ce patient qui a le même numéro dans Elexis dans le champ  \textit{remarques}  par le texte  \textit{AEK:aek}. Les données du patient qui avait déjà été introduit dans Elexis seront ensuite remplacées par les données originaires de Mediwin CBpro.
+
+\textit{Le développement de ce Plugins a été financé par le Dr. med. P. Schönbucher, Luzern et il le met gratuitement à disopsition  de tous les utilisateurs de Elexis. Le développeur principale est \href{http://www.elexis.ch/jp/component/option,com_contact/task,view/contact_id,2/Itemid,32/}{Daniel Lutz}. Pour des éventuelles questions concernant ce Plugin veuillez le contacter directement.} 

@@ -1,0 +1,508 @@
+hg log --template '{node|short}: {date|shortdate}: {author|person}: {desc}\n' -b 2.1.7
+
+Changelog fo 2.1.7.0
+ccfdbcd9ce57: 2012-11-22: marcode79: ch.elexis.developer.resources add code formatter off possibility
+2de8cce78e00: 2012-11-19: thomashu: [1261] highlight hyperlink in blue
+4fcdf406ba62: 2012-11-18: marcode79: ch.elexis.artikel_at set execution environment to JavaSE-1.6
+a554bc257df9: 2012-11-17: marcode79: [1271] postgres jdbc update 9.2-1002 (includes ch.rgw.utility buddy classloading)
+e2c7883f262b: 2012-11-15: Niklaus Giger: [1265]ICD-10 does not drop non existant table anymore. Removed unused messages
+b41d475cf9e5: 2012-11-15: Niklaus Giger: [1265] ICPC does not drop non existant table anymore. Removed unused messages_id
+dddf1eaa6876: 2012-11-15: thomashu: [1265] reworked some NLS messages in ch.elexis.preferences and ch.elexis.arzttarife_schweiz
+1b5b05924cf0: 2012-11-14: marcode79: [1220] ch.elexis.agenda v2.1.7.6
+c1f914780386: 2012-11-14: marcode79: [1260] BriefAuswahl View nach Datum sortieren
+6b3e65dd6c63: 2012-11-14: marcode79: [1250] Erroneous intial db version
+5491b0c9f28a: 2012-11-13: Niklaus Giger: Detail: Fix Text processort -> processor
+b4903eb2347c: 2012-11-12: thomashu: [1253] fixed problems with rounding on tarmed bills, ch.elexis.arzttarife_ch v2.0.19
+7ca308f14ffe: 2012-11-10: Niklaus Giger: #1247: Add missing plugin*.properties to build.properties
+
+Changelog für 2.1.7.rc3
+990b5b874b03: 2012-11-07: thomashu: [1152] changed when articels are marked as ordered
+e24a39725fc2: 2012-11-07: marcode79: [1141] BestellView exception message translation error
+269c2a89faa9: 2012-11-05: Niklaus Giger: #1222: Moved info for p2 into p2_site.yml. Removed medelexis.xml
+cee993e99e35: 2012-11-04: Niklaus Giger: #1237: Version im medelexis auf die gleiche wie im META-INF/MANIFEST.MF (2.0.18) gesetzt
+200203017801: 2012-11-04: Niklaus Giger: #1197: Neues logging framework. Removed cruft, which generated elexis.log
+4c657434b376: 2012-11-02: thomashu: [1219] added Grund of Termin in week view of agenda
+4f8b65478f21: 2012-10-26: marcode79: Merge with b129c10a4a35cf5c7dcba48038ce76e5b0ff5d47
+a5a8faa70ec8: 2012-10-26: marcode79: [612] ch.elexis.eigenartikel v1.0.9
+93a8e3d6bd10: 2012-10-26: marcode79: [1141] fix for minor NPE
+b129c10a4a35: 2012-10-25: Niklaus Giger: RM: remove intermediate texi2pdf files
+31661f2d9a68: 2012-10-25: Niklaus Giger: RM: Fix error, thanks to Bruno Büchel for his translation
+955e42bc97ca: 2012-10-25: thomashu: [1183] added additional save after inserting the table on Labor and Rezept print
+6c95a263801d: 2012-10-23: thomashu: [1213] added placeholder for printing all consultations of the selected patient
+412ab537e755: 2012-10-24: marcode79: [1175] Tarmed importer problem on existing h2 connection
+468b2c6d0cbb: 2012-10-23: thomashu: [1212] consultation date filter is now enabled per default for Tarmed and EAL code selectors
+be355f47ac24: 2012-10-20: marlovitsh: DoubleClick-Action for RezepteView, improved handling for creating prescription, show creationDate of prescription in BriefeView
+e84463ec7dc7: 2012-10-20: marlovitsh: DoubleClick Actions for DocumentSelectDialog, BriefAuswahl, FaelleView, FallListeView, PatHeuteView, PatientenListeView
+7e9b6ed73194: 2012-10-22: Niklaus Giger: #1208: Im Verrechnungs-Vorschlag sollen mehrere Rechnungen aufs Mal ausgewählt werden können
+1464078b822c: 2012-10-22: Niklaus Giger: #979: Neue RFE Version
+352002aa9427: 2012-10-22: Niklaus Giger: #1207: Fix missing mapping in TarmedLeistung (NPE)
+83ba7caceb30: 2012-10-18: marcode79: [1125] DB Version synchronization -> 1.8.16
+7e0e7a947e16: 2012-10-17: marcode79: [1103] Fall selection and presentation of selection in Faelle view
+76d263c4d3e4: 2012-10-16: thomashu: [1196] added libraries for REST access to target
+c8cef3016b64: 2012-10-11: marcode79: [1085] ch.elexis.ebanking_ch v2.0.6.1
+3e62e56f9dde: 2012-10-11: marcode79: [1085] ch.elexis.ebanking_ch v2.0.6.1
+6d7c4f1eaf9e: 2012-10-11: marcode79: [1085] ch.elexis.ebanking_ch v2.0.6
+057c609fe50a: 2012-10-10: thomashu: [1187] added info that labortarif has no VAT
+
+Changelog für 2.1.7.rc2
+d2580a776e47: 2012-10-05: marcode79: [1179] Setting "" to a LabValue deletes it
+8495ebaf384a: 2012-10-04: marcode79: [1178] Errors shown in LaborView when values for formula are missing
+e038c68c28bd: 2012-10-04: marcode79: [1083] arzttarife_ch v2.0.17
+cd97c90d3d9e: 2012-10-03: thomashu: [1091] fixed sales calculation
+a27cb08922e3: 2012-09-30: Niklaus Giger: #632: Remove unused elexis*.xml
+f33dc8353622: 2012-09-30: Niklaus Giger: #632: Bring build.properties in sync with Gerry's ant
+dbf41ce7544c: 2012-09-30: Niklaus Giger: RM: Added forgotten copyright
+c533db66b40f: 2012-09-29: Niklaus Giger: #1172: Fixed docURL in medelexis.xml
+9c931f510cff: 2012-09-28: Niklaus Giger: RM: demoDB auf zwei Arten im Installationspfad suchen
+073cff646a59: 2012-09-27: Niklaus Giger: demoDB unter /home/niklaus/elexis suchen, damit Elexis auch schreibgeschützt installiert werden kann
+ba57c89b569b: 2012-09-27: thomashu: [762] fixed service blocks exporter
+57658973bae6: 2012-09-26: marcode79: [1085] ebanking_ch v2.0.5 - Debug removal
+(transplanted from 78049db7fda0d285bc5cf06f81834d5a41406b8f)
+ae7b4fbb6d0a: 2012-09-26: marcode79: [1085] ebanking_ch v2.0.5
+(transplanted from 8d56c6955e4b7df007f6929793efe27ad9a3537f)
+b3eaac4181b3: 2012-09-26: thomashu: [1074] added context menu to reset codesystem statistics
+d91807c1f01d: 2012-09-26: thomashu: [1091] added bill state and tax point value
+562db1f0a3e9: 2012-09-24: thomas: added Bundle-ClassPath for '.' and '/bin' to ch.elexis, PDE build does not work without
+6329aff2c658: 2012-09-24: thomas: completely removed Bundle-ClassPath as '.' caused ClassNotFound errors
+4b77397acd24: 2012-09-22: Niklaus Giger: RM: Cleanup unused bin/*.jar in Bundle-Classpath
+1ca5f4e36922: 2012-09-17: thomashu: [1152] added isOrdered state for articles which are ordered, but not yet delivered
+
+Changelog für 2.1.7.rc1
+b427dbcff53c: 2012-09-14: Niklaus Giger: #785: izpack installer.xml um LogBack erweitert
+1689d8133cca: 2012-09-14: thomashu: updated core.extlib.feature due to new logging libs
+95e8525408d4: 2012-09-13: Niklaus Giger: # 1153: Anpassungen WeisseSeiten von Jörg Sigle
+530bd0d55af6: 2012-09-12: thomashu: updated target and ch.rgw.utility manifest due to new logging libs
+b398984e0516: 2012-09-11: Niklaus Giger: #785: Fixed build error in META-INF
+7c2ceef3e07e: 2012-09-11: Niklaus Giger: Logback auf 1.0.0 gesetzt
+349d40924f8f: 2012-09-11: tschaller: Provider ausgefüllt im Manifest
+0bb4708fc7b0: 2012-09-11: tschaller: pdfFileName gemäss Filesystem übernehmen
+7bc6baf0ea81: 2012-09-11: tschaller: Wenn kein ORC Segment vorhanden ist, Datum aus MSH nehmen
+77e0197ef8b7: 2012-09-11: L.Millet: Disabled the Ant-Builder: referenced build file does not exist
+8b31971d86ab: 2012-09-11: L.Millet: Automatic import of PDF file into Omnivore
+- implemented import of PDF file matching HL7 file into Omnivore
+- switched plug-in dependences from ch.elexis.hl7.v26 to ch.elexis.hl7.v2x
+22b478f4e012: 2012-09-11: L.Millet: Added output folder to Mercurial's ignore list
+50845b8de976: 2012-09-11: L.Millet: Corrected ant build file
+4bb0c83e9aa1: 2012-09-11: Niklaus Giger: #785: Fix merge error for new logging framework
+b95313eb3edd: 2012-09-07: Niklaus Giger: #785: New logging framework
+87a1c6a85ccf: 2012-08-18: AntoineKaufmann: Ticket #975: Konsultationsliste aktualisieren, auch wenn Konsultation neu erfasst oder gelöscht
+00b2713424ef: 2012-09-07: thomashu: [1091] fixed Elexis version check
+c4c996a9dae2: 2012-09-06: thomashu: [1137] changed Kompendium URL
+c6491386dcd8: 2012-09-06: thomashu: [1112] fixed Tarmed XML output with incomplete ExtInfo entry
+fbdb0e7fd61a: 2012-09-01: thomashu: [1091] removed elexis 2.1.7 specific code buchhaltung.basis v2.0.2
+c233985cd74f: 2012-09-01: thomashu: [1091] added all activities analysis to buchhaltung.basis v2.0.2
+b4bda7f2a208: 2012-08-31: marcode79: [1126] Konsultationsview was not updated on Patient change
+(transplanted from b4cf145f30ca08b79f2d4ed04e44dd94f0408754)
+cac8abf6a41f: 2012-08-30: thomashu: [1122] added valid time to Labor2009Tarif Optifier and label, fixed importer with none de_CH locale
+4d89bf24e3ae: 2012-08-30: marcode79: [476] ch.elexis.medikamente.bag importer fix
+39aa8b14e637: 2012-08-30: marcode79: [476] Query.executeWithDeleted() has no function
+882f1ba179b2: 2012-08-29: marcode79: [976] ICPC refactoring
+a6b49cae5a3b: 2012-08-29: marcode79: [1087] ch.elexis.agenda v2.1.7.5
+(transplanted from 84e65926cf089c32f9853e7e31ca2335e36c25b3)
+1bec702a6118: 2012-08-29: thomashu: [1091] added user id to verrechnet, making financial statistics per user possible, db version 1.8.16
+65210e94466e: 2012-08-28: thomashu: [1116] added option to open ebm search result in external browser, v1.0.2
+fee85f21264a: 2012-08-28: thomashu: [1116] added wikipedia search option to consultation text
+041a4d8dfaba: 2012-08-28: marcode79: [473] Durchsuche Tarmed (missing port)
+15fece27148c: 2012-08-28: marcode79: [1001] ch.elexis.agenda v2.1.7.4
+(transplanted from a6401f6c08c8833c2881fd671b4e9f06ed106aec)
+ad7ec6e1c0c6: 2012-08-21: marcode79: [1009] PatientenDetailView, several fixes
+
+Changelog für 2.1.7.rc0
+
+acfd3ff27383: 2012-08-17: thomashu: Ticket: #873 - added multi mandant bills to arzttarife_ch.
+07b26ea692a0: 2012-08-17: Niklaus Giger: Ticket #1078: Added medelexis.xml
+59481c1ab048: 2012-08-17: Niklaus Giger: Ticket #1078: Using slf4j. Cleanup
+e4a40b914b77: 2012-08-16: Niklaus Giger: Removed old, unused SWTBot-GUI tests
+c1599071fb17: 2012-08-16: Niklaus Giger: Ticket #1078: Initial import of ODDB-CSV
+865856ae43de: 2012-08-16: Niklaus Giger: Ticket #1078: Datenbankänderungen für ODDB-CSV-Import. ATC_code
+d18b9cbe668f: 2012-08-16: thomashu: Ticket: #1025 - fixed table names on update of Tarmed code system
+73edf8e4decc: 2012-08-16: thomashu: Ticket: #1025 - reworked Tarmed Importer, update of IDs is a user option now
+2122290303f8: 2012-08-16: Niklaus Giger: Updated developer documentation
+a98cd492e0b5: 2012-08-16: Niklaus Giger: Updated release plan
+382f480f2e79: 2012-08-09: marcode79: [610] Fix incorrect storage of letters
+ff0ebf3d93d9: 2012-08-09: marcode79: [1103] context sychronization issue -> patient, fall, kons
+5cb7bf1fc1e1: 2012-08-08: marcode79: [1099] ch.elexis.agenda v2.1.7.3
+(transplanted from e6e3c3785c27a80b20462a865728443394d5a435)
+345b8200ba31: 2012-08-01: thomashu: [1095] fixed problem with partially paid bills
+5058174fd8a6: 2012-07-31: marcode79: [696] ch.elexis.agenda v2.1.7.2
+f931a6914875: 2012-07-31: marcode79: [856] ch.elexis.importer.div v1.5.2
+(transplanted from db219d41b6d0b8824a0afff9200338312e57c08a)
+85bd3cf0b747: 2012-07-31: thomashu: [1092] ch.elexis.arzttarife_ch v2.0.15
+ad88171c862f: 2012-07-31: thomashu: more verbose logging on error in RechnungsDrucker
+693aa516129b: 2012-07-31: thomashu: [1092] fixed NPE when updating RFEView
+ad834bb59312: 2012-07-31: marcode79: [1087] ch.elexis.agenda v2.1.7.1
+(transplanted from 8c6e56250a40b56d2d1223f59fb3eaaa3d9c2c49)
+0010bc4eabb1: 2012-07-27: marcode79: [1087] ch.elexis.agenda v2.1.7
+* * *
+Erster graphischer Prototyp Preference-Page
+* * *
+1. funktionierende version
+* * *
+check for appointment clashes, refresh on focus of Wochentage view
+(transplanted from d4ce70dccf4acaf299fc07ac2b7f4ac81e5766ad)
+dff51296900a: 2012-07-27: marcode79: [1001] ch.elexis.agenda v2.1.6
+b855354d462f: 2012-07-25: marcode79: [951] Context menu in stickynotes does not activate copy/paste action
+4ae9a302d424: 2012-07-25: marcode79: [999] ch.rgw.utility v2.0.5.1
+0707269c2fb9: 2012-07-25: marcode79: [999] ch.elexis.agenda v2.1.5.2
+(transplanted from 4215c54c11d04a8d5742ef5c735f1be14a470f60)
+5159cc39147f: 2012-07-24: marcode79: [612] Eigenartikel v1.0.8
+d4fad7df0480: 2012-07-24: marcode79: [1085] ebanking_ch v2.0.4
+dbeccf58ba2d: 2012-07-24: marcode79: [1085] ebanking_ch v2.0.4
+(transplanted from 957b57559f5186d24ce43202c2f97b260b71e004)
+a4c3621f597d: 2012-07-20: marcode79: [1009] Fix for target
+f9be086fcfdd: 2012-07-12: Niklaus Giger: Ticket #1009: Fix for build problem with ant
+c562472a3761: 2012-07-09: marcode79: [1009] Backport (with some new features) of PatientDetailView from 2.2
+1b278c63aa63: 2012-07-08: Niklaus Giger: Ticket #1064: Anpassungen für Viollier OpenSource Plugin
+9638ef441ded: 2012-07-06: marcode79: [909] Agenda version 2.1.5.1
+b0a6dd559805: 2012-07-03: marcode79: Handle double parsing exception in MultiplikatorEditor
+761efe0d6c15: 2012-05-18: marcode79: Ticket #985: Rechnungs-Vorschlag (Zauberstab) funktioniert nicht mehr korrekt
+(transplanted from 0e35ba880ea01536c1b0fe45d36c79d0e5a6c902)
+(transplanted from 8acc47e342a21f93bb564957938f22d38fc2838d)
+8779248c37a1: 2012-06-05: thomashu: Ticket: #1022 - fixed Tarmed Zuschlag Kinder
+ba2540082c89: 2012-05-31: Niklaus Giger: Ticket #1008: Korrektur Tarmed-Import für Postgresql
+4eaf1b109077: 2012-05-29: marcode79: Ticket #918: Artikel CH v2.0.6
+(transplanted from 08b30fa2ebe0cae5c6482a3c3e7bc1a6636071f3)
+f4495973ce9a: 2012-05-21: thomashu: Ticket: #916 - added option to set a default diagnose for new consultations
+5f07c4175268: 2012-05-18: Niklaus Giger: RM: remove automatically generated BuildElexis/rsc/TargetPanel.txt
+3c40ff710234: 2012-04-30: thomashu: Ticket: #799 - fixed by making HistoryLoader thread save, using a new List for sorting
+c8c7d1de92c6: 2012-04-27: marcode79: Ticket #721: Missing sync of Faelle and Fall view
+729d3d7f9cb2: 2012-04-27: marcode79: Ticket #836: Wrong handling of ACE for change mandant
+f4f61a7a00f6: 2012-04-27: thomashu: Ticket: #791 - skipping konsultation with invalid mandant when creating rechnungslauf
+f7a14c3a846d: 2012-04-16: marcode79: Ticket #917: DBVersion 1.8.14
+a3cb5a298cfe: 2012-04-16: marcode79: Ticket #858: move orders into their own table
+(transplanted from 8f16df7fc4e3a2a373c502cdb6caeb3e86d6f9ad)
+559f08dca7e9: 2012-04-12: thomashu: Ticket: #886 - reworked vat rates on tarmed bills
+07a430c88579: 2012-04-02: marcode79: Ticket #480: mailto-funktion in 'patienten-datail'
+dbd8e1ab45e1: 2012-03-30: marcode79: Ticket #838: Leistungen, "teurer" als 9999.99 Fr.
+5ca31cc116f1: 2012-03-28: mdescher: Ticket #714: Weiblicher Patient erfassen
+046f33f8a0b5: 2012-01-26: marcode79: Ticket #13: Allow external access to the current Bestellung (see also Ticket #918)
+0c22c178e545: 2012-01-26: Niklaus Giger: Ticket #632: Merged changes from 2.1.6.2
+381b22dd1da2: 2012-01-19: Niklaus Giger: Merged changes from 2.1.6
+9bec5ba1e9ba: 2012-03-26: marcode79: Task #712: TP-Wert
+b98bd8c76499: 2012-05-18: Niklaus Giger: Tickt #651: Fix PDE-Test (Missing $user.home/elexis/messwerte_v2.xml)
+5bccb9116e08: 2012-05-18: Niklaus Giger: Hilotec Messwerte V2. Sponsor  Dr. Seidenberg
+1f632bcd4ee7: 2012-01-05: Niklaus Giger: Buildr. Change bin/, paths in MANIFEST.MF to bin
+2ef2f1657fd2: 2011-12-27: Niklaus Giger: Ticket: #371: Fixed problem with same name for several patient
+762dd24aa139: 2011-12-10: Niklaus Giger: Ticket: #371: Tests und Korrektur bei mehrere Patienten mit gleichem Namen und Vornamen
+1c1dea767d68: 2011-12-10: Niklaus Giger: Ticket: #371: Erlaube Patienten ohne Vornamen und Geburtsdatum
+18306886ebcd: 2011-12-10: Niklaus Giger: Ticket: #371: Update Plug-In Version to 2.0.0
+d00c0fb43da7: 2011-11-03: Niklaus Giger: Ticket: #371: externe dokumente überarbeiten
+a13a2e927c19: 2011-12-11: Niklaus Giger: Ticket 632: Started Changelog for 2.1.7
+
+Changelog für 2.1.6.4 (retagged on May 13)
+d29146ae7763: 2012-05-13: thomashu: Ticket: #738 - added update of TarmedLeistung in Leistungsblock
+a9e3312dfc29: 2012-05-12: Niklaus Giger: Ticket #964: Ugly workaround, as ant script does not respect build.properties
+adf4fc06128a: 2012-05-09: thomashu: Ticket: #738 - reworked Tarmed importer implementation
+d41c7abeafac: 2012-05-08: thomashu: Ticket: #738 - reworked Tarmed implementation for code system version 1.08
+4b2c26076fb0: 2012-05-07: thomashu: Ticket: #738 - reworked MultiplikatorEditor, make sure JDBC ResultSet gets closed
+6c89540f4129: 2012-05-07: thomashu: Ticket: #738 - update the toolbar of SelectorPanel after adding Actions
+9d9661ca2bda: 2012-05-07: thomashu: Ticket: #738 - fixed memory consumption when importing from access
+3f6927f65d3c: 2012-05-06: marcode79: Ticket #855: Bloecke im Konsfenster via $ (Makrozeichen) verrechnen
+3c268d48968d: 2012-05-04: marcode79: Ticket #955: ebanking_ch v2.0.3 - Removal of ESRView3
+c88b7025f42c: 2012-05-03: Niklaus Giger: Ticket #964: Tarmed: Direkter Import via Access MDB-Datei
+c98fa08ae62f: 2012-05-03: Niklaus Giger: Updated to version 1.2.7 of jackcess
+
+Changelog für 2.1.6.3
+5b3680a01aad: 2012-04-20: thomashu: Ticket: #807 - fixed problems with numeric values from xls due to locale settings
+bf8221aefced: 2012-04-19: thomashu: Ticket: #791 - skipping konsultation with invalid mandant when creating rechnungslauf
+95e96a965bd9: 2012-04-19: Niklaus Giger: Ticket #807: Added UnitTests
+babe0f1677d2: 2012-04-19: marcode79: Ticket #836: ACL Viewauswahl und Mandantenwechsel
+22611ed6008a: 2012-04-19: thomashu: Ticket: #823 - fixed Multiplikator creation and selection based on valid from date
+24f1b962d20b: 2012-04-19: thomashu: Ticket: #864 - added info message with statistic on success
+b216ef20aa8c: 2012-04-19: thomashu: Ticket: #779 - added dynamic tabs when writing vat rates to tarmed bills
+0c7f18c6c4a3: 2012-04-19: thomashu: Ticket: #886 - reworked writing of vat rates to tarmed bills
+b8c8ad947f58: 2012-04-12: thomashu: Ticket: #886 - reworked vat rates on tarmed bills
+b34892a3c825: 2012-04-12: marcode79: Ticket #739: diagnosecodes_ch v2.0.3 - ICD-Codierung search for positions
+7e8ed555d6cd: 2012-03-29: rgw@iMac: Merge with d6dc6c6989795440dff19570b2f221a99bda575f
+7f2afa668f75: 2012-03-28: rgw@iMac: remove references to 2.2 version of IPartner
+e42a1c0dada5: 2012-03-23: rgw@iMac: revert to scalac due to errors in fsc
+e41ffa445ca3: 2012-03-28: marcode79: Ticket #822: View Rechnungsvorschlag => alphabetisch sortieren / Kons nach Datum
+020b6f363fb5: 2012-03-28: marcode79: Ticket #787: Sticker mehrfache Darstellung
+1f47878f9df5: 2012-03-23: marcode79: Ticket #839: "Doppelte Patienten"
+57fa15bd094c: 2012-03-23: marcode79: Ticket #876: Artikel CH v2.0.5
+33f73ff27750: 2012-03-23: marcode79: Ticket #871: zweimal View-Bezeichnung "Bestellung"
+7d828ee3c7ae: 2012-03-08: Niklaus Giger: Ticket: #807 - Adapt Image to 2.1.6
+bafa11e01852: 2012-03-08: Niklaus Giger: Ticket #816: IDs korrigiert, Version auf 2.0.8 erhöht
+6471f41a2e14: 2012-03-08: thomashu: Ticket: #807 - trigger reload of EAL Selector via ElexisEventDispatcher
+222b7b042bed: 2012-03-08: thomashu: Ticket: #807 - fixed format of code to nnnn.mm
+ac0716eb72de: 2012-03-08: thomashu: Ticket: #807 - added incremental import for EAL, added check for matching date with Konsultation, added filter for valid date to CodeSelector, changed version to 1.0.5
+
+Changelog für 2.1.6.2
+05cca30d070e: 2012-01-20: Niklaus Giger: Ticket #778: alte reflotron plug-in löschen
+845a700d057d: 2012-01-20: Niklaus Giger: Fix NPE when RunFromScratch
+a2435936beea: 2012-01-20: Niklaus Giger: Ticket #670: Fix name of semaphore to delete
+46f16f2ea3ce: 2012-01-20: Niklaus Giger: Elexis Installer mit DemoDB, Kopieren Einstellungen, Übersetzungen
+abded96ef9b7: 2012-01-19: Niklaus Giger: Ticket #624: ch.elexis.core braucht noch ein medelexis.xml
+d49db3635c44: 2012-01-19: Niklaus Giger: Ticket #482: setSelectionProvider
+45be6ef2c27b: 2012-01-19: thomashu: Ticket: #482 - enabled access to viewer selection for commands in RezepteView
+c6680874a98e: 2012-01-19: marcode79: Ticket #618: Fix für Länge Dosierung
+d810de3ea972: 2012-01-19: thomashu: Ticket: #697 - make sure new Fall will be displayed correct in NPFL combo, only open Fall displayed in NPFL combo
+2d10f959a9b0: 2012-01-19: thomashu: Ticket: #776 - fixed issue with ordering same labresult on different patients by using LabResult#getForDate() method
+e63f56f04035: 2012-01-13: thomashu: Ticket: #719 - fixed Fall change loop in FallDetailBlatt2
+98285fb05bb3: 2012-01-13: thomashu: Ticket: #736 - wrong Messages class was imported, corrected imports
+1cf651577c46: 2012-01-13: marcode79: Ticket #730: Fix for ical import
+2d1f6ca94485: 2011-12-23: thomashu: Ticket #734: Tarmedrechnung bei Bruckteilen korrekt erstellen.
+
+Changelog für 2.1.6.1
+aedac41fd1d7: 2011-12-11: mdescher: Simple refactoring of string "Klasse" to static constant
+28aa32fb4d10: 2011-12-11: mdescher: Ticket #704: artikel_ch v2.0.4 - Importer now adds class type to table
+6f0c6ac2af20: 2011-12-10: thomashu: Ticket: #697 - reworked selection of Fall for no obligation Verrechenbar
+70ffbd2929e0: 2011-12-10: thomashu: Ticket: #710 - added "Faktura Journal detailliert" statistics
+225733d657f5: 2011-12-09: mdescher: Ticket #704: Refactoring
+
+Changelog für 2.1.6.0
+73e0f1644bfd: 2011-11-25: Niklaus Giger: Ticket #546: Corrected check_plugin_version.rb and some plugin versions
+5329af77af22: 2011-11-25: thomashu: Ticket #412: Fix verschwindende Konsultationstexte
+4630ded7de88: 2011-11-25: mdescher: Ticket #537: doppelte Medikamente (nur lastUpdate verschieden), fix für inkorrektes parsen
+34d29a5c1792: 2011-11-25: thomashu: Ticket: #654 - fixed problem with "money value higher than", and changed Konsultationen filter from Mandant to Rechnungssetller
+996499d7ef31: 2011-11-25: mdescher: Ticket #695: Fix für Funktion 'Popup beim Einloggen' funktioniert nicht.
+75b0afb727bb: 2011-11-25: Niklaus Giger: Ticket #701: Entnahme-Datum anstelle des Analyse-Datums beim Import verwenden
+874966a190d3: 2011-11-25: Niklaus Giger: Ticket #546: Added script to check plug-in version
+50a7b8a6bd43: 2011-11-25: Niklaus Giger: Ticket #680: Added TeamW Test-HL7
+2a386f31823a: 2011-11-25: Niklaus Giger: Ticket #670: Logging für Löschen des Semaphores
+ec9662f4f97d: 2011-11-24: Niklaus Giger: Ticket: #697 - IReason -> IDiagnose fuer 2.1.6. Niklaus sollte zuerst kompilieren vor dem pushen!
+5159af919f56: 2011-11-24: mdescher: Ticket #546: Fix for Umlaute
+62727929c4eb: 2011-11-24: mdescher: Ticket #616: Neue Klasse für Query
+abd67d2501cc: 2011-11-24: thomashu: Ticket: #697 - added new dialog for creating or selecting a Fall for no obligation Verrechenbar, active only if force obligation option selected
+c8df5c7c1a10: 2011-11-17: Niklaus Giger: Ticket #546: use new downloads_opensource FTP-location
+21d8415432e1: 2011-11-15: mdescher: Ticket #525: Importer des ersten Tab-Elements Artikel funktioniert nicht mehr
+8668b954a009: 2011-11-14: rgw@iMac: extend uebergangszuschlag until 31.12.2012
+3d9c8a57dfb3: 2011-11-14: rgw@iMac: removed id lines from copyright message
+
+Changelog für 2.1.6.rc3
+b6061bade595: 2011-11-10: thomashu: Ticket: #620 - fixed by handling for UnsupportedOperationException in isClosed method
+- added option for running H2 db in server mode to createH2Link method
+42fe97e394b9: 2011-11-03: thomashu: Ticket: #628 - fixed by synchronizing access to query
+c704f5fe62b9: 2011-10-24: mdescher: Ticket #595: v2.1.4 - Agenda Mandantendefault - Fehldarstellung der aktuellen View in den Auswahlbuttons
+84369706235c: 2011-09-23: Niklaus Giger: Ticket #412: may start DemoDB & all DBs via properties
+
+Changelog für 2.1.6.rc2
+d0393e0b2c12: 2011-09-26: thomashu: Ticket: #581 - implementation for rechnungssteller based billing, and enforcing obligation and non obligation to separate Fall
+bf898058c95f: 2011-10-03: rgw@iMac: fix consultation anonymizer
+1b9b5adbacf8: 2011-10-02: Niklaus Giger: Ticket 557: Mandantenwechsel per Knopfdruck
+0463a33facab: 2011-09-30: mdescher: Ticket 611: v1.0.7 fix for missing context menu
+afb0b241cce6: 2011-09-27: rgw@macbook: add 1.8.11 to update list
+1b52fefefa19: 2011-09-27: rgw@macbook: update createDB script to match dbUpdate. Change version informations.
+5b911aa0331e: 2011-09-27: rgw@macbook: remove dependency from scala plugin
+592e4e378f5a: 2011-09-27: rgw@macbook: port MandantSelection from 2.1.dev (#557)
+5cd08b5e5235: 2011-09-23: Niklaus Giger: Ticket #505: Use james@bond.invalid instead of james@bond.uk
+8d0a497fd6ea: 2011-09-21: thomashu: Ticket #86: fixed NPE if Mandant has no MWSt. Preference set.
+80dca8f95cd9: 2011-09-08: Niklaus Giger: Added variable for downloadsFrom. Create symlink for macosx zipfiles
+5c51bf665f9e: 2011-09-02: Niklaus Giger: Failonerror on symlink to false
+287a9ef4008f: 2011-09-02: Niklaus Giger: Fetch from ftp.medelexis. Fixes for Jubula
+
+Changelog für 2.1.6.rc1
+
+edc6b6adea02: 2011-08-26: Niklaus Giger: Ticket #546: Use medelexis-packager-1.0.0.jar in build.xml
+f0c36dafce28: 2011-08-26: rgw@iMac: include ch.elexis.core in build
+3058231883cc: 2011-08-26: rgw@macbook: api doc corrected
+0dde524bfe3f: 2011-08-23: Niklaus Giger: Ticket #546: Add medelexis-packager.jar to fix indigo
+3058231883cc: 2011-08-26: rgw@macbook: api doc corrected
+3c668e9ee3f8: 2011-08-25: thomashu: Ticket: #412 - added check if text changed before trying to save the Konsultation
+Various                   rgw@iMac: copied ch.elexis.core from trunk & various fixes
+5470c95826e4: 2011-08-23: rgw@iMac: some datatype abstractions (Use interface instead of classes)
+292ab8768a29: 2011-08-23: rgw@iMac: add public method to execute sql files
+7c1de1141a8f: 2011-08-23: rgw@iMac: better message on reconnect
+936b1d095a80: 2011-08-22: mdescher: Lost method during backout
+4ca364314296: 2011-08-22: mdescher: Reverting changeset 9d02725d6771 - SelectorPanelProvider substring query
+fc4600aae081: 2011-08-22: mdescher: Replace dependency to org.eclipse.help.ui with library requirement dependency
+e6edd1b25038: 2011-08-21: Gerry Weirich (ub): Give more informations on error messages in Exception status
+ba8b2df1f8a2: 2011-08-21: Gerry Weirich (ub): removed some Exceptions that broke existing code.
+1105dd535617: 2011-08-21: Gerry Weirich (ub): removed false exception
+2f7060f99274: 2011-08-14: Gerry Weirich (ub): create report in build.xml for ListDependencies output
+a3cef6cbaa15: 2011-08-21: thomashu: Ticket: #86 - fixed NPE on creation of bill, if Rechnungssteller has no VAT_ISMANDANTVAT InfoElement
+9d02725d6771: 2011-08-16: mdescher: SelectorPanel does now support substring search; additional method for PersistentObject to easy database required value transformation
+8ec154d392ba: 2011-08-14: mdescher: Ticket #562: Multiple memory leaks in PersistentObject
+ff733db76c6c: 2011-08-11: Gerry Weirich (ub): #556: Allow billing for other mandator
+77a55a09e58c: 2011-08-11: thomas: - added Prescription#setBemerkung method
+516dc693f9bb: 2011-08-11: thomas: - usage of MessageBox in Log#log method before the Workbench is running, could lead to a Invalid thread access, fixed by testing if Workbench is already running before trying to display the MessageBox, else write the message to the log file only
+fede97449f1c: 2011-08-11: thomas: - added ch.elexis.core plugin to ch.elexis.core.feature
+5ead6e49fbd2: 2011-08-11: thomashu: Ticket: #560 - ch.elexis.medikamente.bag, fixed db table initialization with elexis version 2.1.5, and set version to 2.0.4
+1f65780616c5: 2011-08-10: rgw@iMac: backports from trunk
+b68ecce952fb: 2011-08-09: rgw@iMac: * give more informations if LockFile can't get aquired
+f639e8b39f11: 2011-08-04: Gerry Weirich (ub): copied ch.elexis.core from trunk
+5b5e1059b887: 2011-08-04: thomashu: Ticket: #412 - ix for saving text into wrong Konsultation, introduced by previous fix (changeset 4927 e712d52a9a37)
+
+Changelog für 2.1.6.rc0
+e712d52a9a37: 2011-07-28: thomashu: Ticket: #412 - fix for loosing parts of Konsultation text, by additional saving on change of Konsultation
+a2231455b59c: 2011-07-28: Niklaus Giger: Fixed problem with LoginNews
+85c1fcfcae87: 2011-07-27: rgw: Login News
+f81a52719e94: 2011-07-25: rgw@iMac: add eigenartikel to mac build
+dcd829ea01cd: 2011-07-25: rgw@iMac: remove old resources
+ea112637965e: 2011-07-25: rgw@iMac: updated mac resources
+9108cfa615c4: 2011-07-25: rgw@iMac: include eigenartikel in base package
+1a274114125a: 2011-07-15: mdescher: medelexis.xml fix
+c3669206271f: 2011-07-13: mdescher: Simple patch: Patient.loadByPatientID() method
+
+Changelog für 2.1.5.1
+
+320a9d979602: 2011-06-15: mdescher: Ticket #470: Allgemeines Refaktoring: Auslagerung der BezugsKontaktAuswahl
+
+Changelog für 2.1.5
+
+8e98cb4bc1f4: 2011-06-30: Niklaus Giger: Ticket: #499: tableExists is no longer case-sensitive
+01608b850e5b: 2011-06-24: Niklaus Giger: Ticket #438: Added failing HL7-files
+13f9450b49d8: 2011-06-30: Niklaus Giger: Ticket: #438: Feldlänge vergrössert
+771bc0963cf9: 2011-06-30: thomashu: Ticket: #503 - ch.elexis.laborimport.medics, fixed db table initialization with elexis version 2.1.5
+8c60f85bdff3: 2011-06-28: thomashu: Ticket: #50 - fixed return value of SqlWithUiRunner, when one sql statement of a script failes the whole script is considert as failed
+3c92ee8817dc: 2011-06-28: Niklaus Giger: Ticket #499: Neue Methode PersistentObject.tableExist
+eb06fe23ad9f: 2011-06-28: thomashu: Ticket: #499 - changed ICD10 version id back to 1 for compatibility
+c1f14713febf: 2011-06-28: thomashu: Ticket: #499 - changed ICD10 version id back to 1 for compatibility
+64c86bd6efe1: 2011-06-28: thomashu: Ticket: #499 - changed static initializer of ICD10 to use state() method for test if table exists
+- changed behavior of SqlWithUiRunner to run every statement of script and not stop on first failure
+- added more meaningful value to parameter plugin id when creating a SqlWithUiRunner in PersistentObject#createOrModifyTable()
+a997d8644234: 2011-06-28: thomashu: Ticket: #499 - corrected code parameter when creating ElexisStatus objects
+88702f5e3b18: 2011-06-27: thomashu: Ticket: #3 - added SqlWithUiRunner class for executing SQL Strings on the DB system
+- changed DBUpdate#doUpdate() and PersistentObject#createOrModifyTable() to use SqlWithUiRunner now
+- added Tests for the modified methods
+f049da3abf0b: 2011-06-27: Niklaus Giger: - updated orbit repository location
+50db4525320d: 2011-06-26: Niklaus Giger: Ticket #495: Temp -> Hub.getTempDir
+8336036f2e87: 2011-06-20: thomashu: Ticket: #377 - changed Money.parse to first use ch format than de format, ignoring the locale setting.
+da4e8d493b8e: 2011-06-24: Niklaus Giger: Ticket #484: create html/pdf from *.textile
+a04b9e714942: 2011-06-24: Niklaus Giger: Ticket #484: corrected documentation
+14cd802815f8: 2011-06-21: mdescher: Ticket #392: Fenster oeffnen => Other Shortcut
+8ab7d1b8ed6a: 2011-06-21: mdescher: Ticket #72: Added external access possibility for selected date and bereich in view
+
+Changelog für 2.1.5.rc4
+628965e4ee0c,"Ticket #51: Corrected copy of elexis.pdf",Niklaus Giger,2011-06-09 09:27 +0200
+f901e29fd164,"Ticket #74: HL7-Test via buckminster/Jenkins zum Laufen gebracht",Niklaus Giger,2011-06-09 11:26 +0200
+4be452d8d332,"Ticket #72: Declarative access to Patient Liste",mdescher,2011-05-25 13:22 +0200
+c9516195ecef,"Ticket #51: Dokumentation verbessert",Niklaus Giger,2011-06-09 12:33 +0200
+5784cfa1aa02,"Ticket: #434 - added method to execute a sql string and handle exceptions appropriately to PersitentObject
+- added possibility to create an ElexisStatus which will trigger a restart of the app",thomashu,2011-06-03 15:05 +0200
+bb2693c953bc,"Ticket: #434 - minor change making exception handling more specific",thomashu,2011-06-03 15:07 +0200
+d758fa8461e2,"Ticket: #434 - only create blocking error with restart on connection problems",thomashu,2011-06-03 16:31 +0200
+2351ce1bafa6,"added constructor to SettingsPreferenceStore which allows usage of org.eclipse.core.runtime.preferences initializer extension point",thomas,2011-06-07 18:17
+
+Changelog für 2.1.5.rc3
+
+Benutzersicht
+tony: Neue Version Medics Plugin (Importer und Exporter)
+tony: Laborview wird so erweitert, dass Bemerkungen zu Laborwerten mit einem proportionalen Font und ohne Unterdrückung der Leerzeichen dargestellt werden
+niklaus: db-shaker mit Korrekturen aus Trunk zum Laufen gebracht
+marco & thomas: diverse kleine Bug-Fixes
+marco & thomas: Länge von Textfeldern werden bei der Eingabe überprüft
+
+Wichtige changesets
+7119c0bbcc0f: 2011-05-31: mdescher: Ticket #104: ch.elexis.privatrechnung2 was unable to load class ch.elexis.privatrechnung2.data.LeistungsFactory
+663b002c8727: 2011-05-31: mdescher: Ticket #405: Maximale Länge von Eingaben in Dialogen
+a4efd4081dd5: 2011-05-23: marco: Ticket #389: Eigenleistung
+7ec6d9afa92c: 2011-05-22: rgw@macbook: fixed broken classpaths and manifests
+75df2a5c043b: 2011-05-22: rgw@macbook: TrustX changes
+5006ef0874a5: 2011-05-16: marco: Ticket #80: Fix for NPE on call of ElexisEventDispatcher.fire() from Non-UI-Thread
+6f1af336aad4: 2011-05-16: marco: Ticket #412: Verschwindende Konsultationseintraege
+680b42b20417: 2011-05-13: marco: Ticket #72: Add declarative access to Leistungsblock Viewer in LeistungenView and CodeDetailView
+8777acb68e6c: 2011-05-11: marco: Ticket #389: Eigenleistung
+e5070a300478: 2011-05-09: thomas: update to db version 1.8.8
+9bb5d238543b: 2011-05-09: thomas: removed unnecessary version constraints
+6d2a4f8d84b3: 2011-05-09: marco: Fix NPE in ch.elexis.artikel_at
+c6e8c1f8ca49: 2011-05-10: thomas: Ticket: #404 - fixed by changing translateFlavor to treat h2 db like hsql db statements
+9f2ea938c0b0: 2011-05-16: Niklaus Giger: Merged changes from 2.1.5.rc2.dev
+38640fc73166: 2011-04-18: marco: Ticket #199: Failed to execute runnable (java.util.ConcurrentModificationException)
+c9456c1c3c67: 2011-04-18: marco: Ticket #331: java.lang.IllegalArgumentException: Index out of bounds
+d18b58bf219b: 2011-05-14: rgw@iMac: apply formatting
+e3bd6c4a8c0b: 2011-05-14: rgw@iMac: use default JRE
+d2a6dd76ff8d: 2011-05-06: Niklaus Giger: Ticket #399: DBUID auch ohne Adminrechte auslesbar
+9255561a6918: 2011-05-01: tony: EXPORT Tags bei Laborwerten hinzugefügt für HL7 Exporter (Einstellungen und DB)
+
+Changelog für 2.1.5.rc2
+Gerry Weirich: Ticket #352: Feld Bezug in Zusatzadressen zu kurz
+marco: Ticket #293: Eclipse Log Status messages
+marco: Ticket #67: java.lang.NoSuchMethodException
+marco: Ticket #84: ch.rgw.tools.JdbcLinkSyntaxException: ERROR: operator does not exist: character = integer
+marco: Ticket #142: Executable extension definition for "Class" not found; LaborDatenImport and LaborOrder extension points
+marco: Ticket #337: ch.elexis.data.PersistenceException: Fehler bei UPDATE LABORITEMS SET
+thomashu: Ticket: #102 - added possibility to create Status with severity ERROR which will be ignored by the QF handler
+marco: Ticket #348: java.lang.NullPointerException at ch.elexis.dialogs.EditLabItem.createDialogArea
+marco: Ticket #199: Failed to execute runnable (java.util.ConcurrentModificationException)
+thomashu: Ticket: #112 - fix for referenced part error message
+Gerry Weirich: Ticket #376: Tarmed-Kinderzuschläge automatisch verrechnen
+Gerry Weirich: Fehler #341: selling partial packages of medicaments
+Niklaus Giger: Fehler #342: Port of fix by Tony PatientenListeView initalizing optimized. Works now also when View is visible at startup.
+Niklaus Giger: ElexisFormat konsequent angewendet
+Niklaus Giger: Ticket 70: Integrationstest, added runFromScratch
+marco: Ticket #328: Funktionsfehler bei Auswertung von Formeln im Laborview
+thomas: Ticket: none - fixed setSelectedLab method of EditLabItem dialog
+thomashu: Ticket: #70 - fixed access to disposed widget on dispose
+marco: Ticket #259: java.lang.IllegalArgumentException: Argument not valid
+marco: Ticket #251: NPE at ch.elexis.dialogs.TerminDialog.linkActivated
+marco: Ticket #270: NPE at ch.elexis.views.KonsDetailView.widgetSelected
+marco: Ticket #239: NPE at ch.elexis.views.FallDetailView.runInUi
+thomas: added more tests for LabItem
+thomas: added LabItem test to AllTests
+thomas: Ticket: #23 - reworked getLabItems method, concerning empty string parameters
+thomas: added tests for LabItem
+Niklaus Giger: Ticket #101: Fixed Linux build by upgrading to Helio 3.6.2
+
+Changelog für 2.1.5.rc1
+Niklaus Giger: Fixed various build errors (Version contained illegal '-')
+
+Changelog für 2.1.5-rc0
+
+Diverses:
+Michael Imhof: "NullPointer abgefangen" from Trunk (Platzhalter/ElexisEvent)
+Tony Schaller: Agenda DataAccessor implementiert für Platzhalter Termin.BeiWem
+Dani Lutz:     Changing consultation's date: notify listeners about change
+Michael Imhof: BugFix: Document-Typ fehlt in Laborprefs-Liste
+Michael Imhof: Typ=DOCUMENT added to LaborPrefs
+Gerry Weirich: Article counter
+
+Redmine Tickets:
+-  Fehler #2: Pendenzen SQL-Statement
+  (Optimierungen Reminders, da Suche mit der Zeit extrem langsam wurde)
+- Fehler #15: Adress-Suche geht nicht mehr
+  Korrigert die Adress-Suche (ch.medshare.elexis-adresssuche)
+- Fehler #32: Patientennummer in Patienten-View
+  In der Patientenview ist es möglich, sich bei der Auswahl der Patienten folgende vier Angaben
+  des Patienten zeigen zu lassen:
+  - Name
+  - Vorname
+  - Geburtsdatum
+  - Patientennummer
+  Die Einstellungen können unter Datei => Einstellungen => Anwender => Ansicht eingestellt werden.
+  Die View oder die Einstellungsseite wurde so anpasst, dass die gewünschten Änderungen
+  beim Speichern übernommen werden.
+- Fehler #33: negativ Beträge in der Buchhaltung
+  In der Elexis-Buchhaltung ist es von Zeit zu Zeit, wenn Patienten aus Versehen zu viel Geld überweisen,
+  der Fall, dass der zuviel bezahlte Betrag zurückerstattet werden muss, was dazu führt, dass
+  in Elexis ein negativer Betrag erfasst werden muss.
+  Bis anhin hatte das funktioniert, seit dem 31.12.2010 ist dies nicht mehr der Fall.
+- Fehler #35: Konstexte verschwinden
+  Diverse Fehler korrigiert, v.a. bei Problemen mit der Datenbankverbindung.
+  (Sporadische Problem, schwierig einzugrenzen)
+- Fehler #37: Termine-View
+  Flickt Java Null-Pointer-Exception
+- Fehler #57: ICPC Codes einspielen
+  Fehler bei Misslingen eines elexis-updates abgefangen. Feld synonyms fehlte.
+- Fehler #62: Platzhalter Fall.BetriebsNummer
+  seit dem letzten Update wird der Platzhalter 'Fall.BetriebsNummer' welcher in der Vorlage
+  'Tarmedrechnung_S1' benötigt wird, nicht mehr korrekt befüllt und das System meldet beim
+  Rechnungsdruck einen Fehler und bricht denselben ab.
+- Fehler #63: TarmedLoader geht nicht mehr
+- Fehler #66: java.lang.NumberFormatException
+  Der Fehler entsteht, weil die Fixmedikationsanzeige für die Berechnung der Tageskosten
+  versucht, Brüche zu analysieren, indem bei einem Ausdruck wie 1/2 (drei Zeichen) Zähler
+  und Nenner separat mit Integer.parseInt geparsed werden.
+  Das Zeichen 1/2 (Ein Zeichen) wird bisher nicht als Zahl erkannt.
+  Wenn ein Ausdruck nicht geparsed werden kann, zeigt die Fixmedikationsanzeige
+  die Tageskosten nicht genau an, sondern schreibt etwas wie ">2.50". Das ist also nicht besonders kritisch.
+  Man kann sowieso nicht alle Möglichkeiten abfangen, mit der Ärzte die Tagesdosis eintragen...
+
+- Fehler #68: java.lang.ArrayIndexOutOfBoundsException
+  Bei Verschreibungen
+- Fehler #75: Verschwindende Einträge
+  Problem kann mit folgenden Schritten nachvollzogen werden, die Views Konsultation und Konsultationen müssen offen sein.
+   1. Selektion eines Patienten
+   2. Erstellen einer Konsultation mittels Konsultation/grüner Button "Neue Konsultation erstellen"
+   3. Wechseln des selektierten Patienten
+   4. Erstellen einer Konsultation mittels Konsultationen/grüner Button "Neue Konsultation erstellen"
+  Konsultationseintrag wird nun bei vorherig selektiertem Patient erstellt.
+- Fehler #76: java.lang.ArrayIndexOutOfBoundsException: -1
+  Beim Löschen einer Konsultation
+- Feature #80: Einführung von sourceProvidern
+  Eingeführt, aber noch nicht überall umgesetzt.
+- Unterstützung #51: Release-Management
+  neu: sw-guidelines.textile, mercurial-how2.textile
+  entfernte: hsql-adapter
+- Unterstützung #74: Integrationstest
+  UnitTest für Elexis-Core laufen (siehe https://jenkins.medelexis.ch/jenkins/job/core.test_2.1.5.x)

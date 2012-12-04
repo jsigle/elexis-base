@@ -1,0 +1,440 @@
+---
+- !ruby/object:Info
+  id: ch.elexis.noatext
+  name: NOAText
+  responsible: weirich@elexis.ch
+  type: Dokumentenverwaltung
+  category: feature
+  description: Anbindung von OpenOffice an Elexis
+- !ruby/object:Info
+  id: ch.elexis.laborimport.bioanalytica
+  name: Laborimport Bioanalytica
+  responsible: support@medelexis.ch
+  type: Laboranbindung
+  category: feature
+  description: Laborimport Labor Bioanalytica HL7
+- !ruby/object:Info
+  id: ch.elexis.laborimport_rischbern
+  name: Laborimport RischBern
+  responsible: support@medelexis.ch
+  type: Laboranbindung
+  category: feature
+  description: Laborimport RischBern
+  docURL: ! '# has doc inside plugin'
+- !ruby/object:Info
+  id: ch.elexis.laborimport_viollier
+  name: Laborimport Viollier
+  responsible: weirich@elexis.ch
+  type: Laboranbindung
+  category: feature
+  description: Import von Laborresultaten vom Labor Viollier
+- !ruby/object:Info
+  id: ch.elexis.connect.sysmex
+  name: Sysmex Laborgeräteanbindung
+  responsible: support@medelexis.ch
+  type: Geräteanbindung
+  category: feature
+  description: Verbindung von Elexis zum Sysmex
+  docURL: ! '# has doc inside plugin'
+- !ruby/object:Info
+  id: ch.elexis.icpc.fire
+  name: ICPC-Fire
+  responsible: weirich@elexis.ch
+  type: Statistik
+  category: feature
+  description: Fire Exporter zum ICPC-Modul
+  docURL: ! '# has doc inside plugin'
+- !ruby/object:Info
+  id: ch.elexis.agenda
+  name: Elexis-Agenda
+  responsible: support@medelexis.ch
+  type: Organisation
+  category: feature
+  description: Mehrplatz- und Mehrbenutzerfähige Agenda mit mehreren Views
+  docURL: http://www.medelexis.ch/unsere-produkte/elexis-plugins/plugins-organisation/plugin-agenda.html
+- !ruby/object:Info
+  id: ch.elexis.laborimport_lg1
+  name: Laborimport LG1
+  responsible: support@medelexis.ch
+  type: Laboranbindung
+  category: feature
+  description: Laborimport LG1
+  docURL: ! '# has doc inside plugin'
+- !ruby/object:Info
+  id: ch.elexis.omnivore
+  name: Omnivore
+  responsible: weirich@elexis.ch
+  type: Dokumentenverwaltung
+  category: feature
+  description: Einfaches Dokumentenmanagementsystem zum filesystemzentrierten Import
+    und flacher Speicherung
+  docURL: http://www.medelexis.ch/unsere-produkte/elexis-plugins/plugins-dokumente/omnivore.html
+- !ruby/object:Info
+  id: ch.elexis.connect.reflotron
+  name: Roche Reflotron Laborgeräteanbindung
+  responsible: support@medelexis.ch
+  type: Geräteanbindung
+  category: feature
+  description: Verbindung von Elexis zum Roche Reflotron
+  docURL: ! '# has doc inside plugin'
+- !ruby/object:Info
+  id: ch.medshare.base.external
+  name: medshare Base external plugin
+  responsible: support@medshare.ch
+  type: Basis-System
+  category: invisible
+  description: Basiskomponenten für medshare Plugins
+- !ruby/object:Info
+  id: ch.elexis.ebanking_ch
+  name: Elexis eBanking Schweiz
+  responsible: weirich@elexis.ch
+  type: Finanzen
+  category: feature
+  description: eBanking-Funktionen (ESR drucken, ESR-Files einlesen)
+- !ruby/object:Info
+  id: ch.elexis.privatnotizen
+  name: Elexis-Privatnotizen
+  responsible: weirich@elexis.ch
+  type: KG-Führung
+  category: feature
+  description: Vertrauliche Notizen in KG-Einträge einbetten
+  docURL: ! '# has doc inside plugin'
+- !ruby/object:Info
+  id: ch.elexis.befunde
+  name: Elexis-Messwerte
+  responsible: weirich@elexis.ch
+  type: KG-Führung
+  category: feature
+  description: Plugin zur Erfassung und Darstellung beliebiger tabellarischer Messwerte
+- !ruby/object:Info
+  id: ch.medshare.elexis_directories
+  name: medshare Directories
+  responsible: info@jsigle.com
+  type: Datenaustausch
+  category: feature
+  description: Adressdaten aus dem Internet einlesen
+- !ruby/object:Info
+  id: ch.elexis.importer.div
+  name: elexis-importer
+  responsible: weirich@elexis.ch
+  type: Basis-System
+  category: feature
+  description: Basisfunktionen für Importer
+  docURL: ! '# has doc inside plugin'
+- !ruby/object:Info
+  id: ch.elexis.h2.connector
+  name: Datenbankanbindung an H2
+  responsible: weirich@elexis.ch
+  type: Datenbankanbindung
+  category: feature
+  description: Verbindung mit der Java-Datenbank H2
+  docURL: http://www.medelexis.ch/unsere-produkte/elexis-plugins/plugins-database.html
+- !ruby/object:Info
+  id: ch.rgw.utility
+  name: Elexis Utilities
+  responsible: weirich@elexis.ch
+  type: Basis-System
+  category: invisible
+  description: Basisfunktionen für Elexis
+- !ruby/object:Info
+  id: ch.elexis.features.switzerland.de
+  name: Elexis Schweiz (deutsch)
+  responsible: support@medelexis.ch
+  type: Basis-System
+  category: feature
+  description: Abrechnungs-, eBanking und Diagnoscode-Plugins für Gebrauch in der
+    Deutschschweiz
+  docURL: http://www.medelexis.ch/unsere-produkte/elexis-plugins/plugins-kern/plugin-medelexis-schweiz-de.html
+- !ruby/object:Info
+  id: com.hilotec.elexis.messwerte
+  name: Hilotec Messwerte
+  responsible: info@hilotec.com
+  type: KG-Führung
+  category: feature
+  description: XML konfigurierbares Messwerte-Plugin
+  docURL: ! '# has doc inside plugin'
+- !ruby/object:Info
+  id: ch.medshare.ebm
+  name: Search in EBM-Guidelines
+  responsible: info@medshare.net
+  type: Klinische Hilfsmittel
+  category: feature
+  description: Search in EBM-Guidelines
+- !ruby/object:Info
+  id: ch.elexis.eigenartikel
+  name: Elexis Eigenartikel
+  responsible: weirich@elexis.ch
+  type: Basis-System
+  category: feature
+  description: Eigenartikel-Verwaltung
+  docURL: ! '# has doc inside plugin'
+- !ruby/object:Info
+  id: ch.elexis.messages
+  name: Praxis-Kurznachrichtensystem
+  responsible: weirich@elexis.ch
+  type: Organisation
+  category: feature
+  description: Versenden Sie Kurznachrichten an Mitarbeiter/innen
+  docURL: ! '# has doc inside plugin'
+- !ruby/object:Info
+  id: ch.elexis.laborimport.hl7.allg
+  name: Laborimport HL7
+  responsible: weirich@elexis.ch
+  type: Laboranbindung
+  category: feature
+  description: Import von Laborresultaten aus HL7-Dateien
+  docURL: ! '# has doc inside plugin'
+- !ruby/object:Info
+  id: ch.elexis.laborimport_teamw
+  name: Laborimport Team W
+  responsible: weirich@elexis.ch
+  type: Laboranbindung
+  category: feature
+  description: Import von Laborresultaten vom Labor Team W
+  docURL: http://www.medelexis.ch/index.php?id=64
+- !ruby/object:Info
+  id: ch.elexis.fop.wrapper
+  name: Wrapper for Apache FOP
+  responsible: weirich@elexis.ch
+  type: Basis-System
+  category: invisible
+  description: Basisfunktionen für Elexis
+- !ruby/object:Info
+  id: ch.elexis.mysql.connector
+  name: Datenbankanbindung an MySQL
+  responsible: weirich@elexis.ch
+  type: Datenbankanbindung
+  category: feature
+  description: Verbindung mit einem MySQL-Server
+  docURL: ! '# has doc inside plugin'
+- !ruby/object:Info
+  id: ch.elexis.diagnosecodes_ch
+  name: Diagnosecodes Schweiz
+  responsible: weirich@elexis.ch
+  type: Organisation
+  category: feature
+  description: TI-Code und ICD-10
+- !ruby/object:Info
+  id: ch.ngiger.utilities.comm
+  name: N. Giger Communications Utilities
+  responsible: niklaus.giger@member.fsf.org
+  type: Basis-System
+  category: invisible
+  description: Kommunuikationsfunktionen für Elexis
+- !ruby/object:Info
+  id: ch.elexis.laborimport_labtop
+  name: Laborimport labtop
+  responsible: support@medelexis.ch
+  type: Laboranbindung
+  category: feature
+  description: Laborimport labtop
+  docURL: ! '# has doc inside plugin'
+- !ruby/object:Info
+  id: ch.elexis.bildanzeige
+  name: Elexis Bildanzeige
+  responsible: weirich@elexis.ch
+  type: KG-Führung
+  category: feature
+  description: Einbinden von Verweisen auf Bilder im KG-Text
+- !ruby/object:Info
+  id: ch.elexis.externe_dokumente
+  name: Iatrix externe Dokumente
+  responsible: support@iatrix.org
+  type: Dokumentenverwaltung
+  category: feature
+  description: Einfache Einbindung eines beliebigen Dokumentenverzeichnisses (Dateinamen
+    müssen bestimmten Konventionen folgen)
+  docURL: ! '# has doc inside plugin'
+- !ruby/object:Info
+  id: ch.elexis.eigendiagnosen
+  name: Elexis-Eigendiagnosen
+  responsible: weirich@elexis.ch
+  type: KG-Führung
+  category: feature
+  description: Eigendiagnosen (ausserhalb der vordefinierten Systeme) definieren
+  docURL: ! '# has doc inside plugin'
+- !ruby/object:Info
+  id: ch.elexis.Textplugin
+  name: Textplugin
+  responsible: elexis.ch
+  type: Basis-System
+  category: invisible
+  description: service:description
+- !ruby/object:Info
+  id: ch.elexis.artikel_ch
+  name: Elexis Artikel Schweiz
+  responsible: weirich@elexis.ch
+  type: Organisation
+  category: feature
+  description: Artikelliste Schweiz
+- !ruby/object:Info
+  id: com.hilotec.elexis.pluginstatistiken
+  name: Hilotec Messwerte Statistik
+  responsible: info@hilotec.com
+  type: Statistik
+  category: feature
+  description: Statistikmodul zu Hilotec-Messwerte
+  docURL: ! '# has doc inside plugin'
+- !ruby/object:Info
+  id: ch.elexis.medikamente.bag
+  name: Medikamente SL
+  responsible: weirich@elexis.ch
+  type: Basis-System
+  category: feature
+  description: Medikamentenauswahl basierend auf der Spezialitätenliste
+  docURL: ! '# has doc inside plugin'
+- !ruby/object:Info
+  id: ch.elexis.mail
+  name: E-Mail Support
+  responsible: weirich@elelxis.ch
+  type: Basis-System
+  category: invisible
+  description: E-Mails senden
+- !ruby/object:Info
+  id: ch.ngiger.elexis.oddb_ch
+  name: ODDB-Import der Artikel
+  responsible: support@medelexis.ch
+  type: Organisation
+  category: feature
+  description: Importieren der Artikelliste von oddb.ch (CSV-Datei) inkl. ATC_code
+  docURL: ! '# has doc inside plugin'
+- !ruby/object:Info
+  id: ch.elexis.icpc
+  name: ICPC-2
+  responsible: weirich@elexis.ch
+  type: Basis-System
+  category: feature
+  description: ICPC-2 Diagnosesystem
+  docURL: ! '# has doc inside plugin'
+- !ruby/object:Info
+  id: com.hilotec.elexis.messwerte.v2
+  name: Hilotec Messwerte V2
+  responsible: info@hilotec.com
+  type: KG-Führung
+  category: feature
+  description: XML konfigurierbares Messwerte-Plugin
+  docURL: http://www.medshare.net/fileadmin/downloads/elexis/dox/ElexisHilotecMesswerteV2.pdf
+- !ruby/object:Info
+  id: ch.elexis.arzttarife_ch
+  name: Arzttarife Schweiz
+  responsible: weirich@elexis.ch
+  type: Basis-System
+  category: feature
+  description: Tarmed&Co
+  docURL: ! '# has doc inside plugin'
+- !ruby/object:Info
+  id: ch.elexis.privatrechnung
+  name: Privatrechnung v1
+  responsible: weirich@elexis.ch
+  type: Basis-System
+  category: feature
+  description: Einbindung eines Privattarifs in Elexis
+  docURL: ! '# has doc inside plugin'
+- !ruby/object:Info
+  id: ch.elexis
+  name: elexis
+  responsible: weirich@elexis.ch
+  type: Basis-System
+  category: invisible
+  description: Elexis Basismodul
+- !ruby/object:Info
+  id: ch.elexis.laborimport.medics
+  name: Laborschnittstelle Medics
+  responsible: info@medshare.net
+  type: Laboranbindung
+  category: feature
+  description: Laborschnittstelle Medics
+  docURL: ! '# has doc inside plugin'
+- !ruby/object:Info
+  id: ch.elexis.core
+  name: Elexis DB-Abkapselung
+  responsible: weirich@elexis.ch
+  type: Basis-System
+  category: invisible
+  description: Elexis-Kern-Modul
+- !ruby/object:Info
+  id: org.iatrix.help.wiki
+  name: Iatrix Help Wiki für Elexis
+  responsible: support@iatrix.org
+  type: Basis-System
+  category: feature
+  description: Anbindung des Iatrix-Wikis an die F1 Taste in jeder View
+  docURL: http://www.iatrix.org/pmwiki/pmwiki.php/Elexishilfe/Uebersicht
+- !ruby/object:Info
+  id: ch.elexis.connect.afinion
+  name: Afinion AS100 Laborgerätanbindung
+  responsible: support@medelexis.ch
+  type: Geräteanbindung
+  category: feature
+  description: Verbindung von Elexis zum Afinion AS100 Analyzer
+  docURL: ! '# has doc inside plugin'
+- !ruby/object:Info
+  id: ch.elexis.labortarif.ch2009
+  name: Labortarif CH 2009
+  responsible: support@medelexis.ch
+  type: Basis-System
+  category: invisible
+  description: Labortarif 2009
+- !ruby/object:Info
+  id: ch.elexis.laborimport_analytica
+  name: Laborimport Analytica
+  responsible: support@medelexis.ch
+  type: Laboranbindung
+  category: feature
+  description: Import von Laborresultaten vom Labor Analytica
+  docURL: ! '# has doc inside plugin'
+- !ruby/object:Info
+  id: ch.elexis.notes
+  name: Elexis Notizen
+  responsible: weirich@elexis.ch
+  type: Organisation
+  category: feature
+  description: Nicht patientenspezifische Notizen, Merkblätter etc. mit Stichwort-
+    und Themensuche
+  docURL: ! '# has doc inside plugin'
+- !ruby/object:Info
+  id: ch.medshare.connect.abacusjunior
+  name: Abacus Junior Laborgerätanbindung
+  responsible: support@medelexis.ch
+  type: Geräteanbindung
+  category: feature
+  description: Verbindung von Elexis zum Abacus Junior
+- !ruby/object:Info
+  id: ch.elexis.hl7.v26
+  name: elexis-hl7-v26
+  responsible: info@medshare.net
+  type: Basis-System
+  category: feature
+  description: Basisfunktionen für HL7 V2.6 Importer und Exporter
+  docURL: ! '# has doc inside plugin'
+- !ruby/object:Info
+  id: ch.elexis.support.dbshaker
+  name: Elexis DB-Shaker
+  responsible: weirich@elexis.ch
+  type: Zusätze / Support
+  category: feature
+  description: ! 'Datenbankanonymisierung (ACHTUNG: irreversibel!)'
+- !ruby/object:Info
+  id: ch.elexis.postgresql.connector
+  name: Datenbankanbindung an PostgreSQL
+  responsible: weirich@elexis.ch
+  type: Datenbankanbindung
+  category: feature
+  description: Verbindung mit einem PostgreSQL-Server
+  docURL: http://www.medelexis.ch/unsere-produkte/elexis-plugins/plugins-database.html
+- !ruby/object:Info
+  id: ch.elexis.laborimport_rothen
+  name: Laborimport Rothen
+  responsible: support@medelexis.ch
+  type: Laboranbindung
+  category: feature
+  description: Laborimport Rothen
+  docURL: ! '# has doc inside plugin'
+- !ruby/object:Info
+  id: ch.elexis.buchhaltung.basis
+  name: Elexis Basis-Buchhaltung
+  responsible: weirich@elexis.ch
+  type: Finanzen
+  category: feature
+  description: Einige einfache Buchhaltungs-Abfragen
+  docURL: ! '# has doc inside plugin'

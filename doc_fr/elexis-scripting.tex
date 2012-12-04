@@ -1,0 +1,251 @@
+% *******************************************************************************
+% * Copyright (c) 2008 by Elexis
+% * All rights reserved. This document and the accompanying materials
+% * are made available under the terms of the Eclipse Public License v1.0
+% * which accompanies this distribution, and is available at
+% * http://www.eclipse.org/legal/epl-v10.html
+% *
+% * Contributors:
+% *    G. Weirich
+% *
+% *  $Id: elexis-privatrechnung.tex 3739 2008-03-23 20:20:40Z rgw_ch $
+% *******************************************************************************
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+
+\documentclass[a4paper]{scrartcl}
+\usepackage{german}
+\usepackage[utf8]{inputenc}
+\usepackage{makeidx}
+
+\makeindex
+% Hier ein etwas skurriler Block, der dazu dient, die Unterschiede
+% zwischen pdflatex und latex auszubügeln
+% Grafiken müssen als png oder gif (für pdflatex) und als eps (für Latex)
+% vorhanden sein. Die Endung kann man beim \includegraphics jeweils weglassen,
+% das System nimmt je nach Renderer die geeignete Variante.
+
+\newif\ifpdf
+\ifx\pdfoutput\undefined
+	\pdffalse              	%normales LaTeX wird ausgeführt
+\else
+	\pdfoutput=1
+	\pdftrue               	%pdfLaTeX wird ausgeführt
+\fi
+
+\ifpdf
+	\usepackage[pdftex]{graphicx}
+	\DeclareGraphicsExtensions{.pdf,.jpg,.png}
+\else
+	\usepackage[dvips]{graphicx}
+	\DeclareGraphicsExtensions{.eps}
+\fi
+
+\usepackage{floatflt}
+\usepackage{wrapfig}
+\usepackage[]{hyperref}
+\usepackage{color}
+\begin{document}
+\title{Elexis-Scripting}
+\author{Gerry Weirich}
+\maketitle
+
+\section{Introduction}
+Scripting est une possibilité très puissante d'élargir la fonctionnalité de Elexis même sans devoir intervenir dans le code du logiciel.  Un script est une sorte de mini-logiciel qui est executé à l'intérieur de Elexis et qui a accès à toutes les données administrées par Elexis.
+\medskip
+
+Les scripts peuvent être utilisés dans des différents endroits . Par exemple lors du calcul des valeurs labo ou autres résultats qui sont basées sur une formule ou lors du filtrage de la liste des patients ou simplement comme fonctionne indépendante.
+
+\section{Langage et syntaxe}
+Le langage utilisé est un java simplifié (mais aussi le 'vrai' Java fonctionne). Contrairement au 'vrai' Java vous n'avez pas besoin d'un Compiler car le script est interprété cela veut dire analysé et au même moment transformé dans des commandes d'ordinateurs compréhensibles à l'ordinateur où le script est installé. Vous pouvez trouver une explication plus détaillée de l'interpréteur chez son producteur Beanshell (http://www.beanshell.org). Ici seulement un toute courte introduction :
+
+\subsection{Structures fondamentales}
+
+\begin{verbatim}
+    /* Ceci est un Script-exemple. Le texte, qui se trouve entre ces deux symboles de commentaire sera considéré comme commentaire et ne servira donc qu'à l'éclaircissement ou au divertissement du lecteur humain.  L'interpreteur par contre ignore tout simplement un tel texte . Pour des scripts un peu plus complexes vous de devez pas être avare avec vos commentaires car ils peuvent vous aider à comprendre encore plus tard ce que vous avez voulu faire etil peut aider à des tiers à comprendre votre script.
+    */
+
+    // Ceci est aussi un commentaire mais lorsqu'il y a des // il se limite juste à la fin de la ligne actuelle et lorsqu'il y a des /* il va toujours jusqu'au prochain*/.
+
+    n'importequoi=10;
+        /* on vient de créer une variable nommée 'n'importequoi' et
+           on lui a assigné la valeur 10. Veuillez considérer qu'à la fin de chaque assertion
+           se trouve un ; pour que l'ordinateur sache que l'assertion s'arrête là. */
+
+    aujourd'hui="Mercredi";
+        /* On vient de créer la variable nommée 'aujourd'hui' et on lui a assigné la valeur
+         'Mercredi'. Veuillez considérer qu'une chaines des signes doit toujours se trouver entre guillemets. */
+
+    chiffreénorme=1000;    // Je pense que c'est claire.
+
+    ensemble=n'importequoi+chiffreénorme;
+        // 'ensemble' devait faire 1010, si votre ordinateur n'est pas foutu
+
+        // allons, on va juste le tester:
+    if(ensemble=1010){
+                // les accolades marquent des blocs qui vont ensemble
+        résultat="ordinateur calcule juste";
+        Valeurdel'ordinateur=1000;
+    }else{
+        résultat="ordinateur calclue faux";
+        valeurdel'ordinateur=0;
+    }
+
+        // Naturellement votre ordinateur sait aussi multiplier et diviser
+    produit=n'importe quoi*chiffreénorme*3.4;
+    quotient=chiffreénorme/(n'importequoi-2);
+
+        // Simples calculs avec des variables
+    n'importequoi=n'importequoi+5;     // n'importequoi est maintenant 15
+    n'importequoi+=3;               // n'importequoi est maintenant 18
+    n'importequoi++;                // n'importequoi est maintenant 19
+
+    aujourd'hui=aujourd'hui+"18. Juin";    // 'aujourd'hui' est alors "Mercerdi 18. Juin"
+
+
+\end{verbatim}
+
+\subsection{Objets}
+Il y a déjà des miliers de livres qui parlent du langage orienté objet. J'essayerai de faire un extrait de l'essentiel sur une à deux pages :
+Un objet est dans ce contexte une construction du logiciel qui a des propriétés et qualifications spécifiques (les méthodes) qui seront fixées dans sa 'classe'.  exemple:
+
+\begin{small}
+\begin{verbatim}
+
+/* Ce script construit et utilise une voiture */
+
+ import de.volkswagen.autos.*;  // importation des classes nécessaires
+
+ mavoiture=new coccinelle();         // cré un objet de la classe séléctionnée
+ mavoiture.setcouleur("Vert");     // cré propriété de l'objet
+ if(mavoiture.estcassée()){      // demande une propriété de l'objet
+     // nous restons à la maison
+ }else{
+     mavoiture.roule vers("Berne"); // veuillez réaliser une méthode de cet objet.
+ }
+
+\end{verbatim}
+\end{small}
+
+Veuillez considérer pour l'exemple ci-dessus que l'implémentation exacte de la 'coccinelle' ne nous intéresse pas. On n'a pas besoin de savoir comment elle est produite ni de quoi elle consiste. La seule chose qu'on doit savoir c'est lesquelles de ses propriétés et méthodes pourraient être d'intérêt pour nous.
+Ceci rend les objets si utile dans la programmation. On ne doit pas tout faire soi-même mais on peut faire usage d'un travail déjà fait (par vous-même ou par quelqu'un d'autre).
+
+\medskip
+
+\hrulefill
+
+\textbf{Différence aux langages de programmation fortement typés}\\
+Des 'véritables' programmateurs sur Java. Pascal, C++ ou C\# s'étonnent probablement de ne pas voir :
+\begin{small}
+\begin{verbatim}
+    coccinelle mavoiture = new coccinelle();
+\end{verbatim}
+\end{small}
+
+La raison se trouve dans le fait que Beanshell est capable d'utiliser des variables non-typées. Ceci a des multiples avantages (et aussi désavantages) lesquelles on ne peut pas traiter ici. Si cela vous dérange vous pouvez utiliser sans problèmes aussi dans Beanshell la forme strictement typée. Mais vous pouvez de façon standardisée attribuer à mavoiture une 'new coccinelle' ou une 'new Ferrarri' ou simplement le chiffre '10'.
+\hrulefill
+
+\medskip
+
+Une classe est donc une définition et un objet est une incarnation concrète d'un classe. On appelle ce procédé 'instancier'. La commande de programmation qu'on utilise pour cela est 'new' et l'objet qui en résulte peut aussi être nommé 'instance' de la classe. Dans l'exemple ci-dessus mavoiture est donc une instance de la classe coccinelle.
+
+\section{Lien avec Elexis}
+Un script peut faire un lien avec Elexis en utilisant les classes Java qui ont été définis dans Elexis. Pour pouvoir s'en servir il faut par contre avoir quelques connaissances de l'interérieur de Elexis.
+
+Pour cette raison il est probablement tout d'abord raisonnable d'utiliser les objets présentés dans des exemples. Ainsi on apprend automatiquement pas à pas lesquels des objets seront utilisables. Comme altérnative on peut naturellement laisser produire ces scipts par quelqu'un d'autre.
+
+Voici un exemple facile:
+
+\begin{small}
+\begin{verbatim}
+
+    import ch.elexis.scripting.*;	
+    Util.display("allô","Je vous souhaite une bonne journée");
+
+\end{verbatim}
+\end{small}
+
+
+Ce script ne fait rien de vraiment spectaculaire : Dans la première ligne il importe depuis Elexis une collection de classes auxiliaires pour des scripts et la deuxième ligne utilise une de ces classes auxiliaires, la classe 'util', en appelant la méthode 'display' de cette classe. Il en résulte une boîte d'information avec le texte mentionné. Le lecteur attentif a probablement constaté que la classe 'util' n'avais pas été instancée - nullepart c'est écrit 'new Util()'. La méthode Util.display() est une 'méthode statique', dont la référence peut être établie directement à travers la classe. Naturellement on aurait pu écrir aussi  :
+\begin{small}
+\begin{verbatim}
+
+    import ch.elexis.scripting.*;	
+    dingsda=new Util();
+    dingsda.display("Allô","Je vous souhaite une bonne journée");
+
+\end{verbatim}
+\end{small}
+
+
+\subsection{Droits}
+Puisque des scripts peuvent réaliser des choses potentiellement dangereuses (puisque vous pouvez accéder à toutes les données de Elexis) leur création et utilisation est liée à des droits. Pour créer et/ou modifier des scripts vous avez besoin du droit \textsc{d'exécution 'un script}. Vous accordez ce droit comme toujours sous \textsc{Fichier-paramètres-groupes et droits}.
+
+\subsection{Créer et modifier un Script}
+
+Pour cela vous pouvez ouvrir la View 'Script'. Cliquez ensuite sur l'étoile rouge pour créer un nouveau script. ON vous demande d'abord d'introduire son nom. Il ne peut contenir que les lettres a-z et des chiffres 0-9 de même que\_ et -. Si vous cliquez sur 'o.k.' un script encore vide est crée à ce nom. Pour modifier ce script il faut cliquer avec la touche droite de la souris dessus et vous pouvez ensuite choisir 'modifier le script'.
+
+\subsection{Exécuter un Script}
+
+Ceci est dependant du contexte et du type du script. Vous pouvez exécuter certains scripts directement dans Script-View:
+Veuillez cliquer avec la touche droite et choisissez 'exécuter script'. Vous pouvez tirer des scripts qui doivent fonctionner comme filtre dans la liste des patients simplement par Drag and Drop dans la boite à filtre de la View liste des patients.
+
+\vspace{3mm}
+
+Voici un exemple d'un script pour le filtre de la liste des patients :
+\begin{small}
+\begin{verbatim}
+
+/* Ce script calcule individuellement de tous les hommes et femmes qui sont restés après les filtrages précédents l'âge moyenne et le médiane.
+*/
+
+import ch.elexis.scripting.*;	//  importation des classes auxiliaires
+
+/* Avant le premier passage init est appelé */
+
+    if(init){					
+      counter=new Counter();				
+      hommes=0;					
+      femmes=0;
+
+/* après le dernier passage finished est appelé */
+    }else if(finished){				
+        // arrondir le résultat à 2 chiffres
+      float sc=counter.getAverage(2);
+
+      Util.display("patients sélectionnés",
+        Integer.toString(hommes)+" Hommes, "+
+        Integer.toString(femmes)+" Femmes, "+
+        "âge moyenne: "+Float.toString(sc)+
+        ", Median: "+counter.getMedian()
+     );
+
+/* ce bloc est appelé pour chaque patient */
+   }else{
+      if([Patient.sexe].equalsIgnoreCase("m")){
+        hommes++;
+      }else{
+        femmes++;
+      }
+      int jahre=Integer.parseInt([Patient.âge]);
+      counter.add(années);
+
+   }
+
+return 0; // on ne veut que compter pas filtrer
+
+\end{verbatim}
+\end{small}
+
+\medskip
+
+Ce script utilise la classe externe 'Counter' pour calculer l'âge moyenne et le médian et utilise la classe Util pour afficher les résultats. Les deux classes auxiliaires se trouvent dans le package ch.elexis.scripting qu'on importe pour cela tout au début. L'étoile * à la fin indique simplement : importer toutes les classes de cu package.
+
+\vspace{3mm}
+
+Des Scripts dans le filtre de la liste des patients sont toujours premièrement appelés par le paramètre 'init' avant le démarrage du passage. Ensuite vous pouvez procéder à des initialisations. Ils sont appelés exactement une fois par patient qui a passé les filtres mentionnés plus haut. Vous pouvez évaluer le patient en utilisant soit une variable commme [Patient.xxx], soit en utilisant l'objet 'patient' transmis de façon implicite  (l'instance actuelle de la classe patient). Après avoir terminé le processus de filtrage le script sera encore une fois appelé par le paramètre 'finished' pour finir le rangement, traiter les résultats et les afficher etc. Le script ne doit pas forcément utiliser les parties init et finished s'il n'en a pas besoin.
+
+\vspace{3mm}
+
+Le script devait par contre toujours fournir un résultat.  1 indique: inclure ce patient dans la liste filtrée, -1 indique: ne pas inclure ce patient dans la liste.  0 indique:ce script ne prend pas des décision concernant le filtrage. -2 indique: une erreur fatale s'est produit, le passage doit être abandonné. (ceci provoque que le script est éliminié du filtre).
+
+\end{document}

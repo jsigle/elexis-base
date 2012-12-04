@@ -1,0 +1,50 @@
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+\section{Linux}
+Je nachdem, ob Sie schon eine java runtime 1.5 oder höher auf Ihrem System installiert haben, benötigen Sie die Version mit oder ohne jre. Nach dem Download müssen Sie den Installer zunächst ausführbar machen. Für die Installation von OpenOffice sind ebenfalls einige Besonderheiten zu beachten.
+
+Um zu überprüfen, welchen Download Sie benötigen, geben Sie in einer Konsole ein:
+\begin{itemize}
+\item java -version
+\end{itemize}
+
+Wenn jetzt eine Fehlermeldung oder eine Version niedriger als 1.5 kommt, müssen Sie den Installer mit jre laden.
+
+
+Im Zweifelsfall können Sie immer den Installer mit jre laden; es wird am System nichs verändert, und die jre wird nur innerhalb des elexis-Verzeichnisses anelegt und kann bei Deinstallation einfach wieder gelöscht werden.
+
+
+Laden Sie jetzt also den benötogten Installer herunter. Danach muss dieser zunächst ausführbar gemacht werden. Öffnen Sie eine Konsole und geben Sie ein:
+
+chmod +x elexis-linux-<version>-<jre>.run
+
+ Danach können Sie den Installer ausführen:
+
+./elexis-linux-<version>-<jre>.run
+
+Dies sollte Elexis auf Ihrem System installieren.
+
+\subsection{OpenOffice}
+Bei verschiedenen Linux-Distributionen ist der Teil, der für die  \textit{Fernsteuerung}  von OpenOffice benötigt wird, nicht automatisch bei der OpenOffice-Installation mit enthalten. Sie müssen dann nach einem Pakt suchen, welches  \textit{officebean}  oder  \textit{ooobean}  enthält, und dieses Paket ebenfalls installieren.
+
+\subsection{Wenn etwas schief geht}
+Falls die Installation nicht auf Anhieb gelingt, beginnt man am besten ganz von vorne. Also löschen Sie die Datenbank noch einmal, legen Sie Sie neu an. Beim ersten Start geben Sie folgenden Parameter ein:
+\begin{itemize}
+ \item ./elexis -clean\_all
+\end{itemize}
+Damit werden allfällige Überreste der gescheiterten Installation entfernt.
+
+\subsection{Wenn es nicht klappt}
+\subsubsection{Support per E-Mail}
+Installationssupport per E-Mail ist bis Abschluss der Betaphase kostenlos.
+\subsubsection{Support per Fernzugriff}
+Support per Fernzugriff (VNC) ist bis Abschluss der Betaphase kostenlos. Sie müssen den nötigen VNC-Server aber selbst installieren. In vielen Fällen kann die ganze Installation via VNC erfolgen.
+
+\subsubsection{Installation vor Ort}
+
+Wir installieren Elexis inkl. Datenbank für Sie zum pauschalen Festpreis von CHF 250.- plus Reisekosten auf folgenden Systemen:
+\begin{itemize}
+ \item SuSE Linux ab 9.3
+\item mit hsql, mysql oder postgresql Datenbank
+\item Ubuntu Linux ab 6.0 mit hsql, mysql oder postgresql Datenbank
+\end{itemize}
+(Installation auf anderen Systemen wird nach Aufwand verrechnet) 

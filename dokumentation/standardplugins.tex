@@ -1,0 +1,239 @@
+% *******************************************************************************
+% * Copyright (c) 2007-2008 by Elexis
+% * All rights reserved. This document and the accompanying materials
+% * are made available under the terms of the Eclipse Public License v1.0
+% * which accompanies this distribution, and is available at
+% * http://www.eclipse.org/legal/epl-v10.html
+% *
+% * Contributors:
+% *    G. Weirich, U. Berner, D. Lutz
+% *
+% *  $Id: elexis.tex 4825 2008-12-17 16:42:46Z rgw_ch $
+% *******************************************************************************
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+%
+% Dies ist das Zentraldokument für die Elexis-Dokumentation. Einzelne
+% Kapitel und Unterkapitel können mit \include eingesetzt werden.
+
+\documentclass[paper=a4,BCOR8.25mm]{scrartcl}
+\usepackage{german}
+\usepackage[utf8]{inputenc}
+\usepackage{makeidx}
+\usepackage{wrapfig}
+\usepackage{graphicx}
+\makeindex
+
+\usepackage{floatflt}
+\usepackage[]{hyperref}
+\usepackage{color}
+\author{Gerry Weirich, Urs Berner}
+
+\extratitle{
+    \vfill
+	\begin{center}
+		\includegraphics{../ch.elexis/rsc/elexis-logo}
+	\end{center}
+    \begin{center}
+        \textbf{Plugins}
+    \end{center}
+    \vfill
+}
+\title{Das Elexis\textsuperscript{\textregistered}-Plugins Verzeichnis}
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+
+Dieses Dokument enthält Beschreibungen der uns zum Zeitpunkt der Publikation bekannten Plugins un deren Dokumentation, soweit vorhanden. Ein solches Verzeichnis kann niemals vollständig sein, da es ja gerade eine Eigenschaft von Elexis ist, dass auch Dritte Plugins herstellen können, ohne uns darüber zu informieren.
+
+\medskip
+
+Falls Sie ein Plugin kennen oder herstellen, das Ihrer Meinung nach in diese Aufstellung gehört, dann lassen Sie es uns bitte wissen.
+
+
+
+\section{KG-Führung}
+\subsection{Elexis-ICPC}
+Einbindung des ICPC-2-Codes in Elexis.
+
+\medskip
+
+\textbf{Preis:} Kostenlos
+
+\textbf{Vertrieb:} Elexis
+
+\textbf{Dokumentation:} http://www.rgw.ch/elexis/dox/elexis-icpc.pdf\
+
+\subsection{Elexis-Iatrix}
+Alternative KG-Oberfläche.
+
+\textbf{Preis:} Kostenlos
+
+\textbf{Vertrieb:} Iatrix
+
+\textbf{Dokumentation:} http://www.iatrix.org/pmwiki/pmwiki.php/Elexishilfe/KGIatrix
+
+\subsection{Elexis-Omnivore}
+Plugin zum Importieren von patientenbezogenen Dokumenten und Bildern aller Art in die KG.
+
+\textbf{Preis:} Kostenlos
+
+\textbf{Vertrieb:} Elexis
+
+\textbf{Dokumentation:} http://www.elexis.ch/jp/content/view/106/76/
+
+\subsection{Omnivore-direct}
+Eine Erweiterung von Omnivore, die auch Dokumente direkt einscannen und hierarchisch gliedern kann.
+
+\textbf{Preis:} CHF 115.00
+
+\textbf{Vertrieb:} Elexis
+
+\textbf{Dokumentation:} http://www.rgw.ch/elexis/dox/omnivore-direct.pdf
+
+\subsection{Elexis-Privatnotizen}
+Teile des KG-Eintrags für Dritte unlesbar machen
+
+\textbf{Preis:} Kostenlos
+
+\textbf{Vertrieb:} Elexis
+
+\textbf{Dokumentation:} http://www.elexis.ch/jp/content/view/48/76/
+
+
+\subsection{Elexis-externe Dokumente}
+Anbindung existierender externer Dokumente, welche nach bestimmten Kriterien benannt sind.
+
+\textbf{Preis:} Kostenlos
+
+\textbf{Vertrieb:} Iatrix
+
+\textbf{Dokumentation:} http://www.iatrix.org/pmwiki/pmwiki.php/Elexishilfe/ExterneDokumente
+
+\subsection{Elexis-Bildanzeige}
+Einbindung von Bildern in den Konsultationseintrag
+
+\textbf{Preis:} Kostenlos
+
+\textbf{Vertrieb:} Elexis
+
+\textbf{Dokumentation:} http://www.elexis.ch/jp/content/view/38/76/
+
+\subsection{Elexis-Befunde}
+Verwlaltung verschiedenster konfigurierbarer Befundtypen (Röntgen- EKG, Quick etc.).
+
+\textbf{Preis:} Kostenlos
+
+\textbf{Vertrieb:} Elexis
+
+\textbf{Dokumentation:} http://www.elexis.ch/jp/content/view/37/76/
+
+\section{Labor-Anbindungen}
+Diese Plugins dienen dazu, Befunde externer Labors in Elexis einlesen zu können. Im Prinzip kann praktisch jedes Labor eingebunden werden. Untenstehend die existierenden Import-Plugins, welche alle vom jeweiligen Labor finanziert worden sind und darum kostenlos verfügbar sind. Falls Ihr Labor nicht dabei ist, fragen Sie nach einem Elexis-Importer.
+
+\begin{itemize}
+\item Ärztelabor Badena
+\item Labor Viollier
+\item Labor Prof. Krech\&Partner
+\item LogoLab
+\item Medica
+\item Team W
+\item Unilabs Weber
+\item Unilabs Mittelland
+\item Labor MicroGen
+
+\end{itemize}
+
+\section{Geräte-Anbindungen}
+Diese Plugins dienen dazu, externe Geräte zu steuern und ggf. deren Ausgabe in die KG einzubinden. 
+\begin{itemize}
+\item Abacus Junior
+\item Mythic 18
+\item ABX Micros
+\item Urilux-S
+\end{itemize}
+
+\section{Finanzen}
+Verschiedene Plugins, die sich mit Rechnungsstellung, Buchhaltung etc. befassen
+
+\subsection{Kassenbuch}
+\subsection{mediserv}
+\subsection{MediPort}
+\subsection{H-Clearing}
+
+\subsection{Elexis-ebanking-Schweiz}
+
+\section{Artikel}
+\subsection{Elexis-Artikel-Schweiz}
+MiGeL, Medikamente, Medicals (Galdat oder zur Rose - Stamm).
+
+\subsection{Elexis-Medikamente-BAG}
+Einbindung der Spezialitätenliste
+\subsection{Elexis-Artikel-Oesterreich}
+
+
+\section{Tarifsysteme}
+\subsection{Elexis-Arzttarife-Schweiz}
+Tarmed, Analysenliste
+\subsection{Elexis-Privatrechnung}
+
+
+\section{Diagnosesysteme}
+\subsection{ICD-10}
+\subsection{Tessiner Code}
+\subsection{ICPC-2}
+\subsection{Elexis-Eigendiagnosen}
+
+\section{Statistik}
+\subsection{Archie}
+Leicht erweiterbares Statistik-Framework für Elexis mit einigen Beispielen.
+
+\textbf{Preis:} Kostenlos
+
+\textbf{Vertrieb:} Designchuchi
+
+\textbf{Dokumentation:} http://archie.designchuchi.ch
+
+\subsection{Waelti-Statistik}
+Kostenanalysen
+
+\textbf{Preis:} 85.00
+
+\textbf{Vertrieb:} Michael Wälti
+
+\textbf{Dokumentation:} http://www.elexis.ch/jp/content/view/231/79/
+
+
+\section{Datentransfer}
+Im- und Export von Daten verschiedener externer Quellen
+
+\subsection{Import von Stammdaten anderer Praxisprogramme}
+\begin{itemize}
+\item Vitomed
+\item Aeskulap
+\item PraxisDesktop
+\item PraxiStar
+\item Ärztekasse
+\end{itemize}
+ Andere Programme auf Anfrage.
+
+\subsection{Covercard}
+\subsection{medshare-directories}
+\subsection{Elexis-Rosenstudio}
+\subsection{Elexis-MediDirect}
+\subsection{SGAM.xChange}
+
+
+\section{Gadgets}
+\subsection{Elexis-Timer}
+\subsection{Elexis-Nachrichten}
+
+\section{Diverse}
+\subsection{Elexis-Agenda}
+\subsection{Elexis-MoleMax}
+
+
+
+\end{document} 

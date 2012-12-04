@@ -1,0 +1,103 @@
+% *******************************************************************************
+% * Copyright (c) 2007 by Elexis
+% * All rights reserved. This document and the accompanying materials
+% * are made available under the terms of the Eclipse Public License v1.0
+% * which accompanies this distribution, and is available at
+% * http://www.eclipse.org/legal/epl-v10.html
+% *
+% * Contributors:
+% *    G. Weirich - initial implementation
+% *
+% *  $Id$
+% *******************************************************************************
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+% Dieses Dokument enthält die Dokumentation der Platzhalter für Datenfelder
+
+\section{Platzhalter für Datentypen}
+\label{Platzhalter}
+Diese Platzhalter können beispielsweise in Textdokumentvorlagen eingesetzt
+werden, in eckige Klammern gesetzt, also z.B.[Patient.Name].
+Sie können auch in der View 'Datenansicht' als Datenquellen eingesetzt werden.
+Die folgende Liste erhebt keinen Anspruch auf Vollständigkeit; insbesondere
+können durch Plugins zusätzliche Felder eingeführt werden.
+\begin{description}
+  \item [Anwender.Name] Name des aktuell eingeloggten Anwenders
+  \item [Anwender.Vorname] Vorname des aktuell eingeloggten Anwenders
+  \item [Anwender.Titel] Titel des aktuell eingeloggten Anwenders
+  \item [Anwender.Kuerzel] Initialen des aktuell eingeloggten Anwenders
+  \item [Anwender.Label] Login-Name des aktuell eingeloggten Anwenders
+  \item [Mandant.Name,Vorname,Titel,Kuerzel,Label] dieselben Felder, wie bei Anwender, bezogen auf den aktuell
+  aktiven Mandanten. 	
+  \item [Mandant.EAN] Die EAN des aktuell aktiven Mandanten. Nur vorhanden, wenn
+  das Plugin Arzttarife Schweiz geladen ist.
+  \item [Mandant.KSK] Die KSK (bzw. ZSR)-Nummer des aktuell aktiven Mandanten.
+  Nur vorhanden, wenn das Plugin Arzttarife Schweiz geladen ist.
+  \item [Patient.Name,Vorname,Titel] Name etc.des aktuell selektierten Patienten
+  \item [Patient.Geburtsdatum] Geburtsdatum des aktuell selektierten Patienten
+  \item [Patient.PatientNr] Die interne Patientennummer des aktuell selektierten Patienten.
+  \item [Patient.Diagnosen] Diagnosen wie auf dem Titelblatt genannt
+  \item [Patient.Allergien] Allergien wie auf dem Titelblatt
+  \item [Patient.Strasse, Patient.Plz, Patient.Ort] Adresse des aktuell
+  selektierten Patienten.
+  \item [Patient.PersAnamnese] Anamnese wie auf dem Titelblatt
+  \item [Patient.Telefon1, Patient.Telefon2, Patient.Natel] Telefonnummern
+  \item [Patient.Medikation] Aktuelle Fixmedikation des aktuell selektierten
+  Patienten
+  \item [AUF.von] Beginn der aktuell ausgewählten Arbeitsunfähigkeit
+  \item [AUF.bis] Ende der aktuell ausgewählten Arbeitsunfähigkeit
+  \item [AUF.Prozent] Prozentsatz der aktuell ausgewählten AUF
+  \item [AUF.Grund] Grund der aktuellen AUF (Unfall Krankheit)
+  \item [AUF.Zusatz] Allfälliger Zusatztext
+  \item [Fall.ArbeitgeberName] Name des Arbeitgebers, wenn eingetragen
+  \item [Fall.Kostenträger] Bezeichnung des Kostenträgers
+  \item [Fall.Versicherungsnummer] Versicherungsnummer, wenn angegeben
+  \item [Rechnung.RnNummer] Nummer der aktuellen Rechnung
+  \item [Rechnung.RnDatum] Rechnungsdatum
+  \item [Rechnung.RnDatumVon] Datum der ersten Konsultation dieser Rechnung
+  \item [Rechnung.RnDatumBis] Datum der letzten Konsultation dieser Rechnung
+  \item [Konsultation.Datum] Datum der aktuell ausgewählten Konsultation
+  \item [Konsultation.Eintrag] Text der aktuell ausgewählten Konsultation
+  \item [Konsultation.Diagnose] Diagnosen der aktuell ausgewählten Konsultation
+
+\end{description}
+
+\section{Geschlechtsspezifische Formulierungen}
+Auch dies sind eine Art Platzhalter, welche aus alternativen Formulierungen bestehen:
+
+\begin{verbatim}
+    [Datenobjekt:mw:Formulierung Mann/Formulierung Frau]
+    oder
+    [Datenobjekt:wm:Formulierung Frau/Formulierung Mann]
+    oder
+    [Datenobjekt:mwn:Formulierung Mann/Formulierung Frau/Formulierung neutral]
+\end{verbatim}
+
+Wenn die das Datenobjekt eine  männliche Person beschreibt, wird die Formulierung Mann verwendet, wenn es eine weibliche Person bezeichnet, die Formulierung Frau, wenn es gar keine Person bezeichnet oder wenn das Geschlecht nicht eingetragen ist, die Formulierung neutral.
+
+\medskip
+
+Beispiele
+\begin{itemize}
+    \item Sehr [Adressat:mwn:geehrter Herr [Adressat.Name]/geehrte Frau [Adressat.Name]/geehrte Damen und Herren]
+    \item Bitte um Aufgebot [Patient:wm:der obengenannten Patientin/des obengenannten Patienten]
+\end{itemize}
+
+\section{Daten aus externen Plugins}
+\label{datenfelder_extern}\index{Datenfelder!extern}
+Wenn vom jeweiligen Hersteller vorgesehen, können auch Daten externer Plugins in Platzhalter eingebunden werden. Dabei ist allerdings eine etwas andere Syntax zu beachten, als bei den 'gewöhnlichen' Platzhaltern. Dies kommt daher, dass sich Platzhalter sonst immer auf das aktuell selektierte Objekt eines bestimmten Typs beziehen, was ja bei Daten aus externen Plugins nicht möglich ist, da Elexis deren Daten nicht kennt. Bei externen Daten gibt es dagegen:
+\begin{itemize}
+\item Den Titel des Plugins, der die bereitstellt
+\item Den Namen des Datenobjekts 
+\item Eine Auswahl der Werte mit diesem Namen (Es könnten ja beispielsweise Serien von mehreren Daten sein. die genauen Optionen dieses Parameters hängen vom bereitstellenden Plugin ab.
+\item Eine Bezeichnung der Daten, die bereitgestellt werden sollen
+\item Möglicherweise Parameter, die für die Anwahl dieser Daten benötigt werden. Auch dieser Parameter hängt vom bereitstellenden Plugin ab.
+\end{itemize}
+Dementsprechend besteht ein Platzhalter für Daten aus Plugins aus vier bis fünf Teilen, die durch : getrennt sind.
+\begin{verbatim}
+    [pluginName:objektName:auswahl:daten]  oder
+    [pluginName:objektName:auswahl:daten:parameter]
+\end{verbatim}
+
+\medskip
+
+Als Beispiele sei auf die Beschreibung des Plugins 'Befunde' hingewiesen (\ref{befunde}, S. \pageref{befunde}).

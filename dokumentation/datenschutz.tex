@@ -1,0 +1,113 @@
+% *******************************************************************************
+% * Copyright (c) 2008 by Elexis
+% * All rights reserved. This document and the accompanying materials
+% * are made available under the terms of the Eclipse Public License v1.0
+% * which accompanies this distribution, and is available at
+% * http://www.eclipse.org/legal/epl-v10.html
+% *
+% * Contributors:
+% *    G. Weirich
+% *
+% *  $Id: Laborimport-Unilabs.tex 859 2008-08-20 17:40:03Z  $
+% *******************************************************************************
+
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+
+\documentclass[a4paper]{scrartcl}
+\usepackage{german}
+\usepackage[utf8]{inputenc}
+\usepackage{makeidx}
+\makeindex
+\usepackage{graphicx}
+\DeclareGraphicsExtensions{.pdf,.jpg,.png}
+
+\usepackage{floatflt}
+\usepackage[]{hyperref}
+\usepackage{color}
+\begin{document}
+\title{Datenschutzkonzept}
+\author{Gerry Weirich}
+\maketitle
+\section{Datenschutz in der Arztpraxis}
+Die Art der in einer Arztpraxis gespeicherten Daten machen eine besondere Sorgfalt zum Schutz dieser Daten nötig. Während es in einer Papier-basierten Praxis genügt, die KG-Schränke verschlossen zuhalten, müssen beim Übergang zur elektronischen KG (elKG) weitere Faktoren berücksichtigt werden. Diese Arbeit soll hierfür Denkansätze liefern. Wir wollen zunächst auf die Besonderheiten und die spezifische Verwundbarkeit elektronisch gespeicherter Daten eingehen und im zweiten Teil nach Lösungsansätzen suchen, um den Schutz der Daten zu gewährleisten.
+
+\subsection{Gesetzliche Grundlagen}
+Der Gesetzgeber schreibt einerseits vor, dass der Arzt dafür Sorge zu tragen hat, dass das Arztgeheimnis gewahrt bleibt, und andererseits, dass medizinische Daten 10 Jahre lang aufbewahr werden müssen. Im Gegensatz zu anderen Ländern sind die Anforderungen in der Schweiz nicht exakt geregelt und Praxis-IT braucht nicht hinsichtlich des Datenschutzes zertifiziert zu werden.
+
+\subsection{Kritische Bereiche}
+\begin{description}
+\item [Technische Fehler] Ein Defekt in einem Teil der PC-Hardware oder der Netzinfrastruktur kann zu partieller oder totale Zerstörung der in der Datenbank gespeicherten Daten führen.
+\item [Logische Fehler] Ein Fehler in einem der beteiligten Anwendungsprogramme oder dem Betriebssystem kann zu fehlerhafter Speicherung oder Zertsörung bereits gespeicherter Daten führen. Dies kann auch dann auftreten, wenn das System vorher jahrelang problemlos funktioniert hat.
+\item [Physikalische Einwirkung] Blitzschlag, Feuer, Überschwemmung und anderes können die Hardwae zerstören und die darauf gespeicherten Daten vernichten.
+\item [Ungezielte Zerstörung] Ein Schadprogramm, das auf den Datenbankserver gelangt, kann die Datenbank vernichten oder verfälschen.
+\item [Gezielter Angriff] Ein Schadprogramm, das auf irgendeinen der am Netzwerk befindlichen PC's gelangt, kann absichtlich so programmiert sein, dass es sich über das Praxisprogramm Zugriff auf den Server verschafft. Dies kann mit dem Zweck geschehen, Daten auszuspähen, zu manipulieren oder zu zerstören.
+\item [Direkter Angriff via Internet] Eine Person oder ein Schadprogramm kann über Schwachstellen der Internetverbindung auf den Server gelangen.
+\item [Direkter Angriff via Konsole] Einem Angreifer gelingt es, sich Zutritt zur Praxis zu verschaffen. Er kann einen der Client-Computer für den regulären Zugriff auf die Datenbank verwenden.
+\item [Diebstahl des Servers] Ein Einbrecher kann den Server mitsamt der Datenbank stehlen und die Daten zuhause in Ruhe analysieren.
+\item [Entsorgung] Die Harddisk des Servers wird am Ende der normalen Lebensdauer entsorgt. Auf dem Weg zur Entsorgung kann sie ein Angreifer behändigen und die darauf befindlichen Daten analysieren.
+\end{description}
+
+\subsection{Einschleusen und Ausführen von Schadprogrammen}
+Schadprogramme können ungezielt gestreut werden mit dem Zweck, möglichst viele Computer zu 'erobern' und für Zwecke des Programmiers zu nutzen (z.B. Spamversand, Hosting von illegalen Files wie Mediendateien oder Kinderpornos etc.). Derartige Schadprogramme richten im Allgemeinen keine Zerstörung an, da sie es ja darauf anlegen, unbemerkt zu bleiben. Es kann aber trotzdem der Reputation des Praxisinhabers abträglich sein, wenn die Polizei bis zur Klärung der Verantwortung für die illegalen Inhalte seine IT beschlagnahmt.
+
+\medskip
+
+Eine weitere Klasse von Schadprogrammen hat die Aufgabe, Passwörter und Zugangscodes zu sammeln. Solche Programme lauern im Hintergrund auf Tastendrücke des Anwenders (keylogger) und achten dabei speziell auf Eingaben in Passwortfeldern. Der Programmierer des Schadprogramms erhält die Passwörter und kann dann geeignete Aktionen durchführen. Einige dieser Programme lassen sich auch aus der Ferne umprogrammieren um neue Aufgaben zu übernehmen. Es ist bekannt, dass ein Markt für solche in-situ-befindlichen Programme existiert: Der Hersteller verkauft seine Dienste an jemanden, der eine bestimmte Funktion erfüllen will. Auf diese Weise könnte auch jemand gezielt Informationen aus einer Arztpraxis-Datenbank beschaffen.
+
+\medskip
+
+Allen derartig eingeschleusten Schadprogrammen gemeinsam ist, dass sie (a) auf einen geeigneten Computer gelangen und (b) dort auch gestartet werden müssen. Das blosse Herunterladen eines Schadprogramms kann dieses \textit{nicht} aktivieren. Hingegen kann es, wenn es einmal aktiviert worden ist, dafür sorgen, dass es künftig bei jedem Systemstart automatisch aktiviert wird. Der Programmierer eines Schadprogramms wird es also darauf anlegen, dass das Opfer sein Programm aktiviert. Dies kann ganz plump geschehen (\glqq Michelle Obama erwischt! Sehen Sie hier den Film!\grqq{}), oder auch subtil durch ein Javascript-Programm, das durch einen Fehler im Web-Browser schon durch blosses Anklicken eines Links ausgeführt werden kann. Haupt-Einfallstore sind E-Mails, Webseiten, vermeintliche MP3-Downloads und Gratisspiele. Etwa 90 Prozent aller Schadprogramme sind für das Betriebssystem Windows geschrieben. Nicht weil es bei anderen Betriebssystemen unmöglich wäre, sondern einfach wegen der Verbreitung.
+
+
+\subsection{Direkte Angriffe via Internet}
+Eine Internet-Verbindung ist immer bidirektional: Daten können von innen nach aussen und von aussen nach innen gelangen. Somit ist jede Internet-Verbindung auch ein potentielles Sicherheitsrisiko. Jeder aktuelle Computer hat 65535 (2$^1$$^6$) Ports, über die eine Verbindung hergestellt werden kann. Einige dieser Ports sind für fixe Aufgaben reserviert (well known ports), so ist etwa Port 80 für http-Verbindungen vorgesehen, Port 22 für SSH usw., die meisten sind aber frei verfügbar. In einem Netzwerk müssen immer eine Anzahl solcher Ports offen sein, damit die Computer miteinander kommunizieren können. Je mehr Aufgaben über das Netzwerk erledigt werden, desto mehr Ports müssen geöffnet sein (z.B. NetBIOS für Windows-Dateifreigaben etc.). Im Prinzip sind diese Zugriffe nicht aufs LAN limitiert: Wenn es eine direkte Verbindung mit dem Internet gibt, dann kann ein PC nicht unterscheiden, ob ein Zugriff aus dem Nebenzimmer oder von der anderen Seite der Welt kommt.
+
+\subsubsection{Router}
+Ein Router sammelt alle PC's des Netzwerks an der Verbindung zum Internet und lässt sie nach aussen als ein einziger PC aussehen. Ein Angreifer kann also von aussen nicht mehr gezielt auf einen der PC's im Netzwerk zugreifen, wenn er nicht zusätzliche Informationen hat.
+
+\subsubsection{Firewall}
+Eine Firewall kann Datenpakete analysieren und anhand bestimmter Kriterien weiterleiten, abweisen oder verwerfen. Sie kann ausserdem gezielt Ports gegen aussen öffnen oder schliessen.
+
+\subsection{Arztgeheimnisverletzung 'en passant'}
+Auch gegenüber dem PC-Supporter gilt das Arztgeheimnis. Wir dürfen ihm nicht einen Computer mit der unverschlüsseltne Datenbank zur Reparatur mitgeben. Wir dürfen ihm auch keinen Fernzugriff auf unseren Computer gewähren. Noch viel mehr gilt das gegenüber einem ASP-Provider: Wir dürfen ihm keine Arztpraxisdaten überlassen. Dies ist allenfalls dann zulässig, wenn bereits clientseitig eine starke Verschlüsselung stattfindet und wenn sichergestellt ist, dass der Provider diese Verschlüsselung nicht brechen kann. (Eine https - oder ASAS- Verbindung erfüllt diese Anforderung \textit{nicht}).
+
+\section{Schutzmassnahmen}
+Der u.A. vom Datenschutzbeauftragten propagierte Rat, die Arztpraxis-IT nicht mit dem Internet zu verbinden, ist heute schlicht nicht mehr praktikabel. Wir möchten darum auf diesen Rat verzichten und dafür eine Reihe anderer Massnahmen vorstellen, die ebenfalls nicht alle in jeder Situation durchführbar sind, aber als Leitlinie gelten sollen.
+
+\subsection{technische Schutzmassnahmen}
+\begin{itemize}
+\item Die Praxis darf nur an einem Punkt mit dem Internet verbunden sein. Dieser Punkt muss mit einer korrekt konfigurierten Firewall abgesichert sein. Die Firewall darf nicht als 'Personal Firewall' auf einem Arbeitcomputer sein, sondern muss ein separates Gerät sein (Rationale: Wenn die Firewall auf einem Arbeits-PC läuft, ist sie selber Teil des Systems, das sie Schützen soll und damit Angriffen ausgesetzt).
+
+\item Der Server, der die Datenbank enthält, muss ein separates Gerät ohne Tastatur und Bildschirm sein.(Rationale: Wenn niemand am Server arbeitet, kann auf dem Server auch kein Schadprogramm unbeabsichtigt gestartet werden, und auch die Gefahr eines Absturzes durch Fehöbedienung ist kleiner.)
+
+\item Das Praxisnetzwerk darf kein WLAN beinhalten. WLAN sind bequeme Angriffspunkte - man braucht die Praxis für den Angriff nicht mal zu betreten.
+
+\item Die Praxisdatenbank muss redundant gespeichert werden, z.B. auf einem RAID 1 oder RAID 5. Der Server muss über einen Unter- und Überspannungsschutz am Stromnetz angeschlossen sein.
+
+\item Regelmässige Backups der Datenbank sind notwendig und müssen ausserhalb der Praxis in einem sicher abgeschlossenen Behältnis  archiviert werden. Aus forensischen Gründen kann es sinnvoll sein, ab und zu einen Datenträger mit Datumstempel in notarielle Aufbewahrung zu geben, um allfälligen Vorwürfen der Datenmanipulation oder fehlender Sorgfalt zu begegnen.
+
+\item Die Datenbank sollte auf einer vom Betriebssystem verschlüsselten Partition eingerichtet werden. (Rationale: Wenn der Server gestohlen oder entsorgt wird, sind die Daten unlesbar.)
+
+\item Das Betriebssystem sollte per automatischen Update immer auf dem neuesten Stand gehalten werden.
+
+\item Auf allen Arbeitsplatz-PC's sollten Virenscanner installiert werden. Deren Signaturen müssen ebenfalls durch automatischen update immer auf dem neuesten Stand gehalten werden. (Auf einem separaten Server ohne Tastatur ist ein Virenscanner entbehrlich). Manche Virenscannern können auch Mails und Web-Inhalte prüfen.
+
+\item Personal Firewalls sind entbehrlich. Die in Windows eingebaute Lösung genügt.
+
+\end{itemize}
+
+
+\subsection{Administrative Schutzmassnahmen}
+\begin{itemize}
+\item     Privater Mailverkehr und privates Internet-Surfen ist zu untersagen. Die allermeisten Schadprogramme kommen auf diesen Wegen auf einen Computer. Wenn doch Surfen und Mails erlaubt sein sollen, dann sollte dafür eher ein separater Computer mit einem ungefährlicheren Betriebssystem (Linux, Mac) angeschafft werden und dann ausschliesslich auf diesem Gerät das private Surfen und Mailen erlaubt werden.
+
+\item Das Installieren von Programmen muss untersagt werden. Auf den Praxis-PC's dürfen nur diejenigen Programme installiert sein, die für die Praxis notwendig sind. (Rationale: Die Gefahr, mit einem Programm ein Scadprogramm einzuschleppen, wird kleiner und die Stabilität des Gesamtsystems wird höher).
+
+\item Es dürfen keine USB-Sticks angeschlossen werden. (Rationale: Moderne USB-Sticks können Programme enthalten, die beim Einstecken automatisch ausgeführt werden. Schadprogramme von zuhause können so ins Praxisnetz eingeschleppt werden)
+    
+    \item Jede zugriffsberechtigte Person hat einen eigenen Account und ein eigenes Passwort. Es ist verboten, das Passwort aufzuschreiben oder jemandem Mitzuteilen. (Rationale: Zugriffe können geloggt und rückverfolgt werden und die Gefahr, dass ein Passwort einem Eindringling bekannt ist, ist kleiner)
+    \item Niemand arbeitet mit Administratorrechten. Alle Benutzerkonten sind als normale Benutzer ausgeführt. Das Login als Administrator erfolgt nur, wenn es technisch notwendig ist und nur so kurz wie möglich. (Rationale: Ein Schadprogramm hat stets die Rechte dessen, der es ausführt und die Gefahr, unbeabsichtigte Zerstörungen anzurichten ist mit Administratorrechten grösser).
+        
+
+\end{itemize}
+\end{document} 

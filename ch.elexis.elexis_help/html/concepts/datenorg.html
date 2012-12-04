@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+		<title>Elexis Datenorganisation</title>
+		<!-- $Id: datenorg.html 813 2006-08-28 20:00:15Z rgw_ch $ 
+		* Copyright (c) 2005, G. Weirich and Elexis
+		* All rights reserved. This program and the accompanying materials
+		* are made available under the terms of the Eclipse Public License v1.0
+		* which accompanies this distribution, and is available at
+		* http://www.eclipse.org/legal/epl-v10.html
+		*
+		* Contributors:
+		*    G. Weirich - initial implementation
+		-->
+	</head>
+	<body>
+		<h1>Datenorganisation in Elexis</h1>
+		<p>Ein Praxisprogramm muss primär mit Patienten, Behandlungen und den damit
+			zusammenhängenden Daten umgehen können. Einige Beispiele für derartige Daten
+			sind Fälle, Behandlungen, Garanten, Korrespondenzen, Leistungspositionen,
+			Diagnosen, externe Kontaktpersonen und -Organisationen usw. Die
+			Organisation dieser Daten kann bei unterschiedlichen Programmen sehr
+			verschieden sein, so dass es sinnvoll ist, sich diese Einzelheiten kurz
+			anzusehen.</p>
+		<p> In Elexis sind die Datenarten hierarchisch angeordnet, so dass jede Datenart
+			bestimmte Eigenschaften der übergeordneten Art "erbt". Hierzu gleich ein
+			Beispiel: Ein "Kontakt" ist ein "etwas", das folgende Eigenschaften hat:
+			<ul>
+				<li>Eine Bezeichnung</li>
+				<li>(optional) Eine Anschrift</li>
+				<li>(optional) Beliebig viele zusätzliche Bezugsadressen (z.B.
+					Angehörige, Spezialisten, Arbeitsplatzadresse usw.)
+					<li>(optional) Eine oder zwei Telefonnummer(n)</li>
+					<li>(optional) Eine E-Mail-Adresse</li>
+					<li>(optional) Eine Website</li>
+					<li>(optional) beliebig viele Reminders</li>
+					<li>(optionel) Beliebig viele frei definierbare Anmerkungen</li>
+					</ul> Eine "Person" ist eine Erweiterung von "Kontakt" und hat somit
+					alle obigen Eigenschaften und zusätlich noch
+					<ul>
+						<li>Ein Geburtsdatum</li>
+						<li>Ein Geschlecht</li>
+					</ul> "Patient" wiederum ist eine Erweiterung von "Person" und hat
+					somit alle Eigenschaften von "Kontakt" und "Person", und zusätzlich
+					noch
+					<ul>
+						<li>Fixe Diagnosen</li>
+						<li>Anamnesen (Familienanamnese, persönliche Anamnese,
+							Systemanamnese)</li>
+						<li>Risiken, Allergien</li>
+						<li>Dauermedikation</li>
+						<li>Liste aller Fälle (Krankheiten, Unfälle) </ul> </p> </body>
+							</html>

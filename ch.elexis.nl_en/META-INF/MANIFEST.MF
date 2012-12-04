@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ch.elexis English NLS Support
+Bundle-SymbolicName: ch.elexis.nl_en
+Bundle-Version: 2.1.5.999
+Bundle-Vendor: ch.elexis
+Fragment-Host: ch.elexis;bundle-version="2.1.5"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Resources and Samples for Elexis developers and plugin developers
+Bundle-SymbolicName: ch.elexis.developer.resources;singleton:=true
+Bundle-Version: 1.0.2
+Bundle-Activator: ch.elexis.developer.resources.model.Activator
+Bundle-Vendor: Medelexis AG
+Require-Bundle: ch.elexis;bundle-version="2.1.0",
+ ch.rgw.utility;bundle-version="2.0.0",
+ org.eclipse.ui,
+ org.eclipse.core.runtime,
+ ch.elexis.core;bundle-version="0.0.2"
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy
+Bundle-Localization: plugin
+

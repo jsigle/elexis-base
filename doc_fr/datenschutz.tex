@@ -1,0 +1,111 @@
+% *******************************************************************************
+% * Copyright (c) 2008 by Elexis
+% * All rights reserved. This document and the accompanying materials
+% * are made available under the terms of the Eclipse Public License v1.0
+% * which accompanies this distribution, and is available at
+% * http://www.eclipse.org/legal/epl-v10.html
+% *
+% * Contributors:
+% *    G. Weirich
+% *
+% *  $Id: Laborimport-Unilabs.tex 859 2008-08-20 17:40:03Z  $
+% *******************************************************************************
+
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+
+\documentclass[a4paper]{scrartcl}
+\usepackage{german}
+\usepackage[utf8]{inputenc}
+\usepackage{makeidx}
+\makeindex
+\usepackage{graphicx}
+\DeclareGraphicsExtensions{.pdf,.jpg,.png}
+
+\usepackage{floatflt}
+\usepackage[]{hyperref}
+\usepackage{color}
+\begin{document}
+\title{Datenschutzkonzept}
+\author{Gerry Weirich}
+\maketitle
+\section{La protection des données dans le cabinet médical}
+La nature des données enregistrées dans un cabinet médical exige une attention accrue à la protection de ces données. S'il suffit pour un cabinet médical qui travaille avec le dossier sur papier de garder fermé les tiroirs où se trouvent les dossiers, une transition à un dossier électronique nous force de prêter attention à des facteurs supplémentaires.  Par ce travail nous voulons fournir quelques relexions à ce sujet. Tout d'abord on aimerait éclaircir la particularité et la vulnérabilité spécifique des données électroniques. Ensuite nous cherchons des solutions possibles pour garantir la protection des données.
+
+\subsection{Bases légales}
+D'un côté le legislateur exige du médecin de veiller que le secrét médical soit garanti, de l'autre il exige aussi que le médecin doive conserver les données médicales pendant 10 ans. En Suisse, contrairement à d'autres pays, les conditions ne sont pas réglées de façon exacte et les technologies de l'information ne doivent pas être certifiés en ce qui concerne la protection des données.
+\subsection{Domaines délicats}
+\begin{description}
+\item [Fautes techniques] Une panne dans une pièce de la PC-Hardware ou dans l'infrastructure du réseau peut provoquer une déstruction partielle ou même totale des données conservées dans la base des données.
+\item [Fautes logiques] Une faute dans un programme d'application impliqué ou même dans le système d'exploitation peut provoquer une sauvegarde défectueuse ou une destruction des données déjà sauvegardées. Ceci est possible même si le système avait fonctionné pendant des années parfaitement bien.
+\item [Force physique] coup de foudre , incendie, inondation et autres peuvent détruire la Hardware y inclus les données qui s'y trouvent.
+\item [déstruction non ciblée] Des programmes malveillants, qui infectent le serveur contenant la base de données peuvent falsifier ou détruir la base de données.
+\item [attaque ciblée] Un programme malveillant qui avait infecté un poste de travail du réseau peut être programmé de sorte qu'il puisse à travers le logiciel du cabinet se procurer un accès au serveur. Ceci avec le but de se procurer des données, de les manipuler ou de les détruire.
+\item [attaque ciblée à travers Internet] Une personne ou un programme malveillant peuvent accéder au serveur en profitant des points faibles de la connexion internet.
+\item [attaque directe à travers une console] Si un envahisseur a réussi à se procurer accès au cabinet, il pourra utiliser un poste de travail pour avoir un accès régulier à la base de données.
+\item [vol du serveur] Un voleur peut voler le serveur y inclus la base de données et analyser les fichiers tranquillement à la maison.
+\item [Traitement des déchets] Le disque dur sera traité comme déchet à la fin de sa vie. Avant qu'il sera détruit un aggresseur pourrait la voler et ensuite analyser les données qui s'y trouvent.
+\end{description}
+
+\subsection{Introduction et lancement des logiciels malveillants}
+Du logiciel malveillant peut être répandu de façon non ciblée avec le seul but de s'emparer d'une cantité maximale d'ordinateurs pour pouvoir les utiliser pour des buts du programmateur (par ex. l'envoie des spams, hébergement des fichiers illégales comme des fichiers de médias ou de la pronographie enfantine etc.). Ces logiels malveillants ne provoqent en général pas de déstructions parce qu'ils veulent normalement rester inaperçus . Il pourrait par contre être très mauvais pour la réputation d'un cabinet médical si la police venait de confisquer l'installation informatique jusqu'à ce que la résponsabilité concernant le contenu illégale des fichiers soit élucidé.
+
+\medskip
+
+Un autre genre de logiciel malveillant collectionne des mots de passe et des codes d'accès. Ces programmes quettent dans l'arrière-plan jusqu'à ce que l'utilisateur tappe des mots sur son clavier (keylogger) et s'intéressent spécifiquement aux mots introduits dans les champs de mot de passe. Le programmateur de ces logiciels reçoit ainsi les mot de passe et peut s'en servir. Certains de ces programmes peuvent même être reprogrammés à distance pour un changement de tâche. Il est connu qu'il existe un marché pour ces programmes qui es trouvent 'in-situ' : Le producteur vend ses services à celui qui veut avoir certaines fonctions. Il serait possible de se procurer des informations de façon ciblée d'une base de données d'un cabinet médical.
+
+\medskip
+
+Le point commun de tous ces logiciels malveillants est le fait qu'ils doivent (a) d'abord arriver sur un ordinateur approprié et (b) y doivent être démarrés. Le téléchargement seul d'un tel programme \textit{ne peut pas } l'activer. Par contre, une fois activé le logiciel peut se charger de s'activer automatiquement lors de chaque démarrage du système. Le programmateur d'un tel logiciel s'intérésse donc que sa victime active son logiciel. Il y arrive parfois de façon grossière (\glqq Michelle Obama chopée! Regardez le Film!\grqq{}), ou par des moyens très subtils par le moyen d'un programme Javascript qui peut, suite à un faute dans le navigateur, être activé déjà simplement par un clic sur un lien. Les points d'accès principaux restent les E-mails, certaines pages web, des prétendus téléchargements MP3 et des jeux gratuits. Environs 90 pourcent de tous les logiciels malveillants sont écrits pour le système d'exploitation Windows et ceci pas parcequ'il serait plus difficile à créer des programmes malveillants dans d'autres systèmes mais simplement par sa propagation.
+
+
+\subsection{Des attaques directes à travers l'Iternet}
+Un lien internet est toujoura bidirectionnel : Des donnes peuvent donc traverser depuis l'intérieur vers l'extérieur mais aussi depuis l'extérieur vers l'intérieur. Par conséquent toute liaison par Internet correspond aussi à un certain risque au niveau sécurité. Acteullement tous les ordinateurs ont 65535(2$^1$$^6$) ports à travers lesquels un lien peut être crée. Certains de ces ports sont réservés pour des tâches fixes (well known ports) comme c'est le cas par exemple pour le port 80 qui est prévu pour des liens-http ou le port 22 prévu pour SSH etc. La majorité des ports reste par contre libre. Dans un réseau une certaine quantité des ports doit toujours rester ouverte pour que les ordinateurs puissent communiquer entre eux. Plus de tâches on règle à travers le réseau, plus de ports doivent être ouverts. (par ex. NetBIOS pour le déverouillage des fichiers Windows etc.) En principe ces accès ne sont pas limités au LAN : S'il y a un lien directe avec l'Internet, un ordinateur ne peut pas distinguer si un accès vient de la pièce voisine ou de l'autre bout du monde.
+
+\subsubsection{Routeur}
+Un routeur canalise tous les ordinateurs du réseau pour le lien avec l'Internet et les laisse apparaître vers l'extérieur comme un seul ordinateur. Un agresseur ne peut donc plus s'attaquer de façon ciblée à un ordinateur dans le réseau s'il n'a pas d'information supplémentaire.
+
+\subsubsection{Firewall}
+ Une Firewall peut analyser des paquets de données et les acheminer, refuser ou détruire selon certains critères. En plus elle peut ouvrir ou fermer de façon spécifique des ports vers l'extérieur.
+
+\subsection{Violation du secret médical 'en passant'}
+Le secret médical est aussi valable face à l'informaticien que vous engagez pour la maintenance. Nous ne pouvons pas lui donner à réparer un ordinateur qui contient une base de donnée non codée. Nous ne pouvons pas non plus lui donner un accès à distance sur notre ordinateur. Et encore moins nous pouvons laisser notre cabinet médical au bon gré d'un fournisseur d'applications hébergées. Ceci est à la rigeur admis si un codage important se fait déjà du côté du cabinet et lorsqu'il est certain que le fournisseur d'accès internet ne pourra pas briser l'encodage.(Un lien https ou -ASAS ne remplit \textit{pas} cette condition).
+
+\section{Mesures de protection}
+Le conseil propagé entre autres par le préposé à la protection des données de ne pas lier le cabinet médical avec l'Internet n'est de nos jours tout simplement plus praticable. Nous propospons pour cette raison d'ignorer ce conseil mais en même temps nous vous proposons une série de mesures qui ne sont pas toutes à tout moment réalisables mais qui pourrait être utiles comme orientation.
+
+\subsection{Mesures techniques de protection}
+\begin{itemize}
+\item Le cabient médical ne doit être lié avec l'Internet qu'à travers un seul point de liaison. Ce point doit être protégé par un pare-feu (Firewall) correctement configuré. Le pare-feu ne doit pas être installé comme pare-feu personnel ('Personal Firewall') sur un poste de travail mais doit être un appareil indépendant. (Si un pare-feu marche sur un poste de travail, il est partie du système qu'il devait protéger et par conséquent il est attaquable.)
+
+\item Le serveur qui contient la base de données doit être un appareil séparé sans clavier et sans écran. Der Server, der die Datenbank enthält, muss ein separates Gerät ohne Tastatur und Bildschirm sein.(Si personne ne travaille directement sur le serveur, le risque de déclencher l'activation d'un logiciel malveillant diminue nettement et en même temps le danger d'un plantage par une faute de manipulation est mineur.)
+
+\item Le réseau du cabinet médical ne doit pas avoir un Wireless-LAN. Un WLAN est un point d'attaque facile - on ne doit pour attquer même pas entrer dans le cabinet.
+
+\item La base de données du cabinet médical doit être sauvegardée de façon redondante. Ceci peut se faire par un système RAID 1 ou RAID 5. Le serveur doit être lié au réseau électrique à travers un UPS (Uninterruptible power supplie)chose qui protège au moins pour quelque minutes contre des interruptions du courrant.
+
+\item Des sauvegardes de la base de données doivent régulièrement être faites et doivent être archivées à l'extérieur du cabinet médical dans un récipient fermé. Pour des raisons juridiques il peut être même utile de donner de temps en temps  un support informatique tamponé avec la date à un notaire pour éviter toute accusation de manipulation des données ou de manque de diligence.
+
+\item La base de données devrait se trouver dans une partition cryptée face au système d'exploitation. (Si le serveur est volé ou jeté, les données resteront illisibles.)
+
+\item Le système d'exploitation doit être mis à jour par des updates réguliers.
+
+\item Tous les postes de travail doivent avoir installé un programme antiviral. Ce programme doit aussi être mis à jour de façon régulière. (Sur un serveur séparé qui n'a pas de clavier un programme antiviral n'est pas nécessaire). Certains programmes antivirales peuvent aussi scanner des E-mails et le contenu des pages Web.
+
+\item Des 'Personal Firewalls' ne sont par très utiles. La solution proposé par Windows suffit largement.
+
+\end{itemize}
+
+
+\subsection{Mesures de protection au niveau administrative}
+\begin{itemize}
+\item     L'utilisation des E-mails privés et l'utilisation de l'internet à des fins privées est à interdire.  La grande majorité des logiciels malveillants arrivent par ce chemin dans les ordinateurs. Si on veut permettre pourtant les mails et la navigation sur l'internet il faudra installer un ordinateur séparé avec un système d'exploitation moins dangereux comme par exemple Linux ou Mac.
+
+\item L'installation des programmes par du personnel doit être interdit. Seulement les programmes nécessaires pour le travail au cabinet médical ne doivent être installés sur les ordinateurs. (Par ceci le risque d'importer un programme malveillant diminue et la stabilité du système entier est meilleure.)
+
+\item L'utilisation des clés-USB doit être interdite. (Des clés-USB modernes peuvent contenir des logiciels qui démarrent automatiquement lorsqu'on branche la clé. Le risque d'importer des logiciels malveillants depuis la maison dans le réseau du cabinet médical diminue de façon importante par cette interdiction.)
+
+    \item Chaque personne qui a un droit d'accès a un compte personnel et un mot de passe. Il est interdit de noter le mot de passe ou de le donner à quelqu'un d'autre. (Tous les accès sont listés et peuvent être tracés et le risque qu'un personne non autorisée puisse savoir le mot de passe diminue.)
+    \item Personne ne travaille avec le droit d'administrateur. Tous les comptes d'utilisateurs travaillent de façon égale. Le Login en tant qu'administrateur ne se fait que lorsqu'il est techniquement indispensable et dure le moins de temps possible.(Un logiciel malveillant a toujours les droits de celui qui l'introduit. Par conséquent, le risque de provoquer une déstruction non-volontaire est plus élevé en tant qu'administrateur.)
+
+\end{itemize}
+\end{document} 

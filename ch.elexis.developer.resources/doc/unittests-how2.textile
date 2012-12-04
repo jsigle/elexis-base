@@ -1,0 +1,139 @@
+{toc}
+
+h1. How to perform Unit Tests for Elexis
+
+h2. What is it all about? 
+
+A Unit test ideally tests a single unit of execution of a program. So, a number of Unit tests is required to cover all nontrivial parts of a program. Different tests should run independently of each other, and the system should be in a known and always identical state when testing begins.
+
+The preferred tool for unit tests in Java is "JUnit":http://junit.sourceforge.net. Junit allows to organize
+an unlimited number of tests into a TestSuite that can be executed automatically and collect errors for later inspection.
+ 
+h2. The Elexis Test environment
+
+h3. Differences from standard JUnit procedures 
+
+* In Elexis, many classes depend from a database. Since a database setup is a quite time consuming operation, it would not be practical to recreate the database for every single unit test. Therefore the test environment supports creation of a new database once per run of the whole TestSuite. Thus, tests do not run really independently - a test might change a database entity another test relies on. We think this is a fair tradeoff between speed and safeness, but one must keep this in mind.
+
+* Elexis consists of many plugins that depend on each other but do not share the sam classpath and namespace. Therefore a Unit test can not call non-public or non-exported Methods of classes in different plugins. To declare all Methods public only for the purpose of testing would not be an option, of course. Therefore we take a different approach where every plugin to test must have an accompanying test fragment. The Test Framework only calls the TestSuites in these fragments. 
+
+h3. Create a Test Suite for your plugin
+
+Again, please use the plugin elexis-developer-resources as an example. 
+
+h4. Step 1: Create a Test Fragment
+
+Right-Click in the package explorer and chose New->Project->Fragment project
+
+!images/testenv1.png!
+
+Name the Project with the name of the Plugin to test and a suffix of _test:
+
+!images/testenv2.png!
+
+For the location, *do not* use the default location. To add it to the mercurial repository, it must reside in the directory controlled by mercurial. So chose the location of the repository and therein a directory with the fragment name.
+
+After clicking next you can define the ID, name, version and the host plugin (i.e. the Plugin to test) of your Fragment. The ID must be the ID of the Host Plugin with a suffix of _test. 
+
+!images/testenv3.png!
+
+This way, the Fragment inherits the classpath and all depenencies of the host Plugin.
+
+h4. Step 2: Create Packages mirroring the Packages in the Host-Plugin
+
+Right-Click on the src folder in your newly created Fragment and chose New->Package
+
+!images/testenv4.png!
+
+Create packages where you want to place tests in.
+ 
+h4. Step 3: Create TestCases as needed
+
+Right-click on the package you created in step 2 and chose New->Other->Java->JUnit->Junit TestCase
+
+!images/testenv5.png!
+
+Make Sure to chose JUnit 4 as Test Runner. You can Name the class as you like but we recommend to prefix it with "Test".
+ 
+!images/testenv6.png!
+
+If you like you can chose methods to test now, but this step is not necessary.
+
+!images/testenv7.png!
+
+Eclipse will add Junit to the classpath for you
+ 
+!images/testenv8.png!
+
+Please find a TestCase created like this in the _test fragment in ch.elexis.deleoper.resources.model.Test_SampleDataType.java.
+
+h4. Step 4: Create a Test Suite
+
+This TestCase won't run since it will not find a database to perform on. (Of course a more trivial class without need of database access could run at this step, such as the tests found in elexis-utilities_test)
+
+In our case, however, we need a TestSuite to run.
+
+Again, right-click on the src-folder of your test fragment and chose New->Other->Java->JUnit->JUnit TestSuite.
+
+!images/testenv9.png!
+
+As Package, chose an appropriate Package of your plugin. We recommend to chose the topmost uniquely contributable to the plugin (here "ch.elexis.developer.resources", since "ch.elexis" would not be unambigous).
+
+!images/testenv10.png!
+ 
+You can safely ignore the warning about "No test classes selected" and click on "finish". Now the wizard has created a JUnit3-style TestSuite which is not what we want. So you have to insert the @RunWith(Suite.class) and @SuiteClasses() annotations by hand. See ch.elexis.developer.resources.AllTests as example. If you have more than one TestCase class, you can insert all in SuiteClasses as a comma separated list.
+
+h4. Step 5: Add TestSuite to Master TestSuite
+
+Still, the TestSuite won't run. We must include it in the Master-TestSuite that sets up the framework. You'll find the Master TestSuite in the Plugin TestElexisNonUI.
+
+Right-Click on TestElexisNonUI and chose BuildPath->Configure Build path
+
+!images/testenv11.png!
+
+Add the test fragment and the plugin to test to the plugin dependencies. Then, open ch.elexis.tests.AllTest.java in the TestElexisNonUI Plugin and add your TestSuite in the @SuiteClasses - Annotation of this class. This will make the compiler happy. But the Suite still won't run. Open the MANIFEST.MF of TestElexisNonUI and include your Plugin to test in dependencies. Then, open the MANIFEST.MF of your Test fragment and add all Packages with tests to Runtime->exported packages.
+ 
+Now we are ready to create or adapt the the run configuration
+
+h3. Create a run configuration
+
+If you have already a TestSuite Run configuration, you can simply add the new Test fragment. Otherwise, do the following:
+ 
+In the Eclipse Menu, select "Run->Run Configurations...". Chose "JUnit Plugin Test" and click on the New Button.
+ 
+!images/testenv12.png!
+ 
+Choose ch.elexis.test.AllTests from the Plugin TestElexisNonUI as Test class. Make Sure you chose Junit4 as Test Runner. 
+
+In The Main Tab, select ch.elexis.ElexisProduct to run.
+
+!images/testenv13.png!
+
+In the Arguments tab, insert the here shown Parameters in VM Arguments:
+
+!images/testenv14.png!
+
+Explanation: If Elexis starts with the elexis-run-mode=RunFromScratch, it will not try connect to a database, but instead create a new one in the TMP- or TEMP- Directory of your system. This database will contain only one user with the login-name "007" and the password "topsecret". The VM Arguments make the TestSuite to login to this database.
+
+In the Plugins  tab, select "plugins selected below only". Then click on "Deselect all" and then select only the plugins you want to test and their _test fragments. Then, click on "Add Required Plugins" and Eclipse will resolve all dependencies for you. After this, you must add the Plugin TestElexisNonUI manually. To be sure, you can click on "Validate Plug-Ins" afterwards.
+
+!images/testenv15.png!
+ 
+Then, finally, we are ready to run the TestSuite. Elexis will start, set up a new database, log-in and execute all test. Then it will close again and in the JUnit-View you'll see the hopefully all-green results:
+
+!images/testenv16.png!
+
+h3. Parameters for choosing a database
+ 
+The following parameters can be passed to select a specify database:
+* elexis-run-mode = SWTBot
+* SWTBot-DBTemplate = /path/to/directory/with/h2-database/called/h2db
+If these parameters are set, elexis will copy the whole  H2 database to the local tmp directory and open it.
+To define a parameter aParam with the value myValue pass it like this to the program: -DaParam=myValue.
+
+h3. Starting with an empty database
+
+When all the following parameters are set, elexis will start with a clean, empty H2 database.
+* ch.elexis.username=007 
+* ch.elexis.password=topsecret 
+* elexis-run-mode=RunFromScratch

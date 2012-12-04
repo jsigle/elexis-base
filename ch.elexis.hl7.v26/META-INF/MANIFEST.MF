@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Elexis HL7 V2.6 Export Utilities
+Bundle-SymbolicName: ch.elexis.hl7.v26;singleton:=true
+Bundle-Version: 2.1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ClassPath: lib/commons-codec.jar,
+ lib/commons-logging-1.0.4.jar,
+ lib/hapi-base-1.1.jar,
+ lib/hapi-structures-v26-1.1.jar,
+ .
+Export-Package: ca.uhn.hl7v2,
+ ch.elexis.hl7,
+ ch.elexis.hl7.data,
+ ch.elexis.hl7.model,
+ ch.elexis.hl7.util,
+ ch.elexis.hl7.v26

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html>
+	<head>
+		<title>Import aus früheren Agenda-Versionen</title>
+		<!-- $Id: import2.html 23 2006-03-24 15:36:01Z rgw_ch $
+		 * Copyright (c) 2005, G. Weirich and Elexis
+		 * All rights reserved. This program and the accompanying materials
+		 * are made available under the terms of the Eclipse Public License v1.0
+		 * which accompanies this distribution, and is available at
+		 * http://www.eclipse.org/legal/epl-v10.html
+		 *
+		 * Contributors:
+		 *    G. Weirich - initial implementation
+		 -->
+	</head>
+	<body>
+		<h1>Import aus früheren Agenda-Versionen</h1>
+		<p>Die 4D-basierte PraxisDesktop-Version hatte keine integrierte Agenda. Stattdessen wurde ein separates
+		Programm, JavaAgenda, speziell für die Zusammenarbeit mit PraxisDesktop angepasst. Infolge der unterschiedlichen Wurzeln verwendeten
+		PraxisDesktop und die Agenda zwei verschiedene Datenbanksysteme (4D bzw. MySQL) und nicht ganz dasselbe 
+		Benutzerkonzept (Ein PraxisDsktop-Mandant war nicht identisch mit einem Agenda-Mandanten)</p>
+		<p>Elexis dagegen hat den Agenda-Code integriert und verwendet nur noch eine Datenbank und dieselben Benutzerdaten für die Agenda
+		und die Praxisdaten.</p>
+		<h2>Konversion</h2>
+		<p>Das wesentlichste Problem der Datenkonversion ist, dass nicht klar definiert ist, welcher Agenda-Mandant welchem PraxisDesktop-Mandanten 
+		entspricht. Deshalb kann man bei den neueren Agenda-Versionen (ab 3.6.7) angeben, wie die Mandanten 
+		zugeordnet werden sollen. Bevor Sie einen Import der alten Agenda-Daten nach Elexis machen, 
+		müssen Sie diese Zuordnung manuell erledigen. Wählen Sie dazu in der Agenda unter 
+		Optionen/Grundeinstellungen das	Einstellungsmenü, geben	Sie das Administrationspasswort ein und gehen
+		Sie zum Reiter "Mandanten".	Klicken Sie dann für jeden Mandanten auf "ändern" und geben Sie im 
+		entsprechenden Feld ein, unter welchem 	Namen dieser Mandant in PraxisDesktop geführt ist (Kurzname).</p>
+	</body>
+</html>

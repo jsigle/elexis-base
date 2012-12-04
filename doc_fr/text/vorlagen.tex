@@ -1,0 +1,55 @@
+% *******************************************************************************
+% * Copyright (c) 2007 by Elexis
+% * All rights reserved. This document and the accompanying materials
+% * are made available under the terms of the Eclipse Public License v1.0
+% * which accompanies this distribution, and is available at
+% * http://www.eclipse.org/legal/epl-v10.html
+% *
+% * Contributors:
+% *    G. Weirich - initial implementation
+% *
+% *  $Id: vorlagen.tex 2821 2007-07-16 14:51:35Z rgw_ch $
+%  *******************************************************************************
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+
+
+ \section{Modèles}
+ \label{textvorlagen}
+ \index{modèles de texte}\index{modèles de lettres}
+Des documents qui ont été crées dans Elexis sont toujours basés sur des modèles spécifiques. Un modèle contient d'un côté l'apparence d'un document de l'autre côté aussi certaines variables qui permettent d'introduire des donnés spécifiques lors de la création du document.
+
+Un modèle est simplement un document avec une apparence spécifique crée à l'aide de OpenOffice. Les Variables sont introduites en forme de simple texte entre parenthèses [Type de fichier.champ] comme par exemple [patient.prénom]. Une liste de tout les variables possibles se trouve à la page \pageref{Platzhalter}
+
+Il y a deux types de modèles :
+\begin{itemize}
+  \item {Modèles pour le système } Il s'agit des modèles qui sont nécessaires pour certaines fonctions du logiciel. Ainsi un ordonnance ne peut être imprimée que sur la base d'un modèle du système qui s'appelle \glqq ordonnance\grqq{}. Des modèles pour le système doivent avoir un nom spécifique (comme par ex.  \glqq ordonnance\grqq{}). Ils ont en général à un certain endroit une variable spécifique qui indique où le contenu doit être introduit.
+  \item {Les modèles de l'utilisateur individuels } sont des modèles qui peuvent être crées et dénommés ad libitum et qui peuvent contenir au choix des champs variables. Des modèles de l'utilisateur peuvent être crées par ex. pour des rapports de consilium, de transmission etc.
+\end{itemize}
+
+
+\subsection{Modèles pour tout le système}
+\label{systemvorlagen}
+Les modèles suivants sont utilisés dans le système de base (des Plugins peuvent en plus définir leurs propres modèles pour le système) :
+\begin{itemize}
+
+  \item {Ordonnance} Une ordonnance est normalement imprimée sur papier A5 ou A6. La mise en forme se fait individuellement respectivement selon les exigences légales. La variable [Rezeptzeilen] doit être introduit là où on veut que les médicaments apparaissent.
+  \item {Certificat} Le certificat de l'incapacité de travail peut aussi être mis en forme individuellement. Les variables des dates peuvent être introduites en forme de  [AUF.von],
+  [AUF.bis] und [AUF.Prozent].
+  \item {Feuille de labo} Ceci sert à l'édition des résultats de laboratoire qui se trouvent dans le système. La mise en forme de la feuille est libre mais à un endroit la variable [Laborwerte] doit être introduite.
+  \item {Plan de traitement } Le plan de traitement pour le patient peut être mis en forme individuellement mais doit contenir la variable [Medikamentenliste].
+  \item {Commande} La commande pour une transmission par lettre, fax ou courrier électronique peut être mise en forme individuellement mais dont contenir la variable [Bestellung] quelque part.
+  \item {ListeAgenda} Permet d'imprimer l'agenda d'une journée sur une page. Mise en forme libre mais quelque part doit apparaître la variable [Termine].
+  \item {Liste factures } Liste de toutes les factures faites pendant un certain laps de temps(cf \pageref{fig:konnd}). Peut être mise en forme individuellement mais doit contenir la variable [Liste].
+  \item {Cartes rendez-vous } Permet de faire une liste de tout les rendez-vous d'un patient. Mise en forme libre mais doit contenir la variable [Termine].
+  \item {Facture Tarmed\_BVR} (Tous les modèles de factures Tarmed\_xx ont été mis à disposition par le Plugin Tarmed des médecins Suisse) La facture avec BVR qui est la partie qui reste chez le patient doit être imprimée sur une feuille A4. La mise en page des 2/3 supérieurs est libre mais à un endroit la variable prestation
+  [Leistungen] doit apparaître. Le tiers en bas doit rester libre pour l'impression du BVR.
+  \item {Tarmedrechnung\_M1} Premier rappel avec BVR. Mise en forme comme Tarmedrechnung\_EZ.
+  \item {Tarmedrechnung\_M2} deuxième rappel.
+  \item {Tarmedrechnung\_M3} troisième rappel.
+  \item {Tarmedrechnung\_S1} Première page du formulaire Tarmed. La mise en forme est fixe, seulement des données personnelles peuvent être adaptées (mais le Layout ne peut pas être déplacé !).
+  \item {Tarmedrechnung\_S2} Page suivante du formulaire Tarmed. La mise en forme est fixe.
+\end{itemize}
+
+
+\subsection{Modèles de l'utilisateur individuels}
+Les modèles de l'utilisateur individuels peuvent être crées et nommés librement. 

@@ -1,0 +1,86 @@
+h1. HowTo for the release manager
+
+p(klein). (c) 2011 by Niklaus Giger
+
+Here we document how the release manager works.
+
+The release-manager does all his release relevant work
+in a separate eclipse workspace which he never, never 
+should use for anything like fixing a bug or working on a feature!
+
+In the following discussion we assume that he his working on the 2.1.5.x
+release branch.
+
+Each time he gets a pull request or patch submitted he does the following:
+
+h2. Receiving a pull request
+
+The process starts with a a mail, called "Pull request":http://sourceforge.net/mailarchive/forum.php?thread_name=30D917A4-8792-4141-8492-565F6124F7BB%40medevit.at&forum_name=elexis-develop
+
+bc. hg checkout --clean 2.1.5.x
+hg pull https://medevit.medelexis.ch/hg/elexis-base
+
+Then the release manager runs the following small ruby snippet to generate a patch for each commit id.
+
+bc. #!/usr/bin/ruby
+input = %(
+changeset 4623  aad7d2c058cc
+changeset 4625  38640fc73166
+)
+input.each{
+  |x|
+  next if x.split.size !=3 or !/changeset/.match(x)
+  next if /^#/.match(x)
+  id = x.split[2]
+  patchFile = "#{x.split[1]}.patch"
+  cmd = "hg export -r #{id} >#{patchFile}"
+  puts "hg transplant #{id}"
+  system(cmd)
+}
+
+Then he revises all the patch files he received. When he is happy with the changes he imports the patch(es) calling 
+
+bc. hg patch *.patch
+
+If it fails, e.g. with the patch 9a62e7b5fb3e he changes the patch slightly (by changing the paths to the messages from ch.elexis/ to elexis/). If he make additional small changes, eg. in a build script, but still wants to preserve the authorship of the patch, his workflow looks like this
+
+bc. patch -p1 <2.patch
+<Edit some files>
+hg commit --user marco --message="Ticket #293: Eclipse Log Status messages"
+
+Then he pushes everything of the concerned branch to the public SourceForge repository.
+
+bc. hg push ssh://release-manager@hg.sourceforge.net/hgroot/elexis/elexis-base --branch 2.1.5.x
+
+(It is important to specify --branch, as we want to avoid creating new branches on the SourceForge repository).
+
+If he is unable to push (because it would create new heads), he simply clones the SourceForge repository to a new directory and reapplies the patch-files there.
+
+Sometimes he also only pushes a single revision to the repository, by calling
+
+bc. hg push -r <rev-id>
+
+To see all logs in the branch in a short format he uses
+
+bc. hg log --branch 2.1.5.x --template '{rev}: {date|shortdate}: {author|person}: {desc}\n'
+
+h2. comparing two (or more) branches
+
+He often asks whether all changes have been merged between to branches as after a certain time/event it is often unfeasible to simply call a mercurial branch. One of his tricks is, that he generates a CSV-file with all the relevant pieces of information. 
+He first determines the starting point (a revision) where the branch was created. E.g. @hg log -b 2.1.5.x@ points to a revision @4578:594cd165e4b8@ with the expected comment @Branch 2.1.5.x: created based on 2.1.x-feature@. Calling @hg export -r 4578:594cd165e4b8@ gives you information about its parent. If you get the log of the parent you see the original branch. This should allow you to determine the starting point.
+Then he determines the ending point which is often the last commit, called "tip". Then it is time to run
+
+@hg log --rev tip:feff86775d42  --branch 2.1.5.x --branch 2.1.5.rc2.dev --branch 2.1.x-feature  --branch trunk --template "{branch},{rev},{node|short},\"{desc}\",{author|person},{date|isodate}\n" > history.csv@
+
+Load this CSV into LibreOffice calc and you will be able to see quite easily how many fixes were not backported into the trunk from 2.1.5.x. This is one of the reasons, why the commit messages should be identical/start with the same words in each branch.
+
+h1. Preparing for a release
+
+He maintains a "checklist":http://wiki.medelexis.ch/index.php/Checkliste_f%C3%BCr_Versionsabschluss.
+
+h2. Tagging
+
+When he is ready to tag a release, he checks out the "Elexis Bootstrap":https://ngiger@bitbucket.org/ngiger/elexis-bootstrap project.
+
+There he uses the script *makeTag.rb* to create tags in all Mercurial repositories (sub-folders) of his current workspace.
+

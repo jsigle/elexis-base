@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.plugins.disk__usage.DiskUsageProperty/>
+  </properties>
+  <scm class="hudson.plugins.mercurial.MercurialSCM">
+    <source>https://bitbucket.org/ngiger/elexis-base</source>
+    <modules></modules>
+    <branch>2.1.buckminster</branch>
+    <clean>false</clean>
+    <forest>false</forest>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>true</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers class="vector"/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.plugins.buckminster.EclipseBuckminsterBuilder>
+      <installationName>Buckminster-3.6</installationName>
+      <commands>importtargetdefinition -A &apos;${WORKSPACE}/ch.elexis.releng/core.dev.target&apos;</commands>
+      <logLevel>info</logLevel>
+      <params></params>
+      <targetPlatformName>None</targetPlatformName>
+      <userTemp></userTemp>
+      <userOutput></userOutput>
+      <userCommand></userCommand>
+      <userWorkspace></userWorkspace>
+      <globalPropertiesFile></globalPropertiesFile>
+      <equinoxLauncherArgs></equinoxLauncherArgs>
+    </hudson.plugins.buckminster.EclipseBuckminsterBuilder>
+  </builders>
+  <publishers>
+    <hudson.plugins.buckminster.targetPlatform.TargetPlatformPublisher>
+      <artifacts>.metadata/.plugins/org.eclipse.pde.core/.bundle_pool</artifacts>
+      <latestOnly>false</latestOnly>
+      <targetPlatformName>Elexis Core Target</targetPlatformName>
+    </hudson.plugins.buckminster.targetPlatform.TargetPlatformPublisher>
+  </publishers>
+  <buildWrappers/>
+</project>

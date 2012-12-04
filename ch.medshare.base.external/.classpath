@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry exported="true" kind="lib" path="org.apache.commons.httpclient_3.1.0.v20080605-1935.jar"/>
+	<classpathentry exported="true" kind="lib" path="commons-logging-1.1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="commons-logging-adapters-1.1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="commons-logging-api-1.1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="commons-logging-tests.jar"/>
+	<classpathentry exported="true" kind="lib" path="commons-codec-1.4.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

@@ -1,0 +1,608 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	this file is a copy of build.xml as of 2012-03-28, except that it runs javac and scalac with fork(). As such it runs
+	faster on multicore machines and avoids out-of-memory exceptions under some conditions.
+	If this does not work for you, however, use the original build.xml
+	
+	Copyright (c) 2010-2012 By G. Weirich and Elexis
+	some parts borrowed from N. Giger's hudson build for Elexis
+	
+	This is a new Buildscript (as of 6/2010), based on the new mercurial repository structure. 
+	It will compile all projects found in all repositories in ${repositories} except those listed
+	in ${exclude}. 
+	Eclipse parts will be pulled from an existing eclipse directory as needed.
+
+    This file reflects my personal environment. It is not intended for
+    public use. You may, however, use it if you like to, but everyhting
+    can be changed without notice from one version to another, and there is absolutely
+    no guarantee that it works correctly nor that it works at all. If it turns your
+    500GB Harddisk into a 5.25" Floppy-Disk, that's your own silly fault. I warned you.
+	
+	
+	Prerequisites:
+	- Java 1.6
+	- A working eclipse indigo (3.7) instance. For Mac: 64 Bit Cocoa variant needed
+	- ant 1.8.0
+	- an active internet connection
+	- a file named local.properties containing:
+		base=path/to/basedir				- the directory where the buildenvironment is
+		hg=path/to/mercurial/binary
+		platform-runtime=path/to/eclipse	- A directory with the runtime to use
+		skipPlugins=name2,name2			- A comma separated list of plugins to SKIP in the Build
+		
+	Preparation:
+	- "hg clone" all repositories you want as subdirectories of ${base}/repositories
+	- call "ant -Dos=windows", "ant -Dos=linux" or "ant -Dos=macosx" 
+	- add -Dunplugged=true to the call if you are not connected to the internet
+	  (will only work if all libs are already present i.e. there had been at least one successful 
+	   build while conencted)
+ 	 
+	- A common usage is to create an eclipse workspace at $(base}/repositories.
+	  Then clone the needed repositories, e.g. elexis-base, like this
+ 	  cd ${base}/repositories && hg clone http://elexis.hg.sourceforge.net/hgweb/elexis/elexis-base
+	  "hg clone" more repositories if you want as subdirectories of ${base}/repositories
+	  cd ${base}/repositories/elexis-base/BuildElexis
+	  call "ant -Dos=windows", "ant -Dos=linux", "ant -Dos=linux.x86_64 linux" or "ant -Dos=macosx" 	
+ 	
+	Caveat:
+	- If some Plugins in your repositories do have dependencies to resources you don't have access to,
+	  you must esclude those plugins from the build. See local.properties.sample for a list of plugins that
+	  must be excluded if you have only the repositories elexis-base and elexis-addons
+	  for a full build of all free elexis modules , you need the repositories elexis-base, elexis-addons, 
+	  and archie.
+
+	Hudson (Continuos Integration):
+	- The Ruby script prepare4hudson.rb is used by http://ngiger.dyndns.org/hudson to build Elexis
+	  in a single starting from a default downloaded Eclipse tar/zip file. It will unzip the eclipse
+  	  runtime, do a checkout of archie (needed by some plugins). Then it will create a local.properties
+  	  with the following structure;
+	  	base=/path/to/clean/build
+		repositories=/path/to/clean/build
+		platform-runtime=/path/to/clean/build/elexis-base/indigo/eclipse
+		rsc=/path/to/clean/build/elexis-base/BuildElexis/rsc
+		output=/path/to/clean/build/elexis-base/deploy
+  	- This setup may be useful if you want to from scratch to working elexis. 
+		
+-->
+<project name="elexis" default="all">
+	<property name="version" value="2.1.6.dev-qualifier" />
+	<property name="javatarget" value="1.6" />
+	<property name="debug" value="true" />
+	<property name="optimize" value="off" />
+	<property file="local.properties" />
+
+	<record name="ant.info.log" action="start" loglevel="info" />
+	<!-- if you want more ant log files comment out linese below
+	<record name="ant.warn.log" action="start" loglevel="warn" />
+	<record name="ant.debug.log" action="start" loglevel="debug" />
+	-->
+	<record name="ant.verbose.log" action="start" loglevel="verbose" />
+	<property name="output" value="${base}/deploy" />
+	<property name="dox" value="${output}/dox" />
+	<property name="lib" value="${base}/lib" />
+	<property name="repositories" value="${base}/repositories" />
+	<property name="additions" value="${output}/additions" />
+	<property name="rsc" value="${repositories}/elexis-base/BuildElexis/rsc" />
+	<property name="fop.home" value="${lib}/fop-1.0" />
+	<property name="downloadsFrom" value = "http://ftp.medelexis.ch/downloads_opensource/develop" />
+	<condition property="nopull">
+		<isset property="unplugged" />
+	</condition>
+
+	<mkdir dir="${base}" />
+
+	<tstamp />
+
+	<target name="downloads" unless="unplugged">
+		<mkdir dir="${lib}" />
+		<get src="${downloadsFrom}/izpack-standalone-compiler-4.3.4.jar" dest="${lib}/izpack-compiler.jar" usetimestamp="true" />
+		<get src="${downloadsFrom}/demoDB_elexis_2.1.5.4.zip" dest="${lib}/demoDB_elexis_2.1.5.4.zip" 		usetimestamp="true" />
+		<get src="${downloadsFrom}/org.eclipse.mylyn.wikitext.core.jar" dest="${lib}/org.eclipse.mylyn.wikitext.core.jar" usetimestamp="true" />
+		<get src="${downloadsFrom}/org.eclipse.mylyn.wikitext.textile.core.jar" dest="${lib}/org.eclipse.mylyn.wikitext.textile.core.jar" usetimestamp="true" />
+		<get src="${downloadsFrom}/jdom-1.1.1.jar" dest="${lib}/jdom.jar" usetimestamp="true" />
+		<get src="${downloadsFrom}/medelexis-packager.jar" dest="${lib}/medelexis-packager.jar" usetimestamp="true" />
+		<get src="${downloadsFrom}/ant-contrib-1.0b3.jar" dest="${lib}/ant-contrib.jar" usetimestamp="true" />
+		<get src="${downloadsFrom}/scala-compiler-2.8.0.jar" dest="${lib}/scala-compiler.jar" usetimestamp="true" />
+		<get src="${downloadsFrom}/scala-library-2.8.0.final.jar" dest="${lib}/scala-library.jar" usetimestamp="true" />
+		<get src="${downloadsFrom}/fop-1.0-bin.zip" dest="${lib}/fop-1.0-bin.zip" usetimestamp="true" />
+		<unzip src="${lib}/fop-1.0-bin.zip" dest="${lib}" overwrite="false" />
+		<chmod file="${lib}/fop-1.0/fop" perm="0755" />
+	</target>
+
+	<target name="initialize" depends="downloads">
+		<property name="dist" value="${output}/${os}/elexis-${version}" />
+		<mkdir dir="${dist}" />
+		<mkdir dir="${additions}" />
+		<mkdir dir="${dist}/plugins" />
+		<mkdir dir="${dist}/doc" />
+		<taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${lib}/ant-contrib.jar" />
+		<taskdef name="packager" classname="ch.medelexis.packager.Creator" classpath="${lib}/medelexis-packager.jar;${lib}/jdom.jar" />
+		<taskdef name="listDependencies" classname="ch.medelexis.packager.DependencyList" classpath="${lib}/medelexis-packager.jar;${lib}/jdom.jar" />
+		<taskdef name="pluginID" classname="ch.medelexis.packager.PluginID" classpath="${lib}/medelexis-packager.jar;${lib}/jdom.jar" />
+		<taskdef name="supporter" classname="ch.medelexis.packager.SupportCreator" classpath="${lib}/medelexis-packager.jar" />
+		<taskdef resource="scala/tools/ant/antlib.xml">
+			<classpath>
+				<pathelement location="${lib}/scala-compiler.jar" />
+				<pathelement location="${lib}/scala-library.jar" />
+			</classpath>
+		</taskdef>
+		<!-- Set the classpath for wikitext common -->
+		<property name="wikitext.standalone" value="${base}/lib" />
+		<path id="wikitext.classpath">
+			<fileset dir="${wikitext.standalone}">
+				<include name="org.eclipse.mylyn.wikitext.*core*.jar" />
+			</fileset>
+		</path>
+		<taskdef classpathref="wikitext.classpath" resource="org/eclipse/mylyn/wikitext/core/util/anttask/tasks.properties" />
+		<taskdef name="izpack" classpath="${lib}/izpack-compiler.jar" classname="com.izforge.izpack.ant.IzPackTask" />
+
+	</target>
+
+	<target name="update" unless="nopull">
+		<for param="repo">
+			<path>
+				<dirset dir="${repositories}" includes="*/.hg" />
+			</path>
+			<sequential>
+				<exec executable="${hg}" dir="@{repo}">
+					<arg value="pull" />
+					<arg value="-u" />
+				</exec>
+			</sequential>
+		</for>
+	</target>
+
+	<!-- generate a plugin: Copies all non-java files and compiles java- and scala- files and builds
+		documentation if found. Creates a 
+		 medelexis-package after successful compilation, if it finds a "medelexis.xml" in the plugin.
+		 must be called with following parameters:
+		 sourcedir:         Plugin-Name, i.e. the directory name in the repository
+		 plugindir:  The target directory in the plugins-directory of the destination
+		 repository: the repository where the sourced are
+		 cp:         Reference to the classpath to use
+		 -->
+	<target name="compile">
+		<echo message="create ${plugindir} from ${sourcedir}" />
+		<mkdir dir="${plugindir}" />
+		<copy todir="${plugindir}">
+			<fileset dir="${sourcedir}">
+				<include name="*.jar" />
+				<include name="*.xml" />
+				<include name="*.bmp" />
+				<include name="*.dll" />
+				<include name="*.so" />
+				<include name="*.properties" />
+				<include name="*.script" />
+				<include name="bin/**/*.properties" />
+				<include name="icons/**/*.*" />
+				<include name="rsc/**/*.*" />
+				<include name="lib/**/*.*" />
+				<include name="META-INF/MANIFEST.MF" />
+				<include name="meta-inf/manifest.mf" />
+			</fileset>
+		</copy>
+		<copy todir="${plugindir}" failonerror="false">
+			<fileset dir="${sourcedir}/src" includes="**/*.script" />
+			<fileset dir="${sourcedir}/src" includes="**/*.properties" />
+		</copy>
+		<scalac fork="true" srcdir="${sourcedir}" destdir="${plugindir}" excludes="Tests/**" encoding="UTF-8" classpathref="${cp}" classpath="${lib}/scala-library.jar" />
+		<javac fork="true" srcdir="${sourcedir}" destdir="${plugindir}" excludes="Tests/**" debug="${debug}" optimize="${optimize}" target="${javatarget}" includeantruntime="false" encoding="UTF-8" classpathref="${cp}" />
+		<packager plugindir="${plugindir}" dest="${additions}" skipOnMissing="true" targetVersion="${version}" />
+		<mkdir dir="${dox}/${dirname}" />
+		<copy todir="${dox}/${dirname}" failonerror="false">
+			<fileset dir="${sourcedir}/doc" />
+		</copy>
+		<wikitext-to-html markupLanguage="Textile" overwrite="true" multipleOutputFiles="true" formatOutput="true" sourceEncoding="utf-8">
+			<fileset dir="${dox}/${dirname}">
+				<include name="*.textile" />
+			</fileset>
+
+			<!-- stylesheet url="styles/main.css" / -->
+		</wikitext-to-html>
+		<wikitext-to-xslfo markupLanguage="Textile" sourceEncoding="utf-8" author="Elexis">
+			<fileset dir="${dox}/${dirname}" includes="*.textile" />
+		</wikitext-to-xslfo>
+		<!-- create PDF 
+				<exec command="${fop.home}/fop">
+					<arg value="${dox}/${pn}/*.fo" />
+					<arg value="${dox}/${pn}/*.pdf" />
+				</exec -->
+	</target>
+
+	<target name="compile-plugins">
+		<echo message="compile all plugins listed from listDependencie ${buildlist}" />
+		<for param="plugin" list="${buildlist}" delimiter=",">
+			<sequential>
+				<echo message="dist ist ${dist}: compiling plugin @{plugin}" />
+				<pluginID dir="@{plugin}" />
+				<var name="plugindir" value="${dist}/plugins/${BundleId}_${version}.${DSTAMP}" />
+				<path id="varcp">
+					<dirset dir="${rsc}/${os}" />
+					<dirset dir="${dist}/plugins" />
+					<fileset dir="${dist}/plugins">
+						<include name="**/*.jar" />
+					</fileset>
+				</path>
+
+				<antcall target="compile" inheritrefs="true">
+					<param name="dirname" value="${DirName}" />
+					<param name="sourcedir" value="@{plugin}" />
+					<param name="cp" value="varcp" />
+				</antcall>
+			</sequential>
+		</for>
+	</target>
+
+	<!--
+	create all projects in all repositories
+	-->
+	<target name="create-default" depends="initialize,update">
+		<echo message="dest ${dist} run ${platform-runtime}" />
+		<concat destfile="${dist}/elexis.ini">-vmargs
+-Xms128m
+-Xmx768m
+</concat>
+
+		<concat destfile="${dist}/.eclipseproduct">#Product Runtime Configuration File
+osgi.splashPath=platform:/base/plugins/ch.elexis
+eclipse.product=ch.elexis.ElexisProduct
+osgi.bundles.defaultStartLevel=4
+osgi.bundles=org.eclipse.equinox.transforms.hook,org.eclipse.equinox.common:start,org.eclipse.update.configurator@3:start,org.eclipse.core.runtime@start
+</concat>
+
+		<concat destfile="${dist}/configuration/config.ini">#Product Runtime Configuration File
+eclipse.application=ch.elexis.ElexisApp
+osgi.bundles.defaultStartLevel=4
+eclipse.product=ch.elexis.ElexisProduct
+osgi.splashPath=platform:/base/plugins/ch.elexis
+osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@3:start,org.eclipse.core.runtime@start
+</concat>
+		<copy todir="${dist}/plugins">
+			<fileset dir="${platform-runtime}/plugins">
+				<include name="com.ibm.icu_*" />
+				<include name="org.eclipse.equinox.launcher_*" />
+				<include name="org.eclipse.update.configurator_*" />
+			</fileset>
+		</copy>
+		<copy todir="${dist}">
+			<fileset dir="${rsc}">
+				<include name="*.ico" />
+				<include name="LICENSE*.*" />
+				<include name="lizenz.*" />
+			</fileset>
+		</copy>
+		<!-- do some magic stuff to find all the files to include -->
+		<echo message="listDependencies WITH ${platform-runtime} REPOS ${repositories} lib ist ${lib}" />
+		<listDependencies eclipse="${platform-runtime}" dest="${dist}/plugins" repositories="${repositories}" exclude="${skipPlugins},TestElexis,TestElexisUI" report="${output}" />
+		<antcall target="compile-plugins" inheritrefs="true">
+			<param name="buildlist" value="${buildlist}" />
+		</antcall>
+	</target>
+
+	<!-- create the Windows installer.  -->
+	<target name="windows" depends="initialize">
+		<property name="os" value="windows" />
+		<copy todir="${dist}/plugins">
+			<fileset dir="${rsc}/windows" excludes="elexis.exe" />
+		</copy>
+		<copy todir="${dist}" file="${rsc}/windows/elexis.exe" />
+		<antcall target="create-default" />
+		<antcall target="installer" inheritrefs="true" inheritall="true" />
+	</target>
+
+	<target name="macosx" depends="initialize">
+		<property name="os" value="macosx" />
+		<copy todir="${dist}">
+			<fileset dir="${rsc}/macosx" />
+		</copy>
+		<!-- exec executable="chmod" dir="${dist}/elexis.app/Contents/MacOS">
+			<arg line="+x starter-mac" />
+		</exec -->
+
+		<antcall target="create-default" />
+
+		<!-- For the Mac, we do not create a jar installer, because on MacOSX,
+		     zip installation packages are a well known and well supported 
+		     standard. So we just create a zip with the essential parts of elexis.
+		     we must make sure that there will be a correct elexis.app with an
+		     executable launcher within
+		 -->
+		<zip destfile="${output}/elexis-macosx-${version}.${DSTAMP}.zip">
+			<zipfileset dir="${dist}">
+				<include name="*" />
+				<include name="configuration/**" />
+				<include name="plugins/ch.elexis_*/**" />
+				<include name="plugins/ch.elexis.core_*/**" />
+				<include name="plugins/ch.rgw.utility_*/**" />
+				<include name="plugins/ch.elexis.eigenartikel_*/**" />
+				<include name="plugins/ch.elexis.mysql.connector_*/**" />
+				<include name="plugins/ch.elexis.h2.connector_*/**" />
+				<include name="plugins/ch.elexis.postgresql.connector_*/**" />
+				<include name="plugins/ch.elexis.importer.div_*/**" />
+				<include name="plugins/org.eclipse*" />
+				<include name="plugins/org.eclipse*/**" />
+				<include name="plugins/org.apache*" />
+				<include name="plugins/com.ibm*" />
+				<include name="plugins/javax*" />
+			</zipfileset>
+			<zipfileset dir="${rsc}/macosx/elexis.app" prefix="elexis.app" />
+			<zipfileset file="${rsc}/macosx/starter-mac" fullpath="elexis.app/Contents/MacOS/starter-mac" filemode="755" />
+			<zipfileset file="${rsc}/macosx/starter-mac.ini" fullpath="elexis.app/Contents/MacOS/starter-mac.ini" />
+		</zip>
+		<symlink action="delete" link="${output}/elexis-${os}-install.zip" failonerror="false" />
+		<symlink link="${output}/elexis-${os}-install.zip" resource="./elexis-macosx-${version}.${DSTAMP}.zip" />
+	</target>
+
+	<target name="linux" depends="initialize">
+		<property name="os" value="linux" />
+		<copy todir="${dist}">
+			<fileset dir="${rsc}/${os}">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+		<copy tofile="${dist}/elexis" file="${platform-runtime}/eclipse" preservelastmodified="true" verbose="true" />
+		<chmod file="${dist}/elexis" perm="ugo+rx" />
+		<antcall target="create-default" />
+		<antcall target="installer" inheritrefs="true" inheritall="true" />
+	</target>
+
+	<target name="linux.x86_64" depends="initialize">
+		<property name="os" value="linux.x86_64" />
+		<copy todir="${dist}">
+			<fileset dir="${rsc}/${os}">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+		<copy tofile="${dist}/elexis" file="${rsc}/${os}/eclipse" preservelastmodified="true" verbose="true" />
+		<chmod file="${dist}/elexis" perm="ugo+rx" />
+		<antcall target="create-default" />
+		<antcall target="installer" inheritrefs="true" inheritall="true" />
+	</target>
+
+	<target name="installer" depends="doc,doc-plugins">
+		<echo message="preparing files for izpack installer" />
+		<wikitext-to-html markupLanguage="Textile" overwrite="true" multipleOutputFiles="false" formatOutput="true">
+			<fileset dir="${rsc}">
+				<include name="*.textile" />
+			</fileset>		  
+		</wikitext-to-html>
+		<echo file="${rsc}/TargetPanel.txt">$SYSTEM_user_home/Elexis/bin/Elexis-${version}</echo> 
+		<copy todir="${dist}">
+			<fileset dir="${rsc}">
+				<include name="info*.html" />
+				<include name="license.html" />
+			</fileset>
+			<filterset begintoken="&lt;?" endtoken="?&gt;">
+				<filter token="xml version=&apos;1.0&apos; encoding=&apos;utf-8&apos; " value="" />
+			</filterset>
+		</copy>
+		<copy todir="${output}/${os}">
+			<fileset dir=".">
+				<include name="${rsc}/*.*" />
+			</fileset>
+		</copy>
+		<delete file="${rsc}/info.html" />
+		<delete file="${rsc}/license.html" />
+		<echo message="Running IzPack to build the installer..." />
+		<izpack input="${rsc}/installer.xml" output="${output}/elexis-${os}-${version}.${DSTAMP}-install.jar" installerType="standard" inheritAll="true" basedir="${dist}" compression="deflate" compressionlevel="9" />
+		<symlink action="delete" link="${output}/elexis-${os}-install.jar" failonerror="false" />
+		<symlink link="${output}/elexis-${os}-install.jar" resource="./elexis-${os}-${version}.${DSTAMP}-install.jar" />
+
+
+	</target>
+
+	<!-- SWTbot. Needs special config.ini to start
+	   - Not yet functional 
+		 -->
+
+	<target name="create-swtbot" depends="initialize,update">
+		<concat destfile="${dist}/elexis.ini">-vmargs
+-Xms128m
+-Xmx768m
+</concat>
+
+		<concat destfile="${dist}/.eclipseproduct">#Product Runtime Configuration File
+osgi.splashPath=platform:/base/plugins/ch.elexis
+eclipse.product=ch.elexis.ElexisProduct
+osgi.bundles.defaultStartLevel=4
+osgi.bundles=org.eclipse.equinox.transforms.hook,org.eclipse.equinox.common:start,org.eclipse.update.configurator@3:start,org.eclipse.core.runtime@start
+</concat>
+
+		<concat destfile="${dist}/configuration/config.ini">#Product Runtime Configuration File
+eclipse.application=ch.elexis.ElexisApp
+osgi.bundles.defaultStartLevel=4
+eclipse.product=ch.elexis.ElexisProduct
+osgi.splashPath=platform:/base/plugins/ch.elexis
+osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@3:start,org.eclipse.core.runtime@start
+</concat>
+		<copy todir="${dist}/plugins">
+			<fileset dir="${platform-runtime}/plugins">
+				<include name="com.ibm.icu_*" />
+				<include name="org.eclipse.equinox.launcher_*" />
+				<include name="org.eclipse.update.configurator_*" />
+			</fileset>
+		</copy>
+		<copy todir="${dist}">
+			<fileset dir="${rsc}">
+				<include name="*.ico" />
+				<include name="LICENSE*.*" />
+				<include name="lizenz.*" />
+			</fileset>
+		</copy>
+		<!-- do some magic stuff to find all the files to include -->
+		<listDependencies eclipse="${platform-runtime}" dest="${dist}/plugins" repositories="${repositories}" exclude="${skipPlugins}" />
+		<antcall target="compile-plugins" inheritrefs="true">
+			<param name="buildlist" value="${buildlist}" />
+		</antcall>
+	</target>
+
+	<target name="linux-swtbot" depends="initialize">
+		<property name="os" value="linux" />
+		<property name="swtbot" value="/data/elexis/linux/eclipse" />
+		<copy todir="${dist}" verbose="true">
+			<fileset dir="${swtbot}">
+				<include name="plugins/**/*" />
+				<include name="features/**/*" />
+			</fileset>
+			<fileset dir="${platform-runtime}">
+				<include name="plugins/org.eclipse.equinox.launcher.gtk*/*" />
+				<include name="plugins/org.eclipse.swt.gtk.linux.x86_*.jar" />
+				<include name="plugins/org.apache.log4j*.jar" />
+				<include name="plugins/org.hamcrest*.jar" />
+				<include name="plugins/org.eclipse.swtbot.ant.optional.junit4*.jar" />
+				<include name="plugins/org.eclipse.swtbot*.jar" />
+				<include name="plugins/org.eclipse.swtbot*/*" />
+				<include name="*.so" />
+			</fileset>
+		</copy>
+		<copy tofile="${dist}/elexis" file="${platform-runtime}/eclipse" preservelastmodified="true" verbose="true" />
+		<chmod file="${dist}/elexis" perm="ugo+rx" />
+		<antcall target="create-swtbot" />
+		<antcall target="installer" inheritrefs="true" inheritall="true" />
+	</target>
+
+	<!--
+	create all projects in all repositories
+	-->
+	<target name="all">
+		<antcall target="${os}" />
+	</target>
+
+	<target name="clean" description="Aufräumen; Alle vom letzten Build erstellten files löschen">
+		<echo message="deleting output directory" />
+		<delete dir="${output}" />
+	</target>
+
+	<target name="javadoc">
+		<delete dir="${output}/dokumentation/javadoc" />
+		<echo message="Creating javadoc for ${repositories}" />
+		<javadoc failonerror="false" access="public" destdir="${output}/dokumentation/javadoc" windowtitle="Elexis API documentation" excludepackagenames="org,net,rb,au" charset="utf-8" author="true" version="true" use="true" maxmemory="128M">
+			<fileset dir="${rsc}/../.." defaultexcludes="yes">
+				<include name="ch.elexis/**/*.java" />
+				<include name="elexis-a*/**/*.java" />
+				<include name="elexis-c*/**/*.java" />
+				<include name="elexis-d*/**/*.java" />
+				<include name="elexis-e*/**/*.java" />
+				<include name="elexis-f*/**/*.java" />
+				<include name="elexis-i*/**/*.java" />
+				<include name="elexis-k*/**/*.java" />
+				<include name="elexis-l*/**/*.java" />
+				<include name="elexis-m*/**/*.java" />
+				<include name="elexis-n*/**/*.java" />
+				<include name="elexis-o*/**/*.java" />
+				<include name="elexis-p*/**/*.java" />
+				<include name="elexis-s*/**/*.java" />
+				<include name="elexis-tools/**/*.java" />
+				<include name="helpers/**/*.java" />
+				<include name="ch.elexis.*.connector/**/*.java" />
+				<include name="hilotec-messwerte/**/*.java" />
+				<include name="elexis-u*/**/*.java" />
+				<include name="m*/**/*.java" />
+				<include name="*wrapper*/**/*.java" />
+				<include name="iatrix*/**/*.java" />
+				<include name="p*/**/*.java" />
+				<include name="L*/*/*.java" />
+
+				<!-- Jedes der beiden Plugins führt zum Absturz von Javadoc -->
+				<exclude name="elexis-trustx-embed/**/*.java" />
+				<exclude name="hilotec-pluginstatistiken/**/*.java" />
+
+				<!-- noatext generiert fast 3000 warnungen -->
+				<exclude name="noatext/**/*.java" />
+				<exclude name="deploy/**" />
+				<exclude name="**/Test*.java" />
+				<exclude name="**/au/**/*.java" />
+				<exclude name="**/org/**/*.java" />
+			</fileset>
+			<doctitle>
+				<![CDATA[Elexis project API]]>
+			</doctitle>
+			<header>
+				<![CDATA[Elexis API documentation as of ${TODAY}]]>
+			</header>
+			<bottom>
+				<![CDATA[Copyright 2005-2010 by Gerry Weirich, Elexis]]>
+			</bottom>
+		</javadoc>
+		<available file="${output}/dokumentation/javadoc/index.html" property="javadoc.has.index.html" />
+		<echo message="Created javadoc in ${output}/dokumentation/javadoc index? ${javadoc.has.index.html}" />
+		<fail unless="javadoc.has.index.html" />
+	</target>
+
+	<target name="doc" unless="skip_texify" depends="initialize">
+		<echo message="doc ${repositories}/elexis-base/dokumentation" />
+		<exec executable="${texify}" dir="${repositories}/elexis-base/dokumentation" failonerror="true">
+			<arg value="${texifyArgs}" />
+			<arg value="elexis.tex" />
+		</exec>
+		<copy file="${repositories}/elexis-base/dokumentation/elexis.pdf" todir="${dist}/doc" />
+		<copy file="${repositories}/elexis-base/dokumentation/elexis.pdf" todir="${dist}" />
+	</target>
+
+	<target name="doc_fr" unless="skip_texify" depends="initialize">
+		<exec executable="${texify}" dir="${rsc}/../../doc_fr" failonerror="true">
+			<arg line="${texifyArgs}  elexis.tex" />
+		</exec>
+		<copy file="${rsc}/../../doc_fr/elexis.pdf" tofile="${dist}/doc/elexis_fr.pdf" />
+	</target>
+
+	<target name="texify" unless="skip_texify">
+		<exec executable="${texify}" dir="${sourcedir}/doc" failonerror="false">
+			<arg line="${texifyArgs} ${dirname}.tex" />
+		</exec>
+		<copy file="${sourcedir}/doc/${dirname}.pdf" todir="${dist}/doc" failonerror="false" />
+	</target>
+
+	<target name="doc-plugins" unless="skip_texify" depends="initialize">
+		<!-- create docs for all plugins listed from listDependencies -->
+		<listDependencies eclipse="${platform-runtime}" dest="${dist}/plugins" repositories="${repositories}" exclude="${skipPlugins},TestElexis,TestElexisUI" />
+		<for param="plugin" list="${buildlist}" delimiter=",">
+			<sequential>
+				<pluginID dir="@{plugin}" />
+				<if>
+					<available file="@{plugin}/doc/${DirName}.tex" type="file" />
+					<then>
+						<antcall target="texify">
+							<param name="dirname" value="${DirName}" />
+							<param name="sourcedir" value="@{plugin}" />
+							<param name="plugin" value="@{plugin}" />
+							<param name="cp" value="varcp" />
+						</antcall>
+					</then>
+					<else>
+						<echo message="Skipping, as @{plugin}/doc/${DirName}.tex not found" />
+					</else>
+				</if>
+				<if>
+					<available file="@{plugin}/doc" type="dir" />
+					<then>
+						<echo message="building html/pdf from textile in @{plugin}/doc" />
+						<wikitext-to-html markupLanguage="Textile" overwrite="true" multipleOutputFiles="false" formatOutput="true">
+							<fileset dir="@{plugin}/doc">
+								<include name="*.textile" />
+							</fileset>
+						</wikitext-to-html>
+						<wikitext-to-xslfo markupLanguage="Textile">
+							<fileset dir="@{plugin}/doc">
+								<include name="*.textile" />
+							</fileset>
+						</wikitext-to-xslfo>
+						<apply executable="${fop.home}/fop" dir="@{plugin}/doc" relative="true" verbose="true" dest="@{plugin}/doc" logError="true">
+							<arg value="-r" />
+							<srcfile />
+							<targetfile />
+							<fileset dir="@{plugin}/doc" includes="*.fo" />
+							<mapper from="*.fo" to="*.pdf" type="glob" />
+						</apply>
+					</then>
+				</if>
+				<if>
+					<available file="@{plugin}/doc" type="dir" />
+					<then>
+					</then>
+				</if>
+			</sequential>
+		</for>
+	</target>
+
+</project>

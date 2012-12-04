@@ -1,0 +1,30 @@
+#!/usr/bin/perl
+# Starter for elexis in linux
+# $Id: elexis 2457 2007-05-31 09:50:35Z rgw_ch $
+
+$path=`pwd`;
+chomp($path);
+$path.="/ooo/program";
+print $path;
+#if there is a local ooo directory, we'll always use this instance
+if(-d $path){
+    my $wr=0;
+    open IN,"elexis.ini";
+    open OUT,">elexis.loc";
+    while(<IN>){
+        if($_=~ /-Djava\.library\.path=.*/){
+            print OUT "-Djava.library.path=".$path."\n";
+            $wr=1;
+        }else{
+            print OUT $_;
+        }
+    }
+    if($wr==0){
+            print OUT "-Djava.library.path=".$path."\n";
+    }
+    close OUT;
+    close IN;
+    unlink "elexis.ini";
+    rename "elexis.loc", "elexis.ini";
+}
+exec './starter';

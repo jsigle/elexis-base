@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Omnivore"
+            id="ch.elexis.omnivore">
+      </category>
+      <view
+            name="Dokumente"
+            icon="icons/sample.gif"
+            category="ch.elexis.omnivore"
+            class="ch.elexis.omnivore.views.OmnivoreView"
+            id="ch.elexis.omnivore.views.OmnivoreView">
+      </view>
+   </extension>
+   <extension
+         point="ch.elexis.PersistentReference">
+      <Factory
+            Class="ch.elexis.omnivore.data.DocHandleFactory"
+            name="Omnivore"/>
+   </extension>
+   <extension
+         point="ch.elexis.ServiceRegistry">
+      <Service
+            actor="ch.elexis.omnivore.data.DocumentManagement"
+            description="Omnivore"
+            name="DocumentManagement"
+            value="1">
+      </Service>
+   </extension>
+
+</plugin>

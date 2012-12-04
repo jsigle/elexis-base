@@ -1,0 +1,43 @@
+% *******************************************************************************
+% * Copyright (c) 2007 by Elexis
+% * All rights reserved. This document and the accompanying materials
+% * are made available under the terms of the Eclipse Public License v1.0
+% * which accompanies this distribution, and is available at
+% * http://www.eclipse.org/legal/epl-v10.html
+% *
+% * Contributors:
+% *    G. Weirich - initial implementation
+% *
+% *  $Id: menu.tex 4903 2009-01-03 11:44:22Z rgw_ch $
+% *******************************************************************************
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+
+% Dieses Dokument enthält die Dokumentation der Menübefehle
+
+\section{Menu}
+Le menu est - comme la plupart des éléments d'Elexis- pas fixe. Les Plugins peuvent ajouter des propres commandes de menu ou des sous-menus entiers. Ce qui suit ne décrit par conséquent que le contenu des menus qui existent dans l'installation de base de Elexis.
+
+\begin{itemize}
+  \item {\textsc{fichier -- utilisateur}: S'annoncer comme autre utilisateur. Une boîte de dialogue s'ouvre dans laquelle on introduit le nom de l'utilisateur et un mot de passe.
+Lorsqu'on clique sur  \glqq abandonner\grqq{}on clôture seulement la session de sorte qu'il n'y ait plus d'utilisateur branché. Il est recommandé d'installer pour chaque utilisateur son propre compte puisque Elexis lie la plupart des actions à un nom d'utilisateur, et puisque les droits d'utilisateur dépendent également de l'utilisateur connecté.}
+  \item {\textsc{fichier -- mandant}: Activer un autre mandant. Dans ce cas, l'utilisateur actuel reste le même, toutefois il travaille pour un autre mandant. Cela signifie entre autres que le décompte des prestations de même que la responsabilité médicale en définitive vont sur le compte de ce mandant. Il est ainsi essentiel que dans un cabinet de groupe le mandant correct soit toujours activé. Elexis indique dans l'entête le nom de l'utilisateur actuel et le nom du Mandant actuel respectivement.}
+  \item {\textsc{fichier -- connexion}: Etablir et/ou. modifier la connexion à la base de données.
+Ceci n'est important que lors de l'installation du programme et peut être lu sous la rubrique concernant l'installation.}
+  \item {\textsc{fichier -- Options}: Configuration centrale. La description en détail se trouve sous 'Configuration'.  (voir page \pageref{settings} et suivantes).}
+  \item {\textsc{fichier -- Importation de données }: Ici, des données étrangères de différent type peuvent être importées (données de contact, données d'autres logiciels de gestion du cabinet etc.). Les options disponibles dépendent de installation des Plugins d'importation} \footnote{Il existe p.ex. un 'Plugin' d'importation pour le logiciel \textit{Aeskulap}. Un autre Plugin existe pour \textit{PraxisStar}. Informations et achat par l'intermédiaire du support (ad) elexis.ch}
+  \item {\textsc{fichier -- fermer}: Fermeture du programme}
+  \item {Le menue \glqq Edition\grqq{} est prévu comme dans d'autres programmes pour le presse-papiers.}
+  \item {\textsc{fenêtre -- fixer perspective }: Cela sert à protéger la perspective actuelle des modifications par erreur. Des perspectives essentiels ne peuvent pas être fermés tant que se trouve un crochet devant ce point de menu.}
+  \item {\textsc{fenêtre -- perspective -- enregistrer perspective }: Par ceci, vous sauvegardez l'aménagement des affichages actuels sous le même nom de perspective qu'elle a eu avant.}
+  \item {\textsc{fenêtre -- perspective -- enregistrer perspective sous \ldots}:
+  Par ceci, vous sauvegardez l'aménagement des affichages actuels sous un nouveau nom de perspective.}
+  \item {\textsc{fenêtre -- perspective -- annuler perspective }: Reconduit la perspective actuelle à l'aménagement des affichages qu'elle avait avant la dernière sauvegarde. Peut rétrograder toutes les dernières modifications.}
+  \item {\textsc{fenêtre -- perspective -- sauvegarder comme perspective de démarrage }: Déclare la perspective actuelle comme perspective de démarrage pour l'utilisateur actuel. Ainsi cette perspective apparaît après le login de l'utilisateur actuel.}
+  \item {\textsc{fenêtre -- perspective -- autre }: Une boîte de dialogue, avec laquelle vous pouvez faire apparaître touts les affichages/Views existants dans le système classifiés d'après les thèmes. Vous pouvez feuilleter la liste ou introduire le nom de l'affichage recherché dans la case prévue.}
+  \item {\textsc{denêtre - affichage }: Dans ce menu, on énumère d'abord quelques affichages (Views) qui font partie des perspectives standard. Cliquez sur un titre pour ouvrir l'affichage en question.}
+  \item {\textsc{fenêtre - affichage - autre }: Il apparaît une boite de dialogue dans laquelle vous pouvez accéder, groupées par thème, à toutes les 'Views' existantes dans le système. Vous pouvez feuilleter la liste ou taper le nom de la 'View' dans la case prévue pour cela.}
+\end{itemize}
+
+\section{Barre d'outils}
+La barre d'outils qui se trouve au-dessous du menu est également configurable par des Plugins ou par vos réglages personnels. Elle met à disposition des fonctions pour accéder aux perspectives (voir page \ref{perspektiven})
+et pour imprimer des étiquettes. Si vous passez simplement avec la souris sur un bouton et si vous attendez un petit moment, la fonction du bouton en question est indiquée comme texte. 

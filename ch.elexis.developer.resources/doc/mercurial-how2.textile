@@ -1,0 +1,287 @@
+h1. How to use Mercurial repositories with Elexis
+
+{toc}
+
+h2. I Hierarchical repository structure
+
+After switching to mercurial we found the following hierarchical structure suited best our need. Each level is characterized by one directory which hold all used repositories of the same hierarchical level. Each of these repositories is used to push and pull to exactly one repository one hierarchical level above. 
+*Note:* on a technical level all these repository are equal and usually contain  the same information.
+
+# The main server for all open-sources repositories are located on sourceforge.net. We call it "Lucy":http://de.wikipedia.org/wiki/Lucy.
+# Work is often done by teams building a work group. These teams may be elexis-developper of a given compony or an ad-hoch group working on new feature. 
+** Each work group maintains a "grandma" directory on a server accessible by all members of this work group. On a Debian server it is usually placed under /var/cache/hg.
+** Usually there is cron scripts which periodically pulls in all changes found under Lucy.
+** Usually there is a team leader which is reponsible for integration tests and which pushes successfully tested changes from grandma to Lucy.
+** The ruby script "elexis-grandma.rb":elexis-grandma.rb can be used to create a grandma directory and (if running under Linux) a cron-script to regularly pull in changes from Lucy. Save it in a convenient location (e.g. /usr/local/bin) and adapt it to your needs.
+# Each developer has one or more mother directories.
+** These are copies from the grandma of each each mercurial repository.
+** The developper pulls in changes from grandma at his discretion and pushes (successfully tested) changes to grandma.
+** The ruby script "elexis-mother.rb":elexis-mother.rb can be used to create a mother directory.
+** For experiments you should probably open a new, separate mother directory, whereas for bug-fixing you will always reuse the same one. Give these directories *meaningful names* !
+
+# Each developer has one (or more) Eclipse workspaces.
+** Each workspace has repositories with a checkout of the choosen branch.
+** Usually the workspace contains also a checkout of the archie SVN repository. 
+** The developper pulls in changes from mother at his discretion and pushes (successfully tested) changes to mother.
+** We recommend to use for each task (e.g. bug fix, feature) a separate workspace. Give each workspace a *meaningful name* (or you will have troubles remembering what the hell "ws27" was meant for). I often have five up to ten different workspaces on my notebook.
+** The ruby script "elexis-ws.rb":elexis-ws.rb can be used to create an Eclipse workspace (including archie).
+
+Note: As many the elexis developers also use parts of the Medelexis repository, the ruby scripts mentions it too.
+
+h2. II Prerequisites
+
+* Eclipse 3.5 or later
+* Mercurial 1.5.0 or later (from http://mercurial.selenic.com/)
+* the hgEclipse plugin, Version 1.6.0 or later (the update site is at http://cbes.javaforge.com/update)
+* a sourceforge.net account, if you need write access
+* Create a @.hgrc@ file in your home directory to enable commonly used Mercurial extensions and (optionally) allowing pushing without entering passwords. My @.hgrc@ looks like this:
+
+pre. 
+[extensions]
+transplant=
+rebase=
+keyword=
+[keyword]
+**.java =
+[keywordmaps]
+Id = {file|basename} {node|short} {date|utcdate} {author|user}
+[ui]
+username = Name Family <user@example.org>
+[auth]
+# this works only with http(s)
+med.prefix=https://repo.medelexis.ch/hg/medelexis-trunk
+med.username=myusername
+med.password=topsecret
+
+h2. II Steps
+
+h3. Workspace organization 
+
+If you want to use the ant build prepare a workspace structure like this.
+/path/to/your/base
+/path/to/your/base/deploy -> generated output via ant will go there
+/path/to/your/base/repositories -> Select this directory as your eclipse workspace
+
+Unter repositories checkout/clone the following repositories (as shown below)
+ssh://yourusername@elexis.hg.sourceforge.net/hgroot/elexis/elexis-base
+http://archie.googlecode.com/svn/archie/ch.unibe.iam.scg.archie/trunk
+ssh://yourusername@elexis.hg.sourceforge.net/hgroot/elexis/elexis-addons
++ more proprietary checkouts
+
+Alternately you may adapt the ruby script "elexis-ws.rb":elexis-ws.rb to create an Eclipse workspace (including archie).
+
+h3. Clone the repository 
+
+
+* In an empty eclipse workspace, right-click in the package explorer and select _import_ -> _Clone existing Mercurial repository_. 
+
+!images/elexis_hg_1.png!!images/elexis_hg_2.png!
+
+* In the field _repository location_, enter the appropriate repository location.  Note that you need different URLs for read-only and for read/write access. In Case of read/write you must choose an SSH connection and enter your _sourceforge_ account details in the username and password fields. In case of a read-only access, use http:// instead of ssh:// and leave the username/password-fields empty.
+
+!images/elexis_hg_3.png! 
+
+*  In the field _Clone directory name_, enter a Name for this repository, e.g. 'elexis-basis'.
+* Leave the remaining fields as-is and click "finish"
+
+This will take a quite long time (>160MB to fetch) . Time enough to think about the ideas behind Mercurial (or, more generally, distributed source code managers (DSCM)). If you know all about DSCM, you can skip this safely and proceed to IIb, "checking out the sources".
+
+Unlike CVS or SVN, a DSCM does not rely on a single central repository. Instead, everyone who wants to use the source code, hold their own copy of the master repository. Such a copy is called a _clone_ in DSCM-Speak. To create a clone, you perform the operation *clone* - as you might have guessed. Such a clone is in fact just a directory on your hard drive. Note: In Linux and Mac, the directory might seem empty. It is not. It contains at least a subdirectory called .hg which is hidden in unix-like operating systems by default. You can make a backup by simply copying it or with any other backup mechanism you might to prefer. From this clone, you create a working directory with the sources you want to work on. Remember: The clone is really a clone of the master repository and as such it contains every single commit, tag and branch that occurred to the master repository - so you can *check out* any repository position you like to your working directory and you can easily *switch* to any other repository branch without the need for an internet connection.
+
+With this local clone, you can work as with any other SCM. If you know Subversion/Subclipse, you'll find this quite familiar: You *commit* your changes to the repository; you can *update*, *branch*, *tag*,  and so on. The only difference is: You do not need to bother about other members of the development team, because all changes go only to your very own repository clone and nobody will cry if you totally mess it up (not even you because you can always create a new clone from the master). If you do not want to make a new clone but only want to keep up with changes on the Master, you can *pull* your repository from the master, *merge* incoming changes with your changes and then *update* the source directory to adapt the changes. 
+
+If you feel, however, that your changes should go to the master repository, you should first *pull* any changes that might have happened on the master in the meantime, *merge* if necessary, resolve all conflicts (if any) and then *push* your Repository to the master. If you do not have *push* rights, you can ask a master maintainer, to *pull* your changes, or you can send them a push request by e-mail, containing a diff of your repository to the master.  
+ 
+h3. Check out the sources
+
+Now the clone operation from IIa is probably finished. You are presented a dialog "Select working directory revision". Most probably you'll want the bleeding edge, and thus, you might want to select the Revision that has the tag "tip". Then click Next, and you'll see all Elexis Projects that are part of this repository. Select those you want to import into your Eclipse workspace and click finish
+
+!images/elexis_hg_4.png! !images/elexis_hg_5.png!
+
+After this, you'll probably see lots of errors. First try a full rebuild (Project->clean->clean all). If  some funny errors persist, you probably forgot to switch your workspace to UTF-8. 
+
+!images/elexis_hg_6.png! 
+
+Still remaining errors are mostly due to unresolved dependencies. Probably you just want to close or remove the involved projects.  Or, you clone repositories with the missing projects into the same workspace, which is perfectly possible. You can even mix projects from subversion and mercurial repositories.
+
+h2. III Repository operations
+
+h3. IIIa Pulling changes from the master repository
+
+From time to time you should integrate changes from the master repository into your clone to prevent it to differ to much from its parent. To do this, right-click on one of the projects from this repository and select _team->pull_.  This will pull changes of ALL projects from the same repository.
+
+!images/elexis_hg_7.png!
+
+Note: In plain Mercurial, this will *not* update your workspace. See next paragraph. The Eclipse plugin gives you the option to  update after pull automatically by checking the respective checkbox in the dialog.
+Note: If you
+The pull operation can lead to a two-headed repository since there might be changes from somewhere else that originate from the same common revision than your own changes. You can merge the two heads with right-click on the project and _team->merge_.  Again, the Eclipse plugin offers an option in the pull dialog to merge automatically if no unresolved conflicts are found. If there are conflicts in the files that can't be resolved automatically, you have to resolve them manually. HgEclipse will open some merge View depending of your operating system. Here kdiff3 as found on Windows and  KDE based Linuxes (with Gnome  you'll probably prefer 'meld'): On the leftmost side you have the file as merged up to now and the right two panels show the two parents of the merge. You can decide which lines from which parent to move into the result and then save. 
+
+!images/elexis_hg_8.png!
+
+
+h3. IIIb Updating your workspace
+
+Your workspace can be set to any of the branches defined in the repository. Therefore by default a repository pull will not be reflected automatically in your workspace. To Update a project in  your workspace, right-click on the project and select _team->update_. 
+
+h3. IIIc Committing your changes
+
+It is recommended to commit your changes frequently. That way you have always the possibility to return to an earlier state if something went wrong. To commit, simply right-click on the project and select _team->commit_. Enter a commit-message and you're done. Note: This will only change your own repository. To propagate your work to the parent repository, you must *push*. The rule of thumb is: *Commit* whenever you finished a distinct piece of work, *push* whenever you want to make the sum of your commits available to others. This involves some amount of testing bevore pushing.  
+
+h3. IIId Adding a new plugin to the Repository
+
+This is a bit tricky first, so please read carefully:
+
+# Right-click in the project explorer, select new->project...
+# Select "Plug In Project"
+# Now, this is important, *uncheck* "Use default location" and instead, select a subdirectory of your Mercurial repository as location for the project. You'll want to name the subdirectory just as your project is called. *NOTE*: If you do not want to share the new project, or if you want to share it to a different repository, say, with subversion, you can just keep the default location. Elexis can keep sources from different repositories in the same workspace. !images/hgeclipse-3.png!
+# Click Next and proceed as you would with earlier projects.
+# After clicking "finish" wait a minute or so and you'll see that the new plugin project is added magically to your Mercurial repository. Right.Click the newly created project and select Team->Commit to write a first import of the new Project into the local Mercurial repository clone. (Again, wait a minute to see the file decorations disappear as eclipse collects the diff information to the repository)
+
+If you are not used to DSCM's: Mind the word "clone" above: All changes go only to your local clone. You'll need to *push* them to the master (or send the master  maintainer a *pull* request).
+
+h3. IIIe Removing a plugin from your workspace (but not from the repository)
+
+*WARNING*: If you right-click on the plugin and select "delete", you'll remove the project from the repository. And with the following *commit* and *push* your delete will be propagated through the hierarchy. Of course, this will not really delete anything, you can still recreate it using an older revision, but such actions can lead to some bad vibrations within the team...
+ 
+ So you better do the following: You can, instead of removing the project, just *close* it by right-clicking an choosing "close".
+ Or, if you really want to remove it: Select _Team->disconnect_. After doing this you can safely delete it.
+
+h2. IV Advanced concepts
+
+h3. IVa Shared repository
+
+If you are a group working on the same subset of elexis, or if you are working with different computers,  having a separate repository clone on every computer will probably not suffice to fit your needs. You'll need some "regional" master repository to collect commits from distributed local repositories. This regional 
+master synchronizes itself with the global master. 
+
+*Note:* These shared repositories, are also called "bare" repositories, as they *may not* contain a checkout. You should only use the commands @hg pull@ and @hg push@ in these repositories.
+
+Shared repositories are cloned from the upper repository using the --noupdate switch. Without it, it will create a repository *and* a checkout of the default branch and commits from children repositories on different branches will create a mess, e.g. the error message "push creates new heads in remote repostory".
+
+Fortunately, this is quite easy with Mercurial. You need only a PC with active internet connection or a repository on a public server (such as bitbucket.org) . If you use a private server, just install Mercurial there (eclipse is not required) and create a local clone with
+
+_hg clone --noupdate http://elexis.hg.sourceforge.net/hgroot/elexis/elexis-base_
+
+then, serve this clone with
+
+_hg serve -d_
+
+And everybody from your team with access to that server (e.g. via internet or via VPN) can clone it with
+
+_hg clone http://your-url:8000_
+
+(Maybe you'll have to change some firewall rules, though). By default, users have only read access (i.e. _clone_ and _pull_).
+
+If you want to allow push, you can either set up SSH on the server, or, if you connect through a secure path anyway, eg. inside a closed LAN or VPN, you can add the following lines to <repository>/.hg/hgrc:
+
+bc. 
+[web]
+allow_push = *
+push_ssl=false
+
+Do *not* use this hack for public servers since it imposes a major security risk!
+
+This way, everyone having access to the server can pull and push their data. So your private subproject can be developed independently from the master repository. Whenever you feel that the time has come to share your work, you do one of the following, depending on your preferences and access rights:
+
+* _push_ your regional master to the global master (You need push rights on the master to do this).
+* Ask a maintainer of the master to _pull_ from your repository (You need some reputation to make them do this...)
+* Create a diff of your repository to the master and send this to a maintainer of the master. This is the most informal path.
+
+h4. Web access
+
+Having set up your repository for sharing gives you an additional feature for free: Web access to your repository. Simply point your favorite web browser to http://your-url:8000. 
+And even more: You can subscribe to an RSS feeder that tells you whenever something changed in the repository.
+You might want to  try this with the "elexis main repositories":http://elexis.hg.sourceforge.net/hgroot/elexis
+
+h4. Serving multiple repositories
+
+The _hg serve_ command only serves the repository it was called from and by doing so,  it occupies a port (normally 8000), making it inaccessible for other instances. If you want to share more repositories, you can either call it from each repository, providing a distinct port number, e.g. _hg serve -d -p 8001_.
+Or, a bit more difficult to install but more flexible when running: Serve via cgi from a webserver. I use lighttpd which is much easier to configure than the ubiquitous Apache (that seems here oversized)
+
+h3. IVb Using an SVN repository as master
+
+It is possible to use an existing SVN repository as master for a mercurial repository (and its descendants).  This can be useful for collaboration with different groups.
+If you plan to host your Mercurial repository on a debian-based computer (debian, ubuntu etc), this is quite easy. Just install the package hgsvn. This gives you the following commands:
+
+* @hgimportsvn <url>@ - Checkout an existing SVN repository (If it is your first access to this svn repository, you should checkout with @svn checkout@ first to set ssh keys or username correctly) . 
+* @hgpullsvn@ - pull any changes from the svn repository into the mercurial repository. Note: You must do this after hgimportsvn to initialize the Mercurial repository correctly
+
+After doing this, you have a chimaere repository with a  shared workspace. Use @hg update@ to integrate hg changes into the workspace. Use @hg commit@ to propagate workspace changes into hg. Use @hgpullsvn@ to fetch svn changes into the workspace. Use @svn commit@ to send workspace changes to the svn repository.  Please note: while the svn commands work on the central repository, the hg commands work only with the local hg repository. To propagate them, you must use @hg push <url>@ (or @hg pull@ from elsewhere)
+
+h3. IVc Tagging and Branching
+
+A Tag is a label that marks a specific step of development with a human understandable name.  In fact, every single commit has automatically a unique name such as c3445543dfsdfcdea,  but this is not very useful for humans. A tag is just a meaningful alias such as "elexis 2.1 beta 4 rev2". You can always create a working directory that contains such a development position by updating to that given tag.
+
+ In contrast, a branch denotes a point where the repository is split in two. Consider a public release such as "elexis 2.0". There will still be a trunk with continuous development leading to  release 2.1, but also "elexis 2.0" will not be static like a tag, but will receive bugfixes and continue eventually to 2.0.1 and so on. 
+ 
+ While it is possible in mercurial to create branches, it is more common to use clones for this purpose. So the elexis master repository has clones for elexis 1.4 and 2.0 branches.
+
+h3. IVd Keyword expansion
+
+It is often nice to see who was the last person that edited a given file. Therefore you find most java-files the pattern @$Id$@ which is automatically expanded to something like
+
+pre. 
+$Id: BackgroundJob.java 689dbcc40507 2008/11/22 05:58:01 rgw_ch $
+
+To enable this keyword extension create a @.hgrc@ file in your home directory and add the following content:
+
+pre. 
+[extensions]
+keyword=
+[keyword]
+**.java =
+[keywordmaps]
+Id = {file|basename} {node|short} {date|utcdate} {author|user}
+
+More information about keyword expansion is found under "KeywordExtension":http://mercurial.selenic.com/wiki/KeywordExtension in the Mercurcial wiki.
+
+h3. IVe Rebasing
+
+Have a look at "RebaseProject":http://mercurial.selenic.com/wiki/RebaseProject, which explains how rebase allows to flatten the history graph of changes committed by several people in separate repositories. In the "Medelexis wiki":http://wiki.medelexis.ch/index.php/Mercurial_primer you find a ruby script, which creates some sample revisions.
+
+To enable it you have to add the following lines into the @.hgrc@ file in your home directory:
+
+pre. 
+[extensions]
+rebase=
+
+The easiest way is to enable the "rebase after pull" checkbox on each pull from the mother repository. (Unfortunately you cannot make this the default choice.) If you ever forgot it, you have a second chance after committing your changes and before pushing to mother. In the Eclipse "Package viewer" simply select a package. Then select "Team..Rebase.." from the context menu (right click). 
+* Be aware that the operation will impact the whole repository and not only the selected project.
+   
+h3. IVf Cherry-picking changes from a different branch/repository
+
+Mercurial's "transplant extension":http://mercurial.selenic.com/wiki/TransplantExtension allows you to selectively pull a single (or multiple) commit(s) from a different branch or repository into you current project. 
+
+To enable it you have to add the following lines into the @.hgrc@ file in your home directory:
+
+pre. 
+[extensions]
+transplant=
+
+To use it under Eclipse, select a package in the Package viewer. Then select "Team..Extensions..Transplant.." from the context menu (right click). 
+* Be aware that the operation will impact the whole repository and not only the selected project. 
+* It may also create false conflicts if you try to merge afterwards the selected branch.
+
+
+   
+h2. V Troubleshooting
+
+h3. Never use --force
+
+Unless you are a real mercurial crack, one assumes how things should work. In this cases usually Mercurcial will o something different than what you assume. Don't use this switch even when Mercurial says so.
+
+h3. push creates new heads in remote repostory
+
+If you get the error "push creates new heads in remote repostory" when pushing from a shared repository, you probably have a checkout in the shared repository. To cope with this error these steps should work:
+# delete the shared repository (or move it to safe place)
+# clone it from its mother using the "--noupdate" switch
+# go to the workspace where you have the changes you wanted to push
+# pull --rebase the changes from the newly created shared repository
+# push the changes to the shared repository
+# push the changes from the shared repository to its mother
+
+
+h2. VI Further reading
+
+"Mercurial: The definitive guide":http://hgbook.red-bean.com/
+"The Mercurial web site":http://mercurial.selenic.com/
+"Short tutorial":http://hginit.com/  

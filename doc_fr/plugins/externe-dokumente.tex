@@ -1,0 +1,59 @@
+% *******************************************************************************
+% * Copyright (c) 2007 by Elexis
+% * All rights reserved. This document and the accompanying materials
+% * are made available under the terms of the Eclipse Public License v1.0
+% * which accompanies this distribution, and is available at
+% * http://www.eclipse.org/legal/epl-v10.html
+% *
+% *  $Id$
+% *******************************************************************************
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+
+\section{Documents externes}\label{elexis-externedokumente}
+\index{Documents externes}
+Ce Plugin permet l'intégration de n'importe quel document externe dans Elexis.
+
+En totale jusqu'à trois registres peuvent être intégrés dans le système des données.
+Les fichiers de ces registres sont représentes dans une liste combinée.
+Le document s'ouvre par double-clic sur le fichier.
+Après ouverture ce document peut être modifié tout normalement.
+
+Dans un environement réseau, les documents doivent être sauvegardés sur un disque dûre qui est intégré dans le réseau pour que les documents soient accessibles pour tous les participants du réseau.
+
+\subsection{Configuration}
+
+Le Plugin doit d'abord être configuré de façon intelligente pour qu'il puisse être utilisé.
+Sous configuration il y a une rubrique \textit{documents externes}.
+Là un peut choisir jusqu'à trois registres du système. 
+(Après avoir changé cette configuration on doit redémarrer Elexis.)
+
+\subsection{Afficher des documents dans Elexis}
+
+Sélectionnez dans le menu \textit{Fenêtre/Affichage/Other...}. Introduisez dans le champ de recherche textit{documents externes}. Séléectionnez la 'view' \textit{documents externes} et cliquez sur OK.
+Vous pouvez maintenant positionner la fenêtre sur votre surface de travail.
+
+Si un patient avait été séléctionné, Elexis va chercher les documents le concernant dans les registres configurés et les montrera sur une liste. Elexis montrera les documents de tous les registres. Vous pouvez (selon besoin) laisser montrer ou cacher un registre en le marquant en dessus de la liste.
+
+
+Pour ouvrir un document veuillez double-cliquer  sur le nom du fichier. Vous pouvez aussi voir le nom du fichier ou la date de sa creation en cliquant avec la touche droite et en choisissant dans le menu qui se montre \textit{propriétés}.
+
+\subsection{Comment nommer un document?}
+
+Des documents sauvegardés à l'extérieur de Elexis ne peuvent pas être liés automatiquement et de façon fiable aux données des patients dans Elexis car les documents externes n'ont pas une identité inéquivoque. Ces documents doivent donc être liés à l'aide du nom du fichier avec les patients existants dans Elexis, raison pour laquelle le nom du fichier doit toujours remplir les conditions du même modèle pour que Elexis puisse attribuer les documents au patient spécifique.
+
+Le Plugin suit dong le schéma suivant :
+
+\begin{itemize}
+\item Le nom du fichier doit commencer avec les premières 6 lettres du nom du patient. Si le nom du patient est plus court que 6 lettres, il faudra ajouter des éspaces jusqu'au nombre de 6 lettres.
+\item Il y suit le prénom complet.
+\item Le reste peut être un texte quelconque. Idéalement il décrit le contenu du document.
+\end{itemize}
+
+Exemples:
+
+\begin{description}
+\item[MusterPeter Labo.pdf]
+Ce fichier est attribué au patient Muster Peter.
+\item[Kunz  Rolf Transmission Dr. Meier.doc]
+Ce fichier est attribué au patient Kunz Rolf. Le nom (Kunz) doit être prolongé par deux éspaces.
+\end{description}

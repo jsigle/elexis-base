@@ -1,0 +1,13 @@
+#TeXlipse project settings
+#Tue Mar 13 21:11:20 CET 2007
+builderNum=2
+outputDir=
+makeIndSty=
+bibrefDir=
+outputFormat=pdf
+tempDir=tmp
+mainTexFile=elexis.tex
+outputFile=elexis.pdf
+langSpell=de
+markDer=true
+srcDir=

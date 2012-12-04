@@ -1,0 +1,42 @@
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+
+\section{banque de données, Client/Server-Système}
+L'installation de Elexis consiste en deux parties: Un\textit{Serveur}, sur lequel sont installés les données et un ou plusieurs  \textit{Clients}, qui ont accès aux données et qui permettent de les visualiser et de les modifier. Le serveur et les 'clients' peuvent se trouver sur le même ou sur des différents ordinateurs.  Un\textit{\textit{Serveur}} au sens large est un ordinateur à part sur lequel fonctionnent un ou plusieurs logiciels serveur.
+
+Elexis peut utiliser (en principe une quelconque) base de données qui se laisse utiliser selon le standard de l'industrie JBBC comme logiciel de serveur. L'installation automatique est configurée d'avance pour les systèmes de base de données suivants :
+\begin{itemize}
+\item MySQL (www.mysql.com) : Il s'agit de la base de données le plus répandue dans l'Internet. La majorité des applications basées sur une base de données qu'on trouve dans le Web, utilisent en arrière-plan un serveur MySQL. Un serveur MySQL coute environs Fr 750.-pour une utilisation à des fins commerciales. A des fins privés il est gratuit.
+
+\item PostgreSQL (www.postgresql.org) : Il s'agit d'un serveur de base de données OpenSource. Il maîtrise un jeu d'instructions plus large que MySQL mais est considéré comme un peu plus lent que celui-ci. Cependant cela ne devrait pas jouer un rôle pour Elexis car les test de rapidité se font normalement sous les conditions de plusieurs milliers d'accès par seconde, un situation qui pourrait se produire que dans des très rares cas dans un cabinet médical. PostgreSQL est gratuit pour toutes les formes d'utilisation.
+
+\item HSQLDB: Il s'agit d'une base de données OpenSource qui est écrite en Java. Elle peut être utilisée soit en tant que serveur indépendant soit intégrée dans le logiciel. HSQL est un peu plus lent que les deux systèmes mentionnés précédemment mais pour des environnements petits comme ceux d'un cabinet médical éventuellement suffisant. HSQL est gratuit.
+
+\end{itemize}
+
+Elexis conseille PostgreSQL pour des  installations avec plusieurs 'clients' et HSQLDB pour des installations à place uniques. L'installation démo est basée sur un serveur HSQL InProc. Puisque Elexis n'utilise que des commandes et fichiers simples standard-SQL on devrait pouvoir utiliser toute base de données SQL, pour laquelle existe un pilote Jdbc.(Par contre ceci doit être installé manuellement).
+Si vous souhaitez utiliser une installation client-serveur (donc plusieurs 'clients' qui utilisent la même base de données) il faudra installer premièrement le serveur.
+\begin{itemize}
+ \item Comme serveur nous vous conseillons de choisir de préférence un ordinateur sur lequel personne ne travaille directement. Qu'il y ait encore d'autres logiciels de serveur installés comme par ex. pour les mails, fax, imprimantes etc, ne joue aucun rôle.
+\item Installez là le serveur de base de donné de votre choix. (Nous préconisons mysql ou PostgreSQL)
+\item Créez dans la base de donnée un 'user-account' nommé : elexisuser
+\item Créez une base de donnée (vide) avec le nom elexis sur laquelle 'elexisuser' a un accès illimité.
+\item Décidez-vous absolument pour une stratégie de sauvegarde des données efficace et fiable. Plus d'information la concernant ci-après.
+\item La configuration ultérieure se fait depuis les 'clients'. Pour le travail de tout les jours le serveur ne nécessite pas forcément un écran et un clavier et peut se trouver à un endroit frais du cabinet ou même à la cave.
+\end{itemize}
+
+\textbf{Important !}
+
+\textit{N'oubliez jamais la sauvegarde des données! }
+
+Elexis enregistre toutes les données dans cette base des données. Une destruction de cette base de donnée n'est pas du tout impossible. Une interruption du courrant peut  \textit{choper le disque dur au tendon d'Achille}, un dommage mécanique peut détruire des secteurs importants du disque dur et les rendre illisibles, une faute d'un logiciel peut effacer les données et un virus peut se défouler sur vos données. Il y a des multiples stratégies de sauvegarde des données. Nous vous présenterons quelques unes en ce qui suit :
+
+\begin{description}
+\item[ La Réplication ] Certaines banques de données (comme par exemple MySQL à partir de la version 4.0) peuvent copier leurs données de façon constante vers un serveur qui se trouve sur un autre ordinateur. Puisque seulement les données qui changent sont transmis (en arrière-plan) ceci demande moins de capacité que ce qu'on pourrait croire. Cette méthode s'appelle  \textit{Réplication} . En fin de compte on a deux bases de données identiques. Si le serveur se casse on peut dans un délai de quelques minutes choisir le deuxième ordinateur comme serveur et continuer le travail pratiquement sans interruption.
+\item [La Machine virtuelle ] Un concept apparenté : On laisse tourner le serveur de la base de donnée sur un machine virtuelle spécifiquement réservée pour cela (par ex de \href{http://www.vmware.com/}{VMWare}) et on sauvegarde de façon régulière toute la machine virtuelle. En cas de panne du serveur on peut également dans quelques minutes starter la machine virtuelle de sauvegarde sur le même ou n'importe quel autre ordinateur dans le réseau et continuer à travailler.
+\item [Sauvegarde des données fréquente ] On peut laisser faire toutes les quelques minutes une sauvegarde automatisée (par ex. avec mysqldump) et sauvegarder de cette façon des données en plusieurs générations sur des différents supports informatiques. Cette méthode utilise le moins de ressources de toutes les méthodes mentionnées ici et crée les fichiers de sauvegarde les plus petits. En cas de panne du serveur par contre la remise en route prend plus de temps : Il faut d'abord démarrer le serveur de base de donnée sur un ordinateur de réserve et y mettre les fichiers sauvegardés pour ensuite adapter selon la configuration tout les 'clients' au nouveau serveur.
+\end{description}
+
+
+
+
+

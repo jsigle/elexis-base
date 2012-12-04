@@ -1,0 +1,3 @@
+#!/bin/sh
+makeindex $1
+pdflatex $1

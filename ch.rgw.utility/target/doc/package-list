@@ -1,0 +1,6 @@
+ch.rgw.compress
+ch.rgw.crypt
+ch.rgw.io
+ch.rgw.tools
+ch.rgw.tools.net
+org.apache.commons.compress.bzip2

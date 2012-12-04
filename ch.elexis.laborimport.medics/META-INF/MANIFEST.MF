@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Elexis Laborimport Medics
+Bundle-SymbolicName: ch.elexis.laborimport.medics;singleton:=true
+Bundle-Version: 2.1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.ui,
+ ch.elexis;bundle-version="2.1.5",
+ ch.rgw.utility,
+ ch.elexis.importer.div,
+ ch.elexis.arzttarife_ch,
+ ch.elexis.hl7.v2x;bundle-version="2.1.6",
+ ch.elexis.core;bundle-version="0.0.2"
+Bundle-ActivationPolicy: lazy
+Bundle-Activator: ch.elexis.labor.medics.MedicsActivator
+Bundle-Vendor: medshare.net
+

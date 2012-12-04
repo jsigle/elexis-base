@@ -1,0 +1,170 @@
+% *******************************************************************************
+% * Copyright (c) 2007-2009 by Elexis
+% * All rights reserved. This document and the accompanying materials
+% * are made available under the terms of the Eclipse Public License v1.0
+% * which accompanies this distribution, and is available at
+% * http://www.eclipse.org/legal/epl-v10.html
+% *
+% * Contributors:
+% *    G. Weirich, U. Berner, D. Lutz
+% *
+% *  $Id: elexis.tex 5278 2009-05-07 10:37:57Z rgw_ch $
+% *******************************************************************************
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+%
+% Dies ist das Zentraldokument für die Elexis-Dokumentation. Einzelne
+% Kapitel und Unterkapitel können mit \include eingesetzt werden.
+
+\documentclass[paper=a4,BCOR8.25mm,twoside]{scrbook}
+\usepackage{german}
+\usepackage[utf8]{inputenc}
+\usepackage{makeidx}
+\usepackage{wrapfig}
+\usepackage{graphicx}
+%\usepackage{placeins}
+\makeindex
+
+\usepackage{floatflt}
+\usepackage[]{hyperref}
+\usepackage{color}
+\author{Gerry Weirich\\Urs Berner\\Daniel Lutz\\traduction française par Bruno Büchel}
+
+\extratitle{
+    \vfill
+	\begin{center}
+		\includegraphics{../ch.elexis/rsc/elexis-logo}
+	\end{center}
+    \begin{center}
+        \textbf{Version 2.1.0}
+    \end{center}
+    \vfill
+}
+\title{Le Manuel de Elexis\textsuperscript{\textregistered}}
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\part{Introduction}
+\chapter{Conditions pour l'utilisation}
+Elexis\textsuperscript{\textregistered} est un projet ouvert qui évolue constamment. Le développement continue, et on ne peut pas garantir que ce manuel décrit toujours correctement et/ou de façon exhaustive toutes les qualités de ce programme. Si vous croyez d'avoir trouvé une erreur veuillez nous l'annoncer svp.
+
+Important : Vous ne pouvez utiliser Elexis que si vous êtes d'accord avec la clause de non-résponsabilité suivante et avec les conditions de la licence.
+
+
+\section{Clause de non-résponsabilité}
+On ne peut jamais garantir qu'on logiciel soit sans erreurs\footnote{Déjà en 1930 Kurt Gödel avait prouvé avec son théorème d'incomplétude que il existe une infinité de faits vrais qu'il est impossible de prouver en utilisant la branche des mathématiques en question. L'élargissement de ce théorème par la preuve que l'absence d'erreurs d'un logiciel ne peut jamais être garantie à été fourni en 1936 par Alan Turing. Malgré les percées théoriques de connaissances informatique, que Turing a fourni avec sa machine de Turing hypothétique (des véritables ordinateurs n'existaient pas encore) il n'était par ailleurs pas le permier programmeur. Cette honneur appartient à Lady Ada Augusta Byron, Countess of Lovelace (1815-1852), qui avait développé le premier programme d'ordinateur (pour la analytical engine de Charles Babbage qui n'a jamais été construite)}. Il en est de même pour des projets Closed Source que pour des projets Open Source. Elexis est utilisé et testé dans plusieurs cabinets médicaux. Dans la mesure du 
+possible toutes les erreurs ont été éliminées. Mais il ne peut pas être garanti qu'il n' y existent pas d'autres erreurs.
+Pour cette raison nous déclinons toute responsabilité pour des dégâts directs ou indirects, matériels ou immatériels, découlant de l'utilisation ou la non-disponibilité de Elexis. Nous ne garantissons pas non plus la fonctionnalité du logiciel sur un ordinateur spécifique ou pour un usage particulier.
+
+
+\section{Licence}
+Vous pouvez utiliser Elexis sur autant d'ordinateurs que vous voulez. Vous pouvez transmettre des copies de Elexis à des tiers. Vous êtes libres d'appliquer toute modification possible à Elexis ou de les faire effectuer par des tiers, à l'exception de celles énumérées dans le paragraphe suivant.
+
+
+\medskip
+
+Il n'est  \textbf{pas permis }de : supprimer ou modifier des indications de Copyright du programme ou de la documentation. Il n'est  \textbf{pas permis} de créer un logiciel indépendant à base de Elexis sans indiquer l'origine de cette base. Il n'est \textbf{pas non plus permis} de nommer 'Elexis' un autre logiciel ou un logiciel qui a été crée par des modifications et extensions de Elexis.
+
+\chapter{Description et instruction rapide}
+Elexis -- die elektronische Praxis(le cabinet électronique) -- est
+\begin{itemize}
+	\item un projet de développement communautaire d'un logiciel source ouvert (Open Source)spécifiquement adapté aux conditions suisses.
+
+	\item  un logiciel universel : Il est utile pour toutes le professions médicales qu'il s'agisse d'un cabinet médicale ou d'un cabinet de dentiste, d'un cabinet de physiothérapie, de ergothérapie ou de logopédie, de psychothérapie ou de homéopathie. Elexis peut être perfectionné et adapté avec souplesse aux besoins de l'utilisateur.
+	\item De la pratique pour la pratique : Elexis est développé par des professionnels du domaine médicale et testé sous les conditions du travail quotidien au sein du cabinet médical.
+
+	\item Fonctionne sous Windows, Linux et MacOS.X\footnote{Pour MacOS X par contre avec la restriction que le traitement de texte doit avoir lieu avec un autre programme , car l'intégration d'Open Office n'est pas encore possible.} et même dans des environnements mixtes avec différents systèmes informatiques sur le même serveur. 
+	\item Open Source : Elexis n'est pas un programme propriétaire. Vous n'êtes donc pas dépendant d'un fabricant. Des personnes intéressées peuvent en tout temps avoir accès au code source et peuvent selon besoin augmenter la fonctionnalité du logiciel. La licence sous laquelle Elexis est distribué permet un tel développement par des tiers de façon explicite et sans conditions ou coûts.
+
+	\item Tout en un : le dossier médical du patient, la gestion des stocks, les commandes, la facturation, le contrôle des débiteurs, l'agenda et bien plus encore.
+  	\item Sociable : Peut importer les données d'autres logiciels (si prévu par leur producteurs) et peut exporter ses propres données dans des formats d'exportation standardisés.
+\end{itemize}
+\pagebreak[3]
+\textbf{Soutien}
+Elexis contient tous les composants afin de pouvoir démarrer directement. Un dossier médical électronique est toutefois une chose complexe et ne peut pas être maîtrisé d'un coup.
+Nous essayons de vous faciliter le début par notre documentation. Si vous préférez ne pas traiter avec des internes des ordinateurs, nous vous proposons également du soutien sous forme d'installation et de maintenance. C'est avec plaisir que nous vous proposons une offre sur demande.
+
+
+\bigskip
+
+\textbf{Forum}
+Il existe un forum ouvert (http://www.elexis-forum.ch) , où des questions
+et des discussions entre les utilisateurs et les intéressés sont possible et bienvenus.
+
+\bigskip
+
+\textbf{Plugins supplémentaires et développement }
+\index{Plugins supplémentaires}\index{Website}
+Les nouveautés sont en général d'abord décrit sur le site (http://www.elexis.ch) . Afin de rester au courant de l'actualité concernant des nouveaux plugins nous vous conseillons de consulter de temps en temps ce site.
+
+
+\bigskip
+\index{Commande de développement}\index{Plugins supplémentaires}\index{Plugin!programmer}
+\textbf{Développement spécifique }
+Si vous avez besoin d'une fonction spécifique, qui n'est pas disponible dans la version de base, nous vous conseillons volontiers sur les possibilités et les coûts d'un développement correspondant.
+
+\include{installs/default}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part{Visite guidée}
+\chapter{Saisir une nouvelle patiente}
+\label{tour}
+	\include{tour/patneu}
+\chapter{Aménager l'interface utilisateur}
+	\label{customize}
+	\include{tour/customize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part{Référence systématique}
+\chapter{Concepts}
+	\include{konzepte}
+\chapter{Menu et barre d'outils} 					
+	\include{menu}
+\chapter{'Views' du système central}
+	\include{views/einfuehrung}
+	\include{views/stammdaten}
+	\include{views/konsviews}
+	\include{views/laborview}
+	\include{views/abrechnung}
+	\include{views/rest}
+	
+	
+\chapter{Plugins}
+	\include{plugins/einleitung}
+	\include{plugins/agenda}
+	\include{plugins/befunde}
+	\include{plugins/arzttarife}
+	
+\chapter{Traitement de texte}
+	\include{text/einleitung}
+	\include{text/vorlagen}
+	\include{text/datenfelder}
+
+
+\chapter{Fonctionnement multi-client}
+	\include{multiuser}
+	
+\part{Annexes}
+\appendix
+
+\chapter{Configuration du système requise}
+	\include{appendix/voraussetzungen}
+
+\chapter{Transformer la version d'évaluation en version complète}
+	\include{appendix/vollversion}
+
+\chapter{Réglages}
+	\include{settings}
+
+\chapter{Sujets élargis}
+    \include{appendix/advanced}
+
+\chapter{Réflexions concernant la sécurité des données}	
+	\include{appendix/sicherheit}
+
+\chapter{Index}
+\printindex
+\end{document}

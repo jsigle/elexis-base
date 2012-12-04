@@ -1,0 +1,23 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Importations des données Keycab
+Bundle-SymbolicName: ch.elexis.importer.keycab;singleton:=true
+Bundle-Version: 0.1.2
+Bundle-Vendor: elexis.ch
+Require-Bundle: ch.elexis,
+ ch.elexis.arzttarife_ch,
+ org.eclipse.core.runtime,
+ org.eclipse.ui,
+ ch.elexis.icpc,
+ ch.elexis.importer.div;bundle-version="1.4.0",
+ ch.elexis.diagnosecodes_ch;bundle-version="2.0.0",
+ ch.rgw.utility;bundle-version="2.0.0",
+ org.apache.commons.logging;bundle-version="1.0.0",
+ ch.elexis.core;bundle-version="0.0.2"
+Bundle-ClassPath: lib/jackcess-1.2.0.jar,
+ .
+Import-Package: ch.rgw.tools
+Export-Package: ch.elexis.importer.keycab,
+ com.healthmarketscience.jackcess,
+ com.healthmarketscience.jackcess.query,
+ com.healthmarketscience.jackcess.scsu

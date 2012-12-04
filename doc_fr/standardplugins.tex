@@ -1,0 +1,239 @@
+% *******************************************************************************
+% * Copyright (c) 2007-2008 by Elexis
+% * All rights reserved. This document and the accompanying materials
+% * are made available under the terms of the Eclipse Public License v1.0
+% * which accompanies this distribution, and is available at
+% * http://www.eclipse.org/legal/epl-v10.html
+% *
+% * Contributors:
+% *    G. Weirich, U. Berner, D. Lutz
+% *
+% *  $Id: elexis.tex 4825 2008-12-17 16:42:46Z rgw_ch $
+% *******************************************************************************
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+%
+% Dies ist das Zentraldokument für die Elexis-Dokumentation. Einzelne
+% Kapitel und Unterkapitel können mit \include eingesetzt werden.
+
+\documentclass[paper=a4,BCOR8.25mm]{scrartcl}
+\usepackage{german}
+\usepackage[utf8]{inputenc}
+\usepackage{makeidx}
+\usepackage{wrapfig}
+\usepackage{graphicx}
+\makeindex
+
+\usepackage{floatflt}
+\usepackage[]{hyperref}
+\usepackage{color}
+\author{Gerry Weirich, Urs Berner}
+
+\extratitle{
+    \vfill
+	\begin{center}
+		\includegraphics{../elexis/rsc/elexis-logo}
+	\end{center}
+    \begin{center}
+        \textbf{Plugins}
+    \end{center}
+    \vfill
+}
+\title{ \textsuperscript{\textregistered}Le registre des Plugins d'Elexis}
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+
+Ce document contient des descriptions des plugins  et de leur documentation connus jusqu'au moment de la publication. Un tel registre ne peut jamais être exhaustif puisqu'il est une des qualités d'Elexis qu'il pourrait y avoir aussi des tiers qui produisent des plugins sans nous informer.
+
+\medskip
+
+Veuillez nous informer, si vous avez connaissance d'un plugin ou si vous produisez même un plugin qui n'apparaît pas encore dans cette liste mais qui devrait y figurer. 
+
+
+
+\section{Conduite du dossier médical}
+\subsection{Elexis-CISP}
+Intégration du code CISP-2 dans Elexis.
+
+\medskip
+
+\textbf{Prix:} gratuit
+
+\textbf{Distribution:} Elexis
+
+\textbf{Documentation:} http://www.rgw.ch/elexis/dox/elexis-icpc.pdf\
+
+\subsection{Elexis-Iatrix}
+Surface de travail alternative du dossier médical .
+
+\textbf{Prix:} gratuit
+
+\textbf{Distribution:} Iatrix
+
+\textbf{Documentation:} http://www.iatrix.org/pmwiki/pmwiki.php/Elexishilfe/KGIatrix
+
+\subsection{Elexis-Omnivore}
+Plugin pour l'importation de toute sorte de documents ou imagee dans les dossier des patients.
+
+\textbf{Prix:} gratuit
+
+\textbf{Distribution:} Elexis
+
+\textbf{Documentation:} http://www.elexis.ch/jp/content/view/106/76/
+
+\subsection{Omnivore-direct}
+Elargissement d'Omnivore qui peut directement scanner et classifier hiérarchiquement des documents.
+
+\textbf{Prix:} CHF 115.00
+
+\textbf{Distribution:} Elexis
+
+\textbf{Documentation:} http://www.rgw.ch/elexis/dox/omnivore-direct.pdf
+
+\subsection{Elexis-notes privés}
+Permet de rendre illisible certains parties du dossier médical
+
+\textbf{Prix:} gratuit
+
+\textbf{Distribution:} Elexis
+
+\textbf{Documentation:} http://www.elexis.ch/jp/content/view/48/76/
+
+
+\subsection{Elexis-documents externes}
+Intégration des documents externes qui sont nommés selon des critères spécifiques.
+
+\textbf{Prix:} gratuit
+
+\textbf{Distribution:} Iatrix
+
+\textbf{Documentation:} http://www.iatrix.org/pmwiki/pmwiki.php/Elexishilfe/ExterneDokumente
+
+\subsection{Visualisation des images dans Elexis}
+Intégration des images dans la saisie de consultation.
+
+\textbf{Prix:} gratuit
+
+\textbf{Distribution:} Elexis
+
+\textbf{Documentation:} http://www.elexis.ch/jp/content/view/38/76/
+
+\subsection{Résultats dans Elexis}
+Administration (configurable) des différents types de résultats (Radiographies, ECG, TP etc.)
+
+\textbf{Prix:} gratuit
+
+\textbf{Distribution:} Elexis
+
+\textbf{Documentation:} http://www.elexis.ch/jp/content/view/37/76/
+
+\section{Intégration du Laboratoire}
+Ce Plugins permettent d'intégrer les résultats des laboratoires externes dans les documents dans Elexis. En principe il est possible de créer un lien à pratiquement tout laboratoire externe. Ci-joint vous trouvez une liste des plugins d'importation qui ont été financés par le laboratoire concerné et qui sont pour cette raison gratuitement à disposition. Si vous n'y trouvez pas votre laboratoire veuillez demander pour un importateur pour Elexis. 
+
+\begin{itemize}
+\item Ärztelabor Badena
+\item Labor Viollier
+\item Labor Prof. Krech\&Partner
+\item LogoLab
+\item Medica
+\item Team W
+\item Unilabs Weber
+\item Unilabs Mittelland
+\item Labor MicroGen
+
+\end{itemize}
+
+\section{Intégration des periphériques}
+Ces plugins permettent de cingler  des appareils périphériques et intègrer leurs résultats dans le dossier médical. 
+\begin{itemize}
+\item Abacus Junior
+\item Mythic 18
+\item ABX Micros
+\item Urilux-S
+\end{itemize}
+
+\section{Finances}
+Plusieurs plugins qui traitent la facturation, la comptabilité etc.
+
+\subsection{livre de caisse}
+\subsection{mediserv}
+\subsection{MediPort}
+\subsection{H-Clearing}
+
+\subsection{Elexis-ebanking-Suisse}
+
+\section{Article}
+\subsection{Elexis-Article-Suisse}
+LiMA, médicaments, Medicals (Galdat oder zur Rose - Stamm).
+
+\subsection{Elexis-médicaments-OFSP}
+Intégration de la liste des spécialistés 
+\subsection{Elexis-Articles-Autriche}
+
+
+\section{systèmes tarifaires}
+\subsection{Elexis-tarif des médecins-Suisse}
+Tarmed, liste des analyses
+\subsection{Elexis-facturation privé}
+
+
+\section{systèmes de diagnostics}
+\subsection{CIM-10}
+\subsection{Code tessinois}
+\subsection{CISP-2}
+\subsection{Elexis-diagnostics propres}
+
+\section{Statistiques}
+\subsection{Archie}
+Un Framework statistique facilement extensible pour Elexis y inclus quelques exemples.
+
+\textbf{Prix:} gratuit
+
+\textbf{Distribution:} Designchuchi
+
+\textbf{Documentation:} http://archie.designchuchi.ch
+
+\subsection{Waelti-Statistik}
+Analyse des coûts
+
+\textbf{Prix:} 85.00
+
+\textbf{Distribution:} Michael Wälti
+
+\textbf{Documentation:} http://www.elexis.ch/jp/content/view/231/79/
+
+
+\section{Transfer des données}
+Importation et exportation des données des différentes sources externes
+
+\subsection{Importation des bases de données d'autres logiciels }
+\begin{itemize}
+\item Vitomed
+\item Aeskulap
+\item PraxisDesktop
+\item PraxiStar
+\item Ärztekasse
+\end{itemize}
+ Pour d'autres programmes veuillez nous contacter.
+
+\subsection{Covercard}
+\subsection{medshare-directories}
+\subsection{Elexis-Rosenstudio}
+\subsection{Elexis-MediDirect}
+\subsection{SGAM.xChange}
+
+
+\section{Gadgets}
+\subsection{Elexis-Timer}
+\subsection{Elexis-nouvelles}
+
+\section{Diverse}
+\subsection{Elexis-Agenda}
+\subsection{Elexis-MoleMax}
+
+
+
+\end{document} 

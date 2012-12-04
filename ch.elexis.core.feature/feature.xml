@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ch.elexis.core.feature"
+      label="Elexis Core feature"
+      version="1.0.0.qualifier"
+      provider-name="elexis.ch">
+
+   <description url="http://www.elexis.ch">
+      Die elektronische Krankengeschichte (Kern).
+   </description>
+
+   <copyright url="http://www.elexis.ch">
+      Copyright (c) 2005 - 2011 Gerry Weirich und viele andere mehr.
+   </copyright>
+
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      Der Kern von Elexis untersteht der Eclipse Public License Version 1.0
+   </license>
+
+   <plugin
+         id="ch.elexis"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.h2.connector"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="ch.elexis.mysql.connector"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="ch.elexis.postgresql.connector"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="ch.rgw.utility"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.importer.div"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

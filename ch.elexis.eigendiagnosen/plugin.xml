@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="ch.elexis.PersistentReference">
+      <Factory
+            Class="ch.elexis.eigendiagnosen.data.EigendiagnoseFactory"
+            name="Eigendiagnosen">
+      </Factory>
+   </extension>
+   <extension
+         point="ch.elexis.Diagnosecode">
+      <Diagnosesystem
+            CodeDetailDisplay="ch.elexis.eigendiagnosen.views.DetailDisplay"
+            CodeSelectorFactory="ch.elexis.eigendiagnosen.views.CodeSelectorFactory"
+            ElementFactory="ch.elexis.eigendiagnosen.data.EigendiagnoseFactory"
+            ImporterClass="ch.elexis.eigendiagnosen.data.Importer"
+            name="Eigendiagnosen">
+      </Diagnosesystem>
+   </extension>
+
+</plugin>

@@ -1,0 +1,13 @@
+Build-By=jsigle
+Build-Jdk=1.6.0_24
+Implementation-Title=The Elexis project
+Bundle-SymbolicName=ch.elexis.postgresql.connector
+Bundle-Name=elexis:ch.elexis.postgresql.connector
+Bundle-Version=9.2.1002
+Implementation-Vendor=Copyright 2006-2012 by Gerry Weirich
+Include-Resource=/home/jsigle/elexis-bootstrap-201212031735-2.1.7.0/elexis-bootstrap/elexis-base/ch.elexis.postgresql.connector/postgresql-9.2-1002.jdbc4.jar,@/home/jsigle/elexis-bootstrap-201212031735-2.1.7.0/elexis-bootstrap/elexis-base/ch.elexis.postgresql.connector/postgresql-9.2-1002.jdbc4.jar
+Export-Package=org.postgresql,org.postgresql.copy,org.postgresql.core,org.postgresql.core.types,org.postgresql.core.v2,org.postgresql.core.v3,org.postgresql.ds,org.postgresql.ds.common,org.postgresql.ds.jdbc23,org.postgresql.ds.jdbc4,org.postgresql.fastpath,org.postgresql.geometric,org.postgresql.gss,org.postgresql.jdbc2,org.postgresql.jdbc2.optional,org.postgresql.jdbc3,org.postgresql.jdbc3g,org.postgresql.jdbc4,org.postgresql.largeobject,org.postgresql.ssl,org.postgresql.ssl.jdbc4,org.postgresql.translation,org.postgresql.util,org.postgresql.xa,org.postgresql.xa.jdbc3,org.postgresql.xa.jdbc4
+-classpath=/home/jsigle/elexis-bootstrap-201212031735-2.1.7.0/elexis-bootstrap/elexis-base/ch.elexis.postgresql.connector/postgresql-9.2-1002.jdbc4.jar
+Bundle-Description=
+-removeheaders=Include-Resource,Bnd-LastModified,Created-By,Implementation-Title,Tool
+-output=/home/jsigle/elexis-bootstrap-201212031735-2.1.7.0/elexis-bootstrap/elexis-base/ch.elexis.postgresql.connector/target/elexis-ch.elexis.postgresql.connector-9.2.1002.20121203.jar

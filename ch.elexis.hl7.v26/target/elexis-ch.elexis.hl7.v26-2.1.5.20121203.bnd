@@ -1,0 +1,13 @@
+Build-By=jsigle
+Build-Jdk=1.6.0_24
+Implementation-Title=The Elexis project
+Bundle-SymbolicName=ch.elexis.hl7.v26
+Bundle-Name=elexis:ch.elexis.hl7.v26
+Bundle-Version=2.1.5
+Implementation-Vendor=Copyright 2006-2012 by Gerry Weirich
+Include-Resource=/home/jsigle/elexis-bootstrap-201212031735-2.1.7.0/elexis-bootstrap/elexis-base/ch.elexis.hl7.v26/lib/commons-codec.jar,/home/jsigle/elexis-bootstrap-201212031735-2.1.7.0/elexis-bootstrap/elexis-base/ch.elexis.hl7.v26/lib/commons-logging-1.0.4.jar,/home/jsigle/elexis-bootstrap-201212031735-2.1.7.0/elexis-bootstrap/elexis-base/ch.elexis.hl7.v26/lib/hapi-base-1.1.jar,/home/jsigle/elexis-bootstrap-201212031735-2.1.7.0/elexis-bootstrap/elexis-base/ch.elexis.hl7.v26/lib/hapi-structures-v26-1.1.jar,@/home/jsigle/elexis-bootstrap-201212031735-2.1.7.0/elexis-bootstrap/elexis-base/ch.elexis.hl7.v26/lib/commons-codec.jar,@/home/jsigle/elexis-bootstrap-201212031735-2.1.7.0/elexis-bootstrap/elexis-base/ch.elexis.hl7.v26/lib/commons-logging-1.0.4.jar,@/home/jsigle/elexis-bootstrap-201212031735-2.1.7.0/elexis-bootstrap/elexis-base/ch.elexis.hl7.v26/lib/hapi-base-1.1.jar,@/home/jsigle/elexis-bootstrap-201212031735-2.1.7.0/elexis-bootstrap/elexis-base/ch.elexis.hl7.v26/lib/hapi-structures-v26-1.1.jar
+Export-Package=ca.uhn.hl7v2,ch.elexis.hl7,ch.elexis.hl7.data,ch.elexis.hl7.model,ch.elexis.hl7.util,ch.elexis.hl7.v26
+-classpath=/home/jsigle/elexis-bootstrap-201212031735-2.1.7.0/elexis-bootstrap/elexis-base/ch.elexis.hl7.v26/target/classes, /home/jsigle/elexis-bootstrap-201212031735-2.1.7.0/elexis-bootstrap/elexis-base/ch.elexis.hl7.v26/lib/commons-codec.jar, /home/jsigle/elexis-bootstrap-201212031735-2.1.7.0/elexis-bootstrap/elexis-base/ch.elexis.hl7.v26/lib/commons-logging-1.0.4.jar, /home/jsigle/elexis-bootstrap-201212031735-2.1.7.0/elexis-bootstrap/elexis-base/ch.elexis.hl7.v26/lib/hapi-base-1.1.jar, /home/jsigle/elexis-bootstrap-201212031735-2.1.7.0/elexis-bootstrap/elexis-base/ch.elexis.hl7.v26/lib/hapi-structures-v26-1.1.jar
+Bundle-Description=
+-removeheaders=Include-Resource,Bnd-LastModified,Created-By,Implementation-Title,Tool
+-output=/home/jsigle/elexis-bootstrap-201212031735-2.1.7.0/elexis-bootstrap/elexis-base/ch.elexis.hl7.v26/target/elexis-ch.elexis.hl7.v26-2.1.5.20121203.jar

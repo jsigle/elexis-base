@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Plugin für Texterstellung
+Bundle-SymbolicName: ch.elexis.Textplugin; singleton:=true
+Bundle-Version: 1.4.1
+Bundle-Vendor: elexis.ch
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.ui,
+ ch.elexis
+Eclipse-LazyStart: true
+Bundle-ClassPath: .

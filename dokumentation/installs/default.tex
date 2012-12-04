@@ -1,0 +1,84 @@
+% *******************************************************************************
+% * Copyright (c) 2007 by Elexis
+% * All rights reserved. This document and the accompanying materials
+% * are made available under the terms of the Eclipse Public License v1.0
+% * which accompanies this distribution, and is available at
+% * http://www.eclipse.org/legal/epl-v10.html
+% *
+% * Contributors:
+% *    G. Weirich
+% *
+% *  $Id: elexis.tex 2453 2007-05-30 15:16:13Z rgw_ch $
+% *******************************************************************************
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+
+\section{Standard-Installation}
+\label{easyistall}
+\index{installation}
+Es gibt für Windows, Linux und Mac leicht installierbare und sofort lauffähige Pakete. Ausserdem kann eine demo-Datenbank eingerichtet werden, die schon eine Anzahl Pseudo-Patienten enthält.
+
+
+Vergewissern Sie sich bitte zunächst, ob Ihr System von Elexis unterstützt wird (Anhang \ref{systemvoraussetzungen} dieses Handbuchs, Seite \pageref{systemvoraussetzungen}).\par
+\index{Demoversion}
+\textbf{Vollversion}: Wenn Sie nicht die Demo-Installation, sondern eine volle Praxisinstallation möchten, fangen Sie trotzdem so wie hier beschrieben an, und fahren dann gemäss der Anleitung im Anhang \ref{vollversion} ab Seite \pageref{vollversion} weiter.
+\subsection{Windows 2000/XP/Vista}
+\index{Windows}\index{Vista}
+\begin{itemize}
+	\item Laden Sie \href{http://www.elexis.ch/dl14.php?file=elexis-windows}{www.elexis.ch/dl14.php?file=elexis-windows} herunter (ca. 170MB)
+	\item starten Sie die heruntergeladene Datei elexis-windows-x.y.z.exe und folgen Sie den Anweisungen am Bildschirm.
+    \item Programm starten: Doppelklick auf das Symbol \glqq Elexis\grqq{} auf Ihrem Desktop oder das Programm \glqq Elexis\grqq{} im Startmenü auswählen.
+	\item Deinstallation: Klicken Sie auf \glqq Elexis deinstallieren\grqq im  Startmenü.
+\end{itemize}
+
+\subsection{Linux}
+(getestet mit SuSE 10.0, Kubuntu 6.06, 6.10, 7.04 und 8.04 sowie  Xubuntu 6.10, 7.04, 7.10., 8.04 und 8.10.)\footnote{Bei Gnome gibt es Probleme mit OpenOffice; wir empfehlen daher zur Zeit nur Kubuntu (KDE) und Xubuntu (XFCE), nicht aber Ubuntu (Gnome).}
+\index{Linux}
+\begin{itemize}
+	\item Laden Sie \href{http://www.rgw.ch/dl14.php?file=elexis-linux}{www.rgw.ch/dl14.php?file=elexis-linux} herunter (ca. 90MB)
+	\item Entpacken Sie das	heruntergeladene Archiv	elexis-linux-x.y.z.tgz an eine beliebige Stelle\footnote{Z.B. mit dem Befehl tar -xzf elexis-linux-x.y.z.tgz}
+    \item Programm starten: Starten Sie einfach das Programm \footnote{meistens so: ./elexis}. Selbstverständlich können Sie auch unter Linux einen Shortcut auf dem Desktop
+    anlegen, das dazu nötige Vorgehen variiert aber je nach desktop environment.
+
+ 	\item Textprogramm einrichten: Da bei den empfohlenen Linux-Distributionen
+ 	Open\-Of\-fi\-ce ohnehin integriert ist, liefern wir es beim Linux-Installer nicht
+ 	mit. Daher ist dieser auch erheblich kleiner, als der Windows-Installer. Dafür
+ 	ist noch ein wenig 	\glqq Handarbeit\grqq{} notwendig, um die Zusammenarbeit
+ 	von Elexis mit OpenOffice einzurichten (Anleitung für Kubuntu/Xubuntu, SuSE
+ 	analog mit Yast statt mit apt-get):
+	\begin{itemize}
+	 	\item öffnen Sie eine Konsole und geben Sie ein: \textit{sudo apt-get in\-stall
+	 	openoffice.org-office\-bean}
+		\item öffnen Sie in Elexis das Menü \textsc{Datei - Einstellungen} und suchen
+		Sie dort die Seite \textsc{Textverarbeitung} auf. Markieren Sie den Punkt
+		\glqq Open\-Of\-fice Wrap\-per\grqq{}.
+		\item Gehen Sie dann im selben Dialog zur Seite \textsc{OpenOffice.org}.
+		Suchen Sie mit dem Knopf \textsc{Durchsuchen} Ihr OpenOffice-
+		Programmverzeichnis auf (in aller Regel wird dies bei Kubuntu
+		/usr/lib/openoffice/program sein). Klicken Sie dann auf \textsc{Anwenden} und
+		schliessen Sie den Dialog mit \textsc{OK}
+		\item Wichtig: Verlassen Sie Elexis, warten Sie einige Sekunden und starten
+		Sie neu.
+    \end{itemize}
+  \item Deinstallation: Löschen Sie den beim Entpacken erstellten Ordner. Das
+ ist alles.
+\end{itemize}
+
+\subsection{Apple Macintosh OS-X}\
+(Getestet Version 10.4 (Tiger) und 10.5 (Leopard). Einschränkung: Kein integriertes Textsystem)
+\index{Macintosh}\index{Apple}
+\begin{itemize}
+	\item Laden Sie \href{http://www.elexis.ch/dl14.php?file=elexis-macosx}{www.elexis.ch/dl14.php?file=elexis-macosx} herunter (ca. 25 MB)
+	\item Entpacken Sie das heruntergeladene Archiv elexis-macosx-x.y.z.zip an eine beliebige Stelle.
+    \item Programm starten: Öffnen Sie das herunter\-geladene Verzeichnis und doppel\-klic\-ken Sie auf das Pro\-gramm \glqq Elexis\grqq{}
+	\item Deinstallation: Löschen Sie den beim Entpacken erstellten Ordner. Das ist alles.
+\end{itemize}
+
+Bei allen Betriebssystemen wird beim ersten Start die Einrichtung des Programms komplettiert und eine leere Datenbank erstellt. Der Benutzername zum ersten Anmelden ist 'Administrator' das Passowort 'admin'. Beachten Sie, dass sie mit dieser leeren Datenbank noch nicht sehr viel anfangen können. Wenn Sie Elexis einfach mal ausprobieren wollen, möchten Sie vielleicht die Demo-Datenbank benutzen:
+
+\subsection{Demo-Datenbank}
+(Für alle Betriebssysteme.) Laden Sie \href{http://www.elexis.ch/files/demoDB.zip}{http://www.elexis.ch/files/demoDB.zip} herunter. Entpacken Sie dieses Archiv in Ihr Elexis-Verzeichnis (es enthält einen Ordner namens 'demoDB'). Starten Sie dann Elexis neu. Es wird sich nun mit dieser De
+mo-Datenbank verbinden, welche bereits einige Beispielpatienten etc. enthält. Anmeldename ist hier 'test', das Passwort ebenfalls 'test'.
+
+Wir empfehlen, dass Sie dann zum \glqq warmwerden\grqq{} die geführte Tour (s.S.
+\pageref{tour}) machen.
+

@@ -1,0 +1,134 @@
+123: athenstaedt AG  ean13 7601001307001
+{wheel=Wheel id=2, map={id=3}, plate=12-XP-F4}
+ch.elexis.artikel_ch.oddb.Car@2de12f6d
+Working Directory = /opt/src/elexis/src/ch.ngiger.elexis.oddb_ch_test
+Working Directory = /opt/src/elexis/src/ch.ngiger.elexis.oddb_ch_test
+{ikscd=010, lppv=true, descr=, ikscat=D, sl_entry=null, parts=[{count=10,
+	multi=1, measure=null, addition=0,
+	commercial_form=org.oddb.ch.CommercialForm@275e538e,
+	composition=org.oddb.ch.Composition@21bfa3d3}], has_generic=false,
+	ean13=7680211090101, price_exfactory=0.0, price_public=10.25,
+	pharmacode=756873, narcotics=[], deductible=null}
+	 name: Lecicarbon ean13: 7680211090101 EK: 0.00 VK: 10.25 atc: A06AB
+	 pharmacode: 756873
+{ikscd=037, lppv=true, descr=, ikscat=D, sl_entry=null, parts=[{count=100,
+	multi=1, measure=null, addition=0,
+	commercial_form=org.oddb.ch.CommercialForm@275e538e,
+	composition=org.oddb.ch.Composition@21bfa3d3}], has_generic=false,
+ean13=7680211090378, price_exfactory=0.0, price_public=71.15,
+pharmacode=759185, narcotics=[], deductible=null}
+ name: Lecicarbon ean13: 7680211090378 EK: 0.00 VK: 71.15 atc: A06AB
+ pharmacode: 759185
+{ikscd=053, lppv=true, descr=, ikscat=D, sl_entry=null, parts=[{count=10,
+	multi=1, measure=null, addition=0,
+	commercial_form=org.oddb.ch.CommercialForm@275e538e,
+	composition=org.oddb.ch.Composition@56ad2c30}], has_generic=false,
+ean13=7680211090538, price_exfactory=0.0, price_public=7.55,
+pharmacode=756867, narcotics=[], deductible=null}
+ name: Lecicarbon ean13: 7680211090538 EK: 0.00 VK: 7.55 atc: A06AB
+ pharmacode: 756867
+{ikscd=036, lppv=false, descr=, ikscat=D, sl_entry=null, parts=[{count=30,
+	multi=1, measure=null, addition=0,
+	commercial_form=org.oddb.ch.CommercialForm@2778c490,
+	composition=org.oddb.ch.Composition@69b0de2e}], has_generic=false,
+ean13=7680362850364, price_exfactory=0.0, price_public=0.0, pharmacode=null,
+narcotics=[], deductible=null}
+ name: Arcostrong ean13: 7680362850364 EK: 0.00 VK: 0.00 atc: A11JC
+{ikscd=044, lppv=false, descr=, ikscat=D, sl_entry=null, parts=[{count=100,
+	multi=1, measure=null, addition=0,
+	commercial_form=org.oddb.ch.CommercialForm@2778c490,
+	composition=org.oddb.ch.Composition@69b0de2e}], has_generic=false,
+ean13=7680362850449, price_exfactory=0.0, price_public=0.0, pharmacode=null,
+narcotics=[], deductible=null}
+ name: Arcostrong ean13: 7680362850449 EK: 0.00 VK: 0.00 atc: A11JC
+{ikscd=016, lppv=false, descr=null, ikscat=E, sl_entry=null,
+	parts=[{count=1, multi=1, measure={not_normalized=null, val=10, unit=ml,
+		scale=null}, addition=0, commercial_form=null,
+	composition=org.oddb.ch.Composition@2523defe}], has_generic=false,
+	ean13=7680220800166, price_exfactory=0.0, price_public=0.0,
+	pharmacode=null, narcotics=[], deductible=null}
+	 name: Poho Oel Golden Lotus ean13: 7680220800166 EK: 0.00 VK: 0.00 atc:
+	 R05X
+{ikscd=010, lppv=false, descr=, ikscat=E, sl_entry=null, parts=[{count=1,
+	multi=1, measure={not_normalized=null, val=200, unit=ml, scale=null},
+	addition=0, commercial_form=null,
+	composition=org.oddb.ch.Composition@64811e10}], has_generic=false,
+ean13=7680384750109, price_exfactory=0.0, price_public=0.0, pharmacode=null,
+narcotics=[], deductible=null}
+ name: Amigo KrÃ¤utersirup ean13: 7680384750109 EK: 0.00 VK: 0.00 atc: R05C
+{ikscd=19.0, lppv=false, descr=, ikscat=B, sl_entry=null, parts=[{count=1,
+	multi=1, measure={not_normalized=null, val=13, unit=ml, scale=null},
+	addition=0, commercial_form=org.oddb.ch.CommercialForm@7eb1fea4,
+	composition=org.oddb.ch.Composition@57c501f7}], has_generic=false,
+ean13=7680400150197, price_exfactory=0.0, price_public=0.0, pharmacode=null,
+narcotics=[], deductible=null}
+ name: CrÃ©sophÃ¨ne ean13: 7680400150197 EK: 0.00 VK: 0.00 atc: A01AD11
+{ikscd=013, lppv=false, descr=, ikscat=B, sl_entry=null, parts=[{count=1,
+	multi=1, measure={not_normalized=null, val=4.5, unit=g, scale=null},
+	addition=0, commercial_form=null,
+	composition=org.oddb.ch.Composition@62ee558f}], has_generic=false,
+ean13=7680481580135, price_exfactory=0.0, price_public=0.0, pharmacode=null,
+narcotics=[], deductible=null}
+ name: Caustinerf forte ean13: 7680481580135 EK: 0.00 VK: 0.00 atc: A01AD11
+{ikscd=017, lppv=null, descr=, ikscat=B,
+	sl_entry=org.oddb.ch.SlEntry@7d01acff, parts=[{count=1,
+		multi={not_normalized=null, val=1, unit=, scale=null},
+		measure={not_normalized=null, val=10, unit=ml, scale=null},
+		addition=0, commercial_form=org.oddb.ch.CommercialForm@7904d976,
+		composition=org.oddb.ch.Composition@2d61100c}], has_generic=false,
+	ean13=7680549280175, price_exfactory=25.52, price_public=45.65,
+	pharmacode=2234423, narcotics=[], deductible=10}
+	 name: Insulin CP Pharma Hypurin Porcine Neutral Vial ean13:
+	 7680549280175 EK: 25.52 VK: 45.65 atc: A10AB03 pharmacode: 2234423
+{ikscd=021, lppv=null, descr=null, ikscat=B,
+	sl_entry=org.oddb.ch.SlEntry@6602e879, parts=[{count=1,
+		multi={not_normalized=null, val=5, unit=, scale=null},
+		measure={not_normalized=null, val=3, unit=ml, scale=null},
+		addition=0, commercial_form=null,
+		composition=org.oddb.ch.Composition@48ec9441}], has_generic=false,
+	ean13=7680549290211, price_exfactory=48.0, price_public=71.5,
+	pharmacode=2873620, narcotics=[], deductible=10}
+	 name: Insulin CP Pharma Hypurin Porcine Neutral Patronen ean13:
+	 7680549290211 EK: 48.00 VK: 71.50 atc: A10AB03 pharmacode: 2873620
+{ikscd=011, lppv=null, descr=, ikscat=B,
+	sl_entry=org.oddb.ch.SlEntry@483bead5, parts=[{count=1,
+		multi={not_normalized=null, val=1, unit=, scale=null},
+		measure={not_normalized=null, val=10, unit=ml, scale=null},
+		addition=0, commercial_form=org.oddb.ch.CommercialForm@7904d976,
+		composition=org.oddb.ch.Composition@55b66aff}], has_generic=false,
+	ean13=7680549300118, price_exfactory=25.52, price_public=45.65,
+	pharmacode=2234452, narcotics=[], deductible=10}
+	 name: Insulin CP Pharma Hypurin Porcine Isophane Vial ean13:
+	 7680549300118 EK: 25.52 VK: 45.65 atc: A10AC03 pharmacode: 2234452
+{ikscd=026, lppv=null, descr=null, ikscat=B,
+	sl_entry=org.oddb.ch.SlEntry@7168c1e1, parts=[{count=1,
+		multi={not_normalized=null, val=5, unit=, scale=null},
+		measure={not_normalized=null, val=3, unit=ml, scale=null},
+		addition=0, commercial_form=null,
+		composition=org.oddb.ch.Composition@1490d4f2}], has_generic=false,
+	ean13=7680549310261, price_exfactory=48.0, price_public=71.5,
+	pharmacode=2873637, narcotics=[], deductible=10}
+	 name: Insulin CP Pharma Hypurin Porcine Isophane Patronen ean13:
+	 7680549310261 EK: 48.00 VK: 71.50 atc: A10AC03 pharmacode: 2873637
+{ikscd=014, lppv=null, descr=, ikscat=B,
+	sl_entry=org.oddb.ch.SlEntry@5197d20c, parts=[{count=1,
+		multi={not_normalized=null, val=1, unit=, scale=null},
+		measure={not_normalized=null, val=10, unit=ml, scale=null},
+		addition=0, commercial_form=org.oddb.ch.CommercialForm@7904d976,
+		composition=org.oddb.ch.Composition@465f3bad}], has_generic=false,
+	ean13=7680549320147, price_exfactory=25.52, price_public=45.65,
+	pharmacode=2234481, narcotics=[], deductible=10}
+	 name: Insulin CP Pharma Hypurin Porcine 30/70 Mix Vial ean13:
+	 7680549320147 EK: 25.52 VK: 45.65 atc: A10AD03 pharmacode: 2234481
+{ikscd=29.0, lppv=null, descr=null, ikscat=B,
+	sl_entry=org.oddb.ch.SlEntry@f0c0ef2, parts=[{count=1,
+		multi={not_normalized=null, val=5, unit=, scale=null},
+		measure={not_normalized=null, val=3, unit=ml, scale=null},
+		addition=0, commercial_form=null,
+		composition=org.oddb.ch.Composition@60a93995}], has_generic=false,
+	ean13=7680549330290, price_exfactory=48.0, price_public=71.5,
+	pharmacode=2873643, narcotics=[], deductible=10}
+	 name: Insulin CP Pharma Hypurin Porcine 30/70 Mix Patronen ean13:
+	 7680549330290 EK: 48.00 VK: 71.50 atc: A10AD03 pharmacode: 2873643
+	 Elapsed 0.555 seconds
+

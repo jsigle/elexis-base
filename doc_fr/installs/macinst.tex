@@ -1,0 +1,19 @@
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+\section{MacOS X (Tiger) }
+Elexis lui-même peut être facilement installé : Téléchargez le fichier et installez le. Par contre l'installation de OpenOffice pose des problèmes et, chose qui doit malheureusement être dite, n'est pas encore possible de façon correcte.
+
+Il y a deux difficultés principales:
+\begin{itemize}
+ \item
+
+ \textit{Premièrement}: OpenOffice nécessite X11 sur Mac et X11 est livré avec chez Tiger mais se trouve assez caché sur le DVD 1 du système. Mettez donc le DVD1 du système dans le lecteur. Ignorez toutes les incitations d'installer quoi que ce soit (car X11 ne s'y trouvera pas), mais utilisez \textit{spotlight}, pour trouver X11User.pgk.  Démarrez ensuite cet installateur (pour cela vous nécessitez les droits de l'administrateur). Le reste se fera presque automatiquement.
+
+Ensuite vous pouvez télécharger les fichiers convenables pour votre système depuis \href{http://www.openoffice.org}{OpenOffice.org} (français: http://de.openoffice.org/downloads/quick.html)????????. Vous y trouverez un fichier  .dmg. Avec un double-click sur le fichier vous l'ouvrez et ceci montre un fichier imag qui contient le OpenOffice.org complet. Enfin se montre un fichier avec le symbole de OpenOffice.org 2.0. Tirez ce fichier dans le classeur \textit{programme} (du côté gauche). ... et l'installation de OpenOffice est déjà terminée.
+
+Jusque là OpenOffice sera fonctionel que comme programme Standalone.
+
+\item La  \textit{deuxième difficulté} est par contre : OpenOffice ne peut pas encore être intégré dans Elexis.
+\item  Ceci se fait par une composante qui s'appelle SWT\_AWT-Bridge, qui fonctionne parfaitement sous Windows et Linus mais qui ne fonctionne malheureusement pas encore sous MacOS. Nous espérons que ce problème sera réglé avec une des prochaines mises à jour de MacOS réspectivement Java pour MacOS. Vous trouverez des informations supplémentaires sous  \href{https://bugs.eclipse.org/bugs/show_bug.cgi?id=67384}{hier}
+\end{itemize}
+
+Conclusion: Elexis marche sur Macintosh que de façon limitée car toutes les fonctions textes (lettres, ordonnances, certificats, factures) sont désactivées.
