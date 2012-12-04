@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Elexis Notizbuch
+Bundle-SymbolicName: ch.elexis.notes;singleton:=true
+Bundle-Version: 2.0.3
+Bundle-Vendor: elexis.ch
+Bundle-Localization: plugin
+Require-Bundle: ch.elexis,
+ org.eclipse.ui,
+ org.eclipse.ui.forms,
+ org.eclipse.core.runtime,
+ ch.rgw.utility,
+ ch.elexis.core;bundle-version="0.0.2"

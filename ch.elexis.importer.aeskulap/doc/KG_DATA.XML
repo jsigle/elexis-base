@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?><meldung>
+<Patient PatID="1">
+	<Risiken>
+		<Risiko Risiko_Name="Medikamentenallergie"/>
+	</Risiken>
+	<Konsultation KonsID="2" Datum="2003-09-10T18:45:00" ArztID="1">
+		<Subjektiv>Der Patient hat gearbeitet, bei Anstrengungen Kopfweh. Sitz sehr viel vor dem PC und hat eine schlechte Haltung beim Sitzen. Das ganze zieht sich schon mehrere Jahre hin. </Subjektiv>
+
+		<Medikation Text="AMOXI MEPHA P SUSP FORTE 40ML INF" Pharma="1491690" Verordnungsart="Selbstdispensation" Dauermedikament="Nein" Dosierung_nach_Mittagessen="1" Dosierung_nach_Abendessen="1"/>
+		<Medikation Text="ASPEGIC 500 PLV BTL 20" Pharma="0753946" Verordnungsart="Selbstdispensation" Dauermedikament="Nein" Dosierung_nach_Fruehstueck="1"/>
+		<Medikation Dauermedikament="Nein"/>
+		<Medikation Dauermedikament="Nein"/>
+	</Konsultation>
+	<Konsultation KonsID="3" Datum="2003-09-11T13:06:00" ArztID="1">
+
+	</Konsultation>
+	<Konsultation KonsID="788" Datum="2003-10-16T08:30:00" ArztID="1">
+
+		<Medikation Text="ASPEGIC 1000 PLV BTL 20" Pharma="1094285" Dauermedikament="Ja" Dosierung_nach_Fruehstueck="1" Dosierung_nach_Mittagessen="1" Dosierung_nach_Abendessen="1"/>
+		<Medikation Text="Pnstan" Dauermedikament="Ja" Dosierung_vor_Fruehstueck="1" Dosierung_vor_Mittagessen="1" Dosierung_vor_Abendessen="1"/>
+	</Konsultation>
+	<Konsultation KonsID="1648" Datum="2003-11-14T14:30:00" ArztID="1">
+
+		<Medikation Text="ASPEGIC 1000 PLV BTL 20" Pharma="1094285" Dauermedikament="Ja" Dosierung_nach_Fruehstueck="1" Dosierung_nach_Mittagessen="1" Dosierung_nach_Abendessen="1"/>
+		<Medikation Text="Pnstan" Dauermedikament="Ja" Dosierung_vor_Fruehstueck="1" Dosierung_vor_Mittagessen="1" Dosierung_vor_Abendessen="1"/>
+	</Konsultation>
+	<Konsultation KonsID="1650" Datum="2003-11-14T14:30:00" ArztID="1">
+
+		<Medikation Text="ASPEGIC 1000 PLV BTL 20" Pharma="1094285" Dauermedikament="Ja" Dosierung_nach_Fruehstueck="1" Dosierung_nach_Mittagessen="1" Dosierung_nach_Abendessen="1"/>
+		<Medikation Text="Pnstan" Dauermedikament="Ja" Dosierung_vor_Fruehstueck="1" Dosierung_vor_Mittagessen="1" Dosierung_vor_Abendessen="1"/>
+	</Konsultation>
+	<Konsultation KonsID="1651" Datum="2003-11-14T14:30:00" ArztID="1">
+
+		<Medikation Text="ASPEGIC 1000 PLV BTL 20" Pharma="1094285" Dauermedikament="Ja" Dosierung_nach_Fruehstueck="1" Dosierung_nach_Mittagessen="1" Dosierung_nach_Abendessen="1"/>
+		<Medikation Text="jhhkh" Dauermedikament="Nein" Dosierung_vor_Fruehstueck="1" Dosierung_vor_Mittagessen="1" Dosierung_vor_Abendessen="1"/>
+	</Konsultation>
+	<Konsultation KonsID="2205" Datum="2003-12-02T10:30:00" ArztID="1">
+
+		<Medikation Text="ASPEGIC 1000 PLV BTL 20" Pharma="1094285" Dauermedikament="Ja" Dosierung_nach_Fruehstueck="1" Dosierung_nach_Mittagessen="1" Dosierung_nach_Abendessen="1"/>
+	</Konsultation>
+	<Konsultation KonsID="7457" Datum="2004-06-01T09:10:00" ArztID="1">
+
+		<Medikation Text="ASPEGIC 1000 PLV BTL 20" Pharma="1094285" Dauermedikament="Ja" Dosierung_nach_Fruehstueck="1" Dosierung_nach_Mittagessen="1" Dosierung_nach_Abendessen="1"/>
+	</Konsultation>
+	<Konsultation KonsID="28066" Datum="2006-04-04T00:00:00" ArztID="1">
+
+		<Medikation Text="ASPEGIC 1000 PLV BTL 20" Pharma="1094285" Verordnungsart="Rezept" Dauermedikament="Ja" Dosierung_nach_Fruehstueck="1" Dosierung_nach_Mittagessen="1" Dosierung_nach_Abendessen="1"/>
+	</Konsultation>
+	<Konsultation KonsID="29495" Datum="2006-05-19T15:55:00" ArztID="1">
+
+		<Medikation Text="ASPEGIC 1000 PLV BTL 20" Pharma="1094285" Dauermedikament="Ja" Dosierung_nach_Fruehstueck="1" Dosierung_nach_Mittagessen="1" Dosierung_nach_Abendessen="1"/>
+	</Konsultation>
+	<Konsultation KonsID="31787" Datum="2006-08-04T11:30:00" ArztID="1">
+		<Subjektiv>askdjfaljfdasjflajsflajfajfajfajfk</Subjektiv>
+
+		<Medikation Text="ASPEGIC 1000 PLV BTL 20" Pharma="1094285" Dauermedikament="Ja" Dosierung_nach_Fruehstueck="1" Dosierung_nach_Mittagessen="1" Dosierung_nach_Abendessen="1"/>
+	</Konsultation>
+	<Konsultation KonsID="42074" Datum="2007-06-22T00:00:00" ArztID="1">
+
+		<Medikation Text="ASPEGIC 1000 PLV BTL 20" Pharma="1094285" Dauermedikament="Ja" Dosierung_nach_Fruehstueck="1" Dosierung_nach_Mittagessen="1" Dosierung_nach_Abendessen="1"/>
+	</Konsultation>
+	<Konsultation KonsID="42388" Datum="2007-07-05T00:00:00" ArztID="1">
+
+		<Medikation Text="ASPEGIC 1000 PLV BTL 20" Pharma="1094285" Dauermedikament="Ja" Dosierung_nach_Fruehstueck="1" Dosierung_nach_Mittagessen="1" Dosierung_nach_Abendessen="1"/>
+	</Konsultation>
+	<Konsultation KonsID="44629" Datum="2007-09-14T00:00:00" ArztID="1">
+
+		<Medikation Text="ASPEGIC 1000 PLV BTL 20" Pharma="1094285" Dauermedikament="Ja" Dosierung_nach_Fruehstueck="1" Dosierung_nach_Mittagessen="1" Dosierung_nach_Abendessen="1"/>
+	</Konsultation>
+	<Konsultation KonsID="61856" Datum="2009-02-09T16:15:00" ArztID="1">
+
+		<Medikation Text="ASPEGIC 1000 PLV BTL 20" Pharma="1094285" Dauermedikament="Ja" Dosierung_nach_Fruehstueck="1" Dosierung_nach_Mittagessen="1" Dosierung_nach_Abendessen="1"/>
+	</Konsultation>
+</Patient>

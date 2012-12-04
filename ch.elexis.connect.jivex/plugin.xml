@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="ch.elexis.connect.jivex.JiveXView"
+            id="ch.elexis.connect.jivex.view"
+            name="JiveX"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="ch.elexis.connect.jivex.Preferences"
+            id="ch.elexis.connect.jivex.preferences"
+            name="JiveX">
+      </page>
+   </extension>
+
+</plugin>

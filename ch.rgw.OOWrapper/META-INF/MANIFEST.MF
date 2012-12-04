@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OOwrapper Plug-in
+Bundle-SymbolicName: ch.rgw.OOWrapper; singleton:=true
+Bundle-Version: 1.4.1
+Bundle-ClassPath: .,
+ juh.jar,
+ jurt.jar,
+ officebean.jar,
+ ridl.jar,
+ sandbox.jar,
+ unoil.jar
+Bundle-Localization: plugin
+Require-Bundle: ch.elexis,
+ org.eclipse.core.runtime,
+ org.eclipse.swt,
+ org.eclipse.ui,
+ ch.rgw.utility
+Bundle-Vendor: elexis.ch

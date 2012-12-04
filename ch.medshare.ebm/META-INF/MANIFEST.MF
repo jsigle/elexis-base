@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Search in EBM-Guidelines
+Bundle-SymbolicName: ch.medshare.ebm;singleton:=true
+Bundle-Version: 1.0.2
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ ch.elexis,
+ ch.rgw.utility;bundle-version="2.0.0",
+ ch.medshare.base.external;bundle-version="1.0.0"
+Bundle-Vendor: medshare.ch
+Export-Package: .
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

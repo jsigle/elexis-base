@@ -1,0 +1,20 @@
+h1. Elexis devoloper resources
+
+This plugin contains some sample files to show techniques used in elexis, along with documentation to help you getting started in developing plugins for elexis. It will create a View called 'SampleView' (or 'Beispiel' in the german environment) that displays objects of the Type SampleDataType for the momentarly selected patient. A click on the 'plus' button creates a new SamplaDataType. Right-Click on a SampleDataType opens a contect menu where the object can be deleted.
+To create or delete SampleDataType objects, privileges are necessary, that can be granted in the Settings for users and roles. 
+
+Documentation is in .textile format, which is supported by the Mylin wikitext editor. 
+
+Look at developer.textile to get started compiling and running Elexis via the Eclipse IDE.
+
+Documentation can easily be converted into html, DocBook, or XSL-FO/PDF, by right clicking on the file and selecting "WikiText...Generate HMTL" or another format.
+
+The Mylin wikitext editor has on its bottom a "preview" tab for on-the-fly compiling of the .textile source.
+
+Please find more information on the wikitext editor and the textile format here:
+
+"http://www.peterfriese.de/getting-started-with-wikitext/":http://www.peterfriese.de/getting-started-with-wikitext/
+and here:
+"http://wiki.eclipse.org/Mylyn/Incubator/WikiText":http://wiki.eclipse.org/Mylyn/Incubator/WikiText
+
+Please note: in many eclipse environments, Mylin ist installed by default. So check first before downloading the Mylin plugin.

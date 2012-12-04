@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Importer für Praxistar
+Bundle-SymbolicName: ch.elexis.importer.praxistar;singleton:=true
+Bundle-Version: 0.1.1
+Bundle-Vendor: elexis.ch
+Require-Bundle: ch.elexis,
+ ch.elexis.arzttarife_ch,
+ ch.elexis.importer.div,
+ org.eclipse.core.runtime,
+ org.eclipse.ui,
+ ch.elexis.icpc,
+ ch.elexis.diagnosecodes_ch,
+ ch.rgw.utility

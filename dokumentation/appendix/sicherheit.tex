@@ -1,0 +1,257 @@
+% *******************************************************************************
+% * Copyright (c) 2007 by Elexis
+% * All rights reserved. This document and the accompanying materials
+% * are made available under the terms of the Eclipse Public License v1.0
+% * which accompanies this distribution, and is available at
+% * http://www.eclipse.org/legal/epl-v10.html
+% *
+% *  $Id: sicherheit.tex 4905 2009-01-03 18:30:50Z rgw_ch $
+%
+%*******************************************************************************
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+
+\label{sicherheit}
+\index{Datensicherheit}
+Aufzeichnungen sensibler Daten, wie es Patientendaten immer sind, müssen mit besonderer Sorgfalt
+aufbewahrt und gesichert werden. Dieser Artikel beschreibt einige Konzepte zur Datensicherheit.
+
+Sensible Daten, wie sie in einer Arztpraxis anfallen, müssen:
+\begin{itemize}
+  \item{Gegen Verlust gesichert sein}
+  \item{Gegen (versehentliche oder absichtliche) Verfälschung oder
+  Veränderungen gesichert sein.}
+  \item {Gegen unbefugte Einsichtsnahme gesichert sein}
+\end{itemize}
+
+Auf diese Punkte werden wir im Folgenden näher eingehen.
+
+\section{Sicherheit vor Datenverlust}\index{Datenverlust}
+Grundsätzlich besteht bei einem Computersystem jederzeit die Gefahr eines kompletten
+oder teilweisen Verlusts aller der gespeicherten Daten. Dies kann durch Fehler der Hardware
+passieren (beispielsweise haben Festplatten nur eine begrenzte Lebensdauer von einigen Jahren
+im Dauerbetrieb und können dann unvermittelt unlesbar werden, weil wichtige Sektoren zerstört
+sind). Es kann auch durch äussere Einflüsse passieren (beispielsweise durch eine Spannungsspitze
+oder einen Ausfall im Stromnetz, während gerade wichtige Schreiboperationen stattfinden).
+Und nicht zuletzt können vorher nicht erkannte Fehler in den beteiligten Programmen
+sich plötzlich zeigen und zu Datenverlusten führen.
+
+Aus all diesen Gründen muss man sich überlegen:
+\begin{itemize}
+  \item {Wie lang ist der Zeitraum, für den ich Daten notfalls manuell
+  rekonstruieren könnte, bzw. deren Verlust ich verschmerzen könnte.}
+  \item {Wie teuer kommt mich eine manuelle Rekonstruktion dieser Daten.}
+  \item {Wie teuer kommen mich unwiederbringlich verlorene Daten.}
+\end{itemize}
+
+Aus diesen Überlegungen kann man dann abschätzen, wie teuer eine automatische
+Datensicherungslösung \index{Backup}sein darf, und wie häufig sie angewendet werden soll.
+Bei einer lebhaft genutzen Arztpraxisanwendung, bei der ein Datenverlust peinlich und
+allenfalls sogar juristisch relevant sein könnte, kann eine Sicherung stündlich bis mehrmals
+täglich durchaus sinnvoll sein. In jedem Fall ist eine mindestens einmal tägliche Sicherung
+dringend zu empfehlen.
+
+Wie diese Sicherung im einzelnen funktioniert, hängt von der verwendeten Datenbank ab.
+Falls Sie den entsprechenden Vorgang bei Ihrer Datenbank nicht kennen oder nicht selbst
+durchführen können, empfehlen wir Ihnen dringend, Support einzukaufen –- der Verzicht auf
+Datensicherung kann schwer zu tragende Folgen haben.
+
+\section{Sicherheit vor Datenverfälschungen}
+
+Eine computerbasierte Datenbank ist hier gegenüber der Papier-Krankengeschichte im Nachteil:
+Veränderungen an einem handschriftlichen Eintrag sind im Allgemeinen leicht zu erkennen, während
+man einem Datensatz im Computer nicht ansieht, ob er noch im Originalzustand ist... Elexis
+begegnet diesem Problem mit dem Konzept der Versionierung: Eine Änderung eines KG-Eintrags
+überschreibt nie den ursprünglichen Datensatz, sondern erstellt eine neue Version dieses
+Datensatzes, welche mit aktuellem Datum, Zeit und aktuell eingeloggtem Benutzer markiert wird.
+Die vorherigen Versionen können bei Bedarf sehr leicht angesehen und/oder wiederhergestellt werden.
+Ein normaler Benutzer hat keine Möglichkeit, einen Eintrag unwiederbringlich zu löschen.
+Aus praktischen Gründen hat aber der Administrator als einziger standardmässig doch diese
+Möglichkeit. So können grob falsche Einträge doch gelöscht werden, oder die Datenbank kann von
+Zeit zu Zeit bereinigt werden, um das System schlanker zu machen. Gegen einen allfälligen Vorwurf,
+Dokumente verfälscht zu haben, kann man sich bei diesem Konzept beispielsweise schützen, indem man
+vor jeder derartigen Bereinigung eine Kopie der Datenbank auf ein nur beschreibbares Medium
+überträgt und dieses Medium mit einem zuverlässigen Zeitstempel versieht oder notariell versiegelt
+aufbewahren lässt. Ein weitergehender Schutz gegen Aktivitäten des Administrators ist technisch gar
+nicht möglich - jemand mit Administratorrechten könnte ja jederzeit auch einfach die Datenbank
+löschen oder gegen eine verfälschte oder frühere Version ersetzen. Daher sollte nur eine einzige
+Person Administratorzugriff auf den Rechner mit der Datenbank haben.
+
+\section{Sicherheit vor unbefugtem Zugriff auf die Datenbank}
+
+Eine Datenbank dient dazu, Informationen zu speichern, abzurufen und zu modifizieren.
+Leider \glqq weiss\grqq die Datenbank im Einzelfall nicht ohne weiteres, ob ein
+Zugriff von einer berechtigten Person erfolgt, oder nicht. Unberechtigte Zugriffe können
+gezielt sein (um etwa Daten auszuspähen, Daten zu vernichten, oder auch um Daten subtil
+zu verändern, was manchmal weit grössere Schäden nach sich ziehen kann, als eine direkte Zerstörung, die ja immerhin
+wenigstens sofort bemerkt wird.). Unberechtigte Zugriffe können auch zufällig und ungezielt sein, hervorgerufen durch Schadprogramme,
+die nach dem Zufallsprinzip weit ausgestreut werden, und jedes System anzugreifen versuchen. Im Folgenden
+sollen einige Angriffsszenarien kurz umrissen werden. Danach gehen wir jeweils auf die entsprechenden Verteidigungsmassnahmen ein.
+Dieser Teil des Handbuchs ist eher technisch gehalten und braucht Sie nur zu interessieren, wenn Sie die Installation
+und Wartung Ihres Netzwerks nicht extern in Auftrag gegeben haben.
+\subsection{Angriff auf offene Ports}
+
+Ein am Internet angeschlossener Computer gleicht einem Haus mit verschiedenen Türen, die unterschiedlichen Zwecken dienen.
+Anstatt Kellertreppen, Lieferanteneingängen, Balkontüren, Haustüren und Gartentoren hat ein Computer aber einfach sogenannte Ports.
+Und zwar genau 65535 Stück. Jeder dieser Ports kann ähnlich wie eine Tür offen, geschlossen oder auch zugemauert sein. Ein offener Port
+ist wie eine offenstehende Haustür in gewissem Sinn eine Einladung an Einbrecher, die Zugänglichkeit der Innenräume zu erkunden. Ebensowenig
+wie es Sinn macht, zuhause Türen und Fenster zumauern zu lassen, kann man auf
+diese Ports einfach verzichten. Würde man keine Kommunikation über
+einige Ports zulassen, könnte man auch gleich einfacher das Netzwerkkabel bzw. die Telefonleitung abtrennen.
+
+Glücklicherweise ist ein offener Port nicht einfach ein \glqq Loch\grqq im Computer,
+sondern es ist immer ein Türsteher da – ein Programm, das diesen Port geöffnet hat. Ohne solche Programme wären
+nämlich alle Ports standardmässig geschlossen. Ein Angreifer wird also zuerst nachsehen, ob Ports offen sind.
+Dazu werden alle Ports kurz nacheinander geprüft (Ein sogenannter Portscan). Wenn offene Ports gefunden werden,
+wird versucht herauszufinden, welches Programm den Port geöffnet hat. Und wenn dies ein Programm ist, von dem eine Sicherheitsschwäche
+(vulnerability) bekannt ist, dann wird diese Sicherheitslücke für einen Angriff benutzt.
+
+Ein derartiger Angriff aus Portscan, Programmanalyse und Einbruch braucht leider keinen hochintelligenten und zu allem entschlossenen
+Hacker, sondern es existieren massenhaft fixfertige Programme, die derartige Angriffe ohne menschliches Zutun an tausenden Computern
+pro Sekunde durchführen können, und welche beispielsweise von abenteuerlustigen oder einfach zerstörungswilligen Jugendlichen (\glqq Script kiddies\grqq) verbreitet werden. In der letzten Zeit ist darüberhinaus eine ernstzunehmende Professionalisierung der Schadprogramme festzustellen, welche von Spammern finanziert wird, und deren Ziel es ist, angegriffene PC's für die Verbreitung von Spam und die Ausspähung vertraulicher Daten zu missbrauchen.
+
+\medskip
+
+Was kann man dagegen tun?
+\begin{itemize}
+  \item {Computer mit kritischen Daten weder direkt noch indirekt (via LAN) ans
+  Internet anschliessen. Lieber einen separaten, nicht mit dem Netzwerk verbundenen PC zum Surfen und für E-Mail
+  verwenden.
+  Wenn doch das LAN ans Internet angeschlossen werden soll, dann sollte man sich unbedingt Kenntnisse über die Absicherung der
+   Computer aneignen oder einkaufen.}
+  \item  {Nur solche Ports öffnen lassen, die auch wirklich benötigt werden. Dazu sollte kritisch geprüft werden, welche
+  Dienste das Betriebssystem standardmässig startet, und ob diese wirklich alle gebraucht werden. So neigen beispielsweise
+  Windows-Computer dazu, NetBIOS-Ports nach aussen zu öffnen, was im LAN freigegebene Ressourcen unnötigerweise auch gleich
+   im ganzen Internet freigibt. Welche Ports bei Ihnen offen sind, können Sie beispielsweise unter http://www.security-check.ch herausfinden.}
+  \item{Einen Router mit Firewall zwischen LAN und Internet-Anschluss setzen.
+  Ein Router \glqq versteckt\grqq{}die internen Adressen der Computer im LAN,
+  und eine Firewall\footnote{Wir möchten an dieser Stelle davor warnen, einer
+  sogenannten \glqq Personal Firewall\grqq{}allzuviel Vertrauen zu schenken.
+  Eine solche Software ist als auf dem zu schützenden PC laufende Software
+  selber den Angriffen ausgesetzt, vor denen sie schützen soll, und tatsächlich
+  gibt es viele Schadsoftware, die Personal Firewalls gezielt ausschaltet. Eine
+  seprarate Hardware-Firewall ist selber vor Angriffen viel besser geschützt und
+  kaum auszuschalten.} kontrolliert (unter anderem),
+  über welche Ports Kommunikation überhaupt erlaubt werden soll. Dies kann
+  aber nicht sämtlich Angriffe verhindern!}
+  \item {Darauf achten, dass man möglichst wenig Software mit bekannten Sicherheitslücken einsetzt. Leider gehören dazu viele
+  Microsoft-Produkte –- nicht zuletzt wegen ihrer hohen Verbreitung sind Programme wie Internet Explorer und Outlook immer wieder
+  Ziele erfolgreicher Angriffe gewesen.
+  In sicherheitskritischen Umgebungen ist der Einsatz alternativer Web- und Mailprogramme sicherlich eine Überlegung wert.}
+\end{itemize}
+
+\subsection{Angriff durch Ausnutzen von Sicherheitslücken}
+
+Um den Komfort für den Anwender zu erhöhen, hat vor allem die Firma Microsoft in ihre Produkte viele Funktionen eingebaut,
+mit denen gewisse Aufgaben vollautomatisch erledigt werden können. Und dies sogar ohne Anweisung des Anwenders. So können beispielsweise
+in einer E-Mail, einer Website, einem Word-Dokument oder einer Excel-Tabelle unsichtbare Befehle enthalten sein, welche das entsprechende
+MicrosoftProgramm (Outlook, Internet-Explorer, Word, Excel) ohne weitere Rückfrage ausführt. Diese Komfortfunktionen haben
+Programmierer von Schadsoftware ausgenutzt. Dadurch konnte beispielsweise durch das blosse Lesen einer E-Mail oder Surfen auf eine
+entsprechende Website oder Öffnen eines Office-Dokuments der Computer mit Schadsoftware befallen werden. In der letzten Zeit hat
+Microsoft zwar diese Nachteile ihrer Programme erkannt und laufend Verbesserungen entwickelt, aber es werden doch immer wieder neue
+Sicherheitslücken bekannt. Selbstverständlich betrifft dieses grundsätzliche Problem auch andere Hersteller, aber Microsoft ist wegen
+seiner Bedeutung halt doch das weitaus häufigste Ziel von Angriffen.
+
+\medskip
+
+Was kann man dagegen tun?
+
+\begin{itemize}
+    \item{ Besorgen Sie sich immer die neuesten Updates Ihres Betriebssystems und Ihrer Anwendungssoftware. Nur dann haben Sie die Gewähr,
+    dass wenigstens die bekanntgewordenen Lücken gestopft sind.}
+    \item{Für \glqq Abenteuersurfen\grqq sollten Sie nicht den Geschäftscomputer
+    benutzen. Besuchen Sie zweifelhafte Websites niemals mit einem Computer, der am Geschäftsnetz angeschlossen ist.}
+    \item{Lesen Sie niemals unkritisch E-Mails. Eine der grössten Virenschwemmen bisher entstand, weil Leute mit Microsoft Outlook
+    eine E-Mail mit dem Titel \glqq I love you\grqq{} geöffnet haben, und weil Outlook
+    automatisch und ohne Rückfrage den darin enthaltenen Virus ausführte und im System installierte.Wenn eine E-Mail eine ausführbare Datei
+    als Dateianhang enthält, sollten Sie diese nur dann ausführen, wenn Sie wissen, von wem diese stammt, und warum sie sie bekommen.
+    Wenn eine Mail ein Office-Dokument als Dateianhang enthält, sollten Sie diesen niemals mit dem entsprechenden Microsoft-Programm lesen,
+    sondern immer zuerst mit einem der vielen kostenlos erhältlichen reinen Dateibetrachter.}
+    \item{In vielen Fällen kann man ohne weiteres ganz auf Alternativprogramme umsteigen. So kann man statt dem
+    Internet-Explorer ohne weiteres Firefox oder Opera einsetzen, statt Outlook Thunderbird oder Opera, statt
+    Microsoft Office kann OpenOffice eingesetzt werden.}
+    \item{Installieren Sie auf jedem Computer einen Virenscanner und achten Sie
+    darauf, dass dieser immer auf dem neuesten Stand ist. Beachten Sie aber,
+    dass ein Virenscanner keinen hundertprozentigen Schutz bieten kann. Er kann
+    systembedingt nur diejenige Schadsoftware erkennen, die ihm bereits bekannt
+    ist, oder deren Verhalten er mittels heuristischer Methoden als verdächtig
+    erkennen kann -- neue oder speziell auf ihn angesetzte Schadprogramme kann
+    er nicht erkennen und schon gar nicht unschädlich machen.}
+
+\end{itemize}
+
+\subsection{Angriffe durch Abhören des Netzwerkverkehrs}
+
+Dies ist ein relativ neues Problem. Netzwerkleitungen sind nämlich ziemlich abhörsicher (Da sie aus mehreren miteinander verdrillten
+Leitungen bestehen, ist die Abstrahlung nur minimal). Mit dem Aufkommen von kabellosen Netzwerken (WLAN) entsteht hier aber ein sehr
+grosses Angriffspotential. Grundsätzlich kann jeder, der in Funkreichweite ist, sich in ein WLAN einklinken und so beispielsweise andere
+am Netz hängende Computer an der Firewall vorbei ausspionieren oder benutzen. Ausserdem kann jeder, der in Funkreichweite ist, den gesamten
+Netzwerkverkehr zwischen allen Computern des LAN abhören. Dies ist technisch keineswegs schwierig und kann mit gewöhnlichem Standard-Equipment
+gemacht werden. Die WLAN Hersteller haben schon früh ein Verschlüsselungsverfahren namens WEP entwickelt, das diesen Gefahren begegnen sollte.
+WEP hat aber gravierende Implementationsfehler und ist heute gebrochen. Das heisst, jeder der eine bestimmte im Internet gratis erhältliche
+Software benutzt, kann nach wenigen Stunden \glqq mithören\grqq die
+WEP-Verschlüsselung umgehen und genausoleicht einbrechen, wie in ein ungesichertes Netz. Als Reaktion darauf entwickelten die
+WLAN Hersteller in neuerer Zeit ein besseres Verschlüsselungs- und Authentifizierungsverfahren namens WPA. Dieses ist nur mit erheblichem
+Aufwand, Know-How und viel Geduld zu knacken (aber ebenfalls nicht mehr unknackbar).
+Und noch immer beherrschen nicht alle WLAN Geräte WPA, und ausserdem können Geräte verschiederer Hersteller wegen mangelnder
+Standardisierung nicht immer über WPA miteinander verbunden werden. Der aktuelle Stand der Technik ist WPA2, auch WPA-AES oder
+IEEE 802.11i genannt. Dies ist nur mit brute force zu brechen und ist ausserdem international standardisiert, so dass alle IEEE
+802.11i-fähigen Geräte miteinander kommunizieren können sollten.
+
+\medskip
+Was kann man dagegen tun?
+
+Im Prinzip: Verwenden Sie möglichst kein WLAN, wenn Sie in Ihrem Netzwerk sensible Daten haben. Wenn Sie wirklich keine Möglichkeit haben,
+Kabel zu ziehen, denken Sie vielleicht eher über Powerline nach. Wenn es wirklich WLAN sein muss: Verwenden Sie ausschliesslich Geräte, die
+WPA2 (IEEE 802.11i) beherrschen, und schalten Sie diese Verschlüsselung auch ein! Wenn Sie die Sendeleistung Ihres Access-Points einstellen
+können, wählen Sie die niedrigste mögliche Leistung, damit möglichst wenig Netzwerkverkehr nach aussen dringt. Verwenden Sie zur Authentisierung
+der Netzwerkteilnehmer entweder einen RADIUS-Server, oder wenn sie PSK vewenden, wechseln Sie das WPA2-Passwort alle paar Wochen und
+wählen Sie keinen zu einfachen Schlüssel.
+
+\subsection{Angriffe durch Ausnutzen der Naivität des Anwenders}
+
+Häufig versuchen Angreifer, Anwender durch irgendwelche geschickt formulierten Emails zum Ausführen eines virenverseuchten Mail-Anhangs oder
+zur Preisgabe sensibler Daten wie Passworte etc. zu verleiten.
+
+\medskip
+
+Was kann man dagegen tun?
+
+\begin{itemize}
+    \item{Reagieren Sie niemals auf E-Mails, die irgendwelche Angaben von Ihnen per Mail oder durch Anklicken eines Links wollen.
+    Rufen Sie den vorgeblichen Absender an, und fragen Sie, ob die Mail wirklich von ihm stammt.}
+    \item{Führen Sie niemals Dateianhänge aus, wenn Sie nicht genau wissen, warum sie sie bekommen haben. Es genügt auch nicht, wenn Ihnen der
+    Absender bekannt ist, da viele Viren Absenderangaben aus dem Adressbuch entnehmen und fälschen.}
+\end{itemize}
+
+
+\section{Was hat dies alles mit Elexis zu tun?}
+
+Elexis ist zumindest in der Mehrbenutzervariante ein Client/Server-System. Das heisst, der Server muss einen Port öffnen,
+über den der Client zugreifen kann. Anders wäre eine Kommunikation über ein Netzwerk nicht möglich.Im Fall der MySQL-Datenbank trägt dieser
+Port die Nummer 3306. Prinzipiell kann, wenn der Computer direkt oder indirekt mit dem Internet verbunden ist, jeder aus der ganzen Welt auf
+Ihre Datenbank zugreifen, denn es ist kein Geheimnis, dass an Port 3306 meistens ein MySQL-Server liegt. Sie sind dann auf der sicheren Seite,
+wenn Sie im Router/Firewall die von der Datenbank verwendeten Ports sperren. Damit sorgen Sie dafür, dass diese Ports vom Internet her
+geschlossen erscheinen, während sie im internen LAN offen sind. Wenn Sie aber beispielsweise von zuhause aus auf Ihr Elexis zugreifen
+möchten, dann muss eine Kommunikation von aussen ja möglich sein. Sie können
+dann auf dem Router eine \glqq forward\grqq -Regel für den benötigten
+Port auf den Computer mit der Datenbank einrichten. In diesem Fall müssen Sie aber unbedingt dafür sorgen, dass der Zugriff auf die Datenbank
+durch deren eigene Sicherheitsregeln kontrolliert wird. Behalten Sie auf keinen Fall das Standardpasswort bei, sorgen sie dafür, dass der
+root-account der Datenbank durch ein Passwort geschützt und nicht von aussen zugänglich ist und begrenzen Sie die Rechte von aussen zugreifender
+Anwender auf das unbedingt notwendige. Lesen Sie dazu bitte die Dokumentantion der Datenbank durch, oder beauftragen Sie eine Fachperson,
+die Einrichtungen für Sie zu übernehmen. Da auch Datenbankserver niemals garantiert frei von Sicherheitslücken sind, kann es
+darüberhinaus besser sein, den Datenbank-Port gar nicht direkt nach aussen zu leiten, sondern den Zugriff vom Internet her nur über
+verschlüsselte und gesicherte Kanäle wie SSH oder VPN zu ermöglichen. Eine weitere Erläuterung dieser Techniken würde aber den Rahmen
+dieses Artikels endgültig sprengen. Lassen Sie sich ggf. über für Sie sinnvolle Sicherheitsmassnahmen individuell beraten.
+
+\section{Last but not least: Angriff durch direkten Zugriff die Festplatte}
+Wenn ein Unbefugter physikalischen Zugang zum Server erhält, kann er in der Regel alles lesen, was auf diesem Server gespeichert ist, auch Ihre Datenbank. Lassen Sie sich nicht von den Sicherheitskonzepten des Betriebssystems täuschen: Ein Angreifer, der an den Server gelangt, kann zum Beispiel einfach die Harddisk ausbauen und an einem andern Computer -auf dem er Administratorrechte hat- auslesen. Dasselbe Problem stellt sich, wann die Harddisk verkauft oder entsorgt werden soll: Wer auch immer die Harddisk erhält, kann alles lesen - die Rechtevergabe des Betriebssystems gilt hier nicht\footnote{Nicht einmal das Löschen aller Daten hilft wirklich: Meist können gelöschte Daten mit mehr oder weniger viel Aufwand rekonstruiert werden.}
+
+\medskip
+
+Was kann man dagegen tun?
+Hier hilft eigentlich nur eines: Die Datenbank muss auf ein verschlüsseltes Verzeichnis des Servers installiert werden. Glücklicherweise bringen moderne Betriebssystem bereits alles mit, was zum Einrichten verschlüsselter Partitionen oder Verzeichnisse nötig ist\footnote{Manche allerdings nur in der 'Professional', 'Business' oder 'Server'-Variante}. Ausserdem gibt es kostenlose OpenSource Tools, die dasselbe tun können, wie z.B. TrueCrypt. 
+Der Nachteil eines verschlüsselten Dateisystems oder Verzeichnisses ist eine möglicherweise etwas reduzierte Zugriffsgeschwindigkeit und die Tatsache, dass Sie sich ein Passwort (einmal mehr) merken müssen. Und zwar gut merken, denn bei Verlust gibt es keine Chance, wieder an die Daten zu kommen.
+
+\subsection{Backup-Medien}
+Hier gilt natürlich dasselbe, wie oben geschrieben. Die beste Sicherung nützt nichts, wenn dafür unverschlüsselte Backup-Medien frei zugänglich aufbewahrt werden. Wenn Sie ein Backup von einer verschlüsselten Partition machen, wird das Backup idR unverschlüsselt sein. Andererseits spricht auch manches gegen Verschlüsselung dieser Medien: Sie wollen die Backups ja auch in 10 Jahren noch lesen können. Aber ob Sie das Passwort in 10 Jahren noch kennen, und ob das Entschlüsselungsprogramm in 10 Jahren überhaupt auf ihrem dannzumaligrn PC lauffähig sein wird, das ist gar nicht mal so sicher....
+Wir empfehlen eher, die Backups unverschlüsselt zu lassen und dafür die Medien an einem sicheren Ort aufzubewahren. 

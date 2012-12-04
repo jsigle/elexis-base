@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Abacus Junior Laborgerätanbindung
+Bundle-SymbolicName: ch.medshare.connect.abacusjunior;singleton:=true
+Bundle-Version: 1.3.4
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ ch.elexis,
+ ch.elexis.importer.div,
+ ch.rgw.utility,
+ ch.elexis.core;bundle-version="0.0.2"
+Eclipse-LazyStart: true
+Bundle-Vendor: medshare.ch

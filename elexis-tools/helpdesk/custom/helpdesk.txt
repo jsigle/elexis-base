@@ -1,0 +1,64 @@
+[TITLE]
+Elexis Support
+
+[HOST]
+Elexis Schaffhausen
+-connect 62.167.242.161:22700 -noregistry
+
+
+
+[TEXTTOP]
+
+
+[TEXTMIDDLE]
+Doppelklick auf "Elexis Schaffhausen"
+
+[TEXTBOTTOM]
+zum Öffnen der Verbindung.
+
+[TEXTRTOP]
+
+
+[TEXTRMIDDLE]
+
+
+[TEXTRBOTTOM]
+(c) 2007 by G. Weirich
+
+
+[TEXTBUTTON]
+Website
+
+[WEBPAGE]
+http://www.elexis.ch
+
+[TEXTCLOSEBUTTON]
+Abbrechen
+
+
+[BALLOON1TITLE]
+Stelle Verbindung her...
+
+[BALLOON1A]
+5 min versuchen
+
+[BALLOON1B]
+Die Sofwtare wird sich selbst entfernen
+
+[BALLOON1C]
+wenn keine Verbindung hergestellt werden kann.
+
+[BALLOON2TITLE]
+Verbindung aktiv
+
+[BALLOON2A]
+Achtung: Ihr Desktop ist jetzt für den Support sichtbar
+
+[BALLOON2B]
+Sie können die Verbindung jederzeit mit
+
+[BALLOON2C]
+'Abbrechen' unterbrechen
+
+[WEBPAGE]
+http://www.elexis.ch

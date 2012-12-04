@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="juh.jar"/>
+	<classpathentry exported="true" kind="lib" path="jurt.jar" sourcepath="C:/dev/ooo-src/jurt"/>
+	<classpathentry exported="true" kind="lib" path="officebean.jar" sourcepath="E:/dev/OpenOffice.org2.1_SRC/OOE680_m6/bean">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/C:/dev/ooo-sdk/docs/java/ref/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="ridl.jar"/>
+	<classpathentry exported="true" kind="lib" path="sandbox.jar"/>
+	<classpathentry exported="true" kind="lib" path="unoil.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

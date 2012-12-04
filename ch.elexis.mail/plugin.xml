@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="ch.elexis.mail.Preferences"
+            id="ch.elexis.mail.settings"
+            name="E-Mail"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            description="Sendet das Elexis-Log und Eclipse log"
+            id="ch.elexis.mail.sendqfa"
+            name="Fehlermeldung senden"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="ch.elexis.mail.actionSet"
+            label="Mail Actions"
+            visible="true">
+         <action
+               class="ch.elexis.mail.SendQFA"
+               definitionId="ch.elexis.mail.sendqfa"
+               helpContextId="ch.elexis.mail.qfaAction_help"
+               id="ch.elexis.mail.qfaAction"
+               label="Fehlermeldung senden"
+               retarget="false"
+               style="push"
+               tooltip="Senden Sie eine automatische Fehlermeldung an Elexis"/>
+      </actionSet>
+   </extension>
+
+</plugin>

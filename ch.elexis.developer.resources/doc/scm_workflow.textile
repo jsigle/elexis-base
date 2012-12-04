@@ -1,0 +1,500 @@
+A proposal to the elexis developers to switch from SVN to Mercurial. See also "Elexis Forum":http://www.elexis-forum.ch/viewtopic.php?t=264
+
+Note: As of May, 22. we decided to use mercurial for the management of the Elexis sources on sourceforge.net. The main reason for this decision was, that mercurial has a mature Eclipse integration which is crucial for most of the Elexis developers. An other small advantage was that Mercurial looks somewhat friendlier to windows-users. These points are, of course, totally biased on our own preferences and do in no way mean that other DSCMs are bad. 
+
+We keep this file to make the process transparent.
+
+
+(c) Niklaus Giger, 2010. niklaus.giger@member.fsf.org. started May 4, 2010
+
+{toc}
+
+h1. Introduction
+
+The author has struggled several time in the last 4 years to get a few patches into the LinuxPPC kernel,  Xenomai and the "U-Boot loader":http://www.denx.de/wiki/U-Boot/WebHome. In the ancient times git was a very fast moving target, graphical interfaces didn't exist and it was easy to get lost in the myriad of commands and options.
+
+Often a patch had to be rewritten 3,4,5 or more times to get accepted. It was hard do conform to contradictory code styles, not forgetting the sign-off, being rebased to yet another branch, etc. One had to used "StackedGit":http://www.procode.org/stgit to split patches in more logical units and rearranging their order.  Even when it took more than a few hours to understand git and how it works with changes, git always reduced the amount of changes to be reviews to the minimum, where human intervention and brain was needed to resolve differenes.
+
+Nowadays git is stable, has nice graphical tools (Tortoise-git for windows user, EGit-plugin for eclipse, qgit and a few more) and can be fun to work with. It encourages to use branches wherever they are appropriate. Git (but also Mercurial and Bazaar) have proven to be reliable tools to which big and small projects can trust their valuable source code.
+
+Here you find a proposition how elexis could organize its workflow to ensure that collaboration is easy, customers can decide themselves whether they want the bleeding edge branch with their long awaited feature or a trusted version with only known bugs in it. For the developers it should be easy to switch rapidly from their pet project to their role as release/branch manager.
+
+h2. Recommended readings
+
+Here you find pointers to some good writings about "SCM":http://en.wikipedia.org/wiki/Source_Code_Management (Software-Configuration-Management) and "DVCS":http://en.wikipedia.org/wiki/Distributed_Version_Control_System (Distributed Version Control System).
+
+"Joel Spolsky":http://www.joelonsoftware.com/items/2010/03/17.html comments about his experiences. The main point is that you need to grasp a different methodology when switching from a centralized SCM to a decentralized one. He had to start thinking about changes and not versions.
+
+Martin Fowler published two very interesting threads about new trends for SCM. Some thoughts are in "http://martinfowler.com/bliki/VersionControlTools.html":http://martinfowler.com/bliki/VersionControlTools.html. He also published the results of an informal "popularity survey":http://martinfowler.com/bliki/VcsSurvey.html.
+
+h3. for mercurial users
+
+Under "http://hginit.com/":http://hginit.com/ you find a nice tutorial about using Mercurial. Don't miss the point about "Subversion Re-education" if you were only using Subversion until now.
+
+See also " Mercurial: The Definitive Guide":http://hgbook.red-bean.com/by Bryan O'Sullivan.
+
+I found the following remark at "http://www.javaforge.com/project/HGE":http://www.javaforge.com/project/HGE very reassuring:
+**"Is MercurialEclipse ready for production?"**
+"Intland is eating its own dog food. We are using MercurialEclipse to develop all our commercial products, like codeBeamer, codeBeamer MR and Participate."
+
+In Switzerland there is commercial support available for mercurial. See "mercurial.ch":http://www.mercurial.ch/. There is found this good comparision by Google between "Git/Mercurial":http://code.google.com/p/support/wiki/DVCSAnalysis
+
+There a over 30 "extensions":http://mercurial.selenic.com/wiki/UsingExtensions for mercurial.
+
+h3. For git-users
+
+Under "http://git-scm.com/documentation":http://git-scm.com/documentation the author liked the article about the "everyday use of git:"http://www.kernel.org/pub/software/scm/git/docs/everyday.html.
+
+Converters from SVN to git should read the "Git - SVN Crash Course":http://git-scm.com/course/svn.html, which gives you the one-to-one correspondance of the most used svn commands.
+
+"Version control with Git":http://oreilly.com/catalog/9780596520137 by Jon Loelinger  is a thorough guide to using Git and the possibilities it offers to customize one's workflow. It is available as PDF or paperback.
+
+
+
+h1. What we want to achieve
+
+h2. Tools we evaluated
+
+* Bazaar
+* Mercurial
+* Git
+
+h2. Reasons for choosing one or another
+
+All the tools matched the following criterias:
+# Free Software
+# Stable, proven for large projects
+# Support rename
+# Support branches
+# Has an eclipse plugin
+## Git -> "EGit":http://www.eclipse.org/egit/
+## Bazaar -> "BzrEclipse":http://wiki.bazaar.canonical.com/BzrEclipse
+## Mercurial  -> "Mercurial Eclipse":http://www.vectrace.com/mercurialeclipse/
+# Has a standalone graphical interface
+## Tortoise-Git
+## Tortoise-Hg
+## TortoiseBzr
+# Has a tool to convert SVN repository
+## "git svn":http://www.kernel.org/pub/software/scm/git-core/docs/git-svn.html 
+## "BzrMigration":http://wiki.bazaar.canonical.com/BzrMigration#Subversion%20%28svn%29	
+## "hg convert":http://mercurial.selenic.com/wiki/ConvertExtension#Converting_from_Subversion
+
+There is no tool that has a unique selling point. The  "popularity survey":http://martinfowler.com/bliki/VcsSurvey.html gave git a small advantage.
+
+The poll about "Neues Revision Control / Source Code Management System?":http://elexis-forum.ch/viewtopic.php?t=264 listed the 4 May 2010 at 22:10 the following results
+* Stay with subversion: 1
+* Git (http://git-scm.com): 4
+* Mercurial (http://mercurial.selenic.com): 0
+* Other: 0
+
+h3. Known deficits of EGit (Galileo)
+
+* Compared to the command line a commit is slow! 
+** Version 0.7.0 took about 45 seconds for fetching the information neede for a commit. 
+** Executing "git repack" at the command line level helped a little bit (bringing it down to about 20 seconds).
+** After a update of JGit/EGit via http://download.eclipse.org/egit/updates-nightly/ to 0.8.0.20100503 this problem went away.
+* Does not honour git config --global properties for EMail, etc
+* No support for git-svn
+* No support for git checkout -b aNewBranch
+* No support for git rebase (must be called on the command line). See "egit":http://wiki.eclipse.org/EGit/User_Guide#Pulling_.28merge_or_rebase.29_new_changes_from_upstream 	
+
+h3. Known deficits of BzrEclipse (Galileo)
+
+None known, as never worked with it.
+
+h3. Known deficits of Mercurial Eclipse (Galileo)
+
+It would be nice if pulling new projects from the repository would add them automatically to the workspace.
+
+h2. The winner is:
+
+To be determined.
+
+h1. Rules
+
+elexis as project wants to offer:
+
+* A stable, regularly updated version for the paying Swiss medical practitioners. This is needed to assure the long-term survival of the project.
+* A somewhat out-dated, easily installed and cost-free version (e.g. 1.4)
+* As many as needed branches for developers to implement new features, explore alternatives or whatever is considered meaningful.
+* A low entry barrier for new developers and/or other contributors (e.g. translations)
+* Pave the way for a workflow where bug tracking, testing and continuos integration give a clear picture of which bugs/problems exist for each branch. A spike of this program can be found at  "http://ngiger.dyndns.org/hudson/":http://ngiger.dyndns.org/hudson/.
+* Make it easy for developers to share patches, even if they are not yet ready for inclusion into a stable branch.
+* Avoid duplication of effort, by making development branches visible in the repository.
+
+h2. Tool independent
+
+* Each developer may maintain as many branches as he believes necessary/meaningful.
+* For performance/size/separation reasons the project may decide to give each developer a separate repository.
+* For the main branches (old-stable, stable, upcoming, important-new-ones) there is either one person or a team responsible for pulling in the changes from a developer's branch. This responsability is documented in the top readme file for each branch.
+* Commit often (e.g. every 15 minutes) as soon as you have achieved a clear micro target, e.g. added a testcase and made it pass by changing/adding some code.
+* Once you want to share your achievements, push your changes into your branch in the public visible repository. Let the world know that you made progress by posting it to gerry@weirich.ch.
+* Each push is published via a commit hook to a commit@elexis.somewhere mailing list.
+* Changes/questions can be discussed by sending an email to developer@elexis.somewhere, where each developers/contributor/interested person can get a feeling how active the elexis project is.
+
+h2. Tool specific
+
+Nothing written here until we have not decided upon a tool.
+
+h1. Examples (using git)
+
+Using Eclipse built in installer add a new Software Site "EGit" from "http://download.eclipse.org/egit/updates-nightly/" to get a version as of 0.8.0.20100503 or later.
+
+h2. Initial git setup (command line only)
+
+git config --global user.name "My Name"
+git config --global user.email "<user@example.com>"
+
+h2. Compile from source
+
+h3. From the command line
+
+@git  git@github.com:ngiger/elexis.git myWorkspace@
+@cd myWorkspace@
+- Never work on the master branch.
+- Always work on your private branch!
+@git checkout master -g myPetProject@
+@cd BuildElexis/rsc/build@
+<edit local.properties>
+@ant Windows|macosx|Linux@
+@cd /to/your/path/to/deploy@
+@./elexis@
+
+h3. Using EGit
+
+EGit has also a "Users Guide":http://wiki.eclipse.org/EGit/User_Guide.
+
+Create a new workspace. In this example we use /opt/elexis.git
+
+Choose "File..Import..Git..Git Repository".
+!images/egit_import_1.png!
+In the "Source Git Dialog" set the "Connection Protocol" to http. Then set the URI to "http://git@github.com/ngiger/elexis.git".
+!images/egit_import_2.png!
+Press "Next". In the next dialog "Branch Selection" accept the defaults and press "Next" again.
+!images/egit_import_3.png!
+In the next dialog "Local Destination" accept the default and press "Next" again.
+!images/egit_import_4.png!
+Now it will take a few minutes to import the git repository.
+In the "Import Projects" dialog press "Finish" to enable Git Team operations on all imported projects.
+!images/egit_import_5.png!
+Now Eclipse will take some time to refresh and build the whole workspace. (For some reasons unclear to me, I got the following error popping ups).
+!images/egit_import_5.png!
+
+
+h2. Submit a small patch
+
+h3. From the command line
+
+<add a testcase, preferably a UnitTest>
+@git commit --sign-off --message "Found a test for this stupid error" path/to/testCase@
+<fix some error>
+@git commit --sign-off --message "Fixed this stupid error" path/to/fileFixed@
+@git format-patch -2@
+<will produce a file like 0002-Tound-a-test-for-this-stupid-error.patch>
+<will produce a file like 0001-Fixe-this-stupid-error.patch>
+Send this file to gerry@weirich.ch.
+
+h3. Using EGit
+
+Select the "Git Repository Explorer" perspective. Select the top-most element "elexis" and fill in your user.email/name in the Properties view.
+!images/egit_properties_1.png!
+
+Edit your tests and java files to fix the error.
+Select the project(s) where you made changes in the Packages Editor, right click and select "Team..Commit.."
+!images/egit_commit_2.png!
+!images/egit_commit_1.png!
+In the "Commit Changes" dialog, enter some meaningful text int the "Commit message". Select the "Add Signed-off-by" box in order to declare that it was really you who is the author for this patch. Set the Author/Commiter names/e-mail-addresses to the correct values.
+!images/egit_commit_3.png!
+* **TODO:** EGit does not yet support the "Create/Submit a patch". Therefore please follow the steps outlined above unter "From the command line"
+
+h2. Basic SCM test as defined by Gerry
+
+The first setup might be done on a command line. For simplicity we will simple use a local directory RemoteServer as remote repository. (You remember that for a DSCM local and remote repositories are equal?)
+
+# Create new DSCM repository in a local directory
+# Add one(all) existing elexis project (e.g. BuildElexis)
+# Push to a remote server
+
+Now everything should be done using the eclipse and the SCM plugin.
+
+# Start eclipse with a new empty workspace A
+# Clone remote repository into workspace A
+# Start a second eclipse B with a new empty workspace B
+# Clone remote repository  into workspace B
+# Eclipse A: Change a file
+# Eclipse A: Commit the change C1
+# Eclipse A: Push it to the remote server
+# Eclipse B: Pull (You should get change C1)
+# Eclipse A: Create a new plugin project myPetProject
+# Eclipse A: Add the new project myPetProject
+# Eclipse A: Commit new myPetProject as change C2
+# Eclipse A: Push it to the remote server
+# Eclipse B: Fetch/Rebase (You should get change C2)
+# diff between workspace A and B should empty
+
+The command line-version of this test can be found "here":file:test_gerry.sh
+
+h3. Above example with mercurial/HgEclipse
+
+For the example here we created the empty hg repositories /opt/gerry/A and /opt/gerry/RemoteServer on the command line (@cd  /opt/gerry/A && hg init@) and an empty directory /opt/gerry/B.
+
+Now we start our first instance of eclipse to open our **workspace B** , e.g.  @eclipse -data /opt/gerry/B@.
+
+Select the menu "File..Import..".  In the "Import" dialog we choose "Clone Existing Mercurial Repository" and press "Next"
+!images/elexis_hg_1.png!
+After choosing the right "remote" repository "/opt/gerry/RemoteServer" in the "Mecurial clone repository wizard". Note that we choose the local directory clone, where our repository will live. Press "Next" to continue.
+!images/elexis_hg_2.png!
+By pressing several times "Next" we have a new workspace populated by the project "BuildElexis".
+!images/elexis_hg_3.png!
+!images/elexis_hg_4.png!
+!images/elexis_hg_5.png!
+
+Now we open a second eclipse **workspace A**, e.g.  @eclipse -data /opt/gerry/A@. Use "File..Import..Existing projects" to import the "BuildElexis" project.
+
+In the "Package Explorer" view select the "BuildElexis" project. Using the context menu choose "Team..Share..". In the "Connect to an existing Mercurial repository" choose your workspace directory "/opt/gerry/A" and press "Finish".
+
+Add a comment line to the file "options.cmd". In the "Package Explorer" you notice, that the icon for "options.cmd" changed to indicate your modification.
+!images/hg_change_C1_1.png!
+
+In the "Package Explorer" view select the "BuildElexis" project. Using the context menu choose "Team..Commit..". In the "Commit changes to local Mercurial repository" add a decent commit message. Then press "OK".
+
+As we are pleased with our work we will pull it to the remote server.
+In the "Package Explorer" view select the "BuildElexis" project. Using the context menu choose "Team..Push..". In the "Push changes to a repository" dialog enter the URL of the RemoteServer. Then press "Next".
+!images/hg_push_1.png!
+In the "Outgoing changesets" dialog you have the possibility to review your changes and think a second time whether they are okay or not. As we are satisfied we press "Finish".
+!images/hg_push_3.png!
+
+Now open again your eclipse **workspace B**. Now we want to fetch the changes we made in **A**.
+In the "Package Explorer" we select the the "BuildElexis" project. In the context menu we choose "Team..Pull..". In the "Pull changes from a repository" assure that that in the "Pull options" the "Update after pull" check-box is activated. Then press "Next".
+!images/hg_pull_1.png!
+In the "Incoming changesets" dialog we have the possiblity to review the changes. To accept them, press "Next".
+!images/hg_pull_2.png!
+
+Now open again your eclipse **workspace A**.
+
+Select "File..New Project..Plugin Projet" and create a new project "myPetProject" using the default settings.
+
+In the package explorer select "myPetProject". In the context menu we choose "Team..Add..". Press "OK" to proceed 
+!images/hg_add_1.png!
+ 
+In the package explorer select "myPetProject". In the context menu we choose "Team..Commit..". In the "Mercurial Commit" you may use the "Select/Unselect all" button to include all files for commiting.
+!images/hg_add_2.png!
+As before we push using "Team..Push.." this change to the RemoteServer. In the dialog, select "Next"
+!images/hg_add_3.png!
+In the dialog, select "Finish"
+!images/hg_add_4.png!
+
+
+Now open again your eclipse **workspace B**.
+As before we pull the changes from the remote repository. Remark the comment about the new project.
+MercurialEclipse did not add the new project automatically. Therefore we have to add it manually using "File..Import..General..Existing Projects into Workspace".
+!images/hg_add_5.png!
+
+h2. Working on a new feature
+
+h3. From the command line
+
+- Never work on the master branch.
+- Always work on your private branch!
+@git checkout master -g myPetProject@
+<edit and polish your project>
+@git add myFailingTests@
+@git add myNewDirectoryWithFilesBeneath@
+@git commit -m "Some work done"@
+@git add moreFailingTests@
+@git add moreFiles@
+@git commit -m "Good work done"@
+Now it is time to publish your work. 
+Setup your credentials for the repository as described in the "EGit Users Guide":http://wiki.eclipse.org/EGit/User_Guide#Eclipse_SSH_Configuration. You will need to get write access to the repository and as you probably will use git+ssh you have to enter your public SSH-key (found usually at  ~/.ssh/id_rsa.pub key) to github.com/sf.net or whereever the elexis git-repository will live.
+@git push remote@
+Hudson will run Unit/Regressiontest on all supported OS and languages
+
+h3. Using EGit
+
+With release 0.7.1 EGit does not yet offer the possibilty to create branches. Therefore quit Eclipse, go to the command shell and enter @git checkout master -g myPetProject@, then restart Eclipse.
+
+Cloning, creating a branch, editing, committing changes is the same work as for a simple patch, but repeated until you are ready to publish.
+
+Setup your credentials for the repository as described in the "EGit Users Guide":http://wiki.eclipse.org/EGit/User_Guide#Eclipse_SSH_Configuration.
+
+Go to the "Package Explorer" view. Right-click and select "Team..Push To..". The "Push to Another Repository" dialog should appear. In the "URI" field, type "h" and you will be prompted with a list of previous location. Therefore "http://git@github.com/ngiger/elexis.git" should appear. Switch the protocoll to https and enter a valid Username/Password. Then press "Next".
+!images/egit_push_1.png!
+In the "Push Ref Specification" dialog select the source/destination branches (e.g. both are "refs/heads/myPetProject"). Press "Add all branches", then "Next".
+!images/egit_push_2.png!
+If you specified an invalid username/password combination you will get an error.
+
+h2. Release procedure
+
+**TODO:** EGit as of version 0.7.1 does not support many of the commands needed from branching, rebasing. 
+
+For each alpha, beta, release candiate, do
+
+* Merge patches from Old-Stable, Stable,etc
+* Hudson will run Unit/Regressiontest on all supported OS and languages
+* Commit and push
+* Merge patches from Project 1
+* Hudson will run Unit/Regressiontest on all supported OS and languages
+* Commit and push
+<...>
+* Merge patches from Project x
+* Hudson will run Unit/Regressiontest on all supported OS and languages
+* Commit and push
+* Run some manual tests
+* Update manual/documentation
+* Commit and push
+* Prepare release info
+* Tag the release.  "git tag -s Version-2.1.0". This command must be run on the command line.
+* Commit and push
+* announce it to the concerned people
+
+The only operation which needs additional care and explanation is merging branches. It is a field where git shines, but only if you understand its inner workings and if you follow the rules.
+
+**Therefore we document here working on the command line. In any case, be careful and think before you type as it might cost you some work to undo errors while rebasing/tagging/merging! You have be warned!** It probably is a good idea to have a separate workspace/git clone dedicated to release work.
+
+The author will only outline the trivial case (a) everything could be merged without manual intervention and (b) merging failed but by changing a few lines. 
+
+* **(a) Trivial case**
+We assume that the following begin with a clean workspace on a branch called release-branch. E.g
+@git checkout origin/master -b release-branch@
+@git status@
+should return
+@# On branch release-branch@
+@nothing to commit (working directory clean)@
+Merging is done using
+@git merge myPetProject@
+This should produce output like:
+@Updating 7e4a71c..103ccb2@
+@Fast-forward@
+@TestElexis/ch/elexis/tests/OpenVPNTest.java |    5 +++++@
+@TestElexisUI/readme.txt                     |    5 ++++-@
+@2 files changed, 9 insertions(+), 1 deletions(-)@
+
+* **(b) Merge errors are easily resolved changing a few lines of code**
+
+Let us assume that you have a merging conflict with the branch alternate (see the 9.1.3. A Merge with a Conflict in the book by Jon Loelinger)
+@master $ git checkout master@
+@Switched to branch "master"@
+@$ git merge alternate@
+@Auto-merged file@
+@CONFLICT (content): Merge conflict in file@
+@Automatic merge failed; fix conflicts and then commit the result.@
+
+@git status@ will tell you, which files have a conflict. Resolve them manually (look for strings @<<<<<@), then tell git that you resolved the conflict by calling
+@git add path/to/conflictingFile@
+@git commit -m "Resolved conflict"@
+
+In all other cases the release manager has to understand what and why it happened, caring about altering history (which means other people want be able to synchronize correctly with the release repository), etc. Git has commands like reset, cherry-pick, revert to handle almost any kind of conflict resolution.  But figuring which command using which option is sometimes hard to figure out.
+
+
+h2. Commit acces to git repository
+
+* Submit your public ssh key to "https://sourceforge.net/apps/trac/sourceforge/wiki/SSH%20keys":https://sourceforge.net/apps/trac/sourceforge/wiki/SSH%20keys
+
+* Request write access to the project maintainer Gerry Weirich <gerry@weirich.ch>
+
+* Follow the guidelines outline on "https://sourceforge.net/apps/trac/sourceforge/wiki/Git":https://sourceforge.net/apps/trac/sourceforge/wiki/Git
+
+h1. Examples using mercurial
+
+(G. Weirich)
+
+To convert an existing Subversion repository to a mercurial repository, I did the following (since the hgSubversion tools seems too complicated...)
+
+* Prepare an Eclipse instance with an empty workspace, e.g. eclipse -data my_hg_workspace
+* Install Mercurial and hgEclipse
+* Export the original Subversion Repository: 
+bc. 
+* svn export https://elexis.svn.sourceforge.net/svnroot/elexis/trunk elexis-base
+* cd elexis-base
+* hg init
+* hg add .
+* hg commit -m"Transfer von Subversion"
+ 
+* In Eclipse choose "import - Mercurial - clone repository using mercurial" and select the freshly created Repository elexis-base. Make sure the checkbox in "Checkout as project(s) in the workspace" is set.
+
+The import will create all contained projects. Repeat above steps for the elexis-addons and archie repositories.
+
+Unfortunately this is a one-way conversion. Thus suited only for evaluation purposes.  
+h1. References
+
+The Koha-project has also some nice drawings and explanations on how to use Git on a small project.
+http://wiki.koha.org/doku.php?id=en:development:git_usage
+
+h1. (One-Time-Job): Converting the existing SVN-repositories
+
+To have revisions to compare the following commands were executed:
+@ svn export https://elexis.svn.sourceforge.net/svnroot/elexis/branches/1.4 /opt/elexis.1.4@
+@ svn export https://elexis.svn.sourceforge.net/svnroot/elexis/branches/2.0 /opt/elexis.2.0@
+
+h2. Converting to git
+
+Install git and it git svn extension.
+@git svn --svn-remote addons clone --quiet --stdlayout --prefix=addons http://elexis-addons.googlecode.com/svn /opt/elexis.git.all.clone@
+@git svn --svn-remote samples clone --quiet --stdlayout --prefix=samples/ http://archie.googlecode.com/svn/archie/ch.unibe.iam.scg.archie.samples /opt/elexis.git.all.clone@
+@git svn --svn-remote archie clone --quiet --stdlayout --prefix=archie/ http://archie.googlecode.com/svn/archie/ch.unibe.iam.scg.archie /opt/elexis.git.all.clone@
+@git svn --svn-remote elexis clone --quiet --stdlayout --prefix=elexis/ file:///opt/elexis.svnsync/mirror-svn/ /opt/elexis.git.all.clone@
+Results:
+* Runtime: Over 2 h
+* Space requirements: about 65 MB in .git directory
+* Quality:  Creates all branches/trunk. But when you checkout elexis/trunk you don't get archie, etc.
+Should probably work with submodules.
+No problems noticed while cloning. Old svn branches do not appear.
+Compared branches 1.4 and 2.0.0 (as exported by svn) after doing a @git checkout -t 1.4@.
+
+
+h2. Converting to mercurial
+
+The hg-extension "hgsubversion":http://bitbucket.org/durin42/hgsubversion must be installed and enabled. Add the following lines to you @~/.hgrc@
+@[extensions]@
+@hgext.convert=@
+@svn=/path/to/python/extension/hgsubversion@
+
+To speedup the conversion we create a local SVN repository.  Use
+@svnsync init file:///opt/elexis.svnsync/mirror-svn/ https://elexis.svn.sourceforge.net/svnroot/elexis@. 
+This command takes a long time to complete,
+To keep it uptodate we call
+@svnsync sync file:///opt/elexis.svnsync/mirror-svn@.
+This command completes usually (when there is not much to update)  in less than one minute.
+
+@hg clone --quiet file:///opt/elexis.svnsync/mirror-svn /opt/elexis.hg.clone@
+
+Compared branches 1.4 and 2.0.0 (as exported by svn) after doing a @hg checkout -r 1.4@.
+
+Results:
+* Runtime:	about 6 minutes
+* Space requirements: about 84 MB in .hg directory
+* Quality:  No problems noticed while cloning. Old svn branches can be listed using @hg branches@
+
+h1. Working with sub-projects coming from different repositories
+
+This is an area where all three DVCS do not yet have a very mature support (especially not using Eclipse). Please have a look at the following pages
+* "git-submodules":https://git.wiki.kernel.org/index.php/GitSubmoduleTutorial
+* "mecurial-subrepos":http://mercurial.selenic.com/wiki/subrepos
+* "bzr-NestedTrees":http://wiki.bazaar-vcs.org/NestedTreesDesign
+
+Merging changes from external repositories is also possible using the mercurial "transplant":http://mercurial.selenic.com/wiki/TransplantExtension extension (with support from HGE).
+
+Seemlessly handling branches, changesets from different repositories in one elexis workspace would provide the following benefits:
+* Easy and accurate reference to a specified plugin/JAR used, e.g. noa
+* Archie, elexis-addon could be migrated later to another DVCS
+* Easy way to create/push-back patches to another project
+* Provider of closed-source plugins (e.g. openoffice 3.x support from medelexis) just add one or more repositories to the open source elexis workspace.
+
+h2. MercurialEclipse (Adding several SVN-repos)
+
+Open the view "Console" and select the "Mercurial Console" as the active one. This will permit you to watch, what the next steps will do. Arrange the workspace to make it look like this: 
+!images/hg_sub_projects_1.png!
+
+Open the view "Mercurial Repositories". Use the context menu in this view and select "Clone repository..". In the "Mercurila clone repository wizard" dialog add the path to the SVN archie repository, then select "Next".
+!images/hg_sub_projects_2.png!
+Now HGE will work a couple of minutes to download everything. Then the dialog "Select working directory revision" lets you select a branch or revision for checkout.
+!images/hg_sub_projects_3.png!
+In the "Import Projects" dialog accept the default to import the projects to the project. Then press "Finish".
+!images/hg_sub_projects_4.png!
+
+**Nested repositories introduce another level of directories!**
+
+* TODO: Howto add all needed repositories into one single Mercurial checkout.
+* TODO: Howto make ant/build process aware of a diffrerent workspace layout.
+* The author did not find a way howto add the needed ".hgsub" using MercurialEclipse.
+* How does Mercurial react if it cannot reach a specified repository (e.g. a closed-source repository is mentioned in an open-source project)?

@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Private Abrechnung 2
+Bundle-SymbolicName: ch.elexis.privatrechnung2;singleton:=true
+Bundle-Version: 1.3.2
+Bundle-Vendor: elexis.ch
+Require-Bundle: ch.rgw.utility,
+ ch.elexis,
+ org.eclipse.jface,
+ org.eclipse.core.runtime,
+ org.eclipse.ui,
+ ch.elexis.importer.div,
+ org.eclipse.ui.forms,
+ ch.elexis.ebanking_ch,
+ ch.elexis.core;bundle-version="0.0.2"

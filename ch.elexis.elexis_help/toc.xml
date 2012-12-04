@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+<!-- $Id: toc.xml 764 2006-08-20 12:59:58Z rgw_ch $
+ * Copyright (c) 2005, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ -->
+<toc label="Elexis Hilfe Inhalt" topic="html/toc.html">
+   <topic label="Einführung">
+      <anchor id="gettingstarted"/>
+   </topic>
+   <topic label="Konzepte">
+      <anchor id="concepts"/>
+   </topic>
+   <topic label="Aufgaben">
+      <anchor id="tasks"/>
+   </topic>
+   <topic label="Referenz">
+      <anchor id="reference"/>
+   </topic>
+   <topic label="Tips und Tricks">
+      <anchor id="samples"/>
+   </topic>
+</toc>

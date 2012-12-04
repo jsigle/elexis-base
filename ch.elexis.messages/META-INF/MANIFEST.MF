@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Elexis Nachrichten plugin
+Bundle-SymbolicName: ch.elexis.messages;singleton:=true
+Bundle-Version: 2.0.2
+Bundle-Activator: ch.elexis.messages.Activator
+Bundle-Vendor: elexis.ch
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ ch.elexis,
+ ch.rgw.utility,
+ org.eclipse.ui.forms,
+ ch.elexis.core;bundle-version="0.0.2"
+Eclipse-LazyStart: true

@@ -1,0 +1,20 @@
+h1. Elexis Databinding
+
+In fact, this is JFace Databinding, adapted to IPersistentObjects.
+
+JFace Databinding is an implementation of the observer-pattern on the Eclipse framwork. You can combine any two Objects, so they keep in-sync.
+Consider a Text-Field an a property of a datastore object. If we make an IObservable from each, we can link them, so the Text Field updates whenever the 
+model changes and vice versa.
+
+h2. How use it?
+
+You can create an IObservable from any field of any IPersistentObject simply by creating a new ch.elexis.core.databinding.PersistentObjectObservableValue. 
+You can create IObservables from JFace UI widgets with their respective factories, and then you can bind them together.
+
+h2. Dependencies
+
+ch.elexis.core.databinding has only a dependency to org.eclipse.core.databinding, com.ibm.icu and to ch.elexis.core. Of course, if you want to combine IPersistentObjects to JFace Widgets, you'll need JFace as well. 
+
+h2. Example
+
+ch.elexis.core.databinding_test shows how to use databinding

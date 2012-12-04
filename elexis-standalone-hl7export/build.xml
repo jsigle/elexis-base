@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<project name="commons-nowhow build script" default="build" basedir=".">
+
+	<!-- ================================================================== -->
+	<!-- Initialize                                                         -->
+	<!-- ================================================================== -->
+	<!-- Create the time stamp -->
+	<tstamp />
+
+	<!-- ================================================================== -->
+	<!-- Properties                                                         -->
+	<!-- ================================================================== -->
+	<property name="prerequisite1" value="../elexis-hl7-v26/elexis-hl7-v26.jar" />
+	<property name="build.dir" value="classes-ant" />
+	<property name="src.dir" value="src" />
+	<property name="jar.file" value="hl7export-${DSTAMP}.jar" />
+	<property name="output.dir" value="output" />
+
+	<!-- ================================================================== -->
+	<!-- Compile                                                            -->
+	<!-- ================================================================== -->
+	<target name="build">
+    <!-- The following lines are commented out because the path to the target
+         file is wrong, the file does not exist and the targeted project does
+         not provide any build file.
+		<copy todir="lib">
+			<fileset file="${prerequisite1}" />
+		</copy>
+		-->
+		<copy todir="${build.dir}">
+			<fileset dir="${src.dir}" includes="**/*.*" />
+		</copy>
+		<javac destdir="${build.dir}" source="1.5" encoding="ISO-8859-1" debug="true">
+			<src path="${src.dir}" />
+			<classpath>
+				<fileset dir="lib" includes="**/*.*" />
+			</classpath>
+		</javac>
+		<jar basedir="${build.dir}" jarfile="${jar.file}">
+			<manifest>
+				<attribute name="Main-Class" value="ch.elexis.export.hl7.Start" />
+				<attribute name="Class-Path" value="h2.jar hsqldb.jar mysql-connector-java.jar postgresql.jar elexis-hl7-v26.jar commons-logging-1.0.4.jar hapi-base-1.1.jar hapi-structures-v26-1.1.jar" />
+			</manifest>
+		</jar>
+
+		<mkdir dir="${output.dir}" />
+		<copy todir="${output.dir}">
+			<fileset file="${jar.file}" />
+			<fileset file="settings.ini" />
+			<fileset file="hl7export.bat" />
+			<fileset file="invisiblerun.vbs" />
+			<fileset dir="lib" includes="**/*.*" />
+		</copy>
+		<replace file="${output.dir}/hl7export.bat" token="VERSION" value="${DSTAMP}" />
+
+		<antcall target="clean">
+		</antcall>
+	</target>
+
+	<target name="clean">
+		<delete dir="${build.dir}" />
+		<delete file="${jar.file}" />
+	</target>
+
+</project>
+

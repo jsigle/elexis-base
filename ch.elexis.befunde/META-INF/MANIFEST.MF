@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Elexis Befunde Plugin
+Bundle-SymbolicName: ch.elexis.befunde; singleton:=true
+Bundle-Version: 2.1.2
+Bundle-Vendor: elexis.ch
+Bundle-Localization: plugin
+Require-Bundle: ch.elexis,
+ ch.rgw.utility,
+ org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.forms,
+ ch.elexis.core;bundle-version="0.0.2"
+Export-Package: ch.elexis.befunde.xchange
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

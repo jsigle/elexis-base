@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+<!-- $Id: tocgettingstarted.xml 764 2006-08-20 12:59:58Z rgw_ch $ -->
+<toc label="Einführung" link_to="toc.xml#gettingstarted"> 
+	<topic label="Was ist Elexis"  href="html/gettingstarted/maintopic.html"> 
+		<topic label="Was bedeutet modular?" href="html/gettingstarted/modular.html" /> 		
+		<topic label="Was bedeutet Betriebssystemunabhängig?" href="html/gettingstarted/systemunabh.html" /> 
+	</topic>
+	<topic label="Systemvoraussetzungen" href="html/gettingstarted/system.html" />
+	<topic label="Installation" href="html/gettingstarted/install.html"/>
+	<topic label="Upgrade von PraxisDesktop und von Java-Agenda">
+		<topic label="Import der Daten von PraxisDesktop" href="html/gettingstarted/import1.html"/>
+		<topic label="Import der Daten aus JavaAgenda" href="html/gettingstarted/import2.html"/>
+	</topic>
+</toc>

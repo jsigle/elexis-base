@@ -1,0 +1,128 @@
+% *******************************************************************************
+% * Copyright (c) 2007 by Elexis
+% * All rights reserved. This document and the accompanying materials
+% * are made available under the terms of the Eclipse Public License v1.0
+% * which accompanies this distribution, and is available at
+% * http://www.eclipse.org/legal/epl-v10.html
+% *
+% *  $Id: sicherheit.tex 4905 2009-01-03 18:30:50Z rgw_ch $
+%
+%*******************************************************************************
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+
+\label{sicherheit}
+\index{sécurité des données}
+Des donnés sensibles (comme les données des patients le sont toujours) doivent être archivées et sauvegardées avec une précaution particulière. Cet article décrit quelques concepts pour la sécurité des données.
+
+Des données sensibles comme on les trouve dans les cabinet médicaux doivent :
+\begin{itemize}
+  \item{être protégées contre une perte}
+  \item{être protégées contre falsification ou manipulation volontaire ou involontaire }
+  \item {être protégées contre la prise de connaissance par des personnes non-autorisées}
+\end{itemize}
+
+Ces points seront traités dans le chapitre qui suit.
+
+\section{Comment éviter la perte des données ? }\index{perte des données}
+En principe il existe à tout moment et dans chaque système d'ordinateurs le risque de perte totale ou limitée des données. Ceci peut se produire à cause d'un défaut de hardware (un disque dur par exemple n'a qu'une durée de vie limitée de quelques années lors d'un fonctionnement permanent et il peut devenir soudainement illisible lorsque quelques secteurs importants sont détruits.) Ceci peut aussi se produire par des influences externes (par exemple une rafale de tension ou une panne de courant lors d'une écriture importante sur le disque). Mais aussi l'apparition subite des fautes non-détectées des logiciels participants peuvent mener à une perte des données.
+
+Pour toutes ces raisons il faut réfléchir ::
+\begin{itemize}
+  \item {Pour quel laps de temps je pourrais à la limite reconstruire manuellement les données ou pour quel laps de temps une perte de données ne serait pas trop importante ?.}
+  \item {Combien me coûtera la reconstruction manuelle de ces données ?}
+  \item {Combien me coûteront des données irréparables ?}
+\end{itemize}
+
+Suite à ces réflexions on pourra estimer combien une solution de sauvegarde automatique des données \index{Backup}pourra coûter et ensuite on pourra fixer la fréquence utile de la sauvegarde.
+Dans le cadre d'une utilisation fréquente d'une application au cabinet médical pour laquelle une perte de données ne sera non seulement pénible mais pourrait aussi entraîner des conséquences juridiques, une sauvegarde qui aura lieu toutes les heures ou plusieurs fois par jour pourrait être utile. Dans tout les cas au minimum une sauvegarde journalière est très recommandée.
+
+Le fonctionnement de cette sauvegarde dépendra de la banque de données utilisée. Si vous ne connaissez pas le processus dans votre banque de données ou si vous ne pouvez pas le mettre en route vous-même, nous vous conseillons vivement d'engager quelqu'un de compétent pour accomplir cette maintenance - la renonciation d'une sauvegarde régulière peut entraîner des graves conséquences.
+
+\section{Comment éviter la falsification des données ? }
+
+Le dossier électronique est dans ce contexte un désavantage en comparaison avec un dossier sur papier : Des manipulations faites sur une note autographe ne sont généralement pas difficile à détécter. Par contre on ne voit pas dans le dossier électronique s'il est encore dans l'état originale. Elexis essaie d'y remédier par le concept de la gestion des versions de documents :
+Un changement d'une note dans le dossier électronique du patient n'écrase jamais l'ancien enregistrement mais cré une nouvelle version de cet enregistrement qui sera marquée par la date, l'heure et l'utilisateur connecté. Si nécessaire les anciennes versions peuvent être visionnées et /ou restaurées très facilement. Un utilisateur standard n'a pas de possibilité d'effacer une note de façon durable. Par contre pour des raisons pratiques l'administrateur seul possède cette possibilité. De cette façon des fautes importantes peuvent être effacées ou de temps en temps il pourra "nettoyer" la base de données pour la rendre plus habile. On peut se protéger contre une éventuelle reproche d'avoir falsifié des documents en faisant avant un tel "nettoyage" une copie de la base de données sur un support de donnés seulement une fois inscriptible. On pourra si nécessaire même marquer ce document avec un chronotimbre fiable et le laisser conserver sellé de façon notariale. Une protection plus importante contre des activités de l'administrateur n'est techniquement pas possible car quelqu'un avec les droits de l'administrateur pourrait à tout moment même effacer la base de données ou la remplacer par une qu'il avait falsifié ou par une ancienne version. Pour cette raison nous préconisons fortement de ne donner le droit d'accès en tant qu' administrateur sur l'ordinateur qui contient la base de donnée qu'à une seule personne.
+
+
+\section{Comment éviter l'accès non autorisé à la base de données ?}
+
+Une base de donné sert à enregistrer des informations, des les fournir au moment voulu et de permettre de les modifier. Malheureusement la base de données ne  \glqq sait pas\grqq chaque fois d'emblée si l'accès se fait par une personne autorisée ou non. Des accès non autorisés peuvent avoir lieu de façon ciblée (par exemple pour espionner des données, pour les détruire mais aussi pour les modifier de façon subtile chose qui peut parfois provoquer des dégâts nettement plus importants qu'une destruction directe qui sera au moins rapidement constatée.).
+Des accès non autorisés peuvent aussi avoir lieu de façon aléatoire et non ciblée, provoqué par des logiciels nuisibles qui sont distribués largement et qui tentent d'attaquer n'importe quel système. Dans ce qui suit nous essayons de tracer quelques scénarios d'attaques. Ensuite nous mentionnons les mesures de défense possibles. Cette partie du manuel est très technique et ne devrait vous intéresser que lorsque vous n'avez pas confié l'installation et la maintenance de votre réseau à des professionnels externes.
+
+\subsection{Attaque contre des ports ouverts}
+
+Un ordinateur qui est connecté à Internet est comparable à une maison avec des portes qui servent à des différentes tâches. Au lieu d'avoir des escaliers de la cave, des entrées pour les livreurs, des  portes des balcons, porte principale et porte du garage, un ordinateur n'a que des Ports et de ceux exactement 65'535. Chacun de ces Ports peut être comme une porte : ouverte, fermée ou même scellée. Un port ouvert est comme une porte d'entrée ouverte. Dans un certain sens une invitation pour des voleurs de venir voir comment accéder à l'intérieur de la maison. Tout aussi peu qu'il y a un sens de sceller à la maison tout les portes et fenêtres, on ne peut pas se priver simplement de ces ports. Si on ne veut pas permettre de communication à travers certains ports on pourrait plus facilement tirer le câble du réseau ou du téléphone.
+Heureusement un port ouvert ne correspond pas seulement à un  \glqq trou\grqq dans l'ordinateur mais il y a toujours un portier - un programme qui a ouvert ce port. Sans des tels programmes tout les ports seraient fermés de façon standardisée. Un agresseur va donc d'abord observer s'il trouve un port ouvert. Pour ceci il va tester tout les ports un après l'autre = Portscan. S'il trouve des ports ouverts, il va essayer de savoir quel programme avait ouvert le port et s'il s'agit d'un programme pour lequel une vulnerabilité est connue il va utiliser cette vulnerabilité de la sécurité pour une attaque.
+
+Pour une telle attaque par Portscan, analyse du programme et intrusion, il ne faut malheureusement pas être un Hacker très intelligent qui est déterminé à tout, mais ils existent en masse des programmes déjà prêts pour produire par seconde des telles attaques contre des milliers d'ordinateurs et qui peuvent être distribués par exemple par des jeunes aventuriers ou simplement destructeurs (\glqq Script kiddies\grqq). En outre on constate dernièrement une professionnalisation de ces programmes qui est à prendre au sérieux car financée par des spammeurs dont le seul but est d'abuser des ordinateurs attaqués pour la distribution des spams et pour espionner des données confidentielles.
+
+\medskip
+
+Qu'est-ce qu'on peut faire contre ?
+\begin{itemize}
+  \item {Des ordinateurs avec des données critiques ne devraient pas être lié à l'Internet ni directement ni indirectement (par le LAN). Pour surfer ou pour les e-mails il faudrait utiliser de préférence un ordinateur à part qui n'est pas lié au réseau. Si le LAN doit pourtant être lié à l'Internet il faudra absolument avoir des connaissances sur la possibilité de se protéger ou il faudra déléguer cette tâche à un professionnel.}
+  \item  {Ne laisser ouvrir que des ports qui seront effectivement utilisés. Pour cela il faudra contrôler en détail quels services sont démarrés d'office par le système d'exploitation et si ce services sont effectivement utilisés. Des ordinateurs avec le système d'exploitation Windows on la tendance d'ouvrir des ports NetBIOS vers l'extérieur ce qui libère inutilement les ressources mises à disposition dans le LAN aussi directement dans l'Internet. Par un simple test à travers le site http://www.security-check.ch vous pouvez savoir lesquels des ports sont ouverts chez vous.}
+  \item{Mettre un routeur entre le LAN et l'accès Internet. Un routeur  \glqq cache\grqq{}les adresses internes des ordinateurs dans le LAN et une firewall\footnote{Nous aimerions vous prévenir de ne pas donner trop de confiance à une  \glqq Personal Firewall\grqq{}. Une telle Software est elle-même exposée à des attaques contre lesquelles elle devrait protéger l'ordinateur et en effet il y a beaucoup de virus et autres logiciels nuisibles qui mettent ce Personal Firewall directement hors service. Une Hardware-Firewall est nettement mieux protégé contre de telles attaques et difficilement à mettre hors service.
+
+} peut contrôler (entre autres) à travers lesquels des ports une communication peut être permise. Mais même ceci ne peut vous protéger contre toute attaque!}
+  \item {Il faut faire attention d'utiliser le moins possible des logiciels dont on a connaissance de problèmes de sécurité. Beaucoup de produits de Microsoft appartiennent malheureusement juste à cette catégorie - dû à leur universalisation des logiciels comme Internet Explorer et Outlook sont régulièrement des cibles de ces attaques. Dans ce contexte l'utilisation des logiciels alternatifs pour le Web et/ou le Mailing vaut quelques réflexions si on veut augmenter la sécurité. }
+\end{itemize}
+
+\subsection{Attaque par exploitation des failles de sécurité}
+
+Pour augmenter le confort pour l'utilisateur de leurs logiciels, Microsoft en premier lieu a impliqué dans leurs produits beaucoup de fonctions qui permettent de régler certaines fonctionnements de façon automatique. Ceci est même possible sans ordre de l'utilisateur. Il est par exemple possible que dans un e-mail, une page web, un document Word ou un tableau Excel se trouvent des commandes invisibles qui ouvrent sans demande de précision supplémentaire le logiciel concerné (Outlook, Internet-Explorer, Word, Excel). Ces fonctions qui visaient le confort de l'utilisateur ont été détournées par les producteurs de logiciels nuisibles. De cette façon l'ordinateur peut être infecté par un virus ou autre logiciel nuisible lorsqu'on ouvre simplement un e-mail, si on surfe simplement sur une page Web spécifique ou si on ouvre un document Office. Pendant les dernières années Microsoft a reconnu ces désavantages de leur logiciels et a développé régulièrement des améliorations, mais on trouve toujours des nouvelles failles de sécurité. Naturellement ce problème de base concerne aussi d'autres producteurs de logiciels mais Microsoft est pourtant par son importance la cible principale des attaques.
+
+\medskip
+
+Quoi faire contre ?
+
+\begin{itemize}
+    \item{ Procurez-vous toujours les derniers Updates de votre système d'exploitation et de votre logiciel. Seulement dans ce cas là vous avez la garantie qu'au moins les failles de sécurité reconnus jusqu'alors ont été réparées. }
+    \item{Pour surfer à tout hasard vous ne devrez pas utiliser l'ordinateur du cabinet médical. Ne visitez des sites douteux jamais par un ordinateur qui est lié au réseau de l'entreprise.}
+    \item{N'ouvrez jamais vos mails à l'hasard. L'inondation virale la plus grande s'était produite car les gens ont ouvert par Microsoft Outlook un e-mail avec le titre " I love you " et puisque Outlook installait le virus automatiquement, sans demande de précision, dans le système d'exploitation. Si vous recevez un e-mail avec un fichier exécutable comme document joint, vous ne devriez l'exécuter que si vous savez de qui et pourquoi vous l'avez reçu. Si un mail contient un document Office comme document joint, vous ne devriez jamais l'ouvrir avec le logiciel Microsoft correspondant mais avec un des multiples programmes gratuites qui permettent de voir que les donnes. }
+    \item{Dans beaucoup de cas on peut changer sans problèmes sur un logiciel alternatif. On peut utiliser sans problème au lieu du Internet-Explorer par exemple Firefox ou Opera, ou au lieu de Outlook Thunderbird ou Opera ou au lieu de Microsoft Office OpenOffice.}
+    \item{Installez sur chaque ordinateur un scanner à virus et veillez qu'il soit toujours mis à jour. Vous devez par contre savoir qu'un scanner à virus n'est pas une protection complète. Dépendant du système, il ne peut reconnaître que des virus ou logiciels malveillants qui lui sont déjà connus ou dont il peut reconnaître le comportement comme suspect à travers des méthodes heuristique.  -- Il ne peut pas reconnaître des nouveaux logiciels malveillants ou ceux qui se portent spécifiquement sur lui et évidemment il ne peut les neutraliser encore moins
+    .}
+
+\end{itemize}
+
+\subsection{Attaque par interception du trafic du réseau}
+
+Il s'agit d'un problème relativement nouveau. Les lignes des réseaux sont relativement sur contre des interceptions de données. (Puisqu'il consistent de plusieurs câbles torsadées les émissions sont minimes). Avec l'introduction des réseaux sans câbles (WLAN) une grande surface d'attaque s'est établie. Par principe toute personne qui se trouve à portée des ondes radio peut se brancher sur un WLAN et par conséquent espionner ou utiliser des ordinateurs du réseau sans être bloqué par une Firewall. En plus, tout le monde qui se trouve à portée des ondes radio peut écouter tout le trafic entre les ordinateurs du réseau. Ceci n'est techniquement pas du tout difficile et peut être réalisé par un équipement standard. Pour maîtriser ce danger les producteurs du WLAN ont développé relativement tôt une méthode de cryptage qui s'appelle WEP. Le WEP contient par contre des graves erreurs d'implémentation et doit aujourd'hui être considéré comme rompu. Ceci implique que toute personne qui utilise un certain logiciel en plus téléchargeable gratuitement à l'Internet, pourra dans quelques heures atteindre le but d'écouter, de contourner le cryptage WEP et d'entrer dans le réseau comme dans un réseau non protégé. Comme réaction à cette menace les producteurs du WLAN ont développé dernièrement une meilleure procédure de cryptage et authentification qui s'appelle WPA. Celle-ci ne peut être déplombée qu'avec une dépense considérable, du Know-How et beaucoup de patience (mais n'est pas non plus impossible à déplomber).
+Il y en a encore toujours des appareils WLAN qui ne maîtrisent pas le WPA et en plus, par manque de standardisation certains appareils des différents producteurs ne sont parfois pas capables de communiquer. L'état actuel de la technique est le WPA2 aussi nommé WPA-AES ou IEEE 802.11i. Ce cryptage ne peut être déplombé qu'avec force brute et il est en plus standardisé au niveau international de sorte que tout les appareils IEEE 802.11i devraient être capables de communiquer.
+
+
+\medskip
+Qu'est-ce qu'on peut faire contre ?
+
+Par principe : Evitez d'utiliser un WLAN si vous avez dans votre réseau des données sensibles. Si vous n'avez absolument pas la possibilité de tirer les lignes, réfléchissez de plutôt choisir une Powerline. S'il faut tout de même utiliser un WLAN : Utilisez exclusivement des appareils qui maîtrisent le WAP2 (IEEE 802.11i) et mettez surtout en route ce cryptage. Si vous pouvez régler l'énergie d'émission de votre Access-Point, choisissez l'émission la plus faible possible pour que le trafic interne ne puisse pénétrer le moins possible à l'extérieur. Utilisez pour l'authentification des utilisateurs du réseau soit un serveur RADIUS ou si vous employez PSK, changez au moins toute les quelques semaines le mot de passe WPA2 et n'utilisez pas une clé trop simple.
+
+\subsection{Attaques en profitant de la naïveté de l'utilisateur}
+
+Souvent les attaquants essayent à convaincre l'utilisateur par des E-Mails bien formulés à exécuter un document joint qui contient un virus ou de révéler des données sensibles comme des mot de passe etc.
+
+\medskip
+
+Que faire contre ceci ?
+
+\begin{itemize}
+    \item{Ne réagissez jamais à des e-mails qui vous demandent des informations par mail ou en cliquant sur un lien. Appelez plutôt l'émetteur présumée du mail et demandez le si ce mail provient de lui.}
+    \item{N'ouvrez jamais des documents joints à un mail si vous ne savez pas exactement pourquoi vous l'avez reçu. Il ne suffit pas de voir si l'émetteur vous est connu car beaucoup de virus sont capable d'extraire et de falsifier des informations des émetteurs de votre répertoire d'adresses. }
+\end{itemize}
+
+
+\section{Et qu'est-ce que tout ça a avoir avec Elexis?}
+
+Elexis est au moins en ce qui concerne la variante multi-client un système client/serveur. Cela veut dire que le serveur doit ouvrir un port a travers lequel le client peut avoir accès. Autrement une communication à travers un réseau ne serait pas possible. Dans le cas d'une base de données MySQL le numéro du port est 3306. En principe toute personne depuis tout les pays du monde pourrait accéder à votre base de données, si l'ordinateur est directement ou indirectement lié à l'Internet car il n'est pas un secret que derrière le port 3306 se trouve en général un serveur MySQL. Par contre vous êtes en sécurité lorsque vous fermez dans votre Router / Firewall les ports qui sont utilisés par votre base de données. Par cela vous laissez apparaître ces ports depuis l'Internet comme fermés, tandis qu'il sont ouverts dans le LAN interne. Si vous voulez par contre accéder à Elexis depuis votre domicile une communication depuis l'extérieur sera indispensable. Pour cela vous pouvez installer dans votre routeur spécifiquement pour le port nécessaire une règle \glqq forward\grqq qui vous donnera accès sur l'ordinateur qui contient la base de données. En ce cas là il faudra par contre absolument veiller à ce que l'accès sur la base de données soit contrôlé par ses propres règles de sécurité. N'utilisez en aucun cas le mot de passe standard, veillez à ce que le root-account de la base de données soit protégé par un mot de passe et ne soit pas accessible depuis l'extérieur et limitez les droits des utilisateurs qui accèdent depuis l'extérieur au minimum. Veuillez pour ceci lire la documentation de la base de données et demandez un spécialiste pour cette installation. Puisque aussi pour les serveurs de base de données on n'a jamais la garanti d'être libre de toute faille de sécurité, il pourrait être utile de ne même pas donner une ouverture par un port de base de donnée mais de permettre l'accès à travers l'Internet que par des canaux sécurisés comme le SSH ou le VPN. Une explication de ces techniques dépasserait par contre définitivement le cadre de ce manuel. En cas de besoin nous vous proposons de vous laisser conseiller individuellement sur des prises de mesures de sécurité utiles.
+
+\section{Last but not least: Attaque par accès direct sur le disque dur}
+Si une personne non autorisée peut accéder au serveur, elle peut en règle général voir tout ce qui se trouve sur le serveur, donc aussi votre base de données. Ne vous laissez pas tromper par des conceptions de sécurité de votre système d'exploitation : Un aggresseur qui peut accéder à votre serveur peut par exemple sortir tout simplement le disque dur de votre serveur et le lire sur un autre ordinateur où il a les droits d'administrateur. Le même problème se pose lorsqu'un disque dur doit être vendu ou éliminé : Quiconque recevant le disque dur pourrait lire tout le contenu - la distribution des droits au mandants et utilisateurs qui avait été faite à travers le système d'exploitation ne joue pas dans ce cas. \footnote{Même pas l'effacement des données ne sert vraiment : En général on peut reconstruire des données effacées avec plus ou moins d'investissement de temps.}
+
+\medskip
+
+Qu'est-ce qu'on peut faire contre ? 
+Il n'y a qu'un remède : La base de données doit être installée dans un répertoire crypté du serveur. Heureusement les systèmes d'exploitation de nos jours apportent déjà toutes les choses nécessaires pour une installation des partitions ou répertoires cryptés\footnote{Certains par contre seulement dans la variante 'Professional', 'Business' ou 'Server'}. En plus il existent des Tools OpenSource gratuits comme par ex. TrueCrypt qui sont apte à faire la même chose. Le désavantage d'un système de données ou des répertoires cryptés est une rapidité d'accès probablement un peu réduite et le fait que vous devez mémoriser (une fois de plus) un mot de passe et celui-ci, il faut vous le graver dans votre mémoire car en cas de perte il n'y aura aucune chance de récupérer les données.
+
+\subsection{Matériel pour le Backup}
+Pour ce thème les mêmes règles comptent comme mentionné ci-dessus. Le meilleure sécurité ne vaut pas grande chose si le matériel du Backup non crypté est facilement accessible à un personne non autorisée. Si vous faites un Backup d'un partition cryptée, le Backup ne sera normalement pas crypté. D'un autre côté il y a plusieurs arguments contre un cryptage de ce matériel de Backup : Vous voudrez pouvoir lire ces Backups encore après 10 ans. Mais il n'est pas certain que vous connaissez votre mot de passe encore dans 10 ans ou que le logiciel de décryptage sera encore fonctionnel sur un ordinateur de l'époque dans 10 ans…
+Nous proposons plutôt de laisser les Backups non cryptés par contre de les garder dans un endroit sécurisé. 

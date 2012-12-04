@@ -1,0 +1,501 @@
+h1. Elexis developer resources
+
+p(klein). (c) 2010 by G. Weirich
+ $Id$	
+
+h2. Table of contents
+
+{toc}
+
+"Back to the elexis site":http://www.elexis.ch
+
+h2. Preface
+
+Elexis is originally a physician's practice management and electronic medical record (EMR) software. It is build on the Eclipse RCP(Rich Client Platform) and therefore extensible in many ways. The kernel is relatively small and contains some simple CRM(Customer Relationship Management) elements. Specific behaviour and capabilities are  introduced with plug-ins.
+
+Elexis is distributed under the Eclipse Public License and thus can freely be extended or modifed. This article will help you in creating plugins for Elexis.
+
+This document is written using the Textile markup language. More about it can be found  in our "readme":../readme.html.
+
+
+h1. Getting started
+
+h2. Prerequisites
+
+We assume that you have good knowledge of the Java programming language and at least a basic knowledge of the Eclipse environment. Beside this you'll need:
+* Linux, Microsoft(tm) Windows(tm) 2000(tm) or newer,  Apple(tm) MacOS-X 10.6 or newer 
+* Java jdk 1.6 or higher
+* "Eclipse for RCP and RAP Developer" 3.7-SR2 (indigo) for your operating system from the (<a href="http://www.eclipse.org/downloads/packages/release/indigo/sr2">eclipse downloads</a>)
+* A mercurial client plugin for Eclipse (we recommend "MercurialEclipse 1.6 or higher":http://javaforge.com/project/HGE. Use this update Site from within eclipse: http://cbes.javaforge.com/update)
+
+h2. Build Elexis first on the command line
+
+Go to the project "Elexis bootstrap"https://bitbucket.org/ngiger/elexis-bootstrap. Follow the instructions there to build an Elexis installer and a deployed product for your operating system. If you have any problems, ask questions at the Elexis developer mailing list before loosing time. We assume that you installed it into /path/to/checkout/elexis-bootstrap.
+
+Having built Elexis on the command line you can be assured that your environment has all the needed components.
+
+h2. Start with a new, clean workspace
+
+Start a new, empty workspace, e.g. under /path/to/workspace/elexis. Via File..Import..General..Existing projects into Workspace import all projects found under /path/to/checkout/elexis-bootstrap
+
+h2. Install the correct delta pack
+
+The delta pack consists of the operating system dependent parts of an Eclipse products for all supported operating systems. We use the version 3.7.2 which corresponds to the Indigo SR2-release.
+
+* Download the "delta-pack.zip":http://mirror.switch.ch/eclipse/eclipse/downloads/drops/R-3.7.2-201202080800/eclipse-3.7.2-delta-pack.zip
+* Unzip it to @/opt/downloads/delta-3.7.2@. 
+
+h2. Use the correct Target Platform
+
+Open the file @ch.ngiger.elexis.opensource/desktop.dev.target@ (from the repository elexis-addons). If you have installed the delta pack to
+
+Click on "Set Target Platform".
+
+!images/setup_1.png!:http://www.rgw.ch/elexis/dox/developer/
+
+This will take some time as it will download over 300 MB of plug-ins.
+
+Restart Eclipse. Often Eclipse seems not to update all dependencies correctly and in these cases a restart will fix this problem.
+
+h2. Run (or debug) using the correct configuration
+
+* In Eclipse, choose Window..Preferences..General..Workspace. Set the Text-Encoding to 'UTF-8' and the "New text file Line Delimiter" to "Other:Unix".
+* Select the file @ch.ngiger.elexis.opensource/ch.elexis.branding.product.launch@. 
+* Assure, that under "Project" "Build automatically" is not checked.
+* Select the menu "Project..Clean..". Check "Start a build immedidately" and "Build only the selected projects". This run must complete without error. If not try to fix them or ask for advice.
+* In the context menu select "Run as..ch.elexis.branding.product"
+* If you have problems starting Elexis, see the chapter below and check whether you have write access to the "Location" specified.
+
+h2. Customize the configuration to your needs
+
+If you want to test your cool plug-in or more plug-in proceed like this:
+
+* In Eclipse, choose Run-Run configurations. Right click on "Eclipse Application" and select "ch.elexis.branding.product". Change it to a convenient name, eg. "Elexis Praxis"
+
+!images/runconfig1.png!:http://www.rgw.ch/elexis/dox/developer/
+
+Then, go to the tab "Arguments":
+
+!images/runconfig2.png!:http://www.rgw.ch/elexis/dox/developer/
+
+* If you want use the demo database to play with some real data, unpack the "demoDB_elexis_2.1.5.4.zip":https://downloads.sourceforge.net/project/elexis/elexis%20full%20installation/Elexis-2.1.5.4/demoDB_elexis_2.1.5.4.zip?r=&ts=1354451696&use_mirror=switch into the sub-directory @.metadata@ of the "Location" specified.
+* If you do not change anything, elexis will run in the default locale of your operating system. If you want to try a different locale and language, you can add an -nl parameter in the upper box "Program arguments". The lower box "VM arguments" can be left empty for the beginning.
+* Proceed to the tab "Plug-Ins"
+
+!images/runconfig3.png!:http://www.rgw.ch/elexis/dox/developer/
+
+* Select the Plugins you want to include (at least those above)
+* Click "add required plugins"
+* Click "validate plugins" and solve missing requirements, if any
+
+Then you should be able to start your "Elexis Praxis" with "Run".
+
+
+h1. Programming guidelines
+
+Have a look at the release-guidelines.textile to see what the formal requirements for submitting code and adding new plug-ins are.
+
+h2. Becoming a committer
+
+If you feel that you'd like to offer your work to the community, we are happy to invite you as a committer. Being a committer gives you write access to the elexis repository, but gives you also responsabilities:
+*  Most importantly,  you need to keep the Codebase clean. You need to understand Copyright Rules and avoid committing any stuff that you copied & pasted from somewhere. Additionally, you must ensure, that the code in the repository always compiles
+* Being a committer is understood as a long-term privilege / obligation. It means that you are willing to maintain and evolve some part of the code (typically yours :-) over time.  Commit Rights can be revoked after an extended period of inactivity, though we'd prefer to not do that and keep you being committer.
+* Commit rights will be revoked if a committer repeatedly does not adhere to coding rules and quality standards. 
+ 
+If you do not want to take this responsability, but still would like to offer your work, please send it via e-mail, so we can integrate it  in the repository for you.
+
+h1. Concepts
+
+h2. Persistence and Database Access
+
+Elexis uses an abstraction layer to separate java's object orientated programming style from the needs of the underlying relational database. Furthermore, the abstraction layer hides differences between database brands and thus allows the elexis programmer to focus on his/her programming model without having to think about persistence.  Unlike similar abstraction layers, the elexis model does not rely on translation files or annotations. Instead, programmers are enforced to design their persistable classes in a specific way:
+All persistable classes are subclasses of ch.elexis.data.PersistentObject. The base class  has static members to connect to a database and to define mappings of object members to database fields.
+From the view of the application programmer, the database is never accessed directly. Instead, the programmer uses get and set-methods to access members of the objects, while PersistentObject cares about mapping those members to database fields accordingly. 
+All objects are created lazily, the creation process only instantiates a proxy without the need of a database access. Fields are only fetched as needed. All data are cached, and subsequent read accesses will be served from the cache during a configurable time (e.g. 20 seconds).
+In the elexis kernel, all data classes are in the package ch.elexis.data.  Classes outside the elexis kernel should never access the database directly to ensure consistency between versions.
+
+If one wants to create a new persistable class, the following steps are needed:
+
+# Your class must be a subclass of PersistentObject
+# Create a static Mapping between a database table and the members of your class.
+# Ensure that the table you need exists (if not, it must be created with an SQL script or an external program)
+# Provide a public static load(String) - function and protected constructors without arguments and with one String argument.
+# extend the ch.elexis.PersistentReference extension point by creating a subclass of PersistentObjectFactory that can create objects of your class.
+# Some mandatory methods must be implemented.
+
+We recommend to use the classes ch.elexis.developer.resources.model.SampleDataType and SampleDataTypeFactory in the plugin elexis-developer-resources as a guideline on how to write such a database model.
+ 
+h2. Access privileges
+
+Elexis has a hierarchical privilege system that is organized in roles and users.  The meaning of a privilege is defined by the implementor.
+
+ We organize the access rights as a hierarchical system of ACE(Access Control Elements), similar to a file system path. The right "foo" might supersede a right "bar" which, in turn overlays the right "baz". This dependency is written as "foo/bar/baz". The grant of a right includes all rights contained therein. So if one has the right "foo" he or she implicitely ha also the rights "bar" and "baz". 
+ 
+Each privilege can be granted to a single user or to a role. Any user with the role _admin_ implicitely has all privileges. 
+ 
+A user who has the right "ACE_USERS" can grant or revoke rights to users and groups. This can be done in the preference page "Gruppen und Rechte/Zugriffssteuerung". 
+ 
+A Plugin that wants to protect one ore more of its resources with ACE's should do the following. 
+* define a name and a parent privilege for the right 
+* plug into the extension point ACLContribution (which includes defining a class that implements ch.elexis.admin.IACLContributor). This makes it possible for the framework to include these acls in the preference page 
+* call Hub.acl.request(right) before executing the protected operation and deny the operation if that method returns false.
+
+A Plugin can grant one or more access rights to a single user by calling Hub.acl.grant(user,strings... ) or to a role by calling Hub.acl.grant(role,strings...). Privileges are revoked by calling the respective Hub.acl.revoke - methods. Note that privelegs are stored in the elexis database and therefore are effective for all work stations.
+
+A view should define by itself the necessary rights to display its content, and should check if the loggend in user has the necessary rights before displaying its contents. You can use ch.elexis.action.RestrictecAction to implement an Action that honors an ACE.
+
+The sample code of the plugin elexis-developer-resources contains examples for use of the ACLSystem (see ACLContributor.java and SampleView.java)
+
+h2. Configuration
+
+There are four configuration areas in elexis. Programmers should take care to use the correkt place for configuration data:
+
+# Hub.localCfg: A Settings-object that is mapped to the Userconfiguration of the underlying system (e.g. Registry HKCU in Windows, .java/preferences in Linux). These are configuration details that must be read before a connection to a database exists. That is mainly the connection details itself.
+# Hub.userCfg: A Settings-Object that ist mapped to the table USERCONFIG. Here are configuration details stored, which are specific for the logged-in user (e.g. perspective layout, window sizes, colors and fonts etc.).
+# Hub.mandantCfg: A Settings-object that is mapped to the table USERCONFIG. Here are details concerning the actual Mandator. Keep in mind, that actUser and actMandant need not at all be the same person.
+# Hub.globalCfg: A Settings-object that is mapped to the table CONFIG. Here are all globally valid configuration details stored. 
+
+*Warning* A plugin must not make any assumptions on how and where configuration data are stored, but always use te API Hub.xxxCfg#get() and Hub.xxxCfg#set() and so on.
+
+h2. Event Dispatcher system
+ 
+In elexis, a view cannot rely on being part of a specific window layout. Instead, a view can be linked to any of an arbitrary number of perspectives, can be hidden or visible or can be closed. Therefore a view must not make any assumptions on other views being available at any given moment. This aticle describes, how a view can be informed on user actions in other views anyhow.
+
+The ch.elexis.actions.ElexisEventDispatcher class is the central point for exchange of informations on user selections. ElexisEventDispatcher  is a singleton that can be accessed with ElexisEventDispatcher.getInstance(). Views that receive user actions must inform the system by calling ElexisEventDispatcher.fire(ElexisEvent ee) - methods. Classes that want to be informed on user actions in other views must register one or more ElexisEventListeners on ElexisEventDispatcher. Classes that want to know which instance of a specific class was selected last, can call the ElexisEventDispatcher.getSelected(Class c)-method.
+
+Note: To optimize performance, we recommend following rules:
+
+* At creation of your view, register only an IActivationListener.
+* In the visible-method of this listener, register the other listeners if the visible-parameter is true, and deregister them if the parameter is false.
+* On registering, call the listener-Methods yourself one time so the view is informed about the actual state.
+* On disposal of the view, do not forget to unregister the IActivatorListener.
+
+This ensures that listeners are only called if their view is visible to the user at the moment of the selection.
+
+The sample code of the elexis-developer-resources plugins contains extensive examples on using the ElexisEventDispatcher.
+
+h2. Keybindings
+
+This section describes how to declare keybindings using the Eclipse framework.
+You can define keybindings for any action. Eclipse provides a mechanism to ensure that there are no conflicts between plugins. This is done using "commands". A command can be seen as an abstract description of a key binding. The command itself has no keybinding assigned to it. But given a certain context, e. g. a certain view window, you can declare, that in this context, the command should have a certain key binding.
+ 
+Let's consider an action "renameAction", which is used to rename some object, e. g. a file name. You can find this example in the plugin "elexis-externe-dokumente".
+ 
+Generally, you need to define a command for each action you want to assign keybindings to. You can use existing actions already defined by Eclipse, like  e. g. "org.eclipse.ui.edit.rename", or you can define your own actions in the plugin editor.
+ 
+Each command has a unique id. The pre-defined action for renaming has the id "org.eclipse.ui.edit.rename". To use this command, you must first assign it to the action, and then register it an action handler for it.
+ 
+pre. renameAction = new Action() {
+  ...
+}
+...
+ renameAction.setActionDefinitionId(GlobalActions.RENAME_COMMAND);
+GlobalActions.registerActionHandler(this, renameAction);
+
+This should be all required to do for a pre-defined command.
+ 
+If you want to define your own key bindings, you require to define a context, a command and a binding. Let's consider an keybinding to export data to the clipboard. The key binding should be "CTRL-E".
+ 
+First, declare a new context in plugin.xml:
+ 
+pre. <extension point="org.eclipse.ui.contexts">
+  <context id="org.iatrix.view.context"
+    name="%iatrix.view.context.name"
+    parentId="org.eclipse.ui.contexts.window">
+  </context>
+</extension>  
+
+Next, declare a command (including a category, if required):
+ 
+pre. <extension point="org.eclipse.ui.commands">
+  <category
+    id="org.iatrix.commands.category"
+    name="%iatrix.commands.category">
+  </category>
+  <command
+    categoryId="org.iatrix.commands.category"
+    id="org.iatrix.commands.export_clipboard"
+    name="%iatrix.commands.export_clipboard">
+  </command>
+</extension>
+
+Then declare a binding
+
+pre. <extension point="org.eclipse.ui.bindings">
+  <key
+    commandId="org.iatrix.commands.export_clipboard"
+    contextId="org.iatrix.view.context"
+    schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+    sequence="M1+E">
+  </key>
+</extension>
+ 
+Now, the new command is known, including the context where it should be valid, and the key binding to be used.
+
+In the view, where you want to use the command, you first need to declare the context:
+
+Declare the context id and the command id as constants: 
+
+pre. private static final String VIEW_CONTEXT_ID = "org.iatrix.view.context"; //$NON-NLS-1$
+private static final String EXPORT_CLIPBOARD_COMMAND = "org.iatrix.commands.export_clipboard"; //$NON-NLS-1$
+ 
+
+At the end of your createPartControl() method, call "activateContext()", which may defined as:
+
+pre. /**
+     * Activate a context that this view uses. It will be tied to this view
+     * activation events and will be removed when the view is disposed.
+     * Copied from org.eclipse.ui.examples.contributions.InfoView.java
+     */
+    private void activateContext() {
+    	IContextService contextService = (IContextService) getSite()
+    	.getService(IContextService.class);
+    	contextService.activateContext(VIEW_CONTEXT_ID);
+    }
+
+
+Whenever the Iatrix view is active, the context "org.iatrix.view.context" will be active, and the key bindings for it will be valid.
+
+Then, assign the command to the action as in the previous example:
+
+pre. exportToClipboardAction = new Action("Export (Zwischenablage)") {
+  ...
+}
+...
+exportToClipboardAction.setActionDefinitionId(EXPORT_CLIPBOARD_COMMAND);
+GlobalActions.registerActionHandler(this, exportToClipboardAction);
+ 
+ 
+Further documentation:
+
+"http://help.eclipse.org/help33/topic/org.eclipse.platform.doc.isv/guide/wrkAdv_keyBindings.htm":http://help.eclipse.org/help33/topic/org.eclipse.platform.doc.isv/guide/wrkAdv_keyBindings.htm
+
+h2. Drag&Drop
+
+Eclipse has drag&drop support by itself. Elexis offers a simplification of this technique, optimized for PersistentObject's. A data type must only override @PersistentObject#isDragOK()@ and return @true@ to become draggable.
+
+h3. Drag source
+ 
+A PersistentObjectDragSource can be attached on any control or StructuredViewer. This happens automatically on creation of such a PersistentObjectDragSource with one of its constructors:
+
+@PersistentObjectDragSource(Control c, ISelectionRenderer renderer)@
+@PersistentObjectDragSource(StructuredViewer v)@
+
+In the first case, the ISelectionRenderer must produce a java.util.List<PersistentObject> (with draggable PersistentObjects); in de second case, the Viewer must contain such PersistentObjects
+ 
+h3. Drop target
+
+An org.eclipse.swt.widgets.Control can become a drop target by attaching a PersistentObjectDropTarget to it. This is achieved by just creating such an Object via one of its constructors
+
+@PersistentObjectDropTarget(Control target, IReceiver receiver)@
+@PersistentObjectDropTarget(String name, Control target, IReceiver receiver)@
+ 
+ The IReceiver is responsible to handle the dropped PersistentObjects.
+ 
+h2. CodeSelectorHandler
+
+Sometimes, it is more convenient to select Objects to send to a Control via double click or with a key press instead of drag&drop. The problem is, that a double-click or a keystroke does not contain any information on the destination the user thinks of. This is addressed by the CodeSelectorHandler concept.
+ 
+When a selection view is openend (e. g. Leistungen or Diagnosis), the view doesn't know about its caller. Actually, it's not really opened, but just brought to the foreground and focused (maybe it's first loaded if it hasn't yet been used so far). The CodeSelectorHandler system allows a caller to announce that it wants to receive an object. When the caller has registered itself with CodeSelectorHandler.getInstance().setCodeSelectorTarget(), and the user selects an object in the selection view,  the caller is informed about the selection and can handle it as if it would have been dropped
+ 
+After registration as a CodeSelectorTarget, the caller should visually mark itself so that the user knows where selected objects will end up. If the selection operation has finished, the caller will be informed and can remove the visual mark.
+ 
+To avoid confusion, the selection operation is finished as soon as the selection view looses the focus.
+ 
+The caller can decide if the selection operation should should finish after one object has been selected, or if it should be possible to select multiple objects in one operation.
+ 
+See ch.elexis.actions.CodeSelectorHandler for more information. 
+
+h2. System independent universal object identifiers: XID
+
+Objects used in an EMR System frequently do have many identifiers before they first come to our user's practice. A Patient might be identified by a Social Security Number, by a Health Insurance Card Number, by a Passport Number, an AHV Number and many more. This article will discuss how to handle such different identifiers.
+
+The task of identifying an object uniquely becomes more important as we want to share objects between different EMR systems. We might see a patient that was treated by a collegue earlier and want to receive the EMR data from this collegue. Or we want to receive laboratory values or other findings from different sources and ye be able to identify such items unambiguously.
+
+To deal with such problems while exchanging EMR data, Elexis introduces the concept of a XID (eXternal Identifier). A XID is an identifier that consists of one or more pairs of domain/id values. A Domain is a String describing the classification system. An ID is a String that describes the given object within this classification system uniquely.
+XIDs can easily be exported into an XML file. The formal description (XSD) can be found at ch.elexis.exchange.xid.xsd in the plugin elexis.
+
+In Elexis, the following API for handling XID's exists:
+
+Xid.localRegisterXIDDomain(String domain, int quality)
+This static method registers a domain for use with the XID-System. Only registered domains may be used, and any domain may only be registered once. (The method will return false if one tries to register an already registered domain).
+
+The name for the domain is any alphanumeric string that must not contain the characters # and ; XID encourages the following rule: Use a string that is guaranteed under your control. We recommend to use an URL you own as prefix for your XID-Domains., e.g. www.elexis.ch/xids/myownXidDomain. If you do not want to use such a String, you should register your XID-Domain with www.xid.ch to avoid name conflicts.
+
+Please note that this method will register your domain only locally for the database where it was issued. The registration will, however, persist between program launches and workstations accessing the same elexis database.
+
+PersistentObject#getXID(String domain)
+Return the object's XID for the given Domain. E.g. getXID(Xid.DOMAIN_AHV) will return a person's AHV-Number (if defined). Attempting to retrieve an inexistent XID will return an empty String.
+
+PersistentObject#getXID()
+This will return the "best" XID (that is the XID with the highest quality value)  defined for this object. If no XID is defined, it will return simply a GUID.
+
+PersistentObject#addXID(String Domain, String id, boolean updateIfExists)
+Attribute a  new XID to this object. Only previously registered domains are valid.
+
+Xid.findXid(String domain, String id)
+find the XID denoted by the given parameners. returns null if no such XID exists.
+
+Xid.findXID(PersistentObject ob, String domain)
+find the Xid of the given object from the specified domain. Equivalent to ob.getXid(domain)
+
+Xid.findObject(String domain, String id)
+find the object indentified by the given XID of the given domain. findObject(Xid.DOMAIN_AHV,"123.45.678.9") will retrieve the Person whose AHV is 123.45.678.9 or will return null if no such object exists in the database.
+
+h2. Logging
+
+h3. How to log in Elexis
+
+Logging in Elexis (on version 2.1.7 or newer) is based on "slf4j":http://www.slf4j.org/. *slf4j* stands for *Simple Logging Facade for Java (SLF4J)*. As backend we use "LogBack":http://logback.qos.ch/manual/. Logging via Apache commons logging, etc can easily be redirected to sl4j using ":egacy Bridges":http://www.slf4j.org/legacy.html. This allows us to send messages using differen logging schemes to one or more clients collecting all the messages they are interested in.
+
+You can either use the sl4j as show in this example (This is the preferred way for new code):
+
+bc. import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+public class HelloWorld {
+  public static void main(String[] args) {
+    Logger logger = LoggerFactory.getLogger(HelloWorld.class);
+    logger.info("Hello World");
+  }
+}
+
+Or the traditional Elexis way was:
+
+bc. import ch.rgw.tools.Log; // or ch.elexis.util.Log
+<...>
+private Log log = Log.get("LabNotSeen"); //$NON-NLS-1$
+<..>
+log.log(Level.WARNING, "Heartbeat unused"); //$NON-NLS-1$
+	
+ch.rgw.tools.Log has been modified to use the slf4j.
+
+Traditional Java Util Logging is depreciated and will be replaced in the code, as soon as somebody has the time for it. It must replaced, as it cannot be dynamically replaced by another method.
+
+Code using e.g. apache commons logging can stay the same. But one plug-in should use exactly one logging API!
+
+h3. Open questions
+
+* Can/should ch.elexis.util.Log and its possibility to pop up an alert be eliminated?
+* Should we use a different namespace for LogbackBundle and org.ekkescorner.logging.osgi?
+
+h3. Configuration
+
+The logging is configured by
+* I specify (as recommended "here":http://ekkescorner.wordpress.com/2009/09/05/osgi-logging-part-7-configure-your-logging-framework-the-dynamic-way) the path of the logback configuration in elexis.ini. To ease development I use to different locations. One must specify an absolute path, as variables like @user.home will not be expanded.
+** when using the installer it is: @-Dlogback.configurationFile=$INSTALL_PATH/configuration/logback.xml@
+** when creating an application, e.g. under @deploy/linux.gtk.x86_64@ it is: @-Dlogback.configurationFile=$USER_HOME/elexis/logback.xml@
+* Copying a default file from @ch.ngiger.elexis.opensource/rsc/logback.xml@ via the Elexis-Installer
+* The defaults are: 
+** Errors are logged on the console
+** Debug-Output goes into ${user.home}/elexis/logs/elexis.log
+** This file is maximal 10 MB big 
+** This fail is rotated daily (max. 10 files, using a timestamp time pattern).
+** If you change manually the file, the changes will take effect at most 60 seconds later (unless you remove the attribute scan)
+* The defaults are open for discussion. Maybe we should also add somewhere in the Elexis installation a second configuration which will log a lot more and could/should be activated when by coping it to the approriate place when the OC/developer are chasing problems.
+* The preferences page has a been changed by adding a note where one can find the logback.xml file.
+
+We assume that the developper has the ch.qos.logbac and slf4j plug-ins somewhere in his/her Eclipse installation. This will be the case if you have activated the correct "target definition", e.g. @ch.ngiger.elexis.opensource/desktop.dev.target@
+
+h3. Startup
+
+I spent several hours trying to create with the traditional Eclipse IDE an "Eclipse product" which starts logging at start level 2. In vain. The problem is that the *fragment* ch.qos.logback.slf4 has as host org.slf4j.api. And when you try to start at start level org.slf4j.api early, you must also specify to load start level 2. And I did not find a solution how to do this in Indigo (3.7.2) via the GUI
+Using buildr.apache.org I simply force the osgi.bundles properties, by adding the following line to @configuration/config.ini@.
+
+@osgi.bundles=org.eclipse.core.runtime@start,org.eclipse.update.configurator@3:start,org.eclipse.equinox.common@2:start,ch.qos.logback.classic@2:start,ch.qos.logback.core@2:start,ch.qos.logback.slf4j@2,org.slf4j.api@2:start,org.slf4j.jul@2,org.eclipse.osgi.services@2:start,org.ekkescorner.logging.osgi@2:start,LogBackend@3:start@
+
+h3. Implementation notes
+
+* The plugin *LogbackBundle* collects *slf4j* log messages and passes them to *ch.qos.logback*.
+* The plugin *org.ekkescorner.logging.osgi* collects OSGi messages, e.g. when bundles are started and logs them via slf4j. Its activator also calls @SLF4JBridgeHandler.install()@ to redirect Java.util.logging.
+* The beanshell script @ch.ngiger.elexis.opensource/rsc/patchForLogback.bsh@ patches at installation time @elexis.ini@ to add a @logback.configurationFile@ property.
+* The new build system based on buildr.apache.org assures that the Elexis installer can install everything as needed. Using the old ant file will probably not work anymore.
+
+
+h3. Links for further reading
+
+# "Simple Logging Facade for Java (SLF4J)":http://www.slf4j.org/ 
+# "SLF4j Bridging legacy APIs":http://www.slf4j.org/legacy.html 
+# "LogBack manual":http://logback.qos.ch/manual/
+# "OSGi logging: putting it all together":http://blog.kornr.net/index.php/2008/12/18/osgi-logging-putting-it-all-together
+# "Logging in OSGI Enterprise Applications":http://ekkescorner.wordpress.com/blog-series/osgi-apps/ (Hint: use the BlogSeries from 2009 and not 2008!)
+
+
+h2. Internationalization (il18n)
+
+In eclipse, designing your UI for different languages, is quite easy, if you think about this topic from the beginning!
+* Wherever possible, use String constants instead of constructing Strings on the fly. If you need to embed a parameter, use the MessageFormat.format(String n, param... m) technique.
+* use Eclipse's String externalization feature (In the menu 'Source->externalize Strings'). This will create a messages.properties file. Create messages_de.properties, messages_fr.properties and so on as needed.
+* Use a property file editor to edit language specific Strings, In eclipse, we recommend the "Jinto plugin":http://www.guh-software.de/jinto.html from Guh-Software, which is distributed under the EPL.
+* Create also plugin.properties, plugin_de.properties, plugin_fr.properties and so on in the root directory of your plugin, to translate Strings from plugin.xml. Name translatable Strings with a % prefix and address them without the % as keys in the properties-files.
+* Do not forget to insert 'Bundle-localization: plugin' in MANIFEST.MF, to turn on il18n for the plugin.xml Strings.
+
+Elexis will use the messages_xx.properties and plugin_xx.properties of the locale that matches best the operating system, or the -nl parameter. If no matching locale is found, the default (messages.properties and plugin.properties) will be used.
+
+h1. Creating a plugin
+
+Elexis plugins are basically eclipse 3.5 plugins and therefore OSGi-Bundles. You'll find a lot of literature on these topics on the web, Recommended reading includes Ed Burnette's "Rich client tutorial":http://www.eclipse.org/articles/Article-RCP-1/tutorial1.html, and Dave Springgay's "Eclipse Views tutorial":http://www.eclipse.org/articles/viewArticle/ViewArticle2.html along with other articles found on the eclipse website. There are also some books on programming OSGi Bundles and Eclipse plugins. You should have a basic knowledge on programming eclipse before proceeding.
+
+h2. The sample plugin
+
+To provide a convenient starting point, the Plugin elexis-developer-resources is deliberately simple designed and well documented. You might want to use this to start learning about plugin development for elexis. In this section, we'll describe that plugin detailed.
+
+The following files belong to the plugin elexis-developer-resources:
+
+* Plugin.xml. This file is an eclipse requirement and contains all informations that are necessary to actually put the plugin together with the rest of the programm (and with all other plugins). Eclipse will create it automagically if needed.
+* META-INF/MANIFEST.MF: The standard OSGi-Bundle. It is created autimatically with the create plugin wizard of eclipse.
+* ch.elexis.developer.resources.view.Perspective: This file defines a perspective for the plugin.(Which is not really necessary in that case, but we want to show, how to do it)
+* ch.elexis.developer.resources.model.SampleDataType: Definition of a data type. We create a subclass of PersistentObject and a table in the elexis database to store our values.
+* ch.elexis.developer.resources.model.SampleDataTypeFactory: A class that can create "SampleDataType" -objects and thus gives the elexis-kernel the possibility to create such objects in a controlled way..
+* ch.elexis.developer.resources.model.ACLContributor: This defines the privileges that are necessary to read, create, modify, and delete SampleDataType objects and includes the UI to grant or revoke these privileges in the Elexis preferences.  
+* ch.elexis.developer.resources.views.SampleView: A View to display our data
+* ch.elexis.developer.resources.views.SampleDataLabelProvider: A Class to create a human readable visual representation of a SampleDataType object.
+* Several .properties-files that contain il18n'ed Strings.
+
+h1. Building, testing and integration
+
+In April 2010 we started to use Jenkins ("http://jenkins-ci.org":http://jenkins-ci.org) as a CI ("Continuos Integration":http://en.wikipedia.org/wiki/Continuous_integration) tool. It's output can be found at "http://ngiger.dyndns.org/jenkins":http://ngiger.dyndns.org/jenkins. It will probably take months if not several years to achieve a good coverage of the whole elexis code base.
+
+It uses the "Elexis Bootstrap":https://ngiger@bitbucket.org/ngiger/elexis-bootstrap project, which provides an easy way to build Elexis. If you add a line like @HgRepos << 'http://myMercurial.server.ch/repositories/myplugins/'@" to the file @privateRepos.rb@ it will clone said repository and build all PDE plugins found therein, too!
+
+The "Elexis Vagrant":https://github.com/ngiger/elexis-vagrant allows the developer to generate a virtual machine (using VirtualBox, Vagrant, weevee) which downloads, compiles and tests a complete elexis version.
+
+An interesting strategy for developing good code is Test Driven Development ("TDD":http://en.wikipedia.org/wiki/Test-driven_development), where you write first tests, which will fail. Afterwards you fill in the code to make them pass. Writing tests allows you to specify use cases first.
+
+There are some Jubula GUI-tests in the project "Jubula-Elexis":https://bitbucket.org/ngiger/jubula-elexis
+
+Further steps will include:
+
+* Add JUnit tests, wherever we find time for it. We will focus on the areas where the benefit/cost-ratio is best.
+
+* MacOSX. Add a MacOSX slave to run all tests for this target platform, too.
+
+h2. Setup of the testing environment
+
+The Elexis CI-environment consists of several VMs (virtual machine). They run inside an "ArchivistaVM":http://www.archivista.ch/-server (AMD QuadCore, 8GB RAM, 1 TB HD).
+
+* jenkins-Master. The jenkins master (running GNU/Debian/Linux Lenny) is responsible for checking continuosly (every hour) whether there are changes in the source repository. It is also responsible to display various pieces of interest to the developers, about failures, change history. It will also display some statistical values about how many lines of code are found.
+** The following Debian packages were needed: sun-java6-bin sun-java6-jdk jenkins openssh-server subversion ant ruby-full texlive texlive-ang-german texlive-latex-extras makeself
+** Some more packages were added for convenience:  etckeeper rsync  apt-listchanges apt-listbugs cron-apt anacron sudo vim dlocate
+
+* jenkins-Win-XP. A slave running the german version of Windows-XP.
+** The following programs were installed: SlikSvn-1.6.9 apache-ant-1.8.0 MikTex-2.8 Java-JDK 6u19 jenkins 1.353 OpenVPN-GUI 1.2.1 eclipse-3.5.2 GNUwinZip "makensis 2.4.6":http://nsis.sourceforge.net/
+** Some more programs were installed for convenience: Notepad++  TortoiseSVN OpenSSH MWSnap FreeCommander MSyS
+
+* jenkins-Win7. A slave running the german version Windows Home 7. 
+** Same programs installed as for Windows-XP
+
+* jenkins-Services: A Lenny system.
+** Hosts the following services (Debian packages) OpenVPN vsftpd mysql-server
+** Same conveniences packets as jenkins-Master
+
+h3. Further ideas
+
+The following ideas are not ordered in any way.
+* Add HW to test the interface to the various laboratory devices.
+* Add stress test for the DB
+* Profiling of the code run during the tests
+* Add other languages (e.g. French)
+* Automatically update the screenshots
+* Before delivering a (new) combination of plugins, create a manual, which contains only the selected plugins.  Test whether all plugins pass their tests in the new combination.
+
+

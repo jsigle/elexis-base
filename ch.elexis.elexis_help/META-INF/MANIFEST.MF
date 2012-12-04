@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Elexis Hilfe
+Bundle-SymbolicName: ch.elexis.elexis_help;singleton:=true
+Bundle-Version: 0.3.4
+Bundle-Localization: plugin
+Bundle-Vendor: elexis.ch
+Require-Bundle: org.eclipse.help

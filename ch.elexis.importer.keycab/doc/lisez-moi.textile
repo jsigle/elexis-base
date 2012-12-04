@@ -1,0 +1,47 @@
+h1. Importation des données de KeyCab vers Elexis
+
+(c) Juin 2010 Niklaus Giger niklaus.giger@member.fsf.org
+
+h2. Introduction
+
+Ce plugin vous permets l'importations des données des patients du programme "KeyCab" vers "Elexis".
+
+Aucune garantie n'est donnée quant à la fiabilite ou la qualité de l'importation. 
+
+Faire une copie de sécurité du fichier avec les données de Keycab est formellement recommandé.
+
+h3. Exigences
+
+Ce plugin nécessite une version d'Elexis 2.1.0 ou plus haut.
+
+Les données de Keycab (fichier *.mdb) dans le format de base de données  Microsoft Access.
+
+Nous ne savons pas, si toutes les installations de Keycab se basent sur des tables avec le même format. Cette importation a été adapté aux éxigences d'un seul médecin généralist (Dr. Bruno Büchel, Yverdon).
+
+h3. Limitations
+
+* N'importe que des patients dont le nom du dossier commence avec "B".
+* Coupe les adresses du courrier électronique à 80 lettres
+* Pour le champ du code postale on utilise que les chiffres, p.e. "F- 83001"  devient "83001"
+
+h2. Utilisation
+
+Si le plugin d'importation Keycab est correctement initialisé, vous pouvez choisir le Menu "Fichier .. Importations des données". Dans le dialoque qui apparaît, choissez "Keycab" et sélectionner le ficher *.mdb de KeyCab pour l'importation.
+
+Cliquez sur "Ok". L'importations des données durera selon la quantité des données entre quelques minutes et quelques heures.
+
+Après l'imporation des données vous pouvez enlever le plugin, car il ne sera plus utilisé.
+
+h2. Description des données importées
+
+En ce moment le plugin importe uniquement
+* les médecin de contact
+* patients. Divers champs de Keycab sont importé dans la rubrique "remarque" d'Elexis.
+
+Il sera possible d'ajouter les données suivantes:
+* Tarmed (français)
+* ordonnances
+* posologies
+* factures/rappels
+* adresses des assurances
+* certificats

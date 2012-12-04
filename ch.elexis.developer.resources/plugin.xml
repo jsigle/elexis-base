@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="elexis-developer-resources.category1"
+            name="ch.elexis.developer.resources.category">
+      </category>
+      <view
+            category="elexis-developer-resources.category1"
+            class="ch.elexis.developer.resources.view.SampleView"
+            icon="icons/sample.jpg"
+            id="ch.elexis.developer.resources.views.sample"
+            name="%SampleView"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="ch.elexis.PersistentReference">
+      <Factory
+            Class="ch.elexis.developer.resources.model.SampleDataTypeFactory"
+            name="SampleDataType">
+      </Factory>
+   </extension>
+   <extension
+         point="ch.elexis.ACLContribution">
+      <ACLContribution
+            ACLContributor="ch.elexis.developer.resources.model.ACLContributor"
+            name="Sample Data Type">
+      </ACLContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="ch.elexis.developer.resources.view.SamplePerspective"
+            id="ch.elexis.developer.resources.perspective"
+            name="%SamplePerspective">
+      </perspective>
+   </extension>
+
+</plugin>

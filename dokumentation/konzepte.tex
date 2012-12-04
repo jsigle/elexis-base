@@ -1,0 +1,265 @@
+% *******************************************************************************
+% * Copyright (c) 2007-2010 by Elexis
+% * All rights reserved. This document and the accompanying materials
+% * are made available under the terms of the Eclipse Public License v1.0
+% * which accompanies this distribution, and is available at
+% * http://www.eclipse.org/legal/epl-v10.html
+% *
+% * Contributors:
+% *    G. Weirich
+% *
+% *  $Id: konzepte.tex 6282 2010-04-19 19:24:51Z niklausgiger $
+% *******************************************************************************
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+
+\section{Kontakte}
+\label{kontakt}
+\index{Kontakt!definition}
+In Elexis ist jede Person oder Firma, die in irgendeiner Beziehung zur Praxis
+steht, zunächst mal ein \glqq Kontakt\grqq{}. Kontakte werden in der
+Kontakt-Perspektive eingegeben oder geändert.
+\begin{flushleft}
+    \includegraphics{images/contactperspective}
+\end{flushleft}
+
+
+Es gibt folgende Typen von Kontakten:
+\begin{itemize}
+  \item Person
+	\begin{itemize}
+  		\item Mandant
+  		\item Anwender
+  		\item Patient
+  		\item Andere
+    \end{itemize}
+    \item{Organisation}
+    \begin{itemize}
+      \item{Labor}
+      \item {Andere}
+    \end{itemize}
+\end{itemize}
+
+
+\section{Anwender und Mandanten}
+\index{Anwender!Definition}\index{Mandant!Definition}
+Jemand, der eine Rechnungsstelle (in der Schweiz z.B. eine eigene ZSR-Nummer) hat, ist ein \textit{Mandant}. Jeder Vorgang in Elexis (Konsultation, Labor, Rezept etc.) läuft immer unter Verantwortung und auf Rechnung genau eines Mandanten. \index{Mandant}
+
+\medskip
+
+Jemand, der das Programm bedienen darf, ist ein \textit{Anwender}. Ein Anwender arbeitet immer im Auftrag eines bestimmten Mandanten.
+
+Zu jedem Zeitpunkt gibt es in Elexis also einen aktuellen Mandanten und einen aktuellen Anwender.
+\index{Anwender}Mandant und Anwender können auch identisch sein (Wenn der
+Mandant selbst am PC arbeitet).
+Ein Anwender kann auch die Mandantenzuordnung ändern (Wenn eine MPA in einer Gruppenpraxis beispielsweise für unterschiedliche
+Mandantinnen arbeitet).
+\index{Gruppen}\index{Rechte}
+\index{Rechte}\index{Anwender!Rechte}
+\index{Benutzerkonten}
+Anwender haben bestimmte, individuell einstellbare Rechte, mit denen man sehr
+fein steuern kann, wer welche Aktionen innerhalb von Elexis steuern kann.
+Anwender können auch in Gruppen zusammengefasst sein, die bestimmte gemeinsame
+Rechte definieren (z.B. Gruppen \glqq MPAs\grqq{} oder \glqq Ärzte\grqq{}). Eine
+spezielle Gruppe ist die Gruppe \glqq Admin\grqq{}: Wer zu dieser Gruppe gehört,
+hat automatisch \textit{alle} Rechte.
+
+\medskip
+
+\textbf{Wichtig}: Auch wenn Ihnen das zunächst unlogisch erscheinen mag: Auch
+der Chef sollte normalerweise nicht als Admin \index{Administrator} arbeiten.
+Der Grund ist, dass der Admin-Account auch irreversible Löschungen und andere
+sehr unangenehme Veränderungen erlaubt. Wie schnell hat man in der Hektik des
+Alltags mal einen falschen Knopf geklickt!
+Deswegen: Arbeiten Sie im Alltag mit einem Account, der genau diejenigen Rechte
+hat, die Sie auch im Alltag brauchen. Erstellen Sie für sich einen zweiten
+Account, welcher der Gruppe Admin zugeordnet ist, und melden Sie sich nur dann
+unter diesem Account an, wenn es wirklich notwendig ist.
+
+Das Konzept der Gruppen und Rechte ist ab Seite \pageref{sec:gruppen} ff.
+genauer erklärt.
+
+\section{Konsultationen, Fälle, Garanten und Kostenträger}
+\index{Konsultation!Definition}\index{Fall!Definition}\index{Abrechnung}Jeder in Elexis festgehaltene Kontakt zwischen Praxispersonal und Patient ist eine \textit{Konsultation}. Wenn die Konsultation verrechnet wird, dann geht die Verrechnung zugunsten desjenigen Mandanten, für welchen der eingeloggte Anwender tätig war.
+\label{definition:fall}
+Jede Konsultation ist auch einem \textit{Fall} zugeordnet. Ein Fall ist hier eher eine versicherungstechnische, als eine medizinische Einheit: Der Fall sammelt alle Konsultationen, welche mit demselben Abrechnungssystem (s. \ref{settings:abrechnungssystem} auf S. \pageref{settings:abrechnungssystem}) abgerechnet werden. Dies kann manchmal identisch mit dem medizinischen Fallbegriff sein (Ein Unfall, welcher über einen bestimmten Versicherer mit einer bestimmten Fallnummer abgerechnet wird), oder er kann auch keinen Zusammenhang mit einem medizinischen Fall haben (z.B. wird in der Schweiz im Allgemeinen ein allgemeiner Fall \glqq Krankheit\grqq{} erstellt werden, der alle KVG-Konsultationen sammelt).
+
+Ein Fall kann immer nur einen Patienten und ein Abrechnungssystem haben, kann aber durchaus  Konsultationen mehrerer Mandanten beinhalten. (Es wird dann für jeden Mandanten eine separate Rechnung erstellt).
+
+\section{Sticker}
+\index{Sticker}\index{Etiketten}\index{Markierungen}
+\label{Etiketten}
+Patienten, Konsultationen und andere Datenbankinhalte können mit 'Stickern' markiert werden. Ein Sticker ist ein im Prinzip beliebiges Merkmal, das mit dem entsprechenden Datenbankobjekt verknüpft wird. Beispielsweise könnte ein Patient mit den Stickern 'Hausarztmodell', 'MRSA' oder anderen markiert werden. Ein solcher Sticker wird beim Aufruf des entsprechenden Obekts mit angezeigt.
+
+ Sticker werden unter \textsc{Datei-Einstellungen-Sticker} definiert (S. Abb. \ref{fig:etiketten1}). Es können beliebig viele Sticker definiert werden. Um einen neuen Sticker anzulegen, schreiben Sie den Text für den Sticker ins obere Feld und klicken dann auf 'Neuer Sticker'. Der eben angelegte Sticker erscheint dann mit Standardwerten in der Liste. Markieren Sie ihn und geben Sie je nach Wunsch ein Bild (Format JPG oder PNG, 16x16 Pixel), eine Textfarbe und eine Hintergrundfarbe ein. Die Bedeutung des 'Werts' sehen Sie weiter unten.
+
+\begin{figure}
+    \includegraphics{images/etikette1}
+    \caption{Sticker erstellen}
+    \label{fig:etiketten1}
+\end{figure}
+
+So erstellte Sticker können einem Patienten durch Rechtsklick in der Patientenliste und Auswahl von 'Sticker...' zugeordnet werden. Jeder Patient kann null bis beliebig viele Sticker erhalten. In der Patientenliste wird nun der entsprechende Eintrag mit dem dem Sticker zugeordenen Bild, Vordergrund- und Hintergrundfarbe angezeigt (Abb. \ref{fig:etiketten2}).
+\begin{figure}
+    \includegraphics{images/etikette3}
+    \caption{Anzeige der Sticker}
+    \label{fig:etiketten2}
+\end{figure}
+
+Hier sieht man nun auch denn Sinn des 'Wert'-Attributs eines Stickers: Wenn ein Patient mehrere Sticker zugeordnet hat, dann wird in der Patientenliste immer diejenige mit dem höchsten 'Wert' angezeigt. Was für Zahlen Sie da konkret einsetzen, ist egal. Die abolute Grösse spielt keine Rolle, nur das Verhältnis zueinander.
+
+\medskip
+
+Wenn Sie einen Konsulaltionseintrag öffnen, sehen Sie alle zugeordneten Sticker.
+\begin{figure}
+    \includegraphics{images/etikette2}
+    \caption{Konsultation mit Stickern}
+    \label{fig:etiketten3}
+\end{figure}
+
+
+\clearpage
+
+\section{Leistungsabrechnung}
+\label{concept:leistung}
+\index{Leistungscodes}\index{abrechnen}
+\begin{wrapfigure}{l}{7.5cm}
+    \includegraphics[width=7.5cm]{images/leistungen1}
+    \caption{Leistungen}
+    \label{fig:leistungen}
+\end{wrapfigure}
+\index{Leistungen!verrechnen}
+Die Leistungscodes, die verrechnet werden können, werden einerseits von Plugins beigesteuert (z.B. Elexis-Arzttarife-Schweiz), andererseits durch von Ihnen selbst definierte Leistungsblöcke (s. weiter unten).
+
+Alle im System vorhandenen Leistungscodesysteme sind im Fenster \glqq Leistungen\grqq{} (Abb. \ref{fig:leistungen}) untergebracht: Am unteren Rand des Fensters sehen Sie für jedes installierte Leistungscodesystem einen Reiter.
+
+Dieses Fenster erscheint jeweils dann, wenn Sie vom Konsultationsfenster aus \glqq{}Verrechnung\grqq{} anklicken. Der Aufbau ist für jedes Leistungscodesystem gleich:
+
+Im obersten Teilfenster stehen die von Ihnen am häufigsten angewendeten Codes dieses Leistungssystems, sind dadurch also im raschen Zugriff ohne suchen. Die Liste wird laufend aktualisiert, und je häufiger Sie einen bestimmten Code verwenden, desto weiter oben erscheint er beim nächsten Öffnen des Fensters.
+
+\medskip
+Im mittleren Teil erscheinen die bei diesem Patienten bisher am häufigsten verwendeten Codes, welche nach demselben Prinzip sortiert sind. Im untersten Teilfenster schliesslich steht das gesamte Leistungscodesystem in der vorgegebenen Systematik zur Verfügung.
+
+\bigskip
+
+Um einen Code zu verrechnen, können Sie ihn  aus irgendeinem der drei Abschnitte ins Verrechnung-Fenster ziehen, oder auch per Doppelklick anwählen. Manche Plugins können auch einen \glqq Optifier\grqq (Optimizer/Verifier) beinhalten, welcher Fehler erkennt bzw. Korrekturen anbringen kann. So wird etwa das Tarmed-Plugin einerseits z.B. die doppelte Verrechnung des Codes \textit{00.0010 Konsultation erste 5 Minuten} mit einer Fehlermeldung verweigern (Verifier), und andererseits wird es, wenn Sie den Code \textit{00.0030 Konsultation letzte 5 Minuten} abrechnen, automatisch auch den Code 00. 0010 dazunehmen, da 00.0030 ja immer mit 00.0010 kombiniert wird (Optimizer).
+Bei \textit{Artikeln}, welche bei Direktabgabe auch von diesem Fenster aus verrechnet werden können, wird bei Verrechnung jeweils automatisch auch der Lagerbestand entsprechend nachgeführt.
+
+\subsection{Leistungsblöcke und Eigenleistungen}
+\begin{wrapfigure}{r}{6cm}
+\includegraphics{images/block1}
+\caption{Leistungsblöcke}
+\label{fig:bloecke}
+\end{wrapfigure}
+\index{Leistungen!selbstdefinierte}
+\index{Leistungsblock}
+Als weitere Arbeitserleichterung erlaubt Elexis auch, mehrere Leistungscodes, auch aus ganz unterschiedlichen Codesystemen, zu Blöcken zusammenzufassen, die dann komplett oder teilweise verrechnet werden können. Solche Blöcke können nebst vordefinierten Leistungscodes aller installierten Codesysteme auch selbstdefinierte Elemente enthalten. In Abb. \ref{fig:bloecke} sehen Sie einige Beispiele: \textit{kons15} ist ein Beispiel für einen Block, der üblicherweise als Ganzes verrechnet wird. Dies kann man machen, indem man den Block mit der Maus ins Verrechnungs-Fenster der Konsultation zieht. Oder, falls Sie lieber mit der Tastatur arbeiten, tippt man im Konsultationstext den Namen des Blocks, gefolgt von der Makroauslösetaste (standardmässig \#). Die Eingabe von kons15\# im Konsultationstext würde also in unserem Beispiel eine 15-minütige Tarmed-Konsultation verrechnen. \textit{Impfungen} wäre ein Beispiel für einen Block, der eher als Zusammenfassung ähnlicher Elemente (als Zeitersparnis beim Heraussuchen) gedacht ist, welche meist einzeln verrechnet werden. Hier zieht man einfach die einzelnen Unterelemente aus dem Block ins Verrechnungs-Fenster.
+
+Um einen neuen Block zu erstellen, gibt man einen (frei wählbaren, aber eindeutigen) Namen für diesen Block ein und klickt anschliessend auf \textit{Neu erstellen...}. Das Hinzufügen von Leistungen zum Block geschieht dann im Fenster Codes (s. Abb. \ref{fig:bloecke2}).
+\begin{figure}[htp]
+\includegraphics[width=0.9\textwidth]{images/block2}
+\caption{Leistungsblock definieren}
+\label{fig:bloecke2}
+\end{figure}
+Sie können entweder vordefinierte Leistungen aus einem der installierten Codesysteme durch drag\&drop hinzufügen, oder Sie können auch eigene Leistungen definieren. Hier müssen Sie auch Kosten und Preis in Rappen/Cents, sowie die für die Leistung budgetierte Zeit in Minuten angeben.
+
+
+\section{Artikel und Lager}
+\index{Artikel}\index{Medikament}\index{Lager}
+ Alles was eingekauft, gelagert, abgegeben oder rezeptiert werden kann, ist ein \textit{Artikel}.
+ Artikel sind in Klassen organisiert, beispielsweise \textit{Medikament},
+ oder \textit{MiGeL} oder \textit{Büromaterial}.
+ Elexis kann jeden Artikel, den es kennt, als \textit{Lagerartikel} aufnehmen.
+
+ Ein Lagerartikel ist ein Artikel, dessen Bestand monitorisiert wird, und der bei Bedarf auch halbautomatisch nachbestellt werden kann.
+ Weitere Informationen zu Artikeln und Lager finden Sie bei der Beschreibung der entsprechenden View (S. \pageref{view:artikel} ff.)
+
+\section{Import von externen Daten }
+\index{Import}
+Elexis ist grundsätzlich in der Lage, Daten aus beliebigen Quellen zu importieren. Allerdings muss natürlich das Format dieser Daten bekannt oder in bestimmter Weise standardisiert sein. Datenimport wird deswegen meist von Importer-Plugins bewerkstelligt. Es gibt Importer für Telefunbuch-Daten, für Stammdaten anderer Praxisprogramme, für externe Labors, für Laborgeräte und für andere medizinische Geräte, die ihre Daten zu einem Computer transferieren können, für MiGeL, Medikamente, Tarmed und andere Datenbanken usw. Eine Aufstellung erhältlicher Plugins finden Sie im Menu 'Plugins' auf http://www.elexis.ch. Zusätzliche Importer können meist relativ einfach programmiert werden, verlangen Sie ggf. einen Kostenvoranschlag.
+
+\medskip
+
+Importer befinden sich meist im lokalen Menü der View, die die entsprechenden Daten anzeigt (z.B. Tarmed-Importer oder Labor-Importer). Eine Klasse von Importern, die keiner bestimmten View zugeordnet sind, hängen sich auch im Datei-Datenimport-Menü ein. Hier öffnet sich ein Dialog wie in Abb. \ref{fig:importdlg}.
+\begin{figure}
+  % Requires \usepackage{graphicx}
+  \includegraphics{images/importdlg}\\
+  \caption{Import-Dialog}\label{fig:importdlg}
+\end{figure}
+\index{Import!Kontakte}
+In den Reitern unten finden Sie alle installierten allgemeinen Importer. Welche das sind, hängt von den vorhandenen Plugins ab. Lediglich der in der Abbildung in den Vordergrund gebrachte 'Kontakt-Importer' ist immer vorhanden. Dieser Importer kann Kontakte aus externen Dateien importieren, sofern diese auf eine standardisierte Weise als Tabellen aufbereitet sind. Wählen Sie unter 'Dateityp', ob es sich um eine Microsoft\texttrademark Excel\texttrademark Tabelle (xls), um eine Character Separated Values-Tabelle (csv)oder um die Santésuisse-Tabelle der Versicherer und ihrer EAN-Codes handelt.
+Im Fall von xls muss die Datei eine Tabelle 0 mit folgenden Spalten enthalten:
+\begin{tabular}[h]{|l|l|}
+\hline Spaltentitel & Erklärung\\
+\hline
+\hline  ID & eine (im Prinzip beliebige, innerhalb der Datei aber eindeutige) Identifikation\\
+\hline IstPerson & 1 wenn der Eintrag eine Person bezeichnet, 0 andernfalls (Organisation etc.)\\
+\hline IstPatient & 1 wenn der Eintrag einen Patienten bezeichnet, 0 andernfalls\\
+\hline Titel & Ein Titel, Anrede, Bezugsperson etc.\\
+\hline Bezeichnung1 & Bei Personen der Name\\
+\hline Bezeichnung2 & Bei Personen der Vorname\\
+\hline Zusatz & \\
+\hline Geburtsdatum & Im Format dd.mm.yyyy oder yyyy-mm-dd\\
+\hline Geschlecht & m oder f oder w oder ein Wort, das mit m oder f oder w anfängt.\\
+\hline E-Mail & die E-Mail-Adresse\\
+\hline Website & Eine WWW-Adresse\\
+\hline Telefon 1 & Primäres Telefon\\
+\hline Telefon 2 & weitere Nummer\\
+\hline Mobil & Mobiltelefon\\
+\hline Strasse & Strasse und Hausnr.\\
+\hline Plz & PLZ entweder als 1224 oder CH-1224 geschrieben. Muss im Eingabefile als Text formatiert sein\\
+\hline Ort & \\
+\hline Postadresse & Adresse, wie sie auf Adressetiketten erscheinen soll. Zeilensprünge als $\backslash$n\\
+\hline EAN & Die EAN als EAN13\\
+\hline
+\end{tabular}
+
+\medskip
+
+Die erste Zeile der Tabelle muss die Spaltentitel genau in obiger Schreibweise enthalten, damit das Format erkannt werden kann.
+Jede der genannten Spalten muss vorhanden sein, darf aber leer sein. Die Datei muss als iso-8859-1 codiert sein (Das ist Standard unter Windows; bei der MAc-Version von Excel müsste die Exportcodierung ev. entsprechend angepasst werden).
+
+\medskip
+
+Wenn Sie den Dateityp festgelegt haben, Klicken Sie auf den Button 'Datei wählen' und suchen die entsprechende Importdatei auf. Setzen Sie ein Häkchen bei 'ID beibehalten' \textbf{nur dann}, wenn \begin{itemize}
+\item Jeder Datensatz im Feld ID eine ID hat
+\item Diese ID garantiert eindeutig ist, also mit keinem anderen Kontakt in Elexis kollidieren kann
+\item Sie diese ID unbedingt beibehalten wollen
+\end{itemize}
+Wenn Sie das Häkchen nicht setzen, was in den meisten Fällen empfohlen ist, dann wird Elexis beim Import für jeden Kontakt eine eigene eindeutige ID erstellen (genauso, als würde man den Kontakt manuell neu anlegen).\\
+Klicken Sie dann OK, um den Import zu starten.
+
+ \section{Mehrere Instanzen gleichzeitig}
+ \index{gleichzeitig}
+ Sie können Elexis problemlos mehrfach starten und dann in verschiedenen
+ Fenstern unterschiedliche Perspektiven oder verschiedene Patienten anzeigen.
+ Einzelne Elemente können auch mit Cut\&Paste zwischen den laufenden Instanzen
+ ausgetauscht werden.
+ Anwendungsbeispiele:
+ \begin{itemize}
+   \item Sie arbeiten an einem Patienteneintrag und es kommt ein Telefon
+   betreffend eines anderen Patienten. Anstatt Ihre Arbeit zu verlassen, bringen
+   Sie die zweite Elexis-Instanz in den Vordergrund und suchen dort den neuen
+   Patienten auf.
+   \item Die MPA möchte an ihrem Arbeitsplatz Agenda und Patientendaten
+   gleichzeitig im Blick haben. Spendieren Sie ihr einen zweiten Monitor (statt
+   eines zweiten PC's), schliessen Sie beide Monitore an einer DualHead-fähigen
+   Grafikkarte am selben PC an und schieben Sie in jeden Monitor eine eigene
+   Instanz von Elexis.
+   \item Während Elexis mit einem langwierigen Rechnungsdruck beschäftigt ist,
+   möch\-ten Sie nicht untätig herumsitzen. Kein Problem, starten Sie eine zweite
+   Instanz von Elexis und arbeiten Sie dort weiter. (Sie könnten natürlich auch
+   einen Kaffee trinken oder einen Spaziergang machen).
+   \item Sie erstellen einen Brief, möchten aber einzelne Stellen aus einem
+   anderen Brief herüberkopieren. Laden Sie in der einen Elexis-Instanz den
+   alten Brief, erstellen Sie in der anderen den neuen Brief und kopieren Sie
+   das gewünschte mit Cut\&Paste.
+ \end{itemize}
+
+\section{Plugins}
+\index{Plugin!Definition}
+Dieses Konzept wird auf Seite \pageref{expl:plugins} genauer besprochen. Hier nur soviel: Elexis ist nach allen Seiten frei erweiterbar. Es gibt nicht nur eine vorgegebene Zahl von \glqq Modulen\grqq{}, sondern tatsächlich können jederzeit auch von Dritten neue Funktionen programmiert werden, von denen zum Zeitpunkt des Programmreleases noch gar nichts bekannt war. Dies geschieht in Form von sogenannten \glqq Plugins\grqq{}. Plugins können beispielsweise für Statistik, Buchhaltung, Import von Labordaten, Anbindung von Apparaten, Export von KG-Daten, neue Abrechnungssysteme, neue Diagnosesysteme usw. programmiert werden.
+
+Ein Elexis-Plugin ist also einfach ein Programm mit im Prinzip beliebigen Fähigkeiten, welches die Eigenschaft hat, mit Elexis zusammenarbeiten zu können.
+
+Es kann weder in diesem Handbuch noch sonstwo eine abschliessende Aufzählung aller Plugins geben, weil niemand wissen kann, welche Plugins von unabhängigen Anwendern bei unabhängigen Programmierern in Auftrag gegeben worden sind.  Eine Auflistung zumindest der uns bekannten Plugins finden Sie jeweils auf http://www.elexis.ch
+

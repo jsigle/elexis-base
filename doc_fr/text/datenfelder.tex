@@ -1,0 +1,100 @@
+% *******************************************************************************
+% * Copyright (c) 2007 by Elexis
+% * All rights reserved. This document and the accompanying materials
+% * are made available under the terms of the Eclipse Public License v1.0
+% * which accompanies this distribution, and is available at
+% * http://www.eclipse.org/legal/epl-v10.html
+% *
+% * Contributors:
+% *    G. Weirich - initial implementation
+% *
+% *  $Id$
+% *******************************************************************************
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+% Dieses Dokument enthält die Dokumentation der Platzhalter für Datenfelder
+
+\section{Variables pour type de données}
+\label{Platzhalter}
+Ces variables peuvent être utilisées dans des documents de modèles de texte et doivent être introduites entre parenthèses comme par ex.  [patient.nom].
+Ces modèles peuvent aussi être utilisés comme source des données dans la 'view' 'visualisation des données'.
+La liste suivante n'a pas de prétention à l'exhaustivité. Notamment par des plugins des nouveaux champs peuvent être introduits.
+
+\begin{description}
+  \item [Anwender.Name]= Utilisateur.Nom :  Name des aktuell eingeloggten Anwenders
+  \item [Anwender.Vorname] = Utilisateur.Prénom : Le prénom de l'utilisateur actuellement connecté
+  \item [Anwender.Titel] = Utilisateur.Titre : Titre de l'utilisateur actuellement connecté
+  \item [Anwender.Kuerzel]= Utilisateur.Sigle : Initiales de l'utilisateur actuellement connecté
+  \item [Anwender.Label] = Utilisateur.Label : Nom Login de l'utilisateur actuellement connecté
+  \item [Mandant.Name,Vorname,Titel,Kuerzel,Label] = Mandant.Nom.Prénom.Titre.Sigle.Label : les mêmes champs comme sous utilisateur en se référant au mandant actuellement actif.	
+  \item [Mandant.EAN] = le code EAN du mandant actuellement actif. Seulement présent si le Plugin Tarmed pour les médecins Suisses est actif.
+  \item [Mandant.KSK] = Mandant.RCC : le numéro du Concordat du mandant actuellement actif. Seulement présent si le Plugin Tarmed pour les médecins Suisses est actif.
+  \item [Patient.Name,Vorname,Titel]= Patient.Nom.Prénom.Titre : Nom etc du patient actuellement sélectionné.
+  \item [Patient.Geburtsdatum] = Patient.date de naissance : Date de naissance du patient actuellement sélectionné.
+  \item [Patient.PatientNr] = Patient.No du Patient : Numéro interne du patient actuellement sélectionné.
+  \item [Patient.Diagnosen] = Patient.Diagnostic : Diagnostics comme mentionnés sur la couverture
+  \item [Patient.Allergien]= Patient.Allergies : Allergies comme mentionnées sur la couverture.
+  \item [Patient.Strasse, Patient.Plz, Patient.Ort] = Patient.Rue, Patient.Codepostal , Patient.Lieu : Adresse du patient actuellement sélectionné.
+  \item [Patient.PersAnamnese] = Patient.Anamnese personnelle : Anamnèse personnelle comme mentionnée sur la couverture
+  \item [Patient.Telefon1, Patient.Telefon2, Patient.Natel] = Patient.Téléphone1, Patient.Téléphone2, Patient.Natel : Numéros de téléphones
+  \item [Patient.Medikation] = Patient.Médication : Médication fixe actuelle du patient actuellement sélectionné.
+  \item [AUF.von] = incap depuis : Début de l'incapacité de travail actuellement sélectionnée
+  \item [AUF.bis] = incap jusqu'au : Fin de l'incapacité de travail actuellement sélectionné
+  \item [AUF.Prozent]= incap pourcentage : Pourcentage de l'incapacité de travail actuellement sélectionné 
+  \item [AUF.Grund] = incap raison : Raison pour l'incapacité de travail actuellement sélectionnée.(accident, maladie) 
+  \item [AUF.Zusatz] = incap complement : Texte complémentaire concernant l'incapacité de travail.
+  \item [Fall.ArbeitgeberName] = Cas.NomEmployeur : Nom de l'employeur si introduit= Cas.NomEmployeur : Nom de l'employeur si introduit
+  \item [Fall.Kostenträger] = Cas.Répondant des coûts : Répondant des coûts
+  \item [Fall.Versicherungsnummer] = Cas.Numéroassuré : Le numéro d'assuré 
+  \item [Rechnung.RnNummer] = Facture.Nodefacture : No de la facture actuelle
+  \item [Rechnung.RnDatum] = Facture.Datefacture : Date de la facture
+  \item [Rechnung.RnDatumVon] = Facture.Datefacturede : Date de la première consultation incluse dans cette facture.
+  \item [Rechnung.RnDatumBis]= Facture.Datefacturejusque : Date de la dernière consultation incluse dans cette facture.
+  \item [Konsultation.Datum] = Consultation.Date : Date de la consultation actuellement sélectionnée
+  \item [Konsultation.Eintrag] = Consultation.Saisie : Texte saisie de la consultation actuellement sélectionnée
+  \item [Konsultation.Diagnose] = Consultation.Diagnostic : Diagnostic de la consultation actuellement sélectionnée.
+
+\end{description}
+
+\section{Libellé selon sexe}
+Aussi ceci sont des sortes de variables qui consistent en une formule alternative :
+
+\begin{verbatim}
+    [Datenobjekt:mw:Formulierung Mann/Formulierung Frau ] = [Data object:mf:Formule Homme/Formule Femme]
+    ou
+    [Datenobjekt:wm:Formulierung Frau/Formulierung Mann] = [Data object:fm:Formule Femme/Formule Homme]
+    ou
+    [Datenobjekt:mwn:Formulierung Mann/Formulierung Frau/Formulierung neutral]  =  [Data object:mfn:Formule Homme Mann/Formule Femme/Formule neutre]
+\end{verbatim}
+
+Si l'objet décrit un personne masculine, la formule Homme sera utilisé. S'il décrit une personne féminine, c'est la formule Femme et s'il ne s'agit pas d'une personne ou si le sexe n'est pas connu, c'est la formule neutre qui s'utilise. 
+
+\medskip
+
+Exemples
+\begin{itemize}
+    \item [Adressat:mwn:geehrter Herr [Adressat.Name]/geehrte Frau [Adressat.Name]/geehrte Damen und Herren]
+    = [Destinataire:mfn:Monsieur [destinataire.nom]/Madame [destinataire.nom]/Mesdames et Messieurs ]
+    \item Bitte um Aufgebot [Patient:wm:der obengenannten Patientin/des obengenannten Patienten]
+   =  Demande pour convocation [Patient:fm:de la patiente/du patient susmentionné]
+\end{itemize}
+
+\section{Données de provenance des Plugins externes}
+\label{datenfelder_extern}\index{Datenfelder!extern}
+Des données d'un Plugin externe peuvent être impliquées dans des variables si c'est prévu par le producteur du Plugin. Il faut cependant observer une Syntaxe un peu différente de celle utilisée pour les variables 'normales'. L'origine de cette différence se trouve dans le faite que la variable se réfère toujours à un objet actuellement sélectionné d'un certain type, chose qui n'est pas possible lorsqu'il s'agit des données d'un Plugin externe, car Elexis ne connaît pas ces données.
+Lorsque les données proviennent de l'extérieur on trouve par contre :
+\begin{itemize}
+\item Le nom du Plugin qui les met à disposition
+\item Le nom de l'objet des donnés
+\item Une sélection des valeurs avec ce nom (Il pourrait y avoir par exemple de séries avec des multiples données. Les options concrètes de ce paramètre dépendent du Plugin.
+\item Une description des données qui devraient être mise à disposition
+\item Probablement des paramètres qui seront nécessaires pour la sélection de ces données. Aussi ce paramètre dépend du Plugin en question.
+\end{itemize}
+Par conséquent une variable pour des données d'un Plugin est constituée par quatre à cinq parties qui sont séparées par le :
+\begin{verbatim}
+    [pluginName:objektName:auswahl:daten]= [nom du plugin:nom de l'objet:séléction:données]  ou
+    [pluginName:objektName:auswahl:daten:parameter] = [nom du plugin:nom de l'objet:séléction:données:paramètres]
+\end{verbatim}
+
+\medskip
+
+Veuillez trouver les exemples dans la partie où il y a une description du Plugin 'résultats'   (\ref{befunde}, page \pageref{befunde}).

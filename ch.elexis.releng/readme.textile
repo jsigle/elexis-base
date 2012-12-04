@@ -1,0 +1,161 @@
+﻿h1. CI mit Jenkins und Buckminster
+
+Copyright (c) 2011 Thomas Huster & Marco Descher, Medevit
+Copyright (c) 2011 Niklaus Giger <niklaus.giger@member.fsf.org>
+
+*Inhaltsverzeichnis*
+
+{toc}
+
+CI steht für "Continuos Integration". CI ist eine Vorgehensweise für die SW-Entwicklung, bei der kontinuierlich alle Bestandteile des auszulieferenden Produktes erstellt und getestet werden.
+
+Bis und mit Version 2.1.4 wurde Elexis durch ein ant-Skript unter BuildElexis erstellt.
+
+Damit die UnitTests des Elexis-Kerns nach jedem Check-In automatisch durchgeführt werden können, wird das CI-Werkzeug "Jenkins":http://www.jenkins-ci.org verwendet. Die Erweiterung des ant-Skripts, um automatische Tests laufen lassen zu können, lief nie richtig. 
+
+Deshalb wird ab Version 2.1.5 versucht, schrittweise das gesamte Build-System auf Buckminster umzustellen. "Buckminster":http://www.eclipse.org/buckminster/ ist ein weitverbreitetes Werkzeuge, um Eclise-Projekte automatisiert zu erstellen. Andere Build-System wie maven, tycho, ("buildr":http://buildr.apache.org) konnten auch nicht in Kürze angepasst werden, da elexis diverse Konventionen für "typische" Eclipse-Projekte nicht einhält.
+
+Als Einführung in die Konzepte von Buckminster empfiehlt es sich das Buch "Buckminster: The definitive Guide":http://www.eclipse.org/downloads/download.php?file=/tools/buckminster/doc/BuckyBook.pdf zu studieren. Es gehen dann zwar leicht ein paar Abende drauf.
+
+h2. Eclipse Projekte
+
+h3. ch.elexis_test
+
+Als Beispiel wurden das Test Fragment vom trunk übernommen. Es beinhaltet den Testcode und die Launch Configuration welche der Konfiguration unter Run > Run Configurations entspricht, welche via "File..Export..Launch Configurations" in eine Datei exportiert wurde.
+  
+h3. ch.elexis.core.extlibs.feature
+
+Dieses Feature referenziert externe plugins. Dies sind alle plugins und features welche nicht Teil der Applikation sind, aber für die Ausführung benötigt werden (z.B. das Eclipse-Help-System).
+  
+h3. ch.elexis.core.feature
+  
+Ist als Beispiel zu sehen wie ein Produkt mit dieser Methode erstellt werden kann. Es enthält die build scripts und Konfiguration dazu. Es verweist deshalb auf den Elexis-Kern, die verwendeten Datenbank-Treiber und die ch.rgw.utilities.
+  
+h3. ch.elexis.core.test.feature
+
+Enthält das ch.elexis.core.feature plus die/das Testfragment  ch.elexis_test. Es wird benötigt, um die Testumgebung (bestehend aus plugins und features) zu definieren.
+  
+h3. ch.elexis.releng
+
+Releng ist die Abküzung von Release engineering. Daher sind hier alle Dateien untergebracht welche rein dafür nötig sind, wie z.B. *.cquery und *.rmap für Buckminster auf Hudson oder *.target Dateien zum definieren gegen welche Plugins ein build durchgeführt wird.
+
+Ebenso werden hier von Zeit zu Zeit die XML-Konfiguration der entsprechenden Jenkins-Jobs abgelegt.
+
+h2. Die Target Definition
+
+Das Target muss alle plugins beinhalten welche nicht Teil der Plugins der Applikation sind. Es kann wie in der Datei ch.elexis.releng/core.dev.target aus features von mehreren Software Sites bestehen.
+
+Es sollte sowohl lokal während der Entwicklung als auch auf dem build server das selbe target verwendet werden. Um unangenehe Überraschungen zu verhindern.
+
+*Vorsicht beim hinzufügen von zusätzlichen Plugins zum target wenn diese in einer anderen Version bereits vorhanden sind führt dies meist zu Problemen!*
+  
+h3.  Bestandteile
+
+*  Eclipse RCP SDK -> nötig für alle RCP Applikationen ...
+*  Eclipse Platform -> nötig für org.eclipse.ui.forms, org.eclipse.help Abhängigkeiten und für build für verschiedene OSs ...
+* PDE JUnit Runner Support -> nötig um junit test auszuführen ...
+* Apache Jakarta Commons Lang -> nötig für Abhängigkeit aus elexis-utilies
+  
+Das Target kann lokal durch einen Doppelklick auf die Datei > und dann mit dem Link "Set as Target Platform" lokal aktiviert werden. (Diese Operation geht eine schöne Weile, da viel runtergeladen werden muss (ca. 200 MB).)
+  
+Für Buckminster auf Jenkins bietet es sich an das Target in einem eigenen Job mit der Buckminster Anweisung 
+
+bq. importtargetdefinition -A '${WORKSPACE}/ch.elexis.releng/core.dev.target'
+    
+zu importieren und dann anderen Jobs mittels der Option "Archive and publish an Eclipse Target Platform" zur verfügung zu stellen.
+  
+h2. Buckminster in der Entwicklungsumgebung
+
+Zum Test ob der Buckminster build funktioniert sollte man ihn zuerst lokal durchführen. Gestartet werden Buckminster Kommandos in Eclipse aus dem Kontextmenu der Projekte > Buckminster > Invoke Action...
+
+Um das Projekt ch.elexis.core.feature mittels Buckminster zu bauen muss im folgenden Dialog die Action create.product (ist durch buckminster.cspec und build/product.ant definiert) ausgewählt werden. Zusätzlich ist lokal ein property file nötig, in dem die Zielplatform und das Zielverzeichnis angegeben sind (z.B ch.elexis.releng/buckminster/win32_prod.properties). Sind diese  beiden Optionen in dem Dialog richtig ausgwählt kann der build mittels Buckminsters durchgeführt werden.
+
+Das andere property file ist für das site.p2 target und gibt vor das für alle Zielplatformen gebaut werden soll.
+  
+h2. Buckminster in der Eclipse-Entwicklungsumgebung
+
+h3. Installation
+
+Das Plugin-Buckminster via Jenkins..Konfiguration..Plugins verwalten installieren. Details siehe "Wiki":https://wiki.jenkins-ci.org/display/JENKINS/Buckminster+PlugIn
+Dann im Jenkins..Konfigurations-Dialog unter "Buckminster" die Option "Automatisch installieren" aktivieren und als Version "Buckminster 3.6" für Helios  wählen. Danach mit Drücken auf "Buckminster hinzufügen" Buckminster erstellen.
+
+Es gibt hier vor allem 2 Szenarien build mit dem ausführbaren Artefakten als Ergebnis, und build mit anschliessenden Tests als Ergebnis.
+
+Generell muss um ein Buckminster build auf dem Server auszuführen spezifiziert werden welches feature die zu buildenden features und plugins enthäl(ch.elexis.releng/buckminster/*.cquery) und wo buckminster nach den entsprechenden features und plugins suchen kann (*.rmap). Damit Buckminster diese auch findet müssen diese zusätzlich in Vereichnisen liegen deren Name ihrer ID entspiricht (ch.elexis_test -> /ch.elexis_test). 
+
+In der Job Konfiuguration unter "Run Buckminster" sieht das dann so aus:
+#  @import '${WORKSPACE}/ch.elexis.releng/buckminster/local.core.cquery'@
+#  @build  -c@
+
+Mit diesen Anweisungen werden alle plugins und features welche für die im cquery spezifizierte Componente nötig sind gebaut.
+  
+h3. Build mit Tests
+
+Buckminster bietet die Möglichkeit die Tests in Eclipse zu konfigurieren und diese Konfiguration dann auf dem build Server auszuführen. D.h. unter Run > Run Configurations... den Test konfigurieren und im Reiter "Common"  unter "Save as" den Radiobutton "Shared file:" aktivieren. Somit wird die Konfiguration als *.launch Datei im Projekt abgelegt. Auf dem build server kann dann in der Job Konfiguration unter "Run Buckminster" mit der Zeile @junit -l '/ch.elexis_test/CoreAllTests.launch' -o '${WORKSPACE}/test-reports/CoreAllTests.xml' --flatXML@ das Ausführen der Test ausgelöst werden. 
+
+h3. Build mit Artefakten
+
+Nach dem bereits alle features und plugins wie bereits beschrieben gebaut wurden, kann mittels der Anweisung 
+
+bq. perform -D target.os=linux -D target.ws=gtk -D target.arch=x86_64 ch.elexis.core.feature#create.product.zip
+
+ein Artefakt für linux mit gtk auf einer x86_64 Zielplatform erstellt werden. Die ch.elexis.core.feature#create.product.zip Anweisung bedeutet das Buckminster im Projekt ch.elexis.core.feature die Action create.product.zip ausführt. Diese ist durch die Dateien buckminster.cspec  und build/product.ant definiert.
+
+h2. Buckminster auf der Kommandozeile
+
+Die Installation ist im Appendix A von "Buckminster: The definitive Guide" erklärt. Zitat:
+
+"Check if Buckminster is already available for install. Buckminster is part of the Eclipse release trains and if you are using a packaged Eclipse downloaded from eclipse.org then chances are that you can install directly from the repository for the release train. Check under Help → Install New Software... for the Buckminster category. If you can’t find the Buckminster category, you need to add a repository location. (You may also want to do this to get the latest updates as the release train sites are updated only infrequently)."
+
+Um auf der Kommandozeile zu arbeiten, muss man den http://download.eclipse.org/tools/buckminster/products/director_latest.zip holen und installieren. 
+
+bq. cd /opt
+wget -c http://mirror.switch.ch/eclipse/tools/buckminster/products/director_latest.zip
+unzip director_latest.zip
+director/director -r http://download.eclipse.org/tools/buckminster/headless-3.6/ \
+-d /opt/buckminster -p Buckminster \
+-i org.eclipse.buckminster.cmdline.product \
+-installIU "org.eclipse.equinox.p2.director.feature.feature.group,\
+org.eclipse.buckminster.pde.headless.feature.feature.group,\
+org.eclipse.buckminster.cmdline.product,\
+org.eclipse.buckminster.core.headless.feature.feature.group"
+
+Damit emma gebraucht werden kann muss Buckminster Version 3.6 installiert sein und wie folgt installiert werden:
+
+bq. cd /opt/buckminster 
+./buckminster install http://download.eclipse.org/tools/buckminster/headless-3.6/ \
+org.eclipse.buckminster.emma.headless.feature
+./buckminster install http://download.eclipse.org/tools/buckminster/headless-3.6/ \
+org.eclipse.buckminster.core.headless.feature.feature.group
+
+h2. Buckminster auf der Kommandozeile benutzen
+
+Die folgenden Schritte erlauben es, den Elexis-Kern in wenigen Schritten zu erstellen und JUnit-Tests laufen zu lassen.
+
+bq. hg clone http://elexis.hg.sourceforge.net/hgweb/elexis/elexis-base /opt/elexis-base
+cd /opt/elexis-base
+/opt/buckminster/buckminster importtargetdefinition -A ch.elexis.releng/core.dev.target [1]
+/opt/buckminster/buckminster import ch.elexis.releng/buckminster/local.core.test.cquery [2]
+/opt/buckminster/buckminster build --clean [3]
+/opt/buckminster/buckminster emma -l ch.elexis_test/CoreAllTests.launch -o test-reports/CoreAllTests.xml --html test-coverage-reports/CoreAllTests.html [4]
+
+fn1. Hier werden die zu holenden Sache definiert
+
+fn2. Hier wird eine ganze p2-site unter workspace zusammengestellt (ca. 200 MB)	
+
+fn3. Hier werden alle Build ausgeführt, ua. alle *.java-Dateien kompiliert
+
+fn4. Hier werden die JUnit-Tests durchgeführt, Test-Reports und Auswertungen der Code-Abdeckung erstellt
+
+h2. PDE-Builds unter Jenkins
+
+Damit ein sogenanter headless build für PDE-Unit-Tests unter jenkins laufen sind noch folgende Schritte notwendig.
+
+* vncserver installieren, z.B. via @"sudo apt-get install tightvncserver"@
+* Einen Window-Manager installieren, z.B. via @"sudo aptitude install metacity"@
+* Als Benutzer Jenkins einmal den vncserver starten und ein beliebiges Passwort eingeben und den gestarten vncserver wieder stoppen
+** @sudo -u jenkins -s -H@
+** @jenkins: cd $HOME && vncserver@
+** @jenkins: killall vncserver@
+* Im Jenkins die Erweiterung (Plug-In) xvnc installieren
+  

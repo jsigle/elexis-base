@@ -1,0 +1,57 @@
+h1. HL7-Exporter
+
+p(klein). (c) 2011 by M.Imhof 
+ $Id$	
+ 
+{toc}
+ 
+h2. Einleitung
+
+Programm für den Export der Labordaten als HL7 Datei.
+
+hl7export.jar <export.path> <export.tag>
+
+Das Programm kann in Windows als Executable-Jar gestartet werden und macht folgendes:
+# Einstellungen (settings.ini) lesen
+# Verbindung zu Elexis Datenbank aufbauen
+# Alle Labordaten mit entsprechenden Tag *export.tag* lesen
+# HL7 Dateien erstellen und in Verzeichnis *export.path* ablegen.
+
+h2. Settings
+
+Die Einstellungen können in der Datei "settings.ini" gespeichert werden. Diese Datei muss
+sich im gleichen Verzeichnis befinden wie das Programm.
+
+| *Name* | *Beschreibung* |
+|elexis.db.driver|Name des Datenbank-Treibers (org.h2.Driver, sun.jdbc.odbc.JdbcOdbcDriver, com.mysql.jdbc.Driver, org.hsqldb.jdbcDriver)|
+|elexis.db.url|URL für Elexis Datenbankzugriff|
+|elexis.db.user|Elexis DB-User|
+|elexis.db.pwd|Elexis DB-User Password|
+|export.path|Export Verzeichnis, kann aber auch als Startparameter mitgegeben werden|
+|export.tag|Text um Laboritems zu filtern. Vgl. EXPORT Feld auf LABITEM Tabelle |
+|log.debug|Debug Output: true/false|
+
+h3. Beispiel
+
+@elexis.db.driver=org.h2.Driver@
+@elexis.db.url=jdbc:h2:C:/Users/immi/AppData/Local/Temp/elexisdata/elexisdb@
+@elexis.db.user=sa@
+@elexis.db.pwd=@
+@export.path=C:/Medics/Upload@
+@export.tag=Medics@
+@log.debug=true@
+  
+h2. Abhängigkeiten
+
+Das Projekt verwendet das elexis-hl7-v26.jar. 
+Dieses kann aus dem Plugin elexis-hl7-v26 gebuildet werden (Ant-Script: build.xml)
+
+h2. Bedieneranleitung
+
+Die aktuelle Bedieneranleitung kann hier heruntergeladen werden:
+"http://www.medelexis.ch/fileadmin/dox/Elexis_HL7Export_Anleitung.pdf":http://www.medelexis.ch/fileadmin/dox/Elexis_HL7Export_Anleitung.pdf
+Dieser Link kann auch den Benutzern angegeben werden und bei Bedarf in ein medelexis.xml eingetragen werden.
+
+Change-History  
+Michael Imhof, 26.04.2011
+Tony Schaller, 08.05.2011

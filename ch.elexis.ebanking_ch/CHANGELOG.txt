@@ -1,0 +1,13 @@
+3.5.2012 - 2.0.3 - M. Descher
+	- Removed ESRView3 according to #955
+24.7.2012 - 2.0.4 - M. Descher
+	- Implemented new grand-unified view ch.elexis.ebanking_ch.ESRView to supersede the other views, see #1085
+26.9.2012 - 2.0.5 - M. Descher
+	- Added date range selection
+	- The sum at the end of the page is now calculated out of the actual values presented in the table
+	- Filter refactoring: Search is now divided for Bill number #, amount $, search for amounts bigger > or lower < than
+	- Several performance improvements
+11.10.2012 - 2.0.6 - M. Descher
+	- minor changes due to ticket #1085
+11.10.2012 - 2.0.6.1 - M. Descher
+	- fix for 2.0.6

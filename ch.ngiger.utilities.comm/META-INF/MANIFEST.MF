@@ -1,0 +1,27 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Communication utilities for elexis
+Bundle-SymbolicName: ch.ngiger.utilities.comm;singleton:=true
+Bundle-Version: 1.0.2
+Bundle-Vendor: Niklaus Giger
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: ch.ngiger.comm.ftp;uses:="org.apache.commons.net.ftp",
+ ch.ngiger.comm.vpn;uses:="ch.elexis.util",
+ org.apache.commons.net,
+ org.apache.commons.net.bsd;uses:="org.apache.commons.net",
+ org.apache.commons.net.ftp,
+ org.apache.commons.net.ftp.parser;uses:="org.apache.commons.net.ftp,org.apache.oro.text.regex",
+ org.apache.commons.net.io,
+ org.apache.commons.net.nntp;uses:="org.apache.commons.net",
+ org.apache.commons.net.ntp;uses:="org.apache.commons.net",
+ org.apache.commons.net.pop3;uses:="org.apache.commons.net",
+ org.apache.commons.net.smtp;uses:="org.apache.commons.net",
+ org.apache.commons.net.telnet;uses:="org.apache.commons.net",
+ org.apache.commons.net.tftp;uses:="org.apache.commons.net",
+ org.apache.commons.net.util
+Require-Bundle: ch.elexis;bundle-version="2.1.0",
+ ch.rgw.utility;bundle-version="2.0.0"
+Bundle-ClassPath: lib/commons-net-1.4.1.jar,
+ .
+Import-Package: org.eclipse.swt.program
+Bundle-ActivationPolicy: lazy

@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Hilotec_Pluginstatistiken
+Bundle-SymbolicName: com.hilotec.elexis.pluginstatistiken;singleton:=true
+Bundle-Version: 0.0.3
+Bundle-Vendor: hilotec.com
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Require-Bundle: ch.unibe.iam.scg.archie,
+ ch.elexis,
+ org.eclipse.core.runtime,
+ org.eclipse.swt,
+ ch.rgw.utility,
+ ch.elexis.core;bundle-version="0.0.2"
+Export-Package: com.hilotec.elexis.pluginstatistiken.schnittstelle

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html>
+	<head>
+		<title>Import aus früheren Versionen</title>
+		<!-- $Id: import1.html 813 2006-08-28 20:00:15Z rgw_ch $ -->
+	</head>
+	<body>
+		<h1>Import aus anderen Praxisprogrammen</h1>
+		<p>Daten aus PraxisDesktop können automatisch übernommen werden. Elexis entstand
+			ursprünglich als Nachfolgeprojekt von PraxisDesktop und kann deswegen mit
+			dessen Datenstrukturen umgehen. Dennoch kann es, bedingt durch das stark
+			veränderte Format, beim Import zu Problemen kommen. Wir empfehlen Ihnen daher,
+			vor dem Import eine komplette Datensicherung durchzuführen. Ausserdem sollte
+			während dem Import kein anderer Zugriff auf die Datenbank erfolgen, also kein
+			anderer Computer angemeldet sein.</p>
+		<p>Falls Sie auch eine frühere Version der Agenda benutzt haben (JavaAgenda bzw.
+			PraxisDesktop-Agenda, dann können Sie auch deren Daten übernehmen. In diesem
+			Fall sollten Sie aber zuerst den nächsten Abschnitt, <a href="import2.html">
+			Import aus früheren Agenda-Versionen</a>, lesen.</p>
+		<p>Für andere Praxisprogramme sind Konversionstools in Vorbereitung</p>
+		
+		<h2>Vorgehen</h2>
+		<p><b>ACHTUNG</b>: Der Konversionsprozess dauert sehr lange. Rechnen Sie mit
+			mehreren Stunden bis zu einem ganzen Tag. (Selbstverständlich müssen Sie nicht
+			die ganze Zeit neben dem Computer sitzen, aber der Computer und das 4D-System
+			müssen für diese ganze Zeit frei sein). Der Konversionsprozess sollte nicht
+			unterbrochen werden (Wenn er unterbrochen wird, muss er wieder neu gestartet
+			werden)</p>
+		<ol>
+			<li>Sowohl PraxisDesktop als auch Agenda müssen auf der neuesten Version
+				sein</li>
+			<li>Alle in PraxisDesktop gespeicherten Briefe und Befunde müssen vom
+				4D-Write ins RTF-Format konvertiert werden (Dafür benötigen Sie den
+				PraxisDesktop konverter.</li>
+			<li>Die Mandantendaten der Agenda müssen angepasst sein wie im Abschnitt <a
+					href="import2.html">Import aus früheren Agenda-Versionen</a>
+				beschrieben.</li>
+			<li>Der 4D-Server und ggf. der Agenda-Server müssen gestartet sein</li>
+			<li>Installieren Sie auf einem Client-Computer neu Elexis und richten Sie die
+				Datenbankverbindung ein</li>
+			<li>Starten Sie Elexis</li>
+			<li>Wählen Sie den Menuepunkt "Datei-Import"</li>
+			<li>Geben Sie dort den Namen resp. die IP-Adresse des PraxisDesktop-Servers
+				und des Agenda-Servers (ist üblicherweise derselbe) ein. Für den
+				Agenda-Server müssen Sie ausserdem Zugriffsnamen und -Passwort
+				eingeben. Wählen Sie hier dasselbe, was Sie beim Anmelden des
+				Agenda-Clients eingestellt haben. Falls Sie keine Agenda konvertieren
+				wollen, können Sie die entsprechenden Eingabefelder einfach leer
+				lassen.</li>
+			<li>Klicken Sie auf "Los!". Der Vorgang wird gestartet und läuft bis zum Ende
+				durch. Wenn Sie abbrechen wollen, können Sie auf den "Abbrechen"-Knopf
+				klicken oder Elexis einfach beenden. Sie müssen dann aber vor dem nächsten
+				Versuch die Elexis Datenbank wieder löschen und neu einrichten, und dann
+				die Konversion erneut starten.
+				<br/> Während dem Konversionsprozess läuft eine Anzeige für den
+				ungefähren Fortschritt. Diese Anzeige kann aber nur ein sehr ungenauer
+				Anhaltspunkt für die zu erwartenden Dauer sein, da die Komplexität der noch
+				nicht konvertierten Daten und damit der dafür nötige Zeitaufwand
+				natürlich nicht im Voraus bekannt ist</li>
+			
+		</ol>
+		
+		<h3>Probleme</h3>
+		<p></p>
+		
+	</body>
+</html>

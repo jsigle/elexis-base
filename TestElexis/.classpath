@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path=""/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ch.rgw.utility"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ch.elexis.importer.div"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ch.elexis"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ch.elexis.laborimport_teamw"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ch.ngiger.utilities.comm"/>
+	<classpathentry kind="lib" path="/ch.rgw.utility/lib/bcprov-jdk15-140.jar" sourcepath="/ch.rgw.utility/D:/dev/contrib/BouncyCastle/src"/>
+	<classpathentry kind="lib" path="/ch.ngiger.utilities.comm/lib/commons-net-1.4.1.jar"/>
+	<classpathentry kind="output" path=""/>
+</classpath>

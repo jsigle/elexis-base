@@ -1,0 +1,121 @@
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+\section{PostgreSQL sous Windows}
+de point en point: Installer PostgreSQL pour Elexis sur Windows.
+
+
+\textbf{préparer l'installation psql}
+
+\begin{itemize}
+\item téléchargez postgresql-8.1.5-1.zip
+\item déballer et executer le postgresql-8.1. msi qui s'y trouve.
+\item installer selon d:{/}test (le disque dur doit être formaté en NTFS), installer toutes les options comme proposées
+\item  {[x]} installer comme services
+\item  nom de l'utilisateur postgres
+\item  mot de passe aussi postgres (devait naturellement être un autre si vous travallez dans l'environement original)
+\item  Remplacer le mot de passe? {[}Non{]}
+\item  {[x]} initialisez le cluster da la base des données
+\item  {[x]} accepter toutes les connexions sur toutes les adresses IP
+\item  Locale German, Switzerland
+\item  Encoding: UTF-8
+\item  mot de passe superuser: elexisadmin
+\item  {[x]} pl/pgsql
+\item  ne choisissez pas de contrib-module
+\item  {[x]} Admin81
+\end{itemize}
+
+\textbf{l'installation se déroule}
+
+Sous d:/test/data configurer le fichier pg\_hba.conf en
+ajoutant  la ligne suivante sous IVP4 local connections :
+
+
+%ajouter la ligne suivante sous IPV4 local connections :
+host all all 192.168.0.1/24 md5
+
+
+(Ceci part de l'idée que le réseau local se trouve dans 192.168.0.x et que vous donnez accès à ce serveur à tous les ordinateurs se trouvant dans ce réseau.) 
+S'il existe une personal firewall : ouvrir le port 5432
+
+
+
+\textbf{installer la base de données:}
+
+\begin{itemize}
+\item démarrer pgadmin3
+\item double clic gauche sur le localhost du serveur de la PostgreSQL Database
+\item mot de passe: elexisadmin
+\item Clique droite sur \textit{Login roles}
+\textit{new Login role}
+\item Role Name: elexisuser
+\item Password: meinepraxis
+\item {[x]} can create database objects
+\item clic droit \textit{Databases}
+\textit{new database}
+\item nom: elexis
+\item Owner: elexisuser
+\item Encoding: UTF-8
+\item Tablespace: pg\_default
+\item démarrer elexis
+\item menu: fichier - connexion 
+\item type: postgreSQL
+\item adresse du serveur : localhost
+\item nome de la base de données : elexis [suivant]
+\item nom d'ultilisateur: elexisuser
+\item mot de passe: meinepraxis
+\item [terminer]
+\end{itemize}
+
+S'il y a quelques messages d'erreur, fermez-les. Le programme se ferme ensuite. Redémarrer Elexis. 
+
+Argh, maintenant il y a un bug, la nouvelle liaison n'a pas encore été sauvegardée :
+
+\begin{itemize}
+ \item Encore une fois le menu fichier- connexion
+\item type: postgreSQL
+\item adresse du serveur : localhost
+\item nom de la base de données: elexis [suivant]
+\item nom d'utilisateur: elexisuser
+\item mot de passe : meinepraxis
+\item [terminer]
+\item fermer Elexis
+\item redémarrer Elexis.
+\end{itemize}
+Maintenant la connexion avec PostgreSQL a été établie et la base de données est constituée. (Testez avec Fichier-Connexion où cette nouvelle connexion sera affichée.
+-{>} Description comme ici : \href{http://www.elexis.ch/jp/content/view/51/47/}{ici}
+(c'est un peu vieux mais toujours plus ou moins juste)
+
+\chapter{Clients}
+\section{Windows 2000/XP}
+Sous Windows 2000 et XP home ou XP pro l'installation est relativement facile. Décidez-vous d'abord si vous avez besoin d'une version avec ou sans JRE (JAVA) et démarrez ensuite l'installateur avec un double-clic.
+Pour la réponse à la question de quelle version vous avez besoin, veuillez prodécer de façon suivante :
+Ouvrez un poste de travail (démarrer - exécuter -> cmd.exe)et introduisez :
+java -version
+Si vous recevez un message d'erreur ou un version < 1.5, vous nécessitez la version de Elexis qui contient le JRE.
+En cas de doute on vous suggère de toujours utiliser la version avec JRE car ceci ne change rien dans votre ordinateur à par  de que ça demande un peu de place. Le JRE ne s'installera que dans le fichier local de Elexis et sera effacé avec celui-là lors de la désinstallation de Elexis. 
+Après un double-clic sur l'installateur (elexis-win32-<version>-<jre>.exe) vous pouvez laisser en cas de doute toutes les options dans l'état 'par défaut'.
+\subsection{Si quelque chose tourne mal}
+Si jamais l'installation ne réussit pas du premier coup, il vaut mieux de recommencer à zéro. Donc, effacez complètement la base des données et réinstallez la. Démarrez Elexis lors du premier démarrage depuis la ligne de commande avec l'option suivante :
+\begin{itemize}
+\item elexis -clean\_all
+\end{itemize}
+
+
+Ceci permet d'effacer tous les restes d'une installation échouée. 
+\subsection{Si ceci ne march pas}
+\subsubsection{Support par E-Mail}
+
+Le support pour l'installation par E-Mail reste gratuite jusqu'à ce que la phase béta est terminée.
+\subsubsection{Support par télémaintenance}
+
+Le support par télémaintenance (VNC) reste gratuit jusqu'à ce que la phase béta est terminée, mais vous devez installer vous-même le serveur VNC qui est nécessaire pour celà. Dans beaucoup de cas toute l'installation peut se faire à travers VNC.
+Installation sur place :
+Nous installons Elexis y inclus une base de données pour vous à un prix forfaitaire de CHF 250.-- pour les systèmes suivants. (S'y ajoutent les frais de voyage.) :
+\begin{itemize}
+ \item Windows 2000,
+\item XP Home ou XP Pro
+\item avec base de données hsql, mysql ou postgresql
+\end{itemize}
+
+\subsubsection{Windows Vista}
+Nous ne pouvons pour le moment pas garantir que Elexis fonctionne sur Windows Vista. Pour cette raison nous ne conseillons actuellement pas encore ce système pour Elexis.
+

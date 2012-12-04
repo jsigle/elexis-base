@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="Konzepte" link_to="toc.xml#concepts"> 
+	<topic label="Programmphilosophie"  href="html/concepts/maintopic.html"> 
+		<topic label="Sub Topic" href="html/concepts/subtopic.html" /> 
+	</topic>
+	<topic label="Datenorganisation" href="html/concepts/datenorg.html">
+		<topic "Kontakte" href="html/concepts/kontakt.html"/>
+	</topic>
+	<topic label="Benutzerkonzept" href="html/concepts/users.html">
+		<topic label="Mandanten" href="html/concepts/mandanten.html" />
+		<topic label="Anwender" href="html/concepts/anwender.html"/>
+		<topic label="Gruppen" href="html/concepts/gruppen.html"/> 
+	</topic> 
+</toc>

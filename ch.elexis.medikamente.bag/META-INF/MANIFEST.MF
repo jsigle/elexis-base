@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Medikamente-Plugin BAG-Liste
+Bundle-SymbolicName: ch.elexis.medikamente.bag;singleton:=true
+Bundle-Version: 2.0.5
+Bundle-Vendor: elexis.ch
+Require-Bundle: ch.elexis;bundle-version="2.1.5",
+ ch.elexis.importer.div,
+ org.eclipse.core.runtime,
+ org.eclipse.ui,
+ org.eclipse.ui.forms,
+ ch.rgw.utility;bundle-version="2.0.0",
+ org.eclipse.core.expressions;bundle-version="3.4.200",
+ ch.elexis.core;bundle-version="0.0.2"
+Export-Package: ch.elexis.medikamente.bag.data

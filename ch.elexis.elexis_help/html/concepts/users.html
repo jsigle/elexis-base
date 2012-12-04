@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>Konzepte: Benutzer</title>
+	<!-- $Id: users.html 23 2006-03-24 15:36:01Z rgw_ch $
+ 	 * Copyright (c) 2005, G. Weirich and Elexis
+	 * All rights reserved. This program and the accompanying materials
+	 * are made available under the terms of the Eclipse Public License v1.0
+	 * which accompanies this distribution, and is available at
+	 * http://www.eclipse.org/legal/epl-v10.html
+	 *
+	 * Contributors:
+	 *    G. Weirich - initial implementation
+	 -->
+</head>
+<body>
+	<h1>Benutzerkonzept</h1>
+	<p>Elexis erlaubt eine feine Steuerung der Zugriffsrechte und Voreinstellungen für die
+	 verschiedenen Programmfunktionen. Hierzu werden Benutzer erstellt, die
+	Ihrerseits zu bestimmten Gruppen gehören können. Man kann Zugriffsrechte
+	und Einstellungen auf Benutzerebene und/oder Gruppenebene erteilen. Ein Benutzer
+	kann zu einer oder mehreren Gruppen gehören.</p>
+	<p>Grundsätzlich gilt: Ein Benutzer hat diejenigen Rechte, die entweder ihm selbst oder
+	einer der Gruppen, zu denen er gehört, erteilt wurden. Für die Voreinstellungen gilt:
+	<ol>
+		<li>Es gelten diejenigen Voreinstellungen, die er für sich erstellt hat</li>
+		<li>Wenn er für eine Funktion keine Voreinstellung gemacht hat, dann gelten die
+		Voreinstellungen der Gruppen, zu denen er gehört. Wenn mehrere Gruppen für
+		dieselbe Funktion widersprüchliche Voreinstellungen haben, dann gilt diejenige der Gruppe,
+		zu der er zuletzt zugeteilt wurde.</li>
+		<li>Wenn es für eine Funktion weder eine individuelle noch eine Gruppen-Voreinstellung gibt,
+		dann gilt eine Standardeinstellung des Systems.</li>
+	</ol></p>
+</body>
+</html>

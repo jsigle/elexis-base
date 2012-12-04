@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: TrustX Plugin
+Bundle-SymbolicName: elexis_trustx_embed;singleton:=true
+Bundle-Version: 1.0.1
+Bundle-Vendor: elexis.ch
+Bundle-Localization: plugin
+Require-Bundle: ch.elexis.arzttarife_ch,
+ ch.elexis,
+ org.eclipse.swt,
+ org.eclipse.ui,
+ org.eclipse.core.runtime,
+ ch.rgw.utility
+Bundle-ClassPath: .,
+ com4j.jar

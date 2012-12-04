@@ -1,0 +1,66 @@
+% *******************************************************************************
+% * Copyright (c) 2007 by Elexis
+% * All rights reserved. This document and the accompanying materials
+% * are made available under the terms of the Eclipse Public License v1.0
+% * which accompanies this distribution, and is available at
+% * http://www.eclipse.org/legal/epl-v10.html
+% *
+% * Contributors:
+% *    G. Weirich - initial implementation
+% *
+% *  $Id: einleitung.tex 4911 2009-01-05 17:56:39Z rgw_ch $
+% *******************************************************************************
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+
+\section{Pourquoi des Plugins ?}
+\label{expl:plugins}
+L'expérience avec de plus vieux programmes a montré que la maintenance et l'extension devenait de plus en plus difficile au fur et à mesure que la quantité de leurs fonctions augmentaient. Modifier postérieurement une certaine fonction (p. ex. un nouveau système de facturation) demandait un investissement énorme et risquait de provoquer des fautes.
+En outre, des modifications et des extensions ne pouvaient être programmés que par le fabricant lui-même, puisque le code de programme entier était \textit{en un morceau} war. Si on avait besoin d'une fonction qui s'utilisait plutôt rarement, on devait s'attendre à des factures salées (pour autant que l'entreprise avait effectivement intérêt à mettre en oeuvre une certaine fonction que pour un client particulier).
+
+Ici, le 'Plugin-System' entre en jeu. A l'origine ce système a été développé pour Eclipse, où il y a eu des exigences semblables, comme dans Elexis : Une multiplicité d'extensions potentielles, dont toutefois pas chaque utilisateur a besoin, et qui ne peuvent pas tous être connus au moment la fabrication. Le concept du Plugin s'est établi entre-temps et a atteint un degré de maturité élevé.
+
+En principe ça se passe de façon suivante : Une multitude de positions dans le programme sont équipées d'emblée avec ce que l'on appelle  \textit{des points d'élargissement}. Ce sont des \textit{contacts à fiches } bien documentés , auxquels  des Plugins \textit{se raccordent}. Le fabricant du Plugin ne nécessite pas à connaître plus que la documentation du point d'élargissement.
+Il n'a besoin ni de connaître le programme principal ni de se former en ce qui concerne son code source. Un Plugin peut mettre en oeuvre qu'une minuscule fonction particulière ou il peut être un programme autonome qui nécessite seulement une certaine coopération avec le programme principal.
+
+
+Dans Elexis, les systèmes de code de diagnostic et de facturation ont été réalisés par exemple comme Plugins afin que des nouveaux systèmes de code puissent être à tout moment insérés sans modification du programme principal. Sont également réalisés comme Plugin le traitement de texte à intégrer et les possibilités d'importer des données d'un autre programme, du laboratoire et des appareils.
+
+\subsection{Installer un Plugin}
+L'installation des Plugins est très facile : Il ne faut que le copier dans dans le répertoire des \textit{plugins}de Elexis et redémarrer Elexis.
+
+\subsection{Désinstaller un Plugin}
+La désinstallation est aussi facile : Il ne faut qu' effacer le plugin  qui se trouve dans le répertoire des  \textit{plugins} et redémarrer Elexis.
+
+\subsection{Liste des Plugins}
+Une liste de tout les Plugins qui nous sont connus se trouve en Internet sous :
+\begin{verbatim}
+    http://www.elexis.ch/jp/content/view/105/78/.
+\end{verbatim}
+Une telle liste ne peu jamais être exhaustive car d'un côté nous ne connaissons pas forcément tout les Plugins (des tiers peuvent développer des Plugins sans nous en parler) et de l'autre côté il y a toujours des nouveaux Plugins qui sont développés. Quelques-uns des Plugins importants sont décrits dans le chapitre \ref{Agenda}et suivants . Pour les autres vous trouverez une documentation sur le site web.
+
+
+\medskip
+
+Dans l'installation complète de Elexis, qui peut être téléchargée depuis notre site web, se trouvent les Plugins suivant de façon standard :
+
+\begin{description}
+  \item [elexis-artikel-schweiz:] Plugin pour intégrer la fiche produit Galdat (abonnement spécifique nécessaire) et la liste MiGeL.
+  \item[elexis-arzttarife-schweiz:] Plugin pour intégrer le Tarmed et Tarif LFA (liste fédérale des analyses)..
+
+  \item[elexis-diagnosecodes-schweiz:] Plugin pour intégrer CIM-10 et le Code Tessinois (TI-Code).
+
+  \item[elexis-medikamente-BAG:] Plugin pour intégrer la liste des spécialités.
+
+  \item[elexis-icpc:] Plugin pour intégrer le Code CISP (la licence doit être commandée chez la SSMG)
+
+  \item[elexis-agenda:] Agenda multiposte pour plusieurs mandants.
+
+  \item[noatext:] Intégration de Office-Suite OpenOffice
+
+  \item[elexis-nachrichten:] Plugin pour envoyer des simples informations de texte entre les postes de travail. 
+  \item[medshare-directories:] Plugin pour lire les données d'adresses qui se trouvent dans des répertoires publiquement accessibles.
+  \item[elexis-bildanzeige:] Plugin pour pouvoir intégrer des images dans le texte des consultations.
+  \item[elexis-omnivore:] Plugin pour le classement de quelconque document dans le dossier des patients.
+
+
+\end{description} 

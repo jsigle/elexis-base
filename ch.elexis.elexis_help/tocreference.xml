@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="Referenz" link_to="toc.xml#reference"> 
+	<topic label="Menues und Toolbars"  href="html/reference/maintopic.html"> 
+		<topic label="Hauptmenu" href="html/reference/subtopic.html" /> 
+	</topic>
+	<topic label="Texteingabe">
+		<topic label="Makros und automatische Ergänzung" href="html/reference/subtopic2.html" /> 
+		<topic label="Datenbankfelder in Textvorlagen" href="html/reference/felder.html"/>
+	</topic> 
+</toc>

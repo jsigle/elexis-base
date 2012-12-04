@@ -1,0 +1,16 @@
+h1. Elexis-Plugins: Programming in Scala
+
+h2. Installing Scala in Eclipse
+
+Install http://www.scala-lang.org/scala-eclipse-plugin-rc as a new update site in eclipse (as of this writing, Scala v 2.8 is Release Candidate. Later, the url should read http://www.scala-lang.org/scala-eclipse-plugin. We do recommend that you use Scala 2.8 or higher.
+
+h2. Creating a mixed-language plugin
+
+An elexis plugin can be made up from java and scala parts. Just create a plugin project, as you would do normally, then right-click on the project and chose: "Add scala nature". Then you can program some files in scala. Unfortunately, on executing such a plugin, it will complain about "Classloader Exception: scala/object not found."
+
+To circumvent this, you must add a dependency to elexis-scala-runtime (found in the elexis-addons.googlecode.com repository)
+
+h2. Recommended reading
+
+"The Scala Website":http://www.scala-lang.org
+   

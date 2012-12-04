@@ -1,0 +1,78 @@
+% *******************************************************************************
+% * Copyright (c) 2007 by Elexis
+% * All rights reserved. This document and the accompanying materials
+% * are made available under the terms of the Eclipse Public License v1.0
+% * which accompanies this distribution, and is available at
+% * http://www.eclipse.org/legal/epl-v10.html
+% *
+% *  $Id$
+% *******************************************************************************
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+
+\section{Externe Dokumente}\label{elexis-externedokumente}
+\index{Externe Dokumente}
+Dieses Plugin ermöglicht die Integration von beliebigen extern gespeicherten
+Dokumenten in Elexis.
+
+Insgesamt können bis zu drei Verzeichnisse im Dateisystem eingebunden werden.
+Die Dateien aus diesen Verzeichnissen werden in einer Liste kombiniert dargestellt.
+Durch einen Doppelklick auf eine Datei wird das Dokument geöffnet. Ein so geöffnetes
+Dokument kann normal bearbeitet werden.
+
+In einer Netzwerkumgebung müssen die Dokumente auf einem Netzwerk-Laufwerk gespeichert
+sein, damit die Dokumente von allen Arbeitsstationen aus verfügbar sind.
+
+\subsection{Konfiguration}
+
+Um das Plugin zu verwenden, muss es zuerst sinnvoll Konfiguriert werden.
+In den Einstellungen gibt es einen Abschnitt \textit{Externe Dokumente}.
+Dort können bis zu drei Verzeichnisse im Dateisystem ausgewählt werden.
+(Werden diese Einstellungen geändert, muss Elexis neu gestartet werden.)
+
+\subsection{Dokumente in Elexis anzeigen}
+
+Wählen Sie im Menü \textit{Fenster/Ansicht/Other...}. Geben Sie im Suchfeld
+\textit{Externe Dokumente} ein. Wählen Sie die Ansicht \textit{Externe Dokumente} aus
+und klicken Sie auf OK. Nun können Sie das Fenster an der gewünschten Position
+anordnen.
+
+Ist ein Patient ausgewählt, sucht Elexis nach passenden Dokumenten in den
+konfigurierten Verzeichnissen und zeigt sie in der Liste an. Elexis blendet
+die Dokumente von allen Verzeichnissen ein. Sie können bei Bedarf ein Verzeichnis
+ein- oder ausblenden, indem Sie oberhalb der Liste das Verzeichnis entsprechend
+markieren.
+
+Um ein Dokument zu öffnen, doppelklicken Sie auf den Dateinamen. Sie können
+auch den Dateinamen oder das Datum des Dokuments öffnen, indem Sie es mit
+der rechten Maustaste anklicken und im erscheinenden Menü \textit{Eigenschaften}
+wählen.
+
+\subsection{Namensgebung für Dokumente}
+
+Extern gespeicherte Dokumente können nicht zuverlässig automatisch mit
+den Patientendaten in Elexis verknüpft werden, da die extern gespeicherten
+Dateien keine eindeutige Kennung haben. Die Dokumente müssen anhand des
+Dateinamens mit den Patienten in Elexis verknüpft werden. Die Dateiname der
+Dokumente müssen deshalb einem bestimmten Muster entsprechen, damit Elexis
+die Dokumente einem Patienten zuordnen kann.
+
+Das Plugin unterstützt folgendes Schema:
+
+\begin{itemize}
+\item Der Dateiname muss mit den ersten 6 Buchstaben des Nachnamens des Patienten beginnen.
+      Falls der Nachname kürzer als 6 Zeichen ist, müssen entsprechend viele
+      Leerzeichen angefügt werden, bis 6 Zeichen erreicht werden.
+\item Danach folgt der komplette Vorname.
+\item Der Rest kann aus beliebigem Text bestehen. Idealerweise wird der Inhalt
+      des Dokuments beschrieben.
+\end{itemize}
+
+Beispiele:
+
+\begin{description}
+\item[MusterPeter Labor.pdf]
+Diese Datei wird dem Patienten Muster Peter zugeordnet.
+\item[Kunz  Rolf Überweisung Dr. Meier.doc]
+Diese Datei wird dem Patienten Kunz Rolf zugeordnet. Der Nachname (Kunz) muss
+mit 2 Leerzeichen ergänzt werden.
+\end{description}

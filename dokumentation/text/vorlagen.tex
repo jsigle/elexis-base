@@ -1,0 +1,90 @@
+% *******************************************************************************
+% * Copyright (c) 2007 by Elexis
+% * All rights reserved. This document and the accompanying materials
+% * are made available under the terms of the Eclipse Public License v1.0
+% * which accompanies this distribution, and is available at
+% * http://www.eclipse.org/legal/epl-v10.html
+% *
+% * Contributors:
+% *    G. Weirich - initial implementation
+% *
+% *  $Id: vorlagen.tex 2821 2007-07-16 14:51:35Z rgw_ch $
+%  *******************************************************************************
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+
+
+ \section{Vorlagen}
+ \label{textvorlagen}
+ \index{Textformatvorlagen}\index{Briefvorlagen}
+In Elexis erstellte Dokumente basieren immer auf bestimmten Vorlagen. Eine
+Vorlage enthält einerseits das Aussehen des Dokuments (Briefkopf etc.),
+andererseits bestimmte Platzhalter, in die beim Erstellen des Dokuments dann die
+entsprechenden Daten eingefügt werden.
+
+Eine Vorlage ist einfach ein mit OpenOffice erstelltes Dokument mit dem
+gewünschten Aussehen. Platzhalter werden als gewöhnlicher, in eckige Klammern
+gesetzter Text der Form [Datentyp.Feld] eingetragen, wie z.B.
+[Patient.Vorname]. Eine Auflistung der möglichen Platzhalter finden Sie auf
+Seite \pageref{Platzhalter}
+
+Es gibt zwei Typen von Vorlagen:
+\begin{itemize}
+  \item {Systemvorlagen} sind Vorlagen, die für bestimmte Programmfunktionen
+  benötigt werden. So kann beispielsweise ein Rezept nur auf der Basis einer
+  Systemvorlage namens \glqq Rezept\grqq{} gedruckt werden. Systemvorlagen
+  müssen einen bestimmten Namen haben (eben z.B. \glqq Rezept\grqq{}), und
+  meistens an einer Stelle einen speziellen Platzhalter, der angibt, wo der
+  Inhalt eingefügt werden soll.
+  \item {Benutzervorlagen} sind Vorlagen, die beliebig erstellt und benannt
+  werden können, und die beliebige Felder (oder gar keine) enthalten können.
+  Benutzervorlagen können beispielsweise für Konsiliarberichte, Zuweisungen
+  etc. erstellt werden.
+\end{itemize}
+
+
+\subsection{Systemvorlagen}
+\label{systemvorlagen}
+Folgende Systemvorlagen werden im Basis-System genutzt (Plugins können ggf. auch
+eigene Systemvorlagen definieren):
+\begin{itemize}
+
+  \item {Rezept} Ein Rezept, meist auf A5 oder A6 gedruckt. Die Gestaltung
+  erfolgt nach eigene Geschmack bzw. gemäss gesetzlichen Vorgaben, falls
+  vorhanden. An der Stelle, wo später die Medikamente eingefügt werden soll,
+  muss ein Platzhalter [Rezeptzeilen] stehen.
+  \item {AUF-Zeugnis} Ein Arbeitsunfähigkeitszeugnis, ebenfalls gemäss örtlichem
+  Usus frei gestaltbar. Die Eckdaten können mit den Platzhaltern [AUF.von],
+  [AUF.bis] und [AUF.Prozent] eingetragen werden.
+  \item {Laborblatt} Dies dient zum Ausdrucken der im System vorhandenen
+  Laborwerte. Das Blatt ist frei gestaltbar, an einer Stelle muss der
+  Platzhalter [Laborwerte] stehen.
+  \item {Einnahmeliste} Eine Medikamentenliste für den Patienten. Frei
+  gestaltbar, an einer Stelle muss der Platzhalter [Medikamentenliste] stehen.
+  \item {Bestellung} Eine Bestellung zur Übermittlung per Brief, Fax oder Mail.
+  Frei gestaltbar, an einer Stelle muss der Platzhalter [Bestellung] stehen.
+  \item {AgendaListe} Ein Ausdruck der Agenda eines Bereiches für einen Tage.
+  Frei gestaltbar, an einer Stelle muss der Platzhalter [Termine] stehen
+  \item {Abrechnungsliste} Eine Liste aller in einem bestimmten Zeitraum
+  erfolgten Abrechnungen (s. \pageref{fig:konnd}). Frei gestaltbar, an einer
+  Stelle muss der Platzhalter [Liste] stehen.
+  \item {Terminkarte} Eine Liste der Termine eines Patienten. Frei gestaltbar,
+  an einer Stelle muss der Platzhalter [Termine] stehen.
+  \item {Tarmedrechnung\_EZ} (Alle Tarmedrechnung\_xx Vorlagen sind vom
+  Arzttarife-Schweiz-Plugin beigesteuert) Rechnung mit Einzahlungsschein, meist
+  der beim Patienten verbleibende Teil. Muss auf einem A4-Blatt sein. Die oberen
+  zwei Drittel sind frei gestaltbar, an einer Stelle muss der Platzhalter
+  [Leistungen] stehen- Das untere Drittel muss frei bleiben, dort wird der
+  Einzahlungsschein gedruckt.
+  \item {Tarmedrechnung\_M1} Erste Mahnung mit Einzahlungsschein. Gestaltung s. Tarmedrechnung\_EZ.
+  \item {Tarmedrechnung\_M2}Zweite Mahnung.
+  \item {Tarmedrechnung\_M3}Dritte Mahnung.
+  \item {Tarmedrechnung\_S1}Erste Seite des Tarmed-Formulars. Die Gestaltung ist
+  fix vorgegeben, nur die persönlichen Daten können geändert werden (Dabei darf
+  das Layout nicht verschoben werden).
+  \item {Tarmedrechnung\_S2} Folgeseite des Tarmed-Formulars. Die Gestaltung ist
+  ebenfalls fix vorgegeben.
+\end{itemize}
+
+
+\subsection{Benutzervorlagen}
+Benutzervorlagen können beliebig erstellt und benannt werden.

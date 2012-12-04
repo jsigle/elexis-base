@@ -1,0 +1,190 @@
+% *******************************************************************************
+% * Copyright (c) 2007 by Elexis
+% * All rights reserved. This document and the accompanying materials
+% * are made available under the terms of the Eclipse Public License v1.0
+% * which accompanies this distribution, and is available at
+% * http://www.eclipse.org/legal/epl-v10.html
+% *
+% *  $Id: abrechnung.tex 4911 2009-01-05 17:56:39Z rgw_ch $
+%
+%*******************************************************************************
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+
+\section{Abrechnungsbezogene Views}
+\subsection{Konsultationen nach Datum}
+\begin{wrapfigure}{l}{7.3cm}
+\includegraphics[width=7cm]{images/heute}
+\caption{Konsultation nach Datum}
+\label{fig:heute}
+\end{wrapfigure}
+
+Diese View (Abb. \ref{fig:heute}) dient dazu, Konsultationen eines bestimmten Zeitraums (standardmässig
+des aktuellen Tages) darzustellen. Sie gibt einen Überblick über Verrechnung und
+verrechnete Zeit jeder Konsultation einzeln und der Summe davon. Durch Anklicken der entsprechenden Checkbox können Sie angeben, ob offene\footnote{also solche, von denen bisher keine Rechnung erstellt wurde} oder abgerechnete Konsultationen (oder beides) gezählt werden sollen. In den Datumsfeldern können Sie Start- und Enddatum des gewünschten Zeitraums angeben. Nach jeder Änderung müssen Sie auf den 'Neu einlesen'-Knopf klicken, damit die Liste neu gezählt wird.
+
+\medskip
+
+Im unteren Abschnitt der View sehen Sie die Gesamtzahl der Konsultationen im
+gewählten Zeitraum, sowie die (vom Abrechnungssystem her vorgegebene)
+verrechnete Zeit und den verrechneten Betrag. Im Feld darunter sehen Sie
+dieselben Angaben für die aktuell markierte Konsultation.
+
+Sie können diese View also auch verwenden, um Abends kurz die Konsultationen des Tages
+durchzugehen um unverrechnete oder falsch verrechnete zu korrigieren.
+
+\medskip
+
+Ausserdem erlaubt diese View einfache statistische Funktionen:
+%\begin{itemize}
+Wenn Sie die Taste 'Filter' klicken, öffnet sich im oberen Teil der View eine Filterbox. Sie können aus einem Verrechnungsfenster diejenigen Positionen in diese Box ziehen, die Sie zählen wollen. Beim nächsten Einlesen zählt die View dann nur noch solche Konsultationen, bei denen einer der gewünschten Codes verrechnet wurde und listet dann (beim Ausdrucken, s. weiter unten), die Codes und Gesamtbeträge separat auf.
+
+\medskip
+
+ Im View-Menü finden Sie die Option 'Liste drucken'. Dadurch öffnet sich ein Fenster mit einer Tabelle, welche die angezeigten Konsultationen auflistet und ausdrucken lässt.
+
+\medskip
+
+ Für detailliertere Statistiken können Sie ebenfalls im View-Menü die Option 'Statistik' auswählen. Dies liefert eine Datei im CSV\footnote{Character Separated Values; ein Standard-Format für tabellarische Daten}- Format, die mit anderen Programmen wie OpenOffice.org calc oder Microsoft\texttrademark Excel\texttrademark eingelesen und statistisch aufbereitet werden kann. Diese Datei enthält alle abgerechneten Positionen mit Häufigkeit, Kosten und Umsatz.
+
+
+\subsection{Konsultationen zum Verrechnen}
+\index{Abrechnung} Diese View (s. fig. \ref{fig:konsv}) dient dazu, diejenigen
+Konsultationen
+auszuwählen, von welchen eine Rechnung erstellt werden soll. Es werden dabei nur
+die Konsultationen des aktuellen Mandanten angezeigt.
+\begin{figure}[hb]
+\includegraphics{images/konsv}
+\caption{Konsultation zur Verrechnung auswählen}
+\label {fig:konsv}
+\end{figure}
+Hierzu gibt es folgende Möglichkeiten:
+\begin{itemize}
+  \item Automatische Auswahl (Zauberstab-Icon): Dabei werden die Konsultationen nach bestimmten Regeln automatisch ausgewählt und in die Auswahlliste
+  übertragen. Dies wird weiter unten (Rechnungsautomatik) genauer ausgeführt.
+  \item Patientennamen aus der Liste in die Auswahl ziehen: Dadurch werden alle
+  Konsultationen aller Fälle des gewählten Patienten zur Abrechnung markiert.
+  \item Fälle aus der Liste in die Auswahl ziehen: Dadurch werden alle
+  Konsultationen der gewählten Fälle zur Abrechnung markiert.
+  \item Konsultationen aus der Liste in die Auswahl ziehen: Dadurch werden nur
+  die gewählten Konsultationen zur Abrechnung vorgemerkt.
+\end{itemize}
+Bei allen Methoden können Sie die Auswahl nachträglich noch beliebig ändern. Sie
+können weitere Elemente zufügen, oder Sie können (nach Rechtsklick auf ein
+Element in der Auswahl) Elemente entfernen, oder Sie können die ganze Auswahl
+wieder löschen. Zu diesem Zeitpunkt sind noch keinerlei Änderungen der Daten
+erfolgt.
+
+Wenn Sie die Auswahl fertig erstellt haben, können Sie auf \glqq Rechnungen
+erstellen\grqq klicken, dann werden Rechnungen für alle in der Auswahl
+befindlichen Elemente erstellt. Dabei werden immer alle Konsultationen, die zu
+einem Fall gehören, zusammengefasst. Wenn von einem Patienten also mehrere Fälle
+in der Auswahl sind, werden auch mehrere Rechnungen erstellt.
+
+\subsubsection{Rechnungsautomatk}
+\index{Rechnungsautomatik}\label{auto}
+Hiermit werden Konsultationen nach bestimmten wählbaren Kriterien zum Abrechnen vorgeschlagen (S. Abb. \ref{fig:rnautomatik}).
+\begin{figure}
+  % Requires \usepackage{graphicx}
+  \includegraphics[width=1.0\textwidth]{images/rechnungsautomatik}\\
+  \caption{Halbautomatischer Rechnungsvorschlag}\label{fig:rnautomatik}
+\end{figure}
+
+\begin{itemize}
+\item Alle Fälle vorschlagen, die zum Abrechnen vorgemerkt sind: Wenn Sie diese Checkbox anklicken werden die Konsultationen jener Fälle ausgewählt, bei denen Sie ein Abrechnungsdatum im Fall-Detail spezifiziert hatten (Vgl. Abb. \ref{fig:falldetail}).
+\item Alle Behandlungsserien vorschlagen, welche angefangen haben vor...: Damit werden sämtliche unverrechneten Konsultationen eines Falls (bis heute) ausgewählt, sofern mindestens eine der Konsulationen vor dem Stichtag stattgefunden hat.
+\item Alle Behandlungsserien vorschlagen, die geendet haben vor...: Damit werden sämtliche unverrechneten Konsultationen eine Falls ausgewählt, sofern die letzte Konsultation vor dem Stichtag stattgefunden hat.
+\item Alle Behandlungsserien vorschlagen, deren Betrag höher ist als...: Alle unverrechneten Konsultationen eines Falls werden ausgewählt, sofern deren Gesamtbetrag höher als der genannte Grenzwert ist.
+\item Alle Behandlungen des vergangenen Quartals vorschlagen: Hierbei wird das letzte \textit{Kalenderquartal} abgerechnet. Es gelten also die Stichtage 31.3., 30.6, 30.9. und 31.12.
+\end{itemize}
+Bei allen Optionen gilt, dass sie nur ausgewertet werden, wenn das Häkchen in der Checkbox gesetzt ist. Es genügt also nicht, einen Wert einzutragen. Die verschiedenen Optionen gelten additiv: Es wird also am Schluss jede Konsultation ausgewählt, für die mindestens eine der aktiven Kriterien zutrifft.
+
+\medskip
+
+\clearpage
+
+\subsection{Rechnungen}
+\begin{figure}[ht]
+  % Requires \usepackage{graphicx}
+  \includegraphics[width=1.0\textwidth]{images/rechnungsview}\\
+  \caption{Rechnungen-View}\label{fig:rechnungen}
+\end{figure}
+
+In dieser View (Abb. \ref{fig:rechnungen}) sehen Sie die erstellten Rechnungen. Eine Rechnung hat immer einen bestimmten Status:
+\begin{description}
+    \item [Offen] Unmittelbar nach dem Erstellen.
+    \item [Offen und gedruckt] Die Rechnung wurde mindestens einmal ausgegeben (über den Drucker oder eine andere Exportmethode). Ab diesem Zeitpunkt beginnt die Zahlungsfrist zu laufen. (Elexis kann allerdings nicht feststellen, ob beispielsweise der Drucker die Rechnung nicht korrekt ausgedruckt hat, oder ob sie nicht abgeschickt wurde. Deshalb liegt in diesem Punkt eine potentielle Fehlerquelle)
+    \item[Zahlungserinnerung] Die Zahlungserinnerung wurde erstellt, aber noch nicht ausgedruckt
+    \item[ZE gedruckt] Die Zahlungserinnerung wurdr ausgedruckt
+    \item [2. Mahnung erstellt, 2. Mahnung gedruckt, 3. Mahnung erstellt, 3. Mahnung gedruckt]: analog
+    \item[Teilweise bezahlt] Es ist (mindestens) eine Zahlung eingebucht, welche aber nicht den ganzen Rechnungsbetrag abdeckt.
+    \item[bezahlt] Der Rechnungsbetrag wurde (in einer oder mehreren Buchungen) vollständig bezahlt
+    \item [zuviel bezahlt] Auch das kommt vor.
+    \item [Teilverlust] Ein Teil des Rechnungsbetrages wird abgeschrieben (Im Gegensatz zu \glqq Teilweise bezahlt\grqq{} rechnen Sie hier nicht mehr mit einer weiteren Zahlung)
+    \item [Totalverlust] Der Rechnungsbetrag wird komplett abgeschrieben
+    \item [In Betreibung] Genau das.
+    \item [Storniert] Eine einmal erstellte Rechnung kann nicht mehr gelöscht werden. Das muss so sein, weil sonst die Situation möglich wäre, dass jemand eine nicht mehr existierende Rechnung reklamiert, oder dass Rückfragen zu einer inexistenten Rechnung kämen. Wenn eine Rechnung aus irgendeinem Grund ungültig ist (Fehler, Erlassen des Betrags etc.), dann muss sie stattdessen storniert werden. Stornieren hat in allen praktischen Belangen denselben Effekt wie löschen, ausser, dass die Rechnungsnummer vergeben bleibt und dass die Rechnung später wieder betrachtet werden kann.
+    \item [fehlerhaft] Wenn ein Rechnungsausgabemodul feststellt, dass eine Rechnung fehlerhaft ist (beispielsweise könnte das TrustX-Modul monieren, dass nicht alle EAN-Nummern angegeben sind), dann erhält die betreffende Rechnung den Status fehlerhaft und kann so korrigiert werden.
+    \item [zu drucken] Diese Einstellung findet alle Rechnungen, die offen, aber noch nicht gedruckt sind (also auch ungedruckte Mahnungen etc.)
+    \item [ausstehend] Zusammenfassung aller 'offen und gedruckt', 'ZE gedruckt', '2.Mahnung gedruckt', '3. Mahnung gedruckt', 'Teilweise bezahlt' und 'In Betreibung'. Also alle Rechnungen, von denen noch Zahlungen erwartet werden.
+    \item [Mahnstopp] Genau das.
+\end{description}
+
+Die Rechnungsliste kann nach bestimmten Kriterien selektiert werden. Um die Liste mit den geänderten Optionen neu einzulesen, klicken Sie jeweils auf den 'Liste neu einlesen'-Knopf.
+Um die Rechnungen mit einem bestimmten Status anzuzeigen, wählen Sie diesen Status in der Combox links oben aus(S. Abb. \ref{fig:rechnungen}). Um nur die Rechnungen eines bestimmten Patienten anzuzeigen, klicken Sie auf die blaue Schrift \glqq Patient\grqq{}. Es öffnet sich die bekannte Kontaktauswahl-Dialogbox. Wählen Sie dort einen Patienten aus und klicken Sie ok, oder klicken Sie auf Abbrechen, um wieder alle Patienten anzuzeigen.
+
+Um nur eine bestimmte Rechnungsnummer auszuwählen, geben Sie diese Nummer im Feld Rn-Nummer ein und drücken die Eingabetaste oder klicken 'neu einlesen'. Um Rechnungen mit einem bestimmten Betrag zu suchen (z.B. um eine unklare Zahlung zuzuordnen), geben Sie den Betrag ein und drücken die Eingabetaste.
+
+\medskip
+Wenn Sie auf das 'Filter'-Symbol klicken, erhalten Sie weitere Darstellungsoptionen.
+
+\begin{wrapfigure}{l}{7cm}
+\includegraphics[width=7cm]{images/rechnungsfilter}
+\end{wrapfigure}
+Die Felder Betrag von/bis dienen dazu, Rechnungen mit einem bestimmten Betrag auszufiltern. Sie können auch nur eins der beiden Felder eingeben, damit wird das andere zur offenen Grenze.
+Die Felder \glqq Rechnungsdatum von\grqq{} und \glqq Rechnungsdatum bis\grqq{} dienen dazu, nur Rechnungen auszuwählen, welche zwischen diesen Daten erstellt wurden. Im Unterschied dazu dienen die Felder \glqq Statusdatum von/bis\grqq{} dazu, Rechnungen auszufiltern, deren letzte Statusänderung zwischen den genannten Daten lag. Auch hier können Sie jeweils nur eins der beiden Daten eingeben und das andere offenlassen.
+Wenn Sie den Dialog mit OK verlassen, wird die Liste anhand Ihrer Kriterien neu eingelesen.
+\medskip
+
+Solange der Filter-Knopf eingerastet ist, sind alle folgenden Einlese-Operationen mit dem Filter UND-Verknüpft. Wenn Sie also beispielsweise Statusdatum bis 30.10.2007 gefiltert haben, und dann das Statusfeld auf "2. Mahnung gedruckt" setzen und neu einlesen, dann werden Ihnen alle Rechnungen angezeigt, welche vor dem 30.10.2007 auf den Status '2. Mahnung gedruckt' gesetzt wurden.
+
+Unten sehen Sie jeweils die Zahl der mit diesen Kriterien vorhandenen Rechnungen, sowie die Summen.
+\subsubsection{Viewmenu der Rechnungsliste}
+Das Viewmenu (Dreieck rechts oben, s. Abb. \ref{fig:rechnungen}) hat folgende Optionen:
+\begin{description}
+\item [Alle expandieren und Alle einklappen] Öffnet bzw. schliesst alle angezeigten Einträge.
+\item [Liste drucken] Dies druckt eine Liste aller im Moment in der Anzeige markierten Patienten bzw. Rechnungen. Hierzu muss eine System-Druckvorlage namens 'Liste' vorhanden sein, die ein Feld [Liste] enthält.
+\end{description}
+\subsubsection{Rechnungen ändern}
+Wenn Sie eine Rechnung der Liste mit der rechten Maustaste anklicken, können Sie diese Rechnung ändern:
+\begin{description}
+\item [Ausgeben] Die Rechnung einzeln ausgeben (s. unten)
+\item [Buchung/Zahlung hinzufügen] Hier können Sie manuell Buchungen eingeben, z.B. wenn eine Barzahlung oder Anzahlung erfolgt ist. (Normalerweise erfolgen Buchungen via ESR automatisch).
+\item [Gebühr zuschlagen] Manuell z.B. Mahngebühr zufügen
+\item [Status ändern] Hier kann der Rechnungsstatus manuell geändert werden. Die meisten Statusänderungen erkennt Elexis automatisch. So werden z.B. beim Einlesen einer ESR-Datei von der Bank alle bezahlten Rechnungen automatisch auf \glqq bezahlt\grqq{} gesetzt etc. Manche Statusänderungen können aber nur manuell gemacht werden. Zum Beispiel kann Elexis den Unterschied zwischen \glqq Teilweise bezahlt\grqq{} und \glqq Teilverlust\grqq{} nicht automatisch erkennen, weil dies ja eine bewusste Entscheidung des Gläubigers ist. Dasselbe gilt für \glqq In Betreibung\grqq{} und \glqq Totalverlust\grqq{}.
+    Von diesen Fällen abgesehen, sollten Sie aber vorsichtig sein mit manuellen Statusänderungen, da hierbei beispielsweise keine Buchungskorrekturen erfolgen.
+\item [Mahnstufe erhöhen] Hierdurch wird die Mahnstufe jeweils um eins erhöht bis max. Dritte Mahnung.
+\item [Stornieren] Damit wird die markierte Rechnung storniert. Man hat dabei die Möglichkeit, Behandlungen wieder freizugeben (z.B. wenn die Rechnung fehlerhaft war und neu erstellt werden soll), oder blockiert zu lassen (Wenn diese Behandlungen definitiv nicht verrechnet werden sollen).
+\end{description}
+
+\subsubsection{Rechnungen ausgeben}
+Mit dem Button \glqq Rechnungen ausgeben\grqq{} werden alle markierten Rechnungen ausgegeben. (Um eine Rechnung zu markieren, klicken Sie mit der linken Maustaste auf diese. Um mehrere Rechnungen zu markieren, klicken Sie mit gedrückter Ctrl (bzw. Mac-) Taste auf die gewünschten Rechnungen. Um eine ganze Reihe zu markieren, klicken Sie zuerst auf die erste, dann mit gedrückter Shift-Taste auf die letzte Rechnung aus der Reihe.) Es wird also \textit{nicht} die ganze Liste ausgegeben, sondern nur die markierten Rechnungen!
+
+
+Die möglichen Ziele der Rechnungsausgabe hängt von den installierten Abrechnungs-Plugins ab. Es kann zum Beispiel ein Drucker sein, der Tarmed-Rechnungen ausdruckt. Es kann aber auch eine XML-Datei oder direkt ein Trust-Center sein. Nähere Angaben dazu finden Sie in den entsprechenden Kapiteln (Tarmed: S. \pageref{arzttarife}).
+\bigskip
+Mit Klick auf das Zauberstab-Icon schliesslich setzen Sie die Mahnungen-Automatik in Gang. Diese wählt Rechnungen anhand der im unten rechts angezeigten Feld aus, erhöht die Mahnstufe, fügt wie gewünscht Gebühren zu und fasst diese Rechnungen als \glqq zu drucken\grqq{} zusammen.
+
+\subsection{Konto}
+\index{Konto}In dieser View sehen Sie alle Kontobewegungen eines bestimmten Patienten.
+Rechnungen werden als negative, Zahlungen und Storno als positive
+Buchungen erfasst, so dass Sie einfach über mehrere Rechnungen und Zahlungen
+hinweg erkennen können, wo Sie finanziell mit dem betreffenden Klienten stehen.
+
+\subsection{Konto-Liste}
+Diese Liste zeigt alle Kontobewegungen insgesamt an.
+
+\subsection{Leistungen}
+Diese View funktioniert ähnlich wie die Diagnosen-View (S. \ref{view:diagnosen} auf S. \pageref{view:diagnosen}): Es werden je nach installierten Abrechnungs-Plugins Reiter für jedes Abrechnungssystem angezeigt. Genauere Angaben sind unter \ref{concept:leistung} auf S. \pageref{concept:leistung}.
+
+
+

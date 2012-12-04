@@ -1,0 +1,366 @@
+h1. SW guidelines (preliminary version 0.2 as of december2 2012)
+
+p(klein). (c) 2010-2012 by G. Weirich and Niklaus Giger
+
+h2. Table of contents
+
+{toc}
+
+"Back to the elexis site":http://www.elexis.ch
+
+h1. Goals
+
+This document is written using the Textile markup language. More about it can be found  in our "readme":../readme.html. This document would not have been written without the generous help of our sponsor Medelexis AG.
+
+This document defines the conventions for the Elexis development. 
+
+Elexis should be a simple to use application to support a general practitioner in all tasks where software is useful. Elexis should adapt to the changing requirements. Therefore Elexis offers solutions for:
+* an electronic patient record
+* billing respecting the actual Swiss rules (TARMED), including reminders
+* laboratory equipment
+* fetching data from laboratories
+
+Elexis is based on a nucleus of module which are released as free (like freedom) software under the Eclipse Public License. Anybody who is using Elexis in his/her practice should be conscient of the fact that Elexis is a business critical application. Problems causing interruptions in your work may lead to financial losses. The developer of Elexis therefore conclude that - be aware of the average yearly budget of all Swiss general practice - that Swiss general practitioner should consider a couple of thousand Swiss francs for a software subscription as a good investment into their freedom to use Elexis know and forever and be the effective owner of their (and their patients) data and being able to choose their IT-supporter.
+
+In this context stability and absence of bugs and mal functioning are more important than new features.
+
+We - the developers of Elexis - strive to offer to all (paying and actively supporting) users regular updates with a (few) new feature, a number of fixed bugs and (hopefully) absent of any new bug. 
+
+Elexis should not only have happy (paying) customers but also be a living community. The advantages offered by the use of Free Software should enable the Elexis community to offer its small contribution to society and an even better medical well being.
+
+Starting with release 2.1.5 end of June 2011, we try to adapt a regular release cycle of 3 months culminating in a stable, well tested release at the end of each quarter.
+
+Intermediate versions of this guidelines will be submitted for comments to all interested parties starting end of March 2011.
+
+A definitive version of this guidelines will be published before June 2011.
+
+Submissions of patches and new plug-ins after end of June 2011, must comply to this guidelines.
+
+These guidelines will be regularly updated to incorporate lessons learned and input from interested parties. Suggestions/critics are always welcomed and should be posted via our mailing lists elexis-develop@lists.sourceforge.net.
+
+h2. Non-goals
+
+Release are not systematically tested whether the API is backwards compatible. Where known, all changes regarding API changes will be documented. Reason: We don't know of any case where changes in the API lead to considerable, non avoidable work.
+
+If there are users which wish this backward compatibility, please announce it (e.g. on our mailing list). Please specify too how much work/money you would invest for such a guarantee.
+
+h2. Release cycle
+
+Our cycle mimicks a few aspects of the Linux kernel development cycle. We distinguish three phases for each release: 
+* feature merge
+* bugfix
+* release freeze
+
+We strive to release a new bug-fix version every 3 months.
+The release plan is maintained under "roadmap":https://sourceforge.net/apps/mediawiki/elexis/index.php?title=Roadmap
+
+h3. Feature merge period
+
+The "feature merge period" is sometimes also described as "merge window". It starts with a new branch, which is a copy of the previous release. Then follows a period of about two weeks where new features go into the newly opened release branch. The last day will usually be a Sunday.
+
+Each submitter (a person representing a team or a individual contributor) publishes the changes in a  public accessible repository or by sending a patch to the release manager.
+
+At the the end the release manager announces the rc-0 release. 
+
+
+h3. Bug fixing period
+
+The rc-0 in only intended for developers and should never go into a productive environment. The release manager is responsible for planning/documenting the tests. Tests will be conducted by persons having used Elexis for some time.
+
+After the -rc0-release only the following type of changes will be accepted:
+* bug fixes
+* documentation changes
+* new and/or improved test cases
+* text changes for translations
+
+This period lasts about 9 weeks. We plan the following release candidates.
+
+* rc-1 Release candidate 1: Start of feature-merge + 1 month (-1 day). 
+* rc-2 Release candidate 2: Start of feature-merge + 2 month (-1 day). 
+
+More release candidates only if there is an urgent need to fix very critical problems.
+
+The release rc-1 and later candidates should be used by early adopters and people interested in the new features.
+
+If a release candidate does not show any error it may be come the final release.
+
+h3. Release freeze phase
+
+About one to maximal 1 week to prepare the final release. Prepare all the paperwork. Run some tests, give it to one or more testers.  The last day will usually be a Friday. Only patches which fixes very critical, build problems or documentation will be allowed during this period.
+
+h3. Final release
+
+After the start of feature-merge + 3 month (-1 day). Free for general use.
+
+The first version which follows this rule will be version 2.1.5 to be release end of June 2011.
+
+h1. Programming guidelines
+
+You are very welcome to provide any type of plug-in for elexis. Please adhere to a few rules to avoid conflicts between different plug-ins.
+
+h2. 1) Name of your plug-in
+
+You may name your plug-in whatever you like but we recommend that you prefix it with your name or the name of your organization.  The prefix ch.elexis is reserved by Gerry Weirich and must not be used. The name must be same as the plug-in-ID. 
+
+Nota bene: Older plug-ins don't respect this convention. It is planned to change all old names to this convention in a later release. This change will be announced at least 1 month ahead of the actual date or during an official developer meeting.
+
+h2. 2) Plug-in ID and version of your pugin
+
+Every plug-in must have its unique ID. It is common use that such an id consists of an inversely written URL of the provider. So, all plug-ins of elexis.ch have a plug-in ID starting with ch.elexis. We recommend, that you use a similar naming scheme. The prefix ch.elexis is reserved for open source plug-ins under the Eclipse Public License and maintained either in the elexis-base or elexis-addons repository under http://elexis.hg.sourceforge.net/hgroot/elexis.
+
+The version of your plug-in is the version of the Elexis release it was developed against.
+
+h2. 3) Packages of your plug-in
+
+Again, it is common use to name the packages of a Java program after its originating URL. Therefore, all elexis classes reside in packages prefixed with ch.elexis. We recommend that you use a similar scheme. In any case, the prefix ch.elexis must not be used.
+
+h2. 4) Name of your Tables
+
+To avoid name clashes between the tables of different plug-ins, it is mandatory that you prefix the names of the tables your plug-in creates (if any) with the plug-inID. For sql syntax reasons, every dot in the name must be replaced by an underscore. Thus the plug-in ch.elexis.something will create a table like CH_ELEXIS_SOMETHING_TABLE1
+
+h2. 5) Coding conventions
+
+h3. Java Codestyle
+
+Adhering to our style guide is easy in eclipse:
+In _Window-Preferences-Java-Codestyle-Formatter_ select _import..._ and import the elexis formatter profile "ElexisFormatterProfile.xml":ElexisFormatterProfile.xml in this directory.
+
+!images/setup_2.png!:http://www.rgw.ch/elexis/dox/developer/
+
+Then, anytime or at least before comitting your code, press CTRL-SHIFT-F to apply the style.
+
+The Elexis coding style is very similar to the java style guide recommended by Sun Microsystems(tm))
+
+Calling the batch file "enforce_elexis_formatting.rb /path/to/dir" in this directory allows you to apply the Elexis formatter to all java files found somewhere under /path/to/dir.
+
+
+h3. File template
+
+In each java file you have to add a copyright and license note. To define such a template 
+select in _Window-Preferences-Java-Code Templates_. Select _Code-New Java file_ and enter a text like:
+
+pre. 
+/*******************************************************************************
+ * Copyright (c) 2011, name family <address@demo.org>
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Sponsor: company which sponsors this new plug-in
+ *
+ * Contributors:
+ *    name family - initial implementation
+ *
+ *******************************************************************************/
+${package_declaration}
+${typecomment}
+${type_declaration}
+
+
+h2. 6) Documentation
+
+No new plug-in will be accepted without documentation. Keep it short, but try to give the non obvious information needed.
+
+h3. Overview
+
+There must at least a 'readme.txt' or 'whatisit.textile' file in the root of your plug-in that describes, what it does and what it depends on.
+
+h3. For users
+
+The user documentation goes into a folder doc in your plug-in.  
+
+The allowed formats are:
+* LaTex (the extension must be .tex)
+* Textile (the extension must be .textile)
+
+For newer documentation, we use the simple Markup-Format 'Textile'. Eclipse's Mylyn plug-in can manage these files out of the box and conversion to HTML and FOP/PDF is easy.
+
+Both formats make it easy to compare revisions, which is not the case with binary representations.
+
+Besides this, LaTeX is still supported. If you use other formats than Textile, LaTeX, your documentation can not be generated automatically during build. Hence if your plug-in is called my-cool-plug-in, there should be at least one file called my-cool-plug-in.tex or my-cool-plug-in.textile in a folder with the name 'doc'. If so, documentation can be generated automatically.
+
+More information on the wikitext editor and the textile format can be found here:
+"http://www.peterfriese.de/getting-started-with-wikitext/":http://www.peterfriese.de/getting-started-with-wikitext/
+and here:
+"http://wiki.eclipse.org/Mylyn/Incubator/WikiText":http://wiki.eclipse.org/Mylyn/Incubator/WikiText
+
+More information on TeX/LaTeX can be found here:
+"http://www.latex-project.org/":http://www.latex-project.org/
+
+The existing *.html, *.doc, *.docx files must be converted to *.tex or *.textile files on a substantial rewrite of the code.
+
+h3. For developers (aka Javadoc)
+
+Our continuos integration tool provides you with the "latest Javadoc":http://ngiger.dyndns.org/hudson/job/Elexis-Full/lastSuccessfulBuild/artifact/dokumentation/javadoc/index.html. If you want to check whether the Javadocs for your changes are okay, go to BuildElexis/rsc/build, call ant javadoc and preview your changes "here":file:///../javadoc/index.html.
+
+h2. 7) Testing and writing JUnit test cases
+
+*NOTE* See also unittests-how2.textile.
+
+* As you surely separated the interface from the implementation, e.g. by using the MVC (Model-View-Controller) pattern, you should test everything which is not part of the GUI using JUnit tests. 
+* Get/set methods don't require a unit test.
+
+h2. 8) Testing plug-ins for laboratory machines
+
+Testing must support logging and simulating the data exchange with the machine.
+The plug-in elexis-connect-afinion shows how you can enable logging of the communication with the laboratory machine. This is indispensible to be able to find problems after releasing.
+Setting the variable simulate (e.g. in finionAS100Action.java) to the path of a file allows you to simulate the interaction with the devices.
+
+h2. 9) Miscellaneous
+
+* There must be a F1 shortcut leading to the www.iatrix.org help side (e.g. http://www.iatrix.org/pmwiki/pmwiki.php/Elexishilfe/Agenda)
+* Windows with a pull-down menu must have a menu item leading to the preferences dialog of the plug-in (unless there are no preferences)
+* Where it makes then the following action must be implemented:
+** Double-click to open/edit an object
+** select all objects via Ctrl-A
+** select several objects via Shift-Select and Ctrl-Select
+
+This list will probably become longer in the next revision of this guideline.
+
+h2. 10) Database changes
+
+Changes in the database layout have a big potential to upset users and/or developers if suddenly fields change type, name or semantics or are dropped. Therefore these changes shall only be made by the database maintainer, currently Marco Descher <marco.descher _at_ medevit.ch>.
+
+Changes must be introduced in all affected branches, eg. 2.1.6 (Q-series), 2.1.7(next) and 2.2.dev (future).
+
+In a Q-series branches the following changes may be okay (but still must be announced with at least one week time for other developers to raise objections via the "Elexis Developer Mailing List":http://sourceforge.net/mailarchive/forum.php?forum_name=elexis-develop. The announcement should contain a patch (fragment) containing exactly the needed changes for the new layout.
+* Adding a new table
+* Adding a new field
+* Extending the size of a varchar field
+* Adding a new index
+All other changes should be avoided.
+
+Changing the layout must be done in one commit, containing the following changes:
+* in ch.elexis/src/ch/elexis/Hub.java
+** Change @public static final String DBVersion = "<newDbVersion>";@
+* in ch.elexis/rsc/createDB.script
+** The changes when creating a new database, adding a field definition like @"station VARCHAR(40),"@
+** @INSERT INTO CONFIG (param,wert) VALUES ('dbversion','<newDbVersion>');@
+** @INSERT INTO CONFIG (param,wert) VALUES('ElexisVersion','<newElexisVersion>');@ # if necessary
+* in ch.elexis/src/ch/elexis/util/DBUpdate.java
+** Add a new version to the @String[] versions@ variable
+** Add the changes to the @String[] cmds@ variable, e.g.
+bq.             // <newDbVersion>
+            "ALTER TABLE LOGS MODIFY station VARCHAR(40);",
+
+Notes:
+* newDbVersion and newElexisVersion must not match. But each newDbVersion should contain the same changes over all branches changed!
+* Make fields large enough, eg. use @VARCHAR(256)@ instead of @CHAR(16)@
+* SQL-Statements and upgrades must be tested under H2, MySQL and PostgreSQL
+* Consider creating a separate commit for the DB-changes, this make reviewing the commit much easier
+
+h2. 11) Unwritten laws
+
+The code follows the written (and sometimes unwritten) laws of the Elexis development team as defined by its leader Gerry Weirich. 
+
+h1. Integrating changes 
+
+We use the elexis-develop@lists.sourceforge.net mailing list to document the changes going into the elexis releases.
+
+Until march 2011 all committers had the right to push any changes into any branch. This serve us quite well and was never abused by anybody. It lead however sometimes to breakages in the branch which was used by the elexis users (e.g. the general practitioners), which were not pleased by this situation.
+
+Therefore we decided to try the following workflow trying to maximize the possibilities offered by our distributed source code management tools Mercurial.
+
+* Each developer (or a group/company) develops and tests in his own repository
+* When he feels ready he announces on the elexis-develop@lists.sourceforge.net mailing list the place where one can merge the changeset(s) from
+* Everybody is free to comment the changeset, e.g. ask
+* After a reviewing the changes the release manager is (this is a role) is the only one authorized to merge this change into the release branch if these conditions are met
+** the changeset fulfills these guidelines 
+** (or) the changeset is trivial and looks okay for the release manager
+** (or) the changeset is acknowledged by other developers
+** (and) no serious complaints are raised by the "senior" developers, e.g. Gerry Weirich
+
+The format of the concern line in the mail is described in a separate section below.
+
+The release manager will try to keep the history of the release branch clean and easily readable. The technical aspects here are not yet completely worked out but will probably involve using the Mercurial mqeue and collapse extension. Findings will be posted on the elexis-develop mailing list and will be incorporated into future version of this document or the mercurial-how2.
+
+As time is running out, the *guidelines mentioned in this chapter* will be only *effective* for feature merge periods *after May 2011*. 
+
+h2. Submitting a new plug-in
+
+We suggest that everybody who is planning to write a new plug-in announces its intention as soon as possible on the elexis-develop mailing list to get feedback, discuss alternatives, implementation methods, etc.
+
+At the end it is simply a big "feature"-changeset as discussed below.
+
+h2. Submitting changes/patches
+
+Changes are either bug fixes or enhancements which do not lead to new plug-ins.
+
+Each change must be documented either under the bugzilla under SourceForge or in the redmine project administration of medelexis. There it must contain at least:
+
+* Who is responsible for the change
+* Who is the stakeholder 
+* Severity of the bug (if any). There is not yet a formal list of known values. In the mean time we stick with the Debian's definition  http://www.debian.org/Bugs/Developer#severities.
+* The Elexis version the bug was found
+* Which version the bug should/is promised be fixed.
+* If fixed, provide link to commit 
+* Which risks are involved by fixing the bug. Try to answer the following questions
+** No code touched, therefore no tests needed
+** Is easy/difficult/impossible to test
+** Breaks build 
+** Breaks API
+** Changes the database
+* How can one test the change? A good rule is "First a test must fail". Try write tests in the following order
+** JUnit-Test
+** automated GUI test
+** manually running a test based on an empty database 
+** manually running a test based on an database
+** manually running a complex network of server/clients
+* the changes must conform to programming guidelines
+* somebody (at least the poor release manager) reviewed your code and accept it
+
+*Tests* are the most important. If you write a test, which fails before you change anything, then the test is at least not false positive. If you change the code and then your test passes, you can be confident that the test is good. (And you will sleep well!)
+
+Running the least costly test is important. When the test can be automated and finishes in less than a second chances are high that it will run many, many times till your code will get obsolete or replaced.
+
+If you write good tests, other developers will usually accept your changes without big discussion and be impressed by your skills, discipline and ...!
+
+h2. Stakeholders
+
+A stakeholder decides from a user point of view whether the bug is fixed, resp. the change is okay. The stakeholde can be a group of persons.
+
+The stakeholder either defines what kind of tests must be run or gives at least is okay to proposed tests.
+
+Often is is also executing (at least some of) the tests.
+
+
+h2. Format of commit message in the release branch
+
+The format is important as it allows an easy extraction of the relevant information for the changelog and therefore simplifies the life of the release manager. (For your personal repositories don't hesitate to commit often in your private branches)
+
+* Bug fixes have comments like 
+** "Bug <nr>: <more info>". <nr> must be the Bugzilla ID of the sourceforge issue tracker of the elexis project or
+** "Ticket <id>:  <more info>". <id> must correspond to the (non-public) redmine.medelexis.ch project administration.
+E.g. "Bug 23545: Document-Typ fehlt in Laborprefs-Liste" 
+
+* "Documentation: <more info>"
+
+* "Test: <more info>"
+
+* Feature have comments like
+** “Feature <nr>: <genaure Angaben>”.<nr> must be the Bugzilla ID of the sourceforge issue tracker of the elexis project or the (non-public) redmine.medelexis.ch project administration.
+
+* For the Release-Management we will use the following comments
+** “Tag <version.x.y>: created”
+** “Tag <version.x.y>: wrong tag removed”
+** “Branch <version_ends_with_.x>: created”
+** “Branch <version_ends_with_.x>: closed”
+** “Branch <version_ends_with_.x>: removed”
+
+* Pure merge changes can be done using
+**  “Merge: <more info>”
+
+At the moment it is not planned to enforce these rules strictly. If desired it would be not too much work to write a pre-commit hook which could be added to the concerning repostory.
+
+h2. Format when sending patches to elexis-develop
+
+Prefix you "concerns" line with one of the following 
+* [Pull]
+* [Patch]
+* [Feature] 
+
+These guidelines are important, as the allow the release manager to feed them into his own, private scripts where he tries not to forget patches.
+
+At the moment it is not planned to enforce these rules strictly (exept for the name of the release branches and tags).
+

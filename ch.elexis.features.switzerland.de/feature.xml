@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ch.elexis.features.switzerland.de"
+      label="Elexis Schweiz (deutsch)"
+      version="2.0.8"
+      provider-name="Medelexis AG">
+
+   <description url="http://www.example.com/description">
+      [Enter Feature Description here.]
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <plugin
+         id="ch.elexis.artikel_ch"
+         download-size="0"
+         install-size="0"
+         version="2.0.4"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.arzttarife_ch"
+         download-size="0"
+         install-size="0"
+         version="2.0.10"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.ebanking_ch"
+         download-size="0"
+         install-size="0"
+         version="2.0.2"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.medikamente.bag"
+         download-size="0"
+         install-size="0"
+         version="2.0.5"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.diagnosecodes_ch"
+         download-size="0"
+         install-size="0"
+         version="2.0.2"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.labortarif.ch2009"
+         download-size="0"
+         install-size="0"
+         version="1.0.4"
+         unpack="false"/>
+
+</feature>

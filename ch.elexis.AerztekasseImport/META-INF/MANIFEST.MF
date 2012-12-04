@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Konverter für Aerztekasse
+Bundle-SymbolicName: ch.elexis.AerztekasseImport; singleton:=true
+Bundle-Version: 0.3.4
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ ch.elexis
+Eclipse-AutoStart: true
+Bundle-Vendor: iatrix.org

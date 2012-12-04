@@ -1,0 +1,50 @@
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+\section{Linux}
+Dépendant du fait que vous avez déjà installé java runtime 1.5 ou plus avancé sur votre système, vous nécessitez la version avec ou sans jre. Après le téléchargement vous devez d'abord rendre fonctionnel l'installateur. Aussi pour l'installation de OpenOffice il faudra considérer quelques particularités.
+
+Pour savoir quelle version vous devez télécharger veuillez introduire : 
+\begin{itemize}
+\item java -version
+\end{itemize}
+
+Si vous recevez maintenant un message d'erreur ou le message que vous avez installé une version < 1.5 il faut télécharger l'installateur avec jre.
+
+
+En case de doute vous pouvez toujours télécharger l'installateur avec jre car rien ne sera changé dans le système et le jre ne sera introduit que dans le fichier Elexis et peut être effacé facilement lors d'une désinstallation.
+
+
+Téléchargez donc l'installateur nécessaire. Ensuite il faudra d'abord le rendre fonctionnel. Ouvez la console et introduisez :
+
+chmod +x elexis-linux-<version>-<jre>.run
+
+ Ensuite vous pouvez executer l'installateur :
+
+./elexis-linux-<version>-<jre>.run
+
+Ceci devrait installer Elexis dans votre système.
+
+\subsection{OpenOffice}
+Dans des différents distributions Linux la partie qui est nécessaire pour la \textit{télécomande} de OpenOffice n'est pas automatiquement inclus dans l'installation OpenOffice. Vous devez chercher et installer un paquet qui contient soit \textit{officebean}  ou \textit{ooobean}.
+
+\subsection{Si quelque chose ne marche pas}
+SI jamais l'installation n'est pas une réussite d'un coup, il vaut mieux de recommencer de zéro. Donc, effacez la base de données et installez la de nouveau. Lors du premier démarrage introduisez les paramètres suivants :
+\begin{itemize}
+ \item ./elexis -clean\_all
+\end{itemize}
+Ceci effacera tout les restes d'une installation échouée.
+
+\subsection{Si ça ne marche pas}
+\subsubsection{Maintenance par E-Mail}
+Pour l'installation le support par mail  est gratuit jusqu'à la fin de la phase béta.
+\subsubsection{Télémaintenance}
+Support par télémaintenance  (VNC)est gratuite jusqu'à la fin de la phase béta. Vous devez par contre installer un serveur VNC vous même. Dans beaucoup de cas la totalité de l'installation peut se faire à travers une télémaintenance.   
+
+\subsubsection{Installation sur place}
+
+Nous installons Elexis y inclus une base de données pour un prix forfaitaire de Fr. 250.-- + frais de déplacement sur les systèmes suivants : 
+\begin{itemize}
+ \item SuSE Linux à partir de  9.3
+\item avec base de données hsql, mysql ou postgresql
+\item Ubuntu Linux à partir de 6.0 avec base de données  hsql, mysql oder postgresql
+\end{itemize}
+(L'installation sur d'autres systèmes sera facturé selon investissment de temps) 
