@@ -373,28 +373,42 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 						//so we can easily see later on if any changes were applied that would warrant a manual review of the postaddresse content.
 						//Please note: if FLD_IS_PERSON, additional content will be added below.
 						
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_E_MAIL))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_E_MAIL)+"\t");};
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_WEBSITE))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_WEBSITE)+"\t");};
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_MOBILEPHONE))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_MOBILEPHONE)+"\t");};
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_FAX))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_FAX)+"\t");};
-						//if (!StringTool.isNothing(k.get(Kontakt.FLD_IS_LAB))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_IS_LAB)+"\t");};
-						//if (!StringTool.isNothing(k.get(Kontakt.FLD_IS_MANDATOR))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_IS_MANDATOR)+"\t");};
-						//if (!StringTool.isNothing(k.get(Kontakt.FLD_IS_USER))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_IS_USER)+"\t");};
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_SHORT_LABEL))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_SHORT_LABEL)+"\t");};
-						//if (!StringTool.isNothing(k.get(Kontakt.FLD_IS_ORGANIZATION))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_IS_ORGANIZATION)+"\t");};
-						//if (!StringTool.isNothing(k.get(Kontakt.FLD_IS_PATIENT))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_IS_PATIENT)+"\t");};
-						//if (!StringTool.isNothing(k.get(Kontakt.FLD_IS_PERSON))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_IS_PERSON)+"\t");};
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_ANSCHRIFT))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_ANSCHRIFT)+"\t");};
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_COUNTRY))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_COUNTRY)+"\t");};
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_PLACE))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_PLACE)+"\t");};
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_ZIP))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_ZIP)+"\t");};
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_STREET))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_STREET)+"\t");};
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_PHONE2))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_PHONE2)+"\t");};
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_PHONE1))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_PHONE1)+"\t");};
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_REMARK))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_REMARK)+"\t");};
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_NAME3))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_NAME3)+"\t");};
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_NAME2))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_NAME2)+"\t");};
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_NAME1))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_NAME1)+"\t");};
+						//The fields are resorted so that a relatively fast review of exported before/after sets is possible.
+						//We want to get output even for empty fields; so no check for isNothing. The .append() will work w/o error even for empty fields (tested).
+						//We want to be able to compare changed field lengths due to trailing spaces visually. Thus, addition of brackets arround each field.
+
+						//if (!StringTool.isNothing(k.get(Kontakt.FLD_IS_LAB))) {SelectedContactInfosTextBefore.append("["+k.get(Kontakt.FLD_IS_LAB)+"]\t");};
+						//if (!StringTool.isNothing(k.get(Kontakt.FLD_IS_MANDATOR))) {SelectedContactInfosTextBefore.append("["+k.get(Kontakt.FLD_IS_MANDATOR)+"]\t");};
+						//if (!StringTool.isNothing(k.get(Kontakt.FLD_IS_USER))) {SelectedContactInfosTextBefore.append("["+k.get(Kontakt.FLD_IS_USER)+"]\t");};
+						//if (!StringTool.isNothing(k.get(Kontakt.FLD_IS_ORGANIZATION))) {SelectedContactInfosTextBefore.append("["+k.get(Kontakt.FLD_IS_ORGANIZATION)+"]\t");};
+						//if (!StringTool.isNothing(k.get(Kontakt.FLD_IS_PATIENT))) {SelectedContactInfosTextBefore.append("["+k.get(Kontakt.FLD_IS_PATIENT)+"]\t");};
+						//if (!StringTool.isNothing(k.get(Kontakt.FLD_IS_PERSON))) {SelectedContactInfosTextBefore.append("["+k.get(Kontakt.FLD_IS_PERSON)+"]\t");};
+
+						//Necessary (looking at the data) probably only for the Postadresse FLD_ANSCHRIFT field and the Bemerkung FLD_REMARK field,
+						//but used as a precaution for all fields,
+						//we want to replace newlines and carriage returns by |,
+						//so that different numbers of lines per field in the Before and After field collections
+						//would neither introduce vertical nor horizontal jitter in the exported fields table.
+						//Otherwise, they would become very irregular and differences much more difficult to spot manually or by means of formulas within a spreasheet.
+						
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_SHORT_LABEL))) */ {SelectedContactInfosTextBefore.append("["+k.get(Kontakt.FLD_SHORT_LABEL).replace("\n","|").replace("\r","|")+"]\t");};
+						
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_NAME1))) */ {SelectedContactInfosTextBefore.append("["+k.get(Kontakt.FLD_NAME1).replace("\n","|").replace("\r","|")+"]\t");};
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_NAME2))) */ {SelectedContactInfosTextBefore.append("["+k.get(Kontakt.FLD_NAME2).replace("\n","|").replace("\r","|")+"]\t");};
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_NAME3))) */ {SelectedContactInfosTextBefore.append("["+k.get(Kontakt.FLD_NAME3).replace("\n","|").replace("\r","|")+"]\t");};
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_REMARK))) */ {SelectedContactInfosTextBefore.append("["+k.get(Kontakt.FLD_REMARK).replace("\n","|").replace("\r","|")+"]\t");};
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_PHONE1))) */ {SelectedContactInfosTextBefore.append("["+k.get(Kontakt.FLD_PHONE1).replace("\n","|").replace("\r","|")+"]\t");};
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_PHONE2))) */ {SelectedContactInfosTextBefore.append("["+k.get(Kontakt.FLD_PHONE2).replace("\n","|").replace("\r","|")+"]\t");};
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_STREET))) */ {SelectedContactInfosTextBefore.append("["+k.get(Kontakt.FLD_STREET).replace("\n","|").replace("\r","|")+"]\t");};
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_ZIP))) */ {SelectedContactInfosTextBefore.append("["+k.get(Kontakt.FLD_ZIP).replace("\n","|").replace("\r","|")+"]\t");};
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_PLACE))) */ {SelectedContactInfosTextBefore.append("["+k.get(Kontakt.FLD_PLACE).replace("\n","|").replace("\r","|")+"]\t");};
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_COUNTRY))) */ {SelectedContactInfosTextBefore.append("["+k.get(Kontakt.FLD_COUNTRY).replace("\n","|").replace("\r","|")+"]\t");};
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_E_MAIL))) */ {SelectedContactInfosTextBefore.append("["+k.get(Kontakt.FLD_E_MAIL).replace("\n","|").replace("\r","|")+"]\t");};
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_WEBSITE))) */ {SelectedContactInfosTextBefore.append("["+k.get(Kontakt.FLD_WEBSITE).replace("\n","|").replace("\r","|")+"]\t");};
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_MOBILEPHONE))) */ {SelectedContactInfosTextBefore.append("["+k.get(Kontakt.FLD_MOBILEPHONE).replace("\n","|").replace("\r","|")+"]\t");};
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_FAX))) */ {SelectedContactInfosTextBefore.append("["+k.get(Kontakt.FLD_FAX).replace("\n","|").replace("\r","|")+"]\t");};
+						
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_ANSCHRIFT))) */ {SelectedContactInfosTextBefore.append("["+k.get(Kontakt.FLD_ANSCHRIFT).replace("\n","|").replace("\r","|")+"]\t");};
 						
 						
 						
@@ -508,12 +522,16 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 							//so we can easily see later on if any changes were applied that would warrant a manual review of the postaddresse content.
 							//Please note: The fields of KONTAKT have already been added above.
 
-							if (!StringTool.isNothing(k.get(Person.TITLE))) {SelectedContactInfosTextBefore.append(k.get(Person.TITLE)+"\t");};
-							if (!StringTool.isNothing(k.get(Person.MOBILE))) {SelectedContactInfosTextBefore.append(k.get(Person.MOBILE)+"\t");};
-							if (!StringTool.isNothing(k.get(Person.SEX))) {SelectedContactInfosTextBefore.append(k.get(Person.SEX)+"\t");};
-							if (!StringTool.isNothing(k.get(Person.BIRTHDATE))) {SelectedContactInfosTextBefore.append(k.get(Person.BIRTHDATE)+"\t");};
-							if (!StringTool.isNothing(k.get(Person.FIRSTNAME))) {SelectedContactInfosTextBefore.append(k.get(Person.FIRSTNAME)+"\t");};
-							if (!StringTool.isNothing(k.get(Person.NAME))) {SelectedContactInfosTextBefore.append(k.get(Person.NAME)+"\t");};
+							//The fields are resorted so that a relatively fast review of exported before/after sets is possible.
+							//We want to get output even for empty fields; so no check for isNothing. The .append() will work w/o error even for empty fields (tested).
+							//We want to be able to compare changed field lengths due to trailing spaces visually. Thus, addition of brackets arround each field.
+
+							/* if (!StringTool.isNothing(k.get(Person.TITLE))) */ {SelectedContactInfosTextBefore.append("["+k.get(Person.TITLE).replace("\n","|").replace("\r","|")+"]\t");};
+							/* if (!StringTool.isNothing(k.get(Person.FIRSTNAME))) */ {SelectedContactInfosTextBefore.append("["+k.get(Person.FIRSTNAME).replace("\n","|").replace("\r","|")+"]\t");};
+							/* if (!StringTool.isNothing(k.get(Person.NAME))) */ {SelectedContactInfosTextBefore.append("["+k.get(Person.NAME).replace("\n","|").replace("\r","|")+"]\t");};
+							/* if (!StringTool.isNothing(k.get(Person.SEX))) */ {SelectedContactInfosTextBefore.append("["+k.get(Person.SEX).replace("\n","|").replace("\r","|")+"]\t");};
+							/* if (!StringTool.isNothing(k.get(Person.BIRTHDATE))) */ {SelectedContactInfosTextBefore.append("["+k.get(Person.BIRTHDATE).replace("\n","|").replace("\r","|")+"]\t");};
+							/* if (!StringTool.isNothing(k.get(Person.MOBILE))) */ {SelectedContactInfosTextBefore.append("["+k.get(Person.MOBILE).replace("\n","|").replace("\r","|")+"]\t");};
 
 							//Normalize a title like "Dr.med.", "Dr.Med." etc. to "Dr. med."
 							//Or "Prof.Dr.med." to "Prof. Dr. med.",
@@ -599,29 +617,41 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 						//Copy the complete content of k before the processing into a single string
 						//so we can easily see later on if any changes were applied that would warrant a manual review of the postaddresse content.
 						//Please note: if FLD_IS_PERSON, additional content will be added below.
+						
+						//The fields are resorted so that a relatively fast review of exported before/after sets is possible.
 					
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_E_MAIL))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_E_MAIL)+"\t");};
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_WEBSITE))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_WEBSITE)+"\t");};
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_MOBILEPHONE))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_MOBILEPHONE)+"\t");};
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_FAX))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_FAX)+"\t");};
 						//if (!StringTool.isNothing(k.get(Kontakt.FLD_IS_LAB))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_IS_LAB)+"\t");};
 						//if (!StringTool.isNothing(k.get(Kontakt.FLD_IS_MANDATOR))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_IS_MANDATOR)+"\t");};
 						//if (!StringTool.isNothing(k.get(Kontakt.FLD_IS_USER))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_IS_USER)+"\t");};
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_SHORT_LABEL))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_SHORT_LABEL)+"\t");};
 						//if (!StringTool.isNothing(k.get(Kontakt.FLD_IS_ORGANIZATION))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_IS_ORGANIZATION)+"\t");};
 						//if (!StringTool.isNothing(k.get(Kontakt.FLD_IS_PATIENT))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_IS_PATIENT)+"\t");};
 						//if (!StringTool.isNothing(k.get(Kontakt.FLD_IS_PERSON))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_IS_PERSON)+"\t");};
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_ANSCHRIFT))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_ANSCHRIFT)+"\t");};
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_COUNTRY))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_COUNTRY)+"\t");};
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_PLACE))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_PLACE)+"\t");};
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_ZIP))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_ZIP)+"\t");};
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_STREET))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_STREET)+"\t");};
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_PHONE2))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_PHONE2)+"\t");};
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_PHONE1))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_PHONE1)+"\t");};
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_REMARK))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_REMARK)+"\t");};
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_NAME3))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_NAME3)+"\t");};
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_NAME2))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_NAME2)+"\t");};
-						if (!StringTool.isNothing(k.get(Kontakt.FLD_NAME1))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_NAME1)+"\t");};
+						
+						//Necessary (looking at the data) probably only for the Postadresse FLD_ANSCHRIFT field and the Bemerkung FLD_REMARK field,
+						//but used as a precaution for all fields,
+						//we want to replace newlines and carriage returns by |,
+						//so that different numbers of lines per field in the Before and After field collections
+						//would neither introduce vertical nor horizontal jitter in the exported fields table.
+						//Otherwise, they would become very irregular and differences much more difficult to spot manually or by means of formulas within a spreasheet.
+
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_SHORT_LABEL))) */ {SelectedContactInfosTextAfter.append("["+k.get(Kontakt.FLD_SHORT_LABEL).replace("\n","|").replace("\r","|")+"]\t");};
+
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_NAME1))) */ {SelectedContactInfosTextAfter.append("["+k.get(Kontakt.FLD_NAME1).replace("\n","|").replace("\r","|")+"]\t");};
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_NAME2))) */ {SelectedContactInfosTextAfter.append("["+k.get(Kontakt.FLD_NAME2).replace("\n","|").replace("\r","|")+"]\t");};
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_NAME3))) */ {SelectedContactInfosTextAfter.append("["+k.get(Kontakt.FLD_NAME3).replace("\n","|").replace("\r","|")+"]\t");};
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_REMARK))) */ {SelectedContactInfosTextAfter.append("["+k.get(Kontakt.FLD_REMARK).replace("\n","|").replace("\r","|")+"]\t");};
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_PHONE1))) */ {SelectedContactInfosTextAfter.append("["+k.get(Kontakt.FLD_PHONE1).replace("\n","|").replace("\r","|")+"]\t");};
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_PHONE2))) */ {SelectedContactInfosTextAfter.append("["+k.get(Kontakt.FLD_PHONE2).replace("\n","|").replace("\r","|")+"]\t");};
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_STREET))) */ {SelectedContactInfosTextAfter.append("["+k.get(Kontakt.FLD_STREET).replace("\n","|").replace("\r","|")+"]\t");};
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_ZIP))) */ {SelectedContactInfosTextAfter.append("["+k.get(Kontakt.FLD_ZIP).replace("\n","|").replace("\r","|")+"]\t");};
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_PLACE))) */ {SelectedContactInfosTextAfter.append("["+k.get(Kontakt.FLD_PLACE).replace("\n","|").replace("\r","|")+"]\t");};
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_COUNTRY))) */ {SelectedContactInfosTextAfter.append("["+k.get(Kontakt.FLD_COUNTRY).replace("\n","|").replace("\r","|")+"]\t");};
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_E_MAIL))) */ {SelectedContactInfosTextAfter.append("["+k.get(Kontakt.FLD_E_MAIL).replace("\n","|").replace("\r","|")+"]\t");};
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_WEBSITE))) */ {SelectedContactInfosTextAfter.append("["+k.get(Kontakt.FLD_WEBSITE).replace("\n","|").replace("\r","|")+"]\t");};
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_MOBILEPHONE))) */ {SelectedContactInfosTextAfter.append("["+k.get(Kontakt.FLD_MOBILEPHONE).replace("\n","|").replace("\r","|")+"]\t");};
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_FAX))) */ {SelectedContactInfosTextAfter.append("["+k.get(Kontakt.FLD_FAX).replace("\n","|").replace("\r","|")+"]\t");};
+
+						/* if (!StringTool.isNothing(k.get(Kontakt.FLD_ANSCHRIFT))) */ {SelectedContactInfosTextAfter.append("["+k.get(Kontakt.FLD_ANSCHRIFT).replace("\n","|").replace("\r","|")+"]\t");};
 
 						//Copy additional content of k (for KONTAKT - PERSON) after the processing into a single string
 						//so we can easily see later on if any changes were applied that would warrant a manual review of the postaddresse content.
@@ -630,12 +660,14 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 						if (k.istPerson()) {
 							//Person p = Person.load(k.getId()); //This has been done above. Will the results of this action persist outside that block? Hopefully.
 
-							if (!StringTool.isNothing(k.get(Person.TITLE))) {SelectedContactInfosTextAfter.append(k.get(Person.TITLE)+"\t");};
-							if (!StringTool.isNothing(k.get(Person.MOBILE))) {SelectedContactInfosTextAfter.append(k.get(Person.MOBILE)+"\t");};
-							if (!StringTool.isNothing(k.get(Person.SEX))) {SelectedContactInfosTextAfter.append(k.get(Person.SEX)+"\t");};
-							if (!StringTool.isNothing(k.get(Person.BIRTHDATE))) {SelectedContactInfosTextAfter.append(k.get(Person.BIRTHDATE)+"\t");};
-							if (!StringTool.isNothing(k.get(Person.FIRSTNAME))) {SelectedContactInfosTextAfter.append(k.get(Person.FIRSTNAME)+"\t");};
-							if (!StringTool.isNothing(k.get(Person.NAME))) {SelectedContactInfosTextAfter.append(k.get(Person.NAME)+"\t");};
+							//The fields are resorted so that a relatively fast review of exported before/after sets is possible.
+
+							/* if (!StringTool.isNothing(k.get(Person.TITLE))) */ {SelectedContactInfosTextAfter.append("["+k.get(Person.TITLE).replace("\n","|").replace("\r","|")+"]\t");};
+							/* if (!StringTool.isNothing(k.get(Person.FIRSTNAME))) */ {SelectedContactInfosTextAfter.append("["+k.get(Person.FIRSTNAME).replace("\n","|").replace("\r","|")+"]\t");};
+							/* if (!StringTool.isNothing(k.get(Person.NAME))) */ {SelectedContactInfosTextAfter.append("["+k.get(Person.NAME).replace("\n","|").replace("\r","|")+"]\t");};
+							/* if (!StringTool.isNothing(k.get(Person.SEX))) */ {SelectedContactInfosTextAfter.append("["+k.get(Person.SEX).replace("\n","|").replace("\r","|")+"]\t");};
+							/* if (!StringTool.isNothing(k.get(Person.BIRTHDATE))) */ {SelectedContactInfosTextAfter.append("["+k.get(Person.BIRTHDATE).replace("\n","|").replace("\r","|")+"]\t");};
+							/* if (!StringTool.isNothing(k.get(Person.MOBILE))) */ {SelectedContactInfosTextAfter.append("["+k.get(Person.MOBILE).replace("\n","|").replace("\r","|")+"]\t");};
 						}
 
 						//If anything has changed, then add the current address to the list of changed addresses.
