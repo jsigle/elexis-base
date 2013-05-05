@@ -325,12 +325,23 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 					//selectedAddressesText.setLength(0);
 					//selectedAddressesText.append("jsdebug: Your selection includes "+sel.length+" element(s):"+System.getProperty("line.separator"));
 					
+					//Buffer for a list of all changed addresses (see below for the ratio behind that)
+					StringBuffer SelectedContactInfosChangedList = new StringBuffer();
+					
+					
 					System.out.println("KontakteView tidySelectedAddressesAction.run Processing "+sel.length+" entries...");
 					for (int i = 0; i < sel.length; i++) {
 
 						if (i % 100 == 0) {
 							System.out.println("KontakteView tidySelectedAddressesAction.run Processing entry "+i+"...");		
 						};
+						
+						//To check whether any changes were made,
+						//synthesize a string with all affected address fields before and after the processing,
+						//and compare them. That's probably faster to do - and not much more of a processing effort,
+						//but much less programming hazzle - than monitoring the individual steps.
+						StringBuffer SelectedContactInfosTextBefore = new StringBuffer();
+						StringBuffer SelectedContactInfosTextAfter = new StringBuffer();	
 						
 						Kontakt k = (Kontakt) sel[i];
 
@@ -357,33 +368,125 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 						//The following field identifiers are derived from Kontakt.java
 						//Is there any way to evaluate all field definitions that exist over there,
 						//and program a loop that would process all fields automatically?
+
+						//Copy the complete content of k before the processing into a single string
+						//so we can easily see later on if any changes were applied that would warrant a manual review of the postaddresse content.
+						//Please note: if FLD_IS_PERSON, additional content will be added below.
+						
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_E_MAIL))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_E_MAIL)+"\t");};
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_WEBSITE))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_WEBSITE)+"\t");};
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_MOBILEPHONE))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_MOBILEPHONE)+"\t");};
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_FAX))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_FAX)+"\t");};
+						//if (!StringTool.isNothing(k.get(Kontakt.FLD_IS_LAB))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_IS_LAB)+"\t");};
+						//if (!StringTool.isNothing(k.get(Kontakt.FLD_IS_MANDATOR))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_IS_MANDATOR)+"\t");};
+						//if (!StringTool.isNothing(k.get(Kontakt.FLD_IS_USER))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_IS_USER)+"\t");};
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_SHORT_LABEL))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_SHORT_LABEL)+"\t");};
+						//if (!StringTool.isNothing(k.get(Kontakt.FLD_IS_ORGANIZATION))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_IS_ORGANIZATION)+"\t");};
+						//if (!StringTool.isNothing(k.get(Kontakt.FLD_IS_PATIENT))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_IS_PATIENT)+"\t");};
+						//if (!StringTool.isNothing(k.get(Kontakt.FLD_IS_PERSON))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_IS_PERSON)+"\t");};
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_ANSCHRIFT))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_ANSCHRIFT)+"\t");};
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_COUNTRY))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_COUNTRY)+"\t");};
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_PLACE))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_PLACE)+"\t");};
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_ZIP))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_ZIP)+"\t");};
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_STREET))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_STREET)+"\t");};
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_PHONE2))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_PHONE2)+"\t");};
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_PHONE1))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_PHONE1)+"\t");};
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_REMARK))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_REMARK)+"\t");};
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_NAME3))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_NAME3)+"\t");};
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_NAME2))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_NAME2)+"\t");};
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_NAME1))) {SelectedContactInfosTextBefore.append(k.get(Kontakt.FLD_NAME1)+"\t");};
+						
+						
+						
+						//The same processing as for Person.TITLE (see below) is applied to the Kontakt.FLD_ANSCHRIFT field
+						//no matter whether we deal with a person or an organization or whatever.
+						//This field contains the Postanschrift,
+						//where we may also assume that titles may occur (even for an organization, e.g. "Dr. Müller Pharma"),
+						//and can be processed rather safely. 
+						//This must be done BEFORE the trim() and replace() processing to remove excess spaces.
+						//Enforce certain uppercase/lowercase conventions
+						
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("prof.","Prof."));
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("dr.","Dr."));
+						//The following ones can not be used in the ANSCHRIFT field, because they would e.g.
+						//ruin a "Facharzt Innere Med." to "Facharzt Innere med."
+						/*
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("Med.","med."));
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("Jur.","jur."));
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("Rer.","rer."));
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("Nat.","nat."));
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("H.c.","h.c."));
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("H.C.","h.c."));
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("h.C.","h.c."));
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("H. c.","h.c."));
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("H. C.","h.c."));
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("h. C.","h.c."));
+						 */
+						
+						//We use these ones instead (and I am too tired to make up better regexes):
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("Dr.Med.","Dr.med."));
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("Dr.Jur.","Dr.jur."));
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("Dr.Rer.","Dr.rer."));
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("Dr.Nat.","Dr.nat."));
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("Dr. Med.","Dr. med."));
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("Dr. Jur.","Dr. jur."));
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("Dr. Rer.","Dr. rer."));
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("Dr. Nat.","Dr. nat."));
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("Innere med.","Innere Med."));
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("Anthroposoph. med.","Anthroposoph. Med."));
+						
+
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("Prof.","Prof. "));
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("Dr.","Dr. "));
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("med.","med. "));
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("jur.","jur. "));
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("rer.","rer. "));
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("nat.","nat. "));
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("h.c.","h.c. "));
+						//remove spaces within "h. c." to "h.c."
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("h. c.","h.c."));
+						
+						//The same processing as for Kontakt.FLD_NAME3 is applied to the Kontakt.FLD_ANSCHRIFT field.
+						//Replace Facharzt f. xyz or Facharzt FMH f. xyz by Facharzt für xyz or Facharzt FMH für xyz
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("Facharzt f.","Facharzt für"));
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("Facharzt FMH f.","Facharzt FMH für"));
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("Fachärztin f.","Fachärztin für"));
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).replace("Fachärztin FMH f.","Fachärztin FMH für"));		
+					
 						
 						//replace three spaces in a row by one space
 						//replace two spaces in a row by one space
 						//remove leading and trailing spaces for each field that may contain free text input
 						
-						k.set(Kontakt.FLD_E_MAIL,k.get(Kontakt.FLD_E_MAIL).trim().replace("  "," ").replace("   "," "));
-						k.set(Kontakt.FLD_WEBSITE,k.get(Kontakt.FLD_WEBSITE).trim().replace("  "," ").replace("   "," "));
-						k.set(Kontakt.FLD_MOBILEPHONE,k.get(Kontakt.FLD_MOBILEPHONE).trim().replace("  "," ").replace("   "," "));
-						k.set(Kontakt.FLD_FAX,k.get(Kontakt.FLD_FAX).trim().replace("  "," ").replace("   "," "));
-						//k.set(Kontakt.FLD_IS_LAB,k.get(Kontakt.FLD_IS_LAB).trim().replace("  "," ").replace("   "," "));
-						//k.set(Kontakt.FLD_IS_MANDATOR,k.get(Kontakt.FLD_IS_MANDATOR).trim().replace("  "," ").replace("   "," "));
-						//k.set(Kontakt.FLD_IS_USER,k.get(Kontakt.FLD_IS_USER).trim().replace("  "," ").replace("   "," "));
-						k.set(Kontakt.FLD_SHORT_LABEL,k.get(Kontakt.FLD_SHORT_LABEL).trim().replace("  "," ").replace("   "," "));
-						//k.set(Kontakt.FLD_IS_ORGANIZATION,k.get(Kontakt.FLD_IS_ORGANIZATION).trim().replace("  "," ").replace("   "," "));
-						//k.set(Kontakt.FLD_IS_PATIENT,k.get(Kontakt.FLD_IS_PATIENT).trim().replace("  "," ").replace("   "," "));
-						//k.set(Kontakt.FLD_IS_PERSON,k.get(Kontakt.FLD_IS_PERSON).trim().replace("  "," ").replace("   "," "));
-						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).trim().replace("  "," ").replace("   "," "));
-						k.set(Kontakt.FLD_COUNTRY,k.get(Kontakt.FLD_COUNTRY).trim().replace("  "," ").replace("   "," "));
-						k.set(Kontakt.FLD_PLACE,k.get(Kontakt.FLD_PLACE).trim().replace("  "," ").replace("   "," "));
-						k.set(Kontakt.FLD_ZIP,k.get(Kontakt.FLD_ZIP).trim().replace("  "," ").replace("   "," "));
-						k.set(Kontakt.FLD_STREET,k.get(Kontakt.FLD_STREET).trim().replace("  "," ").replace("   "," "));
-						k.set(Kontakt.FLD_PHONE2,k.get(Kontakt.FLD_PHONE2).trim().replace("  "," ").replace("   "," "));
-						k.set(Kontakt.FLD_PHONE1,k.get(Kontakt.FLD_PHONE1).trim().replace("  "," ").replace("   "," "));
-						k.set(Kontakt.FLD_REMARK,k.get(Kontakt.FLD_REMARK).trim().replace("  "," ").replace("   "," "));
-						k.set(Kontakt.FLD_NAME3,k.get(Kontakt.FLD_NAME3).trim().replace("  "," ").replace("   "," "));
-						k.set(Kontakt.FLD_NAME2,k.get(Kontakt.FLD_NAME2).trim().replace("  "," ").replace("   "," "));
-						k.set(Kontakt.FLD_NAME1,k.get(Kontakt.FLD_NAME1).trim().replace("  "," ").replace("   "," "));
+						//Please note: replace 3->1 spaces must be placed left of replace 2->1 spaces, so that both can become active.
+						//The processing functions are apparently executed from left to right.
+						//If they were placed the other way round, and we have some "abc   xyz" string (with 3 consecutive spaces),
+						//only two of these would be replaced by one, so that in the end, we get "abc  xyz", and the second replace would remain unused.
+						//I've tried it out. And it makes a difference especially with respect to modified professional titles,
+						//where existing single spaces are temporarily expanded and a cleanup is definitely needed in the same processing cycle.
+						
+						k.set(Kontakt.FLD_E_MAIL,k.get(Kontakt.FLD_E_MAIL).trim().replace("   "," ").replace("  "," "));
+						k.set(Kontakt.FLD_WEBSITE,k.get(Kontakt.FLD_WEBSITE).trim().replace("   "," ").replace("  "," "));
+						k.set(Kontakt.FLD_MOBILEPHONE,k.get(Kontakt.FLD_MOBILEPHONE).trim().replace("   "," ").replace("  "," "));
+						k.set(Kontakt.FLD_FAX,k.get(Kontakt.FLD_FAX).trim().replace("   "," ").replace("  "," "));
+						//k.set(Kontakt.FLD_IS_LAB,k.get(Kontakt.FLD_IS_LAB).trim().replace("   "," ").replace("  "," "));
+						//k.set(Kontakt.FLD_IS_MANDATOR,k.get(Kontakt.FLD_IS_MANDATOR).trim().replace("   "," ").replace("  "," "));
+						//k.set(Kontakt.FLD_IS_USER,k.get(Kontakt.FLD_IS_USER).trim().replace("   "," ").replace("  "," "));
+						k.set(Kontakt.FLD_SHORT_LABEL,k.get(Kontakt.FLD_SHORT_LABEL).trim().replace("   "," ").replace("  "," "));
+						//k.set(Kontakt.FLD_IS_ORGANIZATION,k.get(Kontakt.FLD_IS_ORGANIZATION).trim().replace("   "," ").replace("  "," "));
+						//k.set(Kontakt.FLD_IS_PATIENT,k.get(Kontakt.FLD_IS_PATIENT).trim().replace("   "," ").replace("  "," "));
+						//k.set(Kontakt.FLD_IS_PERSON,k.get(Kontakt.FLD_IS_PERSON).trim().replace("   "," ").replace("  "," "));
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).trim().replace("   "," ").replace("  "," "));
+						k.set(Kontakt.FLD_COUNTRY,k.get(Kontakt.FLD_COUNTRY).trim().replace("   "," ").replace("  "," "));
+						k.set(Kontakt.FLD_PLACE,k.get(Kontakt.FLD_PLACE).trim().replace("   "," ").replace("  "," "));
+						k.set(Kontakt.FLD_ZIP,k.get(Kontakt.FLD_ZIP).trim().replace("   "," ").replace("  "," "));
+						k.set(Kontakt.FLD_STREET,k.get(Kontakt.FLD_STREET).trim().replace("   "," ").replace("  "," "));
+						k.set(Kontakt.FLD_PHONE2,k.get(Kontakt.FLD_PHONE2).trim().replace("   "," ").replace("  "," "));
+						k.set(Kontakt.FLD_PHONE1,k.get(Kontakt.FLD_PHONE1).trim().replace("   "," ").replace("  "," "));
+						k.set(Kontakt.FLD_REMARK,k.get(Kontakt.FLD_REMARK).trim().replace("   "," ").replace("  "," "));
+						k.set(Kontakt.FLD_NAME3,k.get(Kontakt.FLD_NAME3).trim().replace("   "," ").replace("  "," "));
+						k.set(Kontakt.FLD_NAME2,k.get(Kontakt.FLD_NAME2).trim().replace("   "," ").replace("  "," "));
+						k.set(Kontakt.FLD_NAME1,k.get(Kontakt.FLD_NAME1).trim().replace("   "," ").replace("  "," "));
 										
 						//Replace Facharzt f. xyz or Facharzt FMH f. xyz by Facharzt für xyz or Facharzt FMH für xyz
 						k.set(Kontakt.FLD_NAME3,k.get(Kontakt.FLD_NAME3).replace("Facharzt f.","Facharzt für"));
@@ -391,15 +494,27 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 						k.set(Kontakt.FLD_NAME3,k.get(Kontakt.FLD_NAME3).replace("Fachärztin f.","Fachärztin für"));
 						k.set(Kontakt.FLD_NAME3,k.get(Kontakt.FLD_NAME3).replace("Fachärztin FMH f.","Fachärztin FMH für"));		
 
+						
 						if (k.istPerson()) {
 							Person p = Person.load(k.getId());
 
-							//Interestingly, k.set(,k.get()) worked in this section with Person.TITLE
-							//But p.set(,p.get)) do NOT work.
-							//Gerrys comment says: A person is a contact with additional fields,
+							//Please note that k.set(,k.get()) works in this section with Person.TITLE etc.
+							//But p.set(,p.get)) does NOT work.
+							//Gerry's comment says: A person is a contact with additional fields,
 							//so well, it might be correct that the person is accessed via k...
 							//and p.get() throws a no such method error.
 							
+							//Copy additional content of k (for KONTAKT - PERSON) before the processing into a single string
+							//so we can easily see later on if any changes were applied that would warrant a manual review of the postaddresse content.
+							//Please note: The fields of KONTAKT have already been added above.
+
+							if (!StringTool.isNothing(k.get(Person.TITLE))) {SelectedContactInfosTextBefore.append(k.get(Person.TITLE)+"\t");};
+							if (!StringTool.isNothing(k.get(Person.MOBILE))) {SelectedContactInfosTextBefore.append(k.get(Person.MOBILE)+"\t");};
+							if (!StringTool.isNothing(k.get(Person.SEX))) {SelectedContactInfosTextBefore.append(k.get(Person.SEX)+"\t");};
+							if (!StringTool.isNothing(k.get(Person.BIRTHDATE))) {SelectedContactInfosTextBefore.append(k.get(Person.BIRTHDATE)+"\t");};
+							if (!StringTool.isNothing(k.get(Person.FIRSTNAME))) {SelectedContactInfosTextBefore.append(k.get(Person.FIRSTNAME)+"\t");};
+							if (!StringTool.isNothing(k.get(Person.NAME))) {SelectedContactInfosTextBefore.append(k.get(Person.NAME)+"\t");};
+
 							//Normalize a title like "Dr.med.", "Dr.Med." etc. to "Dr. med."
 							//Or "Prof.Dr.med." to "Prof. Dr. med.",
 							//But "h.c." shall remain "h.c."
@@ -438,19 +553,19 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 							k.set(Person.TITLE,k.get(Person.TITLE).replace("h.c.","h.c. "));
 							//remove spaces within "h. c." to "h.c."
 							k.set(Person.TITLE,k.get(Person.TITLE).replace("h. c.","h.c."));
-
+							
 							//The following field identifiers are derived from Person.java
 							//Is there any way to evaluate all field definitions that exist over there,
 							//and program a loop that would process all fields automatically?
 
-							k.set(Person.TITLE,k.get(Person.TITLE).trim().replace("  "," ").replace("   "," "));
-							k.set(Person.MOBILE,k.get(Person.MOBILE).trim().replace("  "," ").replace("   "," "));
-							k.set(Person.SEX,k.get(Person.SEX).trim().replace("  "," ").replace("   "," "));
-							k.set(Person.BIRTHDATE,k.get(Person.BIRTHDATE).trim().replace("  "," ").replace("   "," "));
-							k.set(Person.FIRSTNAME,k.get(Person.FIRSTNAME).trim().replace("  "," ").replace("   "," "));
-							k.set(Person.NAME,k.get(Person.NAME).trim().replace("  "," ").replace("   "," "));
-							//k.set(Person.MALE,k.get(Person.MALE).trim().replace("  "," ").replace("   "," "));
-							//k.set(Person.FEMALE,k.get(Person.FEMALE).trim().replace("  "," ").replace("   "," "));
+							k.set(Person.TITLE,k.get(Person.TITLE).trim().replace("   "," ").replace("  "," "));
+							k.set(Person.MOBILE,k.get(Person.MOBILE).trim().replace("   "," ").replace("  "," "));
+							k.set(Person.SEX,k.get(Person.SEX).trim().replace("   "," ").replace("  "," "));
+							k.set(Person.BIRTHDATE,k.get(Person.BIRTHDATE).trim().replace("   "," ").replace("  "," "));
+							k.set(Person.FIRSTNAME,k.get(Person.FIRSTNAME).trim().replace("   "," ").replace("  "," "));
+							k.set(Person.NAME,k.get(Person.NAME).trim().replace("   "," ").replace("  "," "));
+							//k.set(Person.MALE,k.get(Person.MALE).trim().replace("   "," ").replace("  "," "));
+							//k.set(Person.FEMALE,k.get(Person.FEMALE).trim().replace("   "," ").replace("  "," "));
 
 							//Now, let's replace "xyz FMH" by "Facharzt/Fachärztin für xyz FMH",
 							//like in: Ron Ammann: "Dermatologie/Venerologie FMH"
@@ -461,6 +576,8 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 							//Also, die Strings müssten ggf. aus messages.properties geholt werden,
 							//und wegen der Umlaute dann auch noch in mehreren Varianten vorliegen oder regexp verwenden.
 							//Facharzt für... = spécialiste en ...; und in italienisch will ich es gerade nicht nachschauen.
+							//If this should be activated, you may also want to implement the same processing to Kontakt.FLD_ANSCHRIFT.
+							//See further above for explanations.
 							if (false) {
 								if ( k.get(Person.SEX).equals(Person.MALE)
 										&& (k.get(Kontakt.FLD_NAME3).toUpperCase().indexOf("FACHARZT") < 0)
@@ -476,6 +593,63 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 						
 						}
 
+
+						
+
+						//Copy the complete content of k before the processing into a single string
+						//so we can easily see later on if any changes were applied that would warrant a manual review of the postaddresse content.
+						//Please note: if FLD_IS_PERSON, additional content will be added below.
+					
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_E_MAIL))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_E_MAIL)+"\t");};
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_WEBSITE))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_WEBSITE)+"\t");};
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_MOBILEPHONE))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_MOBILEPHONE)+"\t");};
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_FAX))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_FAX)+"\t");};
+						//if (!StringTool.isNothing(k.get(Kontakt.FLD_IS_LAB))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_IS_LAB)+"\t");};
+						//if (!StringTool.isNothing(k.get(Kontakt.FLD_IS_MANDATOR))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_IS_MANDATOR)+"\t");};
+						//if (!StringTool.isNothing(k.get(Kontakt.FLD_IS_USER))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_IS_USER)+"\t");};
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_SHORT_LABEL))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_SHORT_LABEL)+"\t");};
+						//if (!StringTool.isNothing(k.get(Kontakt.FLD_IS_ORGANIZATION))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_IS_ORGANIZATION)+"\t");};
+						//if (!StringTool.isNothing(k.get(Kontakt.FLD_IS_PATIENT))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_IS_PATIENT)+"\t");};
+						//if (!StringTool.isNothing(k.get(Kontakt.FLD_IS_PERSON))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_IS_PERSON)+"\t");};
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_ANSCHRIFT))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_ANSCHRIFT)+"\t");};
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_COUNTRY))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_COUNTRY)+"\t");};
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_PLACE))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_PLACE)+"\t");};
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_ZIP))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_ZIP)+"\t");};
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_STREET))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_STREET)+"\t");};
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_PHONE2))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_PHONE2)+"\t");};
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_PHONE1))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_PHONE1)+"\t");};
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_REMARK))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_REMARK)+"\t");};
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_NAME3))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_NAME3)+"\t");};
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_NAME2))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_NAME2)+"\t");};
+						if (!StringTool.isNothing(k.get(Kontakt.FLD_NAME1))) {SelectedContactInfosTextAfter.append(k.get(Kontakt.FLD_NAME1)+"\t");};
+
+						//Copy additional content of k (for KONTAKT - PERSON) after the processing into a single string
+						//so we can easily see later on if any changes were applied that would warrant a manual review of the postaddresse content.
+						//Please note: The fields of KONTAKT have already been added above.
+
+						if (k.istPerson()) {
+							//Person p = Person.load(k.getId()); //This has been done above. Will the results of this action persist outside that block? Hopefully.
+
+							if (!StringTool.isNothing(k.get(Person.TITLE))) {SelectedContactInfosTextAfter.append(k.get(Person.TITLE)+"\t");};
+							if (!StringTool.isNothing(k.get(Person.MOBILE))) {SelectedContactInfosTextAfter.append(k.get(Person.MOBILE)+"\t");};
+							if (!StringTool.isNothing(k.get(Person.SEX))) {SelectedContactInfosTextAfter.append(k.get(Person.SEX)+"\t");};
+							if (!StringTool.isNothing(k.get(Person.BIRTHDATE))) {SelectedContactInfosTextAfter.append(k.get(Person.BIRTHDATE)+"\t");};
+							if (!StringTool.isNothing(k.get(Person.FIRSTNAME))) {SelectedContactInfosTextAfter.append(k.get(Person.FIRSTNAME)+"\t");};
+							if (!StringTool.isNothing(k.get(Person.NAME))) {SelectedContactInfosTextAfter.append(k.get(Person.NAME)+"\t");};
+						}
+
+						//If anything has changed, then add the current address to the list of changed addresses.
+						//Actually, I'm adding both the content before and after the processing; without any trailing tab.
+						//We will output that list later on - to the clipboard - so that the Postadresse for any changed addresses can be reviewed.
+						if ( !SelectedContactInfosTextAfter.toString().equals(SelectedContactInfosTextBefore.toString()) ) {
+							System.out.println("Before: ["+SelectedContactInfosTextBefore+"]");
+							System.out.println("After:  ["+SelectedContactInfosTextAfter+"]");
+							SelectedContactInfosTextBefore.delete(SelectedContactInfosTextBefore.length(),SelectedContactInfosTextBefore.length());
+							SelectedContactInfosTextAfter.delete(SelectedContactInfosTextAfter.length(),SelectedContactInfosTextAfter.length());
+							SelectedContactInfosChangedList.append("Before:\t"+SelectedContactInfosTextBefore+"\n");
+							SelectedContactInfosChangedList.append("After:\t"+SelectedContactInfosTextAfter+"\n");
+						}
+						
 					//I DON'T know whether this is required - most probably not,
 					//I guess that something equivalent is included in the implementation of k.set();
 					//anyway - it will NOT cause any window display contents to be updated at all.
@@ -485,7 +659,50 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 					}		//js: for each element in sel do
 
 				
+				
+					/*
+					 * 201303050117js:
+					 * In order to export the list of addresses that might warrant a manual review of Postadresse to the clipboard,
+					 * I have added the clipboard export routine also used in the copyToClipboard... methods further below.
+					 * If not for this purpose, building up the stringsBuffer content would not have been required,
+					 * and neither would have been any kind of clipboard interaction.
+					 */
+					/*
+					 * 20120130js:
+					 * I would prefer to move the following code portions down behind the "if sel not empty" block,
+					 * so that (a) debugging output can be produced and (b) the clipboard will be emptied
+					 * when NO Contacts have been selected. I did this to avoid the case where a user would assume
+					 * they had selected some address, copied data to the clipboard, and pasted them - and, even
+					 * when they erred about their selection, which was indeed empty, they would not immediately
+					 * notice that because some (old, unchanged) content would still come out of the clipboard.
+					 * 
+					 * But if I do so, and there actually is no address selected, I get an error window:
+					 * Unhandled Exception ... not valid. So to avoid that message without any further research
+					 * (I need to get this work fast now), I move the code back up and leave the clipboard
+					 * unchanged for now, if no Contacts had been selected to process.
+					 * 
+					 * (However, I may disable the toolbar icon / menu entry for this action in that case later on.) 
+				 	 */				 	 
 					
+				    //System.out.print("jsdebug: SelectedContactInfosText: \n"+SelectedContactInfosText+"\n");
+					
+					//Adopted from BestellView.exportClipboardAction:
+					//Copy some generated object.toString() to the clipoard
+					
+					if ( (SelectedContactInfosChangedList != null) && (SelectedContactInfosChangedList.length()>0) ) {
+					
+						Clipboard clipboard = new Clipboard(Desk.getDisplay());
+						TextTransfer textTransfer = TextTransfer.getInstance();
+						Transfer[] transfers = new Transfer[] {
+								textTransfer
+						};
+						Object[] data = new Object[] {
+							SelectedContactInfosChangedList.toString()
+						};
+						clipboard.setContents(data, transfers);
+						clipboard.dispose();
+					}
+
 				}			//js: if sel not empty
 			
 			//update display to reflect changed information
