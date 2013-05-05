@@ -1,0 +1,14 @@
+--- ch.elexis/src/ch/elexis/views/messages_en.properties	Tue Dec 11 01:18:46 2012 +0100
++++ ch.elexis/src/ch/elexis/views/messages_en.properties	Tue Dec 11 03:03:53 2012 +0100
+@@ -1,7 +1,9 @@
+ #Created by JInto - www.guh-software.de
+ #Sun Oct 14 01:10:19 CEST 2012
+-AUF2.NoPatientSelected=Kein patient selektiert
+-AUF2.PleaseDoSelectPatient=W\u00E4hlen aus, wen diese AUF betreffen soll
++#Modified by Joerg Sigle - www.jsigle.com
++#Thu Feb 16 13:30:00 CEST 2012
++AUF2.NoPatientSelected=No patient selected
++AUF2.PleaseDoSelectPatient=Please select the patient for whom you want to prepare a certificate
+ AUF2.certificate=Certificate
+ AUF2.createNewCert=Create a new certificate
+ AUF2.createPrint=Open a printable view for the selected certificate
