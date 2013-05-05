@@ -47,6 +47,7 @@ public class TarmedOptifier implements IOptifier {
 	public static final int NOTYETVALID = 7;
 	public static final int NOMOREVALID = 8;
 	public static final int ISZERO = 9;		//201303130140js: Eine Rechnung mit einer Position zu 0.00 wird von der Aerztekasse zurueckgewiesen.
+											//201303130140js: also see: ch.elexis.arzttarife_schweiz.TarmedOptifier.java, ch.elexis.medikamente_bag.BAGOptifier.java
 	
 	boolean bOptify = true;
 	
@@ -384,14 +385,9 @@ public class TarmedOptifier implements IOptifier {
 			//201303130140js: Eine Rechnung mit einer Position zu 0.00 wird von der Aerztekasse zurueckgewiesen.
 			//                Deshalb zumindest eine Warnung ausgeben.
 			if (tc.getTL()==0.00 && tc.getAL()==0.00) {
-				System.out.println("js TarmedOptifier add(): checking for Betrag = 0.00");
-				System.out.println("js TarmedOptifier add(): Code: "+tc.getCode());
-				System.out.println("js TarmedOptifier add(): TL:   "+tc.getTL());
-				System.out.println("js TarmedOptifier add(): AL:   "+tc.getAL());
 				return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, ISZERO,
 						tc.getCode() + " " + 
-						Messages.TarmedOptifier_PriceZeroNotAllowed + " " +
-						Messages.TarmedOptifier_PriceZeroAskDrugNoSellingPrice, null, false);
+						Messages.TarmedOptifier_PriceZeroNotAllowed, null, false);
 			}
 			
 			return new Result<IVerrechenbar>(null);

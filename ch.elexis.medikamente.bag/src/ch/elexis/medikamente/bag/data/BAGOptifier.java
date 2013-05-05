@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2011, G. Weirich and Elexis
+ * Copyright (c) 2007-2011, G. Weirich and Elexis; portions Copyright (c) 2013 Joerg Sigle.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,15 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    Joerg Sigle   - warning if a position is about to be billed at 0.00
+ *
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.data;
 
 import java.util.List;
 
+import ch.elexis.arzttarife_schweiz.Messages;
 import ch.elexis.data.IVerrechenbar;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Verrechnet;
@@ -21,12 +24,30 @@ import ch.rgw.tools.Result;
 
 public class BAGOptifier implements IOptifier {
 	
+											 
+	public static final int ISZERO = 9;		//201303130140js: Eine Rechnung mit einer Position zu 0.00 wird von der Aerztekasse zurueckgewiesen.
+											//201303130140js: also see: ch.elexis.arzttarife_schweiz.TarmedOptifier.java, ch.elexis.medikamente_bag.BAGOptifier.java
+	
 	public Result<Object> optify(final Konsultation kons){
+		System.out.println("js BAGOptifier optify(1) begin");
+
 		return new Result<Object>(kons);
 	}
 	
 	public Result<IVerrechenbar> add(final IVerrechenbar code, final Konsultation kons){
+		System.out.println("js BAGOptifier add(2) begin");
+
 		if (code instanceof BAGMedi) {
+			
+			//201303130140js: Eine Rechnung mit einer Position zu 0.00 wird von der Aerztekasse zurueckgewiesen.
+			//                Deshalb zumindest eine Warnung ausgeben.
+			if (((BAGMedi) code).getVKPreis().isZero()) {
+				return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, ISZERO,
+						((BAGMedi) code).getCode() + " " + 
+						Messages.TarmedOptifier_PriceZeroNotAllowed + " " +
+						Messages.TarmedOptifier_PriceZeroAskDrugNoSellingPrice, null, false);
+			}
+	
 			List<Verrechnet> old = kons.getLeistungen();
 			for (Verrechnet v : old) {
 				IVerrechenbar vv = v.getVerrechenbar();
@@ -47,6 +68,8 @@ public class BAGOptifier implements IOptifier {
 	}
 	
 	public Result<Verrechnet> remove(final Verrechnet v, final Konsultation kons){
+		System.out.println("js BAGOptifier remove(2) begin");
+
 		List<Verrechnet> old = kons.getLeistungen();
 		old.remove(v);
 		v.delete();

@@ -13,3 +13,4 @@ Require-Bundle: ch.elexis;bundle-version="2.1.5",
  org.eclipse.core.expressions;bundle-version="3.4.200",
  ch.elexis.core;bundle-version="0.0.2"
 Export-Package: ch.elexis.medikamente.bag.data
+Import-Package: ch.elexis.arzttarife_schweiz
