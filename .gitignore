@@ -9,8 +9,8 @@
 #201305051530: added bin and target as recommended by niklaus giger
 # Compiled material #
 #####################
-bin
-target
+bin/
+target/
 
 
 #
