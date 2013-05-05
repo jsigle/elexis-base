@@ -1,5 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2005-2011, G. Weirich and Elexis
+ * Copyright (c) 2005-2011, G. Weirich and Elexis; portions Copyright (c) 2013 Joerg Sigle.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +8,15 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    Joerg Sigle   - warning if a case containes no billables or a total turnover of zero
  *    
  *******************************************************************************/
 
 package ch.elexis.data;
+
+//201303130626js: WARNING: A lot of code from this file also exists in ch.elexis.arzttarife_ch.src.TarmedRechnung.Validator.java.
+//And over there, maybe it is in a more advanced state, regarding modularization and internationalization.
+//But this file here appears to be actually used. 
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -22,6 +28,14 @@ import org.eclipse.jface.dialogs.MessageDialog;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.StringConstants;
+//201303130710js:
+//This would require project: ch.elexis: plugin.xml/build.properties -> Dependencies -> imported packages
+//to contain ch.elexis.TarmedRechnung (will be auto done by eclipse if required after confirmation dialog.)
+//And that in turn will cause circular dependencies accross some 100+ projects to appear.
+//So we cannot easily use the TarmedRechnung.Messages.Validator_RgWithKonsWithoutBillablesNorRevenue message string
+//introduced down in that other project.
+//import ch.elexis.TarmedRechnung.Messages;
 import ch.elexis.preferences.Leistungscodes;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Log;
@@ -82,11 +96,83 @@ public class Rechnung extends PersistentObject {
 	 * @return Ein Result mit ggf. der erstellten Rechnung als Inhalt
 	 */
 	public static Result<Rechnung> build(final List<Konsultation> behandlungen){
+		System.out.println("js Rechnung: build() begin");
+		
+		System.out.println("js Rechnung: build(): TO DO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		System.out.println("js Rechnung: build(): TO DO: Apparently, Rechnung.build() uses local checking algorithms,");
+		System.out.println("js Rechnung: build(): TO DO: Event though Validator.checkBill() offers more structured ones.");
+		System.out.println("js Rechnung: build(): TO DO: Why are both of them in the code?");
+		System.out.println("js Rechnung: build(): TO DO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		
 		Result<Rechnung> result = new Result<Rechnung>();
+		
 		if ((behandlungen == null) || (behandlungen.size() == 0)) {
 			return result.add(Result.SEVERITY.WARNING, 1,
-				"Die Rechnung enthält keine Behandlungen", null, true);
+				"Die Rechnung enthält keine Behandlungen (Konsultationen)", null, true); //js: added (Konsultationen) to match nomenclature elsewhere in Elexis.
 		}
+
+		//201303130742js: Jetzt schaue ich auch, ob ich hier noch schnell prüfen kann, ob ein Patient auch Person ist.
+		//Alle Tarmed-Rechnungen an Patienten sollten vermutlich an Personen adressiert sein;
+		//mit einer Organisations-Adresse für den Patienten kommen sie jedenfalls nicht durch die TrustX TCTest Prüfung. 
+		System.out.println("js Rechnung: build(): Check whether the patient is a person; set the flag if not.");
+		System.out.println("js Rechnung: build(): TODO: Prüfen: Verhindert das irgendwelche erforderliche Funktionalität,");
+		System.out.println("js Rechnung: build(): TODO: z.B. in der Abrechnung mit Intermediären?");
+		System.out.println("js Rechnung: build(): TODO: Möglicherweise muss dieser Test hier noch auf Tarmed-Rechnungen beschränkt werden?");
+		for (Konsultation b : behandlungen) {
+			Patient pat=b.getFall().getPatient();
+			if (!pat.istPerson()) {
+				MessageDialog.openInformation(null,"Hinweis","Bei Patient Nr. "+pat.getPatCode()+", "+pat.getName()+", "+pat.getVorname()+", "+pat.getGeburtsdatum()+"\n"+
+			    "fehlte das Häkchen für 'Person' in der Kontaktdatenbank.\n\nIch korrigiere das selbst.");
+				pat.set(Kontakt.FLD_IS_PERSON,StringConstants.ONE);
+			}
+		}	
+		
+		//201303130500js: Lets check whether a consultation contains a non-Zero sum
+		//of recorded Verrechnungen. This will interrupt creation of a bill for a case
+		//that has at least one consultation where the sum of all verrechnungen is 0.00 -
+		//or, where no Verrechnung has been recorded yet.
+		//The following block was first added to arzttarife_ch...Validator.checkBill().
+		//But as it is apparently not called over there when I create an invoice for a case,
+		//I copy/adopt this code over to Rechnung.build(); where other coarse checks are already located (and used) as well.
+		//In the long term, I guess that this code here should replace the code over there. Best bet will be to ask Gerry/Niklaus.
+		System.out.println("js Rechnung: build(): Check whether all consultations contain Verrechnungen > 0 and a total sum > 0");
+		System.out.println("js Rechnung: build(): TODO: This functionality might possibly be moved to Fall.isValid()");
+		System.out.println("js Rechnung: build(): TODO: or even by definition of Abrechnungsregeln outside of the program.");
+		System.out.println("js Rechnung: build(): TODO: Möglicherweise muss dieser Test hier noch auf Tarmed-Rechnungen beschränkt werden?");
+		//The unwanted case behandlungen.size()==0 was already caught (and returned from) above.
+		System.out.println("js Rechnung: build(): number of consultations: "+behandlungen.size());
+		for (Konsultation b : behandlungen) {
+			//b.getUmsatz() ist als deprecated geflaggt.
+			//Wenn es wirklich irgendwann einmal nicht mehr gehen sollte, dann kann man den Umsatz auch aufsummieren,
+			//wie es weiter unten getan wird. 
+			if (b.getLeistungen().isEmpty() || b.getUmsatz()==0) {
+				Patient pat=b.getFall().getPatient();
+				return result.add(Result.SEVERITY.WARNING, 1,
+				"Eine Konsultation vom "+b.getDatum().toString()+" für\nPatient Nr. "+pat.getPatCode()+", "+pat.getName()+", "+pat.getVorname()+", "+pat.getGeburtsdatum()+"\n"+
+				"enthält keine verrechneten Leistungen.\n"+
+				"\nDie Ärztekasse würde so eine Rechnung zurückgeben.\nDeshalb erstelle ich sie nicht.\n\nBitte tragen Sie Leistungen für die Konsultation ein, oder verschieben Sie die Konsultation zu einem später zu verrechnenden Fall.", null, true);
+				//js: sadly we can't easily use TarmedRechnung.Messages.Validator_RgWithKonsWithoutBillablesNorRevenue
+				//as this would cause a major circular references problem. See notes in the import section of this file. 
+			}
+			//Nun muss ich noch die einzelnen Verrechnungsposten auf ==0.00 prüfen.
+			//Beim Eintragen hab ich zwar eine Warnung installiert, aber erstens erfasst die keine alten Verrechnungen,
+			//zweitens aktuell nicht alle möglichen Leistungsarten (sondern nur Tarmed und Medikamente_BAG), und drittens
+			//kann man ja die Warnung auch ignorieren. Also: Prüfen vor dem Verbrauchen einer Rechnungsnummer.
+			else {
+				List<Verrechnet> lstg = b.getLeistungen();
+			
+				for (Verrechnet l : lstg) {
+					if (l.getNettoPreis().isZero()) {
+						Patient pat=b.getFall().getPatient();
+						return result.add(Result.SEVERITY.WARNING, 1,
+						"Eine Konsultation vom "+b.getDatum().toString()+" für\nPatient Nr. "+pat.getPatCode()+", "+pat.getName()+", "+pat.getVorname()+", "+pat.getGeburtsdatum()+"\n"+
+						"enthält mindestens eine Leistung zum Preis 0.00.\n"+
+						"\nDie Ärztekasse würde so eine Rechnung zurückgeben.\nDeshalb erstelle ich sie nicht.\n\nBitte prüfen Sie die verrechneten Leistungen, oder verschieben Sie die Konsultation zu einem später zu verrechnenden Fall.", null, true);
+					}
+				}
+			}
+		}
+		
 		Rechnung ret = new Rechnung();
 		ret.create(null);
 		TimeTool startDate = new TimeTool("31.12.2999");

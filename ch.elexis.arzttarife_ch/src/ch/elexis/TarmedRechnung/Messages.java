@@ -130,6 +130,8 @@ public class Messages extends NLS {
 	
 	public static String Validator_NoDiagnosis;
 	
+	public static String Validator_RgWithKonsWithoutBillablesNorRevenue; //201303130500js: Lets check whether a consultation contains a non-Zero sum of recorded Verrechnungen.
+	
 	public static String Validator_NoEAN;
 	
 	public static String Validator_NoEAN2;
