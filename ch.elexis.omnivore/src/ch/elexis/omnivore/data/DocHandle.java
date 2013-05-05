@@ -20,6 +20,9 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.text.MessageFormat;
 
+import java.security.SecureRandom;		//20130411js: Omnivore_js: To generate random string for unique_temp_ID
+import java.math.BigInteger;						//20130411js: Omnivore_js: To generate random string for unique_temp_ID
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.program.Program;
 
@@ -36,6 +39,7 @@ import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
 
 import ch.elexis.omnivore.preferences.PreferencePage;
+
 
 
 public class DocHandle extends PersistentObject implements IOpaqueDocument {
@@ -158,7 +162,71 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 			if (r != -1) {
 				ext = typname.substring(r + 1);
 			}
-			File temp = File.createTempFile("omni_", "_vore." + ext); //$NON-NLS-1$ //$NON-NLS-2$
+			
+  			//20130411js: Make the temporary filename configurable
+			StringBuffer configured_temp_filename=new StringBuffer();
+			System.out.println("Omnivore_js:DocHandle: configured_temp_filename="+configured_temp_filename.toString());
+			configured_temp_filename.append(PreferencePage.getOmnivore_jsTemp_Filename_Element("constant1",""));
+			System.out.println("Omnivore_js:DocHandle: configured_temp_filename="+configured_temp_filename.toString());
+			configured_temp_filename.append(PreferencePage.getOmnivore_jsTemp_Filename_Element("PID",getPatient().getKuerzel()));	//getPatient() liefert in etwa: ch.elexis.com@1234567; getPatient().getId() eine DB-ID; getPatient().getKuerzel() die Patientennummer.
+			System.out.println("Omnivore_js:DocHandle: configured_temp_filename="+configured_temp_filename.toString());
+			configured_temp_filename.append(PreferencePage.getOmnivore_jsTemp_Filename_Element("fn",getPatient().getName()));
+			System.out.println("Omnivore_js:DocHandle: configured_temp_filename="+configured_temp_filename.toString());
+			configured_temp_filename.append(PreferencePage.getOmnivore_jsTemp_Filename_Element("gn",getPatient().getVorname()));
+			System.out.println("Omnivore_js:DocHandle: configured_temp_filename="+configured_temp_filename.toString());
+			configured_temp_filename.append(PreferencePage.getOmnivore_jsTemp_Filename_Element("dob",getPatient().getGeburtsdatum()));
+			System.out.println("Omnivore_js:DocHandle: configured_temp_filename="+configured_temp_filename.toString());
+
+			configured_temp_filename.append(PreferencePage.getOmnivore_jsTemp_Filename_Element("dt",getTitle()));				//not more than 80 characters, laut javadoc
+			System.out.println("Omnivore_js:DocHandle: configured_temp_filename="+configured_temp_filename.toString());
+			configured_temp_filename.append(PreferencePage.getOmnivore_jsTemp_Filename_Element("dk",getKeywords()));
+			System.out.println("Omnivore_js:DocHandle: configured_temp_filename="+configured_temp_filename.toString());
+			//Da könnten auch noch Felder wie die Document Create Time etc. rein - siehe auch unten, die Methoden getPatient() etc.
+			
+			configured_temp_filename.append(PreferencePage.getOmnivore_jsTemp_Filename_Element("dguid",getGUID()));
+			System.out.println("Omnivore_js:DocHandle: configured_temp_filename="+configured_temp_filename.toString());
+			
+			//N.B.: We may NOT REALLY assume for sure that another filename, derived from a createTempFile() result, where the random portion would be moved forward in the name, may also be guaranteed unique!
+			//So *if* we should use createTempFile() to obtain such a filename, we should put constant2 away from configured_temp_filename and put it in the portion provided with "ext", if a unique_temp_id was requested.
+			//And, we should probably not cut down the size of that portion, so it would be best to do nothing for that but offer a checkbox.
+			
+			//Es muss aber auch gar nicht mal unique sein - wenn die Datei schon existiert UND von einem anderen Prozess, z.B. Word, mit r/w geöffnet ist, erscheint ein sauberer Dialog mit einer Fehlermeldung. Wenn sie nicht benutzt wird, kann sie überschrieben werden.
+			
+			//Der Fall, dass hier auf einem Rechner / von einem User bei dem aus Daten erzeugten Filenamen zwei unterschiedliche Inhalte mit gleichem Namen im gleichen Tempdir gleichzeitig nur r/o geöffnet werden und einander in die Quere kommen, dürfte unwahrscheinlich sein.
+			//Wie wohl... vielleicht doch nicht. Wenn da jemand beim selben Patienten den Titel 2x einstellt nach: "Bericht Dr. Müller", und das dann den Filenamen liefert, ist wirklich alles gleich.
+			//So we should ... possibly really add some random portion; or use any other property of the file in that filename (recommendation: e.g. like in AnyQuest Server :-)  )
+			
+			//Ganz notfalls naoch ein Feld mit der Uhrzeit machen... oder die Temp-ID je nach eingestellten num_digits aus den clockticks speisen. Und das File mit try createn, notfalls wiederholen mit anderem clocktick - dann ist das so gut wie ein createTempFile().
+			//For now, I compute my own random portion - by creating a random BigInteger with a sufficient number of bits to represent  PreferencePage.nOmnivore_jsPREF_cotf_element_digits_max decimal digits.
+			//And I accept the low chance of getting an existing random part, i.e. I don't check the file is already there.
+			
+			SecureRandom random = new SecureRandom();
+			int  needed_bits = (int) Math.round(Math.ceil(Math.log(PreferencePage.nOmnivore_jsPREF_cotf_element_digits_max)/Math.log(2)));
+			configured_temp_filename.append(PreferencePage.getOmnivore_jsTemp_Filename_Element("random",new BigInteger(needed_bits , random).toString() ));
+			System.out.println("Omnivore_js:DocHandle: configured_temp_filename="+configured_temp_filename.toString());
+			
+			configured_temp_filename.append(PreferencePage.getOmnivore_jsTemp_Filename_Element("constant2",""));
+			System.out.println("Omnivore_js:DocHandle: configured_temp_filename="+configured_temp_filename.toString());
+			
+			File temp;
+			if (configured_temp_filename.length()>0) {
+				//The following file will have a unique variable part after the configured_temp_filename_and before the .ext,
+				//but will be located in the temporary directory.
+				File uniquetemp = File.createTempFile(configured_temp_filename.toString()+"_","."+ext); //$NON-NLS-1$ //$NON-NLS-2$
+				String temp_pathname=uniquetemp.getParent();
+				uniquetemp.delete(); 
+				
+				//remove the _unique variable part from the temporary filename and create a new file in the same directory as the previously automatically created unique temp file
+				System.out.println(temp_pathname);
+				System.out.println(configured_temp_filename+"."+ext);
+				temp = new File(temp_pathname,configured_temp_filename+"."+ext);
+				temp.createNewFile();
+			}
+			else {
+				//if special rules for the filename are not configured, then generate it simply as before Omnivore_js Version 1.4.4
+				temp = File.createTempFile("omni_", "_vore." + ext); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			
 			temp.deleteOnExit();
 			byte[] b = getBinary("Doc"); //$NON-NLS-1$
 			if (b == null) {
