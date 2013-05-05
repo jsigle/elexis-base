@@ -9,7 +9,6 @@
  *    G. Weirich - initial implementation
  *    M. Descher - adapted layout
  *    
- *  $Id$
  *******************************************************************************/
 
 package ch.elexis.preferences;

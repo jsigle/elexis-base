@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: IPlannable.java 3731 2008-03-19 21:41:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.data;

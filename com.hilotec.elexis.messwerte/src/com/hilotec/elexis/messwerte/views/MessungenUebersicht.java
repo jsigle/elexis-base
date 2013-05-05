@@ -11,7 +11,6 @@
  *    G. Weirich - adapted to Eventhandling API Change in 2.1
  *    M. Descher - added copy function for value, added CSV Export for a Table
  *    
- * $Id: MessungenUebersicht.java 6261 2010-04-13 11:44:32Z marcode79 $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.views;

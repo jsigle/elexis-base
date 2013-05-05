@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: EncounterDisplay.java 6133 2010-02-13 09:24:30Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.views;

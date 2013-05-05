@@ -9,7 +9,6 @@
  *    G. Weirich - initial implementation
  *    M. Descher - added getClassforName()
  * 
- * $Id$
  *******************************************************************************/
 
 package ch.elexis.developer.resources.model;

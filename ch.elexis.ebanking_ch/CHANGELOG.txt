@@ -11,3 +11,5 @@
 	- minor changes due to ticket #1085
 11.10.2012 - 2.0.6.1 - M. Descher
 	- fix for 2.0.6
+17.01.2013 - 2.0.6.3 - M. Descher
+	- fixes according to 1385

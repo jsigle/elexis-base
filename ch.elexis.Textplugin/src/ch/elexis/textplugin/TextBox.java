@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2007-2011, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *    bogdan314 - initial implementation
+ * Sponsor: 
+ *    G. Weirich
+ ******************************************************************************/
 package ch.elexis.textplugin;
 
 import java.io.DataInputStream;
@@ -12,9 +23,6 @@ import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 
-/**
- * @author bogdan314
- */
 public class TextBox extends EStyledText implements PaintListener {
 	
 	public final static int MIN_SIZE = 15;

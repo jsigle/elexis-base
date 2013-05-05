@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AgendaImages.java 5641 2009-08-18 08:45:21Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.agenda.preferences;
 

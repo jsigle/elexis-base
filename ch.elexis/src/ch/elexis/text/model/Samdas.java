@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Samdas.java 5321 2009-05-28 12:06:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text.model;

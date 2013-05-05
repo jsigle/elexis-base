@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: SoftCache.java 6040 2010-02-01 12:54:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data.cache;

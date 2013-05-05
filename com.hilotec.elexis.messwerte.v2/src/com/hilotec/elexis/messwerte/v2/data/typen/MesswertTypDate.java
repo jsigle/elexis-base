@@ -9,7 +9,6 @@
  *    P. Chaubert - initial implementation 
  *    medshare GmbH - adapted to Messwerte V2.1 in February 2012
  *    
- * $Id: MesswertTypDate.java $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.v2.data.typen;

@@ -9,7 +9,6 @@
  *    G. Weirich - initial implementation
  *    M. Descher - orders are now persisted into own table 
  *    
- *    $Id$
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -17,7 +16,6 @@ package ch.elexis.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.elexis.core.PersistenceException;
 import ch.elexis.util.Log;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
@@ -56,7 +54,7 @@ public class Bestellung extends PersistentObject {
 			if (entry.length == 3) {
 				Bestellung b = new Bestellung();
 				if (b.create(nb2.getId())) {
-					b.set(FLD_ITEMS, nb2.get(NamedBlob2.FLD_CONTENTS));
+					b.set(FLD_ITEMS, nb2.getString());
 					logger.log("Moved order " + nb2.getId() + " from HEAP2 to " + TABLENAME,
 						Log.INFOS);
 					nb2.delete();
@@ -71,20 +69,16 @@ public class Bestellung extends PersistentObject {
 	static {
 		addMapping(TABLENAME, "Liste=S:C:Contents"); //$NON-NLS-1$
 		
-		try {
 			// Starting with 2.1.7.rc0 orders are excavated from the HEAP2 table, here
 			// we check whether the table is existing (new method), else we need to call
 			// the merge code
-			load("1");
-		} catch (PersistenceException e) {
+		if (!PersistentObject.tableExists(TABLENAME))
 			initialize();
-		}
 	}
 	
 	public Bestellung(String name, Anwender an){
 		TimeTool t = new TimeTool();
 		create(name + ":" + t.toString(TimeTool.TIMESTAMP) + ":" + an.getId()); //$NON-NLS-1$ //$NON-NLS-2$
-		alItems = new ArrayList<Item>();
 	}
 	
 	@Override
@@ -95,6 +89,7 @@ public class Bestellung extends PersistentObject {
 	}
 	
 	public String asString(ListenTyp type){
+		initItems();
 		StringBuilder ret = new StringBuilder();
 		for (Item i : alItems) {
 			switch (type) {
@@ -116,10 +111,12 @@ public class Bestellung extends PersistentObject {
 	}
 	
 	public List<Item> asList(){
+		initItems();
 		return alItems;
 	}
 	
 	public void addItem(Artikel art, int num){
+		initItems();
 		Item i = findItem(art);
 		if (i != null) {
 			i.num += num;
@@ -129,6 +126,7 @@ public class Bestellung extends PersistentObject {
 	}
 	
 	public Item findItem(Artikel art){
+		initItems();
 		for (Item i : alItems) {
 			if (i.art.getId().equals(art.getId())) {
 				return i;
@@ -138,11 +136,13 @@ public class Bestellung extends PersistentObject {
 	}
 	
 	public void removeItem(Item art){
+		initItems();
 		alItems.remove(art);
 		
 	}
 	
 	public void save(){
+		initItems();
 		StringBuilder sb = new StringBuilder();
 		for (Item i : alItems) {
 			sb.append(i.art.getId()).append(",").append(i.num).append(";"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -150,6 +150,12 @@ public class Bestellung extends PersistentObject {
 		set(FLD_ITEMS, sb.toString());
 	}
 	
+	private void initItems(){
+		if (alItems == null) {
+			load();
+		}
+	}
+
 	public void load(){
 		String[] it = checkNull(get(FLD_ITEMS)).split(";"); //$NON-NLS-1$
 		if (alItems == null) {
@@ -161,7 +167,7 @@ public class Bestellung extends PersistentObject {
 			String[] fld = i.split(","); //$NON-NLS-1$
 			if (fld.length == 2) {
 				Artikel art = Artikel.load(fld[0]);
-				if (art.exists()) {
+				if (art != null && art.exists()) {
 					alItems.add(new Item(art, Integer.parseInt(fld[1])));
 				}
 			}
@@ -176,7 +182,8 @@ public class Bestellung extends PersistentObject {
 	public static Bestellung load(String id){
 		Bestellung ret = new Bestellung(id);
 		if (ret != null) {
-			ret.load();
+			// load items lazy
+			// ret.load();
 		}
 		return ret;
 	}

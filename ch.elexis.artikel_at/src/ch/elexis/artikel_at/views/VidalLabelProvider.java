@@ -9,7 +9,6 @@
  *    G. Weirich - initial implementation
  *    M. Descher - implemented cache
  *    
- *  $Id: VidalLabelProvider.java 6442 2010-06-30 09:49:08Z marcode79 $
  *******************************************************************************/
 package ch.elexis.artikel_at.views;
 

@@ -9,7 +9,6 @@
  *    G. Weirich - initial implementation
  *    M. Descher - modifications for lazy search (Ticket #473)
  *    
- * $Id$
  *******************************************************************************/
 
 package ch.elexis.selectors;

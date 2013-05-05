@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: RnContentProvider.java 5688 2009-08-28 06:26:36Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 

@@ -8,7 +8,6 @@
  * Contributors:
  *    D. Lutz - initial implementation
  * 
- *  $Id: ICodeSelectorTarget.java 6164 2010-02-26 18:17:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;

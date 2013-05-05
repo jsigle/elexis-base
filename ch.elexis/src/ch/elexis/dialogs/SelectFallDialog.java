@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2010, G. Weirich and Elexis
+ * Copyright (c) 2006-2013, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,26 +7,33 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: SelectFallDialog.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ *    M. Descher - Ticket 1378
  *******************************************************************************/
 
 package ch.elexis.dialogs;
 
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 
+import ch.elexis.actions.ElexisEvent;
 import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.actions.ElexisEventListenerImpl;
+import ch.elexis.actions.GlobalActions;
 import ch.elexis.data.Fall;
 import ch.elexis.util.SWTHelper;
 
 public class SelectFallDialog extends TitleAreaDialog {
 	Fall[] faelle;
 	public Fall result;
-	org.eclipse.swt.widgets.List list;
+	List list;
+	private UpdateFallListListener updateFallListener =
+		new UpdateFallListListener(Fall.class, 0xff);
 	
 	public SelectFallDialog(Shell shell){
 		super(shell);
@@ -34,13 +41,25 @@ public class SelectFallDialog extends TitleAreaDialog {
 	
 	@Override
 	protected Control createDialogArea(Composite parent){
-		list = new org.eclipse.swt.widgets.List(parent, SWT.BORDER);
+		Composite ret = new Composite(parent, SWT.None);
+		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		GridLayout gl_ret = new GridLayout(1, false);
+		gl_ret.marginWidth = 0;
+		gl_ret.marginHeight = 0;
+		ret.setLayout(gl_ret);
+		
+		list = new List(ret, SWT.BORDER);
 		list.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		faelle = ElexisEventDispatcher.getSelectedPatient().getFaelle();
-		for (Fall f : faelle) {
-			list.add(f.getLabel());
-		}
-		return list;
+		
+		reloadFaelleList();
+		
+		ToolBarManager tbManager = new ToolBarManager(SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP);
+		tbManager.add(GlobalActions.neuerFallAction);
+		tbManager.createControl(ret);
+		
+		ElexisEventDispatcher.getInstance().addListeners(updateFallListener);
+		
+		return ret;
 	}
 	
 	@Override
@@ -60,7 +79,34 @@ public class SelectFallDialog extends TitleAreaDialog {
 			result = faelle[sel];
 		}
 		
+		ElexisEventDispatcher.getInstance().removeListeners(updateFallListener);
 		super.okPressed();
+	}
+	
+	@Override
+	protected void cancelPressed(){
+		ElexisEventDispatcher.getInstance().removeListeners(updateFallListener);
+		super.cancelPressed();
+	}
+	
+	private void reloadFaelleList(){
+		list.removeAll();
+		faelle = ElexisEventDispatcher.getSelectedPatient().getFaelle();
+		for (Fall f : faelle) {
+			list.add(f.getLabel());
+		}
+	}
+	
+	private class UpdateFallListListener extends ElexisEventListenerImpl {
+		
+		UpdateFallListListener(final Class<?> clazz, int mode){
+			super(clazz, mode);
+		}
+		
+		@Override
+		public void runInUi(ElexisEvent ev){
+			reloadFaelleList();
+		}
 	}
 	
 }

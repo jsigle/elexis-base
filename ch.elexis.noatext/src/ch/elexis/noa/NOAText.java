@@ -9,7 +9,6 @@
  *    G. Weirich   - initial implementation
  *    H. Marlovits - added support for placeholders inside controls
  *    
- *  $Id$
  *******************************************************************************/
 package ch.elexis.noa;
 

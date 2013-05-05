@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedACL.java 4971 2009-01-18 16:54:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;

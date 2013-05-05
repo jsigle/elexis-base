@@ -1,8 +1,20 @@
-// $Id: ExHandler.java 2666 2007-06-29 13:39:32Z danlutz $
+/*******************************************************************************
+ * Copyright (c) 2005-2011, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ *******************************************************************************/
 
 package ch.rgw.tools;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 
 /**
  * Einfacher catch-all Exeption handler. Kann Exceptions anzeigen oder loggen

@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2010, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ * 
+ *******************************************************************************/
 package ch.elexis.importer.aeskulap;
 
 import java.io.File;
@@ -7,7 +18,6 @@ import java.util.HashMap;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import au.com.bytecode.opencsv.CSVReader;
-
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.data.Patient;

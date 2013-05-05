@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: IcpcImporter.java 6097 2010-02-10 18:11:07Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc;

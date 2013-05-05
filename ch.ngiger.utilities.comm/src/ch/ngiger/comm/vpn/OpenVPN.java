@@ -8,7 +8,6 @@
  * Contributors:
  *    Niklaus Giger - initial implementation
  *    
- *  $Id$
  *******************************************************************************/
 package ch.ngiger.comm.vpn;
 

@@ -7,7 +7,6 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * $Id: PhysioLeistungsCodeSelectorFactory.java 5859 2009-12-05 10:54:40Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 

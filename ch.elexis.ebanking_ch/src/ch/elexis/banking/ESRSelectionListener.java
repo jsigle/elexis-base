@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: ESRSelectionListener.java 6050 2010-02-02 16:49:34Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 

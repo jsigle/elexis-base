@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: IDocumentManager.java 5954 2010-01-23 09:34:48Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.services;
 

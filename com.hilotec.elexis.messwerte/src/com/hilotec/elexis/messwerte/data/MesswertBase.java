@@ -8,7 +8,6 @@
  * Contributors:
  *    A. Kaufmann - initial implementation 
  *    
- * $Id: MesswertBase.java 5386 2009-06-23 11:34:17Z rgw_ch $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.data;

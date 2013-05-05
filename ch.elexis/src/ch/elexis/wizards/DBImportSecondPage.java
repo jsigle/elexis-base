@@ -9,7 +9,6 @@
  *    G. Weirich - initial implementation
  *    D. Lutz    - adapted for importing data from other databases
  *    
- *    $Id: DBImportSecondPage.java 5331 2009-05-30 13:01:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.wizards;

@@ -1,18 +1,28 @@
-// $Id: Settings.java 3862 2008-05-05 16:14:14Z rgw_ch $
+/*******************************************************************************
+ * Copyright (c) 2005-2011, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ *******************************************************************************/
 
 package ch.rgw.io;
 
+import java.awt.Rectangle;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.io.*;
+
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Log;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
-
-import java.awt.*;
 
 /**
  * Abstrakte Basisklasse für die Speicherung applikationsspezifischer Daten.<br>

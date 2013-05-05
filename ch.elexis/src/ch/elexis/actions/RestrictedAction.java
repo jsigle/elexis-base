@@ -10,7 +10,6 @@
  *    D. Lutz    - final implementation
  *    G. Weirich adapted for ACE and AutoAdapt
  * 
- * $Id: RestrictedAction.java 6118 2010-02-12 06:15:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;

@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: OOText.java 5551 2009-07-12 17:16:36Z tschaller $
  *******************************************************************************/
 
 package ch.rgw.oowrapper;

@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LaborleistungDetailDisplay.java 4773 2008-12-08 13:37:29Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;

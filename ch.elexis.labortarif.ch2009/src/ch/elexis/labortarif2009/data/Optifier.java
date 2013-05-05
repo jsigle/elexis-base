@@ -1,8 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2009-2011, G. Weirich and medelexis AG
- * All rights reserved.
+ * Copyright (c) 2009, G. Weirich and medelexis AG
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ * 
  *******************************************************************************/
-
 package ch.elexis.labortarif2009.data;
 
 import java.util.List;
@@ -21,8 +27,6 @@ import ch.rgw.tools.Result.SEVERITY;
 import ch.rgw.tools.TimeTool;
 
 public class Optifier implements IOptifier {
-	private static final String DEADLINE = "31.12.2012";
-	
 	/**
 	 * Add and recalculate the various possible amendments
 	 */
@@ -63,7 +67,10 @@ public class Optifier implements IOptifier {
 		try {
 			boolean haveKons = false;
 			TimeTool date = new TimeTool(kons.getDatum());
-			TimeTool deadline = new TimeTool(DEADLINE); //$NON-NLS-1$
+			TimeTool deadline = Hub.globalCfg.getDate(Preferences.OPTIMIZE_ADDITION_DEADLINE);
+			if (deadline == null)
+				deadline = new TimeTool(Preferences.OPTIMIZE_ADDITION_INITDEADLINE);
+
 			if (date.isBefore(new TimeTool("01.07.2009"))) { //$NON-NLS-1$
 				return new Result<Object>(SEVERITY.WARNING, 3, "Code not yet valid", null, false); //$NON-NLS-1$
 			}
@@ -152,7 +159,7 @@ public class Optifier implements IOptifier {
 					if (date.isAfterOrEqual(deadline)) {
 						v4708.delete();
 						return new Result<Object>(SEVERITY.WARNING, 2,
-							"4708.00 only until " + DEADLINE, null, false); //$NON-NLS-1$
+							"4708.00 only until " + deadline.toString(TimeTool.DATE_GER), null, false); //$NON-NLS-1$
 					}
 				}
 			}

@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id$
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -540,7 +539,9 @@ public class SWTHelper {
 	
 	public static Point getStringBounds(Composite c, String s){
 		GC gc = new GC(c);
-		return gc.textExtent(s);
+		Point ret = gc.textExtent(s);
+		gc.dispose();
+		return ret;
 	}
 	
 	/**

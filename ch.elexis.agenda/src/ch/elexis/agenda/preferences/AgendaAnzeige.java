@@ -8,7 +8,6 @@
  * Contributors:
  *    D. Lutz - initial implementation
  *    
- * $Id: AgendaAnzeige.java 5283 2009-05-09 16:45:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.preferences;

@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2010, Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * 	Based on programm version 1.0 of Julian Robichaux, http://www.nsftools.com
+ *    Michael Imhof - adapted
+ *    
+ *******************************************************************************/
+
 package ch.ngiger.comm.ftp;
 
 import java.io.File;
@@ -17,6 +30,7 @@ import ch.elexis.util.SWTHelper;
  * that allows you to make FTP connections and file transfers.
  * <p>
  * Based on programm version 1.0 of Julian Robichaux, http://www.nsftools.com
+ * http://www.nsftools.com/tips/SunFtpWrapper.java
  * 
  * @author Immi
  * @version 1.0

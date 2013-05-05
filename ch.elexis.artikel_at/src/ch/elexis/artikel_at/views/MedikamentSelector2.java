@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: CommonViewer.java 4799 2008-12-10 17:40:59Z psiska $
  *******************************************************************************/
 
 package ch.elexis.artikel_at.views;

@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: ETFDropReceiver.java 6135 2010-02-13 11:03:49Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.text;
 

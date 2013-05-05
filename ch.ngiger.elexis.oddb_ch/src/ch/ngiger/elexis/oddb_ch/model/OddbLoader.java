@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: OddbLoader.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.ngiger.elexis.oddb_ch.model;

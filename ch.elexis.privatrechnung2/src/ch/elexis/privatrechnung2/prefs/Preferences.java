@@ -9,7 +9,6 @@
  *    G. Weirich - initial implementation
  *    D. Lutz    - Adapted from elexis-arzttarife-schweiz to elexis-privatrechnung2
  *    
- * $Id$
  *******************************************************************************/
 
 package ch.elexis.privatrechnung2.prefs;

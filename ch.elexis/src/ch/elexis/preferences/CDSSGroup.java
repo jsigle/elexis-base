@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: CDSSGroup.java 6352 2010-05-12 17:04:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;

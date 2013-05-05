@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TrustCenters.java 6142 2010-02-14 16:37:56Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 

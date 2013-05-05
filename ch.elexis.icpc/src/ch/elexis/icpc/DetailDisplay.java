@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: DetailDisplay.java 4767 2008-12-08 13:34:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc;

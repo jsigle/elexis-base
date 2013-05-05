@@ -1,7 +1,11 @@
 /**
- * (c) 2010 by Niklaus Giger
+ * Copyright (c) 2010 by Niklaus Giger
  * based on importer.java by G. Weirich
- * All rights reserved
+ * Adapted from Viollier to Bioanalytica by Daniel Lutz <danlutz@watz.ch>
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Adapted from Viollier to Bioanalytica by Daniel Lutz <danlutz@watz.ch>
  * Important changes:
@@ -15,7 +19,6 @@
  * -  Improved detection of Patient ID by evaluation the fields PATIENT_ID and PLACER_ORDER_NUMBER
  * -  Improved matching of Names to the database
  * 
- * $Id: Importer.java 396 2007-12-17 05:37:27Z Gerry $
  */
 
 package ch.elexis.laborimport.analytica;
@@ -55,13 +58,12 @@ import ch.elexis.util.Log;
 import ch.elexis.util.Messages;
 import ch.elexis.util.ResultAdapter;
 import ch.elexis.util.SWTHelper;
-import ch.elexis.util.UtilFile;
 import ch.ngiger.comm.ftp.FtpSemaException;
 import ch.ngiger.comm.ftp.FtpServer;
 import ch.rgw.tools.Result;
+import ch.rgw.tools.Result.SEVERITY;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
-import ch.rgw.tools.Result.SEVERITY;
 
 public class Importer extends ImporterPage {
 	public static final String MY_LAB = "Analytica"; //$NON-NLS-1$

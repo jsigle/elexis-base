@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Tree.java 5022 2009-01-23 16:34:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.rgw.tools;

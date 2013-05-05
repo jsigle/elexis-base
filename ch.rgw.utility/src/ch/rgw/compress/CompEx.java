@@ -1,13 +1,23 @@
-// $Id: CompEx.java 392 2006-05-30 05:20:39Z rgw_ch $
-/*
- * Created on 18.04.2005
+/*******************************************************************************
+ * Copyright (c) 2005-2011, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
- */
+ *******************************************************************************/
+
 package ch.rgw.compress;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;

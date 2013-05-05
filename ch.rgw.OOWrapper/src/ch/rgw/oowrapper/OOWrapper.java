@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: OOWrapper.java 1047 2006-10-05 21:05:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.rgw.oowrapper;

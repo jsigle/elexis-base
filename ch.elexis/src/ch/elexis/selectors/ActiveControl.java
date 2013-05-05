@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ActiveControl.java 6163 2010-02-26 06:20:50Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.selectors;
 

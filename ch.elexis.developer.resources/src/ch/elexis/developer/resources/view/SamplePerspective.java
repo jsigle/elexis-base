@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: SamplePerspective.java 6128 2010-02-12 16:05:28Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.developer.resources.view;
 

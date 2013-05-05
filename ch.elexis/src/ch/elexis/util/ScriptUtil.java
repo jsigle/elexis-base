@@ -9,7 +9,6 @@
  *    G. Weirich - initial implementation
  *    A. Kaufmann - Allow extraction of arbitrary fields
  *    
- * $Id$
  *******************************************************************************/
 
 package ch.elexis.util;

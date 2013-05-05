@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ApplicationWorkbenchWindowAdvisor.java 5814 2009-11-10 22:04:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;

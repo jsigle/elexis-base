@@ -1,10 +1,23 @@
-// $Id: VersionedResource.java 394 2006-05-30 15:05:01Z rgw_ch $
-/*
- * Created on 09.10.2005
- */
+/*******************************************************************************
+ * Copyright (c) 2005-2011, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ *******************************************************************************/
+
 package ch.rgw.tools;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 
 import ch.rgw.compress.CompEx;

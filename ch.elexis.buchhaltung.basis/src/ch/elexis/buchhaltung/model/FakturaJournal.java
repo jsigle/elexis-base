@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: FakturaJournal.java 1056 2008-12-22 22:23:02Z  $
  *******************************************************************************/
 
 package ch.elexis.buchhaltung.model;

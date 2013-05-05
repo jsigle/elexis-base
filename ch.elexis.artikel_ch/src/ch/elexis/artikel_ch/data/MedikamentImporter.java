@@ -9,7 +9,6 @@
  *    G. Weirich - initial implementation
  *    G. Weirich 1/08 - major redesign to implement IGM updates etc.
  * 
- *  $Id$
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.data;

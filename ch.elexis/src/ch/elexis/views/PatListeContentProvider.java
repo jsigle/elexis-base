@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PatListeContentProvider.java 5329 2009-05-30 09:44:17Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 

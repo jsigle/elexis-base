@@ -27,7 +27,7 @@ public class ESRLabelProvider extends LabelProvider implements ITableLabelProvid
 		
 		switch (columnIndex) {
 		case ESRView.DATUM_INDEX:
-			text = rec.get("Datum"); //$NON-NLS-1$
+			text = rec.get(ESRRecord.FLD_DATE); //$NON-NLS-1$
 			break;
 		case ESRView.RN_NUMMER_INDEX:
 			Rechnung rn = rec.getRechnung();

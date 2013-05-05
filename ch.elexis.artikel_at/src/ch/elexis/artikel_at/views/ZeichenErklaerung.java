@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ZeichenErklaerung.java 6337 2010-05-05 11:07:19Z marcode79 $
  *******************************************************************************/
 package ch.elexis.artikel_at.views;
 

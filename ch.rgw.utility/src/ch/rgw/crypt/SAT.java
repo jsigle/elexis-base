@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: SAT.java 4317 2008-08-27 05:19:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.rgw.crypt;

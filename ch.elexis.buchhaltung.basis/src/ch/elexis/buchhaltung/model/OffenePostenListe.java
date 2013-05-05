@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: OffenePostenListe.java 1057 2008-12-22 22:25:21Z  $
  *******************************************************************************/
 package ch.elexis.buchhaltung.model;
 

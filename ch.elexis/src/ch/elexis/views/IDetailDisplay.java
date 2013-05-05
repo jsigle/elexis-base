@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: IDetailDisplay.java 6041 2010-02-01 13:53:45Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 

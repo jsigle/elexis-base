@@ -1,6 +1,9 @@
 /**
- * (c) 2007-2008 by G. Weirich
- * All rights reserved
+ * Copyright (c) 2007-2010, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
  * From: Laborimport Viollier
  * 
@@ -8,7 +11,6 @@
  * Adapted to Risch by Gerry Weirich
  * Adapted to Viollier by Gerry Weirich
  * 
- * $Id: PreferencePage.java 3516 2008-01-11 10:32:42Z rgw_ch $
  */
 
 package ch.elexis.laborimport.viollier;

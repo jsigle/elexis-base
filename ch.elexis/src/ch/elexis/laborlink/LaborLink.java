@@ -9,7 +9,6 @@
  *    D. Lutz - initial implementation
  *    G. Weirich - Adapted for API changes
  * 
- *    $Id$
  *******************************************************************************/
 
 package ch.elexis.laborlink;

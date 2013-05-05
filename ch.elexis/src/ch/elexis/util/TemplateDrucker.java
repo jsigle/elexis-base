@@ -8,7 +8,6 @@
  * Contributors:
  *    Daniel Lutz - initial implementation, based on RechnungsDrucker
  * 
- * $Id$
  *******************************************************************************/
 
 package ch.elexis.util;

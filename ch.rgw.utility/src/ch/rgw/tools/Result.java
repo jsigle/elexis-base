@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Result.java 4307 2008-08-25 05:18:48Z rgw_ch $
  *******************************************************************************/
 
 package ch.rgw.tools;

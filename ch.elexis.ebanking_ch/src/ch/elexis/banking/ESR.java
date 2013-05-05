@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESR.java 5253 2009-04-17 08:13:50Z tschaller $
  *******************************************************************************/
 package ch.elexis.banking;
 

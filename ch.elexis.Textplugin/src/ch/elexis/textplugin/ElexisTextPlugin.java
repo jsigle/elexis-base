@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2007-2011, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *    bogdan314 - initial implementation
+ * Sponsor: 
+ *    G. Weirich
+ ******************************************************************************/
 package ch.elexis.textplugin;
 
 import java.io.ByteArrayInputStream;
@@ -23,9 +34,6 @@ import org.eclipse.swt.widgets.Composite;
 import ch.elexis.text.ITextPlugin;
 import ch.elexis.text.ReplaceCallback;
 
-/**
- * @author bogdan314
- */
 public class ElexisTextPlugin implements ITextPlugin {
 	
 	private ElexisEditor editor;

@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: FaelleView.java 6005 2010-01-31 10:49:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;

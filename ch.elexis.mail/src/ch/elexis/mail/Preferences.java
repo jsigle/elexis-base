@@ -9,7 +9,6 @@
  *    G. Weirich - initial implementation
  *    R. Zweifel - SMTP-Authentifizierung
  * 
- *  $Id: Preferences.java 5952 2010-01-22 17:17:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.mail;

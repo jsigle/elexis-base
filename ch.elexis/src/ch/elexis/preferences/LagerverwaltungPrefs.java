@@ -9,7 +9,6 @@
  *    D. Lutz - initial implementation
  *    G. Weirich check illegal values
  *    
- *  $Id: LagerverwaltungPrefs.java 3851 2008-04-30 13:40:34Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 

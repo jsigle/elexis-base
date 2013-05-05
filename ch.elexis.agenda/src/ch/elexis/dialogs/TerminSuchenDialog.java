@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: TerminSuchenDialog.java 4724 2008-12-04 10:11:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;

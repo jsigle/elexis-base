@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LazyTree.java 4702 2008-11-30 07:17:57Z rgw_ch $
  *******************************************************************************/
 
 package ch.rgw.tools;

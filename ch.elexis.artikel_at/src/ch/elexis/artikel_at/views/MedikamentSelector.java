@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedikamentSelector.java 5013 2009-01-23 16:31:10Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.artikel_at.views;
 

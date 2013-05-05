@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Interaction.java 5187 2009-02-24 15:47:44Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.data;

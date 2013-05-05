@@ -14,7 +14,6 @@
  *               Some debug/monitoring output added in internal version only;
  *                 commented out again for published version: System.out.print("jsdebug: ...           
  *    
- * $Id: DirectoriesHelper.java 4628 2008-10-23 07:57:50Z michael_imhof $
  *******************************************************************************/
 
 package ch.medshare.elexis.directories;

@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: DBLog.java 5828 2009-11-19 11:46:25Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;

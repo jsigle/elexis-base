@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ACLContributor.java 4972 2009-01-18 16:54:18Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.befunde;
 

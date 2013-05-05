@@ -10,7 +10,6 @@
  *    A. Kaufmann - copied from befunde-Plugin and adapted to new data structure 
  *    P. Chaubert - adapted to Messwerte V2
  *    
- * $Id: MessungFactory.java 5386 2009-06-23 11:34:17Z rgw_ch $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.v2.data;

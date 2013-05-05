@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ArtikelLabelProvider.java 5330 2009-05-30 11:24:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.artikel;

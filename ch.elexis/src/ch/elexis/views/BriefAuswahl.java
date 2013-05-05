@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: BriefAuswahl.java 6155 2010-02-20 15:36:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -48,6 +47,7 @@ import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
+import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
@@ -312,7 +312,11 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 							new DocumentSelectDialog(getViewSite().getShell(), Hub.actMandant,
 								DocumentSelectDialog.TYPE_CREATE_DOC_WITH_TEMPLATE);
 						if (bs.open() == Dialog.OK) {
-							tv.createDocument(bs.getSelectedDocument(), bs.getBetreff());
+							// trick: just supply a dummy address for creating the doc
+							Kontakt address = null;
+							if (DocumentSelectDialog.getDontAskForAddresseeForThisTemplate(bs.getSelectedDocument()))
+								address = Kontakt.load("-1");
+							tv.createDocument(bs.getSelectedDocument(), bs.getBetreff(), address);
 							tv.setName();
 							CTabItem sel = ctab.getSelection();
 							if (sel != null) {

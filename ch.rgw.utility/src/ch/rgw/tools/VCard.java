@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: VCard.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 package ch.rgw.tools;
 

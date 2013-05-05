@@ -1,4 +1,21 @@
-//$Id: GnuPG.java 4442 2008-09-25 20:30:29Z rgw_ch $
+/**
+ * A class that implements PGP interface for Java.
+ * <P>
+ * 
+ * It calls gpg (GnuPG) program to do all the PGP commands. $Id: GnuPG.java 4440 2008-09-25
+ * 12:18:51Z rgw_ch $
+ * 
+ * @author Yaniv Yemini, January 2004.
+ * @author Based on a class GnuPG by John Anderson, which can be found
+ * @author at: http://lists.gnupg.org/pipermail/gnupg-devel/2002-February/018098.html
+ * @author modified for use in JBother by Andrey Zakirov, February 2005
+ * @created March 9, 2005
+ * @version 0.5.1
+ * @see GnuPG - http://www.gnupg.org/
+ * 
+ *      Modified 2006/10 by G. Weirich for use in Elexis
+ */
+
 package ch.rgw.crypt;
 
 import java.io.BufferedReader;
@@ -19,24 +36,6 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
-
-/**
- * A class that implements PGP interface for Java.
- * <P>
- * 
- * It calls gpg (GnuPG) program to do all the PGP commands. $Id: GnuPG.java 4440 2008-09-25
- * 12:18:51Z rgw_ch $
- * 
- * @author Yaniv Yemini, January 2004.
- * @author Based on a class GnuPG by John Anderson, which can be found
- * @author at: http://lists.gnupg.org/pipermail/gnupg-devel/2002-February/018098.html
- * @author modified for use in JBother by Andrey Zakirov, February 2005
- * @created March 9, 2005
- * @version 0.5.1
- * @see GnuPG - http://www.gnupg.org/
- * 
- *      Modified 2006/10 by G. Weirich for use in Elexis
- */
 
 public class GnuPG implements Cryptologist {
 	

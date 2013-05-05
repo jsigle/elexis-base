@@ -12,7 +12,6 @@
  *    P. Chaubert - adapted to Messwerte V2
  *    medshare GmbH - adapted to Messwerte V2.1 in February 2012
  *    
- * $Id: DataAccessor.java 6200 2010-03-16 07:26:09Z michael_imhof $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.v2.data;

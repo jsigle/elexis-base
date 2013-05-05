@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007-2011, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     G. Weirich - initial API and implementation
+ ******************************************************************************/
 package ch.elexis.text;
 
 import org.eclipse.osgi.util.NLS;
@@ -17,6 +27,7 @@ public class Messages extends NLS {
 	public static String TextContainer_All;
 	public static String TextContainer_BadFieldDefinition;
 	public static String TextContainer_BadVariableFormat;
+	public static String TextContainer_DontAskForAddressee;
 	public static String TextContainer_EmptyDocument;
 	public static String TextContainer_ErroneousLetter;
 	public static String TextContainer_FieldTypeForContactsOnly;

@@ -11,7 +11,6 @@
  *    M. Descher - Override createContents to include Tab title
  *    G. Weirich - added layout options
  *    
- * $Id: MessungBearbeiten.java 6259 2010-04-09 09:58:29Z marcode79 $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.views;

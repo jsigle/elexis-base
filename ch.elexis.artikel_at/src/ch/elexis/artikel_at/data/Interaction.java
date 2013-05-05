@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Interaction.java 5183 2009-02-24 15:47:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_at.data;

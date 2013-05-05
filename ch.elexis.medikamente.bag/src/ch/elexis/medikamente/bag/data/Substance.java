@@ -8,8 +8,8 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Interaction.java 3188 2007-09-23 06:53:52Z rgw_ch $
  *******************************************************************************/
+
 package ch.elexis.medikamente.bag.data;
 
 import java.util.Collection;

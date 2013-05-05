@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PreferenceInitializer.java 5755 2009-09-26 19:16:57Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 

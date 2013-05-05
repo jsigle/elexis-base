@@ -10,7 +10,6 @@
  *    G. Weirich - additional methods
  *    medshare GmbH - XML validator
  *    
- *  $Id: XMLTool.java 5206 2009-03-15 23:20:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.rgw.tools;

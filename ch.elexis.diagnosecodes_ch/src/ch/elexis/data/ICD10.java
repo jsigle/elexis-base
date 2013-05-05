@@ -9,7 +9,6 @@
  *    G. Weirich - initial implementation
  *    M. Descher / MEDEVIT - minor refactorings
  *    
- *    $Id$
  *******************************************************************************/
 
 package ch.elexis.data;

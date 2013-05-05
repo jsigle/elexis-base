@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: Stickers.java 6178 2010-03-01 17:25:51Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -125,7 +124,8 @@ public class Stickers extends PreferencePage implements IWorkbenchPreferencePage
 			}
 		});
 		for (Sticker et : lEtiketten) {
-			combo.add(et.getLabel());
+			if (et.getVisibility())
+				combo.add(et.getLabel());
 		}
 		// new Label(ret,SWT.NONE).setText("Anzeige");
 		Composite bottom = new Composite(ret, SWT.NONE);
@@ -262,7 +262,7 @@ public class Stickers extends PreferencePage implements IWorkbenchPreferencePage
 	public void init(IWorkbench workbench){
 		Query<Sticker> qbe = new Query<Sticker>(Sticker.class);
 		lEtiketten = qbe.execute();
-		if (lEtiketten != null) {
+ 		if (lEtiketten != null) {
 			
 		} else {
 			lEtiketten = new LinkedList<Sticker>();

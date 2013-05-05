@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ImporterHost.java 2444 2007-05-28 18:50:44Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;

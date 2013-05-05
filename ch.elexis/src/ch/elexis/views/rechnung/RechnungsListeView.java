@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsListeView.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -26,6 +25,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
@@ -47,6 +48,9 @@ import ch.elexis.util.ViewMenus;
 import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.SimpleWidgetProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;
+import ch.elexis.util.viewers.CommonViewer.DoubleClickListener;
+import ch.elexis.views.FallDetailView;
+import ch.elexis.views.PatientDetailView2;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.Tree;
 
@@ -96,6 +100,37 @@ public class RechnungsListeView extends ViewPart implements ElexisEventListener 
 		// Nummer","Name","Vorname","Betrag");
 		cv.create(vc, comp, SWT.BORDER, getViewSite());
 		
+		cv.addDoubleClickListener(new DoubleClickListener() {
+			@Override
+			public void doubleClicked(PersistentObject obj, CommonViewer cv){
+				if (obj instanceof Patient) {
+					try {
+						ElexisEventDispatcher.fireSelectionEvent((Patient) obj);
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+							.showView(PatientDetailView2.ID);
+					} catch (PartInitException e) {
+						e.printStackTrace();
+					}
+				} else if (obj instanceof Fall) {
+					try {
+						ElexisEventDispatcher.fireSelectionEvent((Fall) obj);
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+							.showView(FallDetailView.ID);
+					} catch (PartInitException e) {
+						e.printStackTrace();
+					}
+				} else if (obj instanceof Rechnung) {
+					try {
+						ElexisEventDispatcher.fireSelectionEvent((Rechnung) obj);
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+							.showView(RnDetailView.ID);
+					} catch (PartInitException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+
 		Composite bottom = new Composite(comp, SWT.NONE);
 		
 		RowLayout rowLayout = new RowLayout();

@@ -8,7 +8,6 @@
  * Contributors:
  *    D. Lutz - initial implementation
  *    
- * $Id: OrderImportDialog.java 5822 2009-11-13 07:44:41Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 

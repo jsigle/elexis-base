@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ODDBView.java 3681 2008-02-15 17:47:31Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 

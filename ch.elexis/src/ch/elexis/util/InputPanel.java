@@ -9,7 +9,6 @@
  *    G. Weirich - initial implementation
  *    D. Lutz	 - DBBased Importer
  *    
- * $Id: ImporterPage.java 5171 2009-02-21 19:51:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;

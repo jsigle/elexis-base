@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: IACLContributor.java 4967 2009-01-18 16:52:11Z rgw_ch $
  *******************************************************************************/
 
 // This interface is to be used with the ACLContribution expension point

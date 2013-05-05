@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LabSettings.java 3722 2008-03-14 06:15:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;

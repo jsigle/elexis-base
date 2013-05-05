@@ -8,7 +8,6 @@
  * Contributors:
  *    C. Bruegger - initial implementation
  *    
- * $Id$
  *******************************************************************************/
 
 package ch.elexis.agenda.data;

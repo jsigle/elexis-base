@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id$
  *******************************************************************************/
 
 package ch.elexis.core.data;
@@ -45,5 +44,20 @@ public interface ISticker extends Comparable<ISticker> {
 	public abstract List<String> getClassesForSticker();
 	
 	public abstract int compareTo(ISticker o);
+	
+	/**
+	 * get the current visibility of this sticker to the end-user
+	 * 
+	 * @return true if the sticker should be shown in the user interface, false if not
+	 * @author marlovitsh
+	 */
+	public abstract boolean getVisibility();
+	
+	/**
+	 * set the current visibility of this sticker to the end-user param visibility new visibility
+	 * 
+	 * @author marlovitsh
+	 */
+	public abstract void setVisibility(boolean visibility);
 	
 }

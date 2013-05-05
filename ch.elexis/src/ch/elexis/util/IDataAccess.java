@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: IDataAccess.java 6196 2010-03-14 12:17:03Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;

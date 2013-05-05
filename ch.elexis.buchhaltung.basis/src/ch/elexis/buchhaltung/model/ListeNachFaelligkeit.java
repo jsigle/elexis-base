@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: ListeNachFaelligkeit.java 1058 2008-12-23 09:09:52Z  $
  *******************************************************************************/
 package ch.elexis.buchhaltung.model;
 

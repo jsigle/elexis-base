@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: FlatDataLoader.java 6178 2010-03-01 17:25:51Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;

@@ -8,7 +8,6 @@
  * Contributors:
  *    Daniel Lutz - initial implementation
  *    
- *  $Id: AccountListView.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;

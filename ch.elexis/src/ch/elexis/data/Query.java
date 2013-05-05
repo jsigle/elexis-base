@@ -9,7 +9,6 @@
  *    G. Weirich - initial implementation
  *    D. Lutz    - case insenitive add()
  * 
- * $Id$
  *******************************************************************************/
 
 package ch.elexis.data;

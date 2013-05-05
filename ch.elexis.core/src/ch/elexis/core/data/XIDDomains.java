@@ -8,7 +8,6 @@
  * Contributors:
  *    M. Descher - Initial implementation; Extraction of Xid.java
  * 
- * $Id$
  *******************************************************************************/
 package ch.elexis.core.data;
 

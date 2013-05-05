@@ -8,7 +8,6 @@
  * Contributors:
  *    Daniel Lutz - initial implementation based on RnPrintView
  *
- * $Id: KGPrintView.java 6227 2010-03-18 14:02:17Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.views;

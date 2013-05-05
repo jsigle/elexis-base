@@ -13,7 +13,6 @@
  *    P. Chaubert - adapted to Messwerte V2
  *    medshare GmbH - adapted to Messwerte V2.1 in February 2012
  *    
- * $Id: MessungenUebersicht.java 6261 2010-04-13 11:44:32Z marcode79 $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.v2.views;

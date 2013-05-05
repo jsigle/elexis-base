@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: RnOutputDialog.java 5787 2009-10-29 13:49:41Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;

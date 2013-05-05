@@ -6,7 +6,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: ServiceElement.java 5880 2009-12-19 19:25:22Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange.elements;
 

@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ACLPreferenceTree.java 6117 2010-02-12 06:15:09Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences.inputs;
 

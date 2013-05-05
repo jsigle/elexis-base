@@ -42,6 +42,7 @@ import java.util.zip.ZipOutputStream;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -217,6 +218,11 @@ public abstract class PersistentObject implements IPersistentObject {
 		log.log("Verzeichnis Demo-Datenbank via Hub.getBasePath(): " + demo.getAbsolutePath(),
 			Log.INFOS);
 		log.log("osgi.install.area: " + System.getProperty("osgi.install.area"), Log.INFOS);
+		String demo2path = org.eclipse.core.runtime.Platform.getInstanceLocation().getURL().getPath()+ "demoDB";
+		File demo2 = new File(demo2path);
+		if (demo2.exists()) {
+			demo = demo2;
+		}
 		
 		if (!demo.exists()) {
 			URI demoName = URI.create(System.getProperty("osgi.install.area"));

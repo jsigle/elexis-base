@@ -8,7 +8,6 @@
  * Contributors:
  *    Daniel Lutz - initial implementation based on RnPrintView
  *
- * $Id: KompendiumView.java 5322 2009-05-29 10:59:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;

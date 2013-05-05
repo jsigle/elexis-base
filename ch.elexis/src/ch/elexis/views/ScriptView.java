@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ScriptView.java 6134 2010-02-13 09:51:29Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -17,6 +16,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -52,6 +52,7 @@ import ch.elexis.data.Script;
 import ch.elexis.scripting.ScriptEditor;
 import ch.elexis.util.PersistentObjectDragSource;
 import ch.elexis.util.SWTHelper;
+import ch.elexis.util.SortedList;
 import ch.elexis.util.ViewMenus;
 import ch.rgw.tools.ExHandler;
 
@@ -81,7 +82,13 @@ public class ScriptView extends ViewPart {
 		tv.setContentProvider(new IStructuredContentProvider() {
 			
 			public Object[] getElements(Object inputElement){
-				return Script.getScripts().toArray();
+				SortedList<Script> sortedScripts = new SortedList<Script>(new ScriptComparator());
+				List<Script> scripts = Script.getScripts();
+				for (int i = 0; i < scripts.size(); i++)	{
+					Script script = scripts.get(i);
+					sortedScripts.add(script);
+				}
+				return sortedScripts.toArray();
 			}
 			
 			public void dispose(){}
@@ -108,6 +115,15 @@ public class ScriptView extends ViewPart {
 			exportScriptAction, removeScriptAction);
 		menu.createMenu(importScriptAction, newScriptAction);
 		tv.setInput(this);
+	}
+	
+	class ScriptComparator implements Comparator<Script>	{
+		@Override
+		public int compare(Script script0, Script script1) {
+			String script0_ID = ((ch.elexis.data.Script)script0).getId().toUpperCase();
+			String script1_ID = ((ch.elexis.data.Script)script1).getId().toUpperCase();
+			return script0_ID.compareTo(script1_ID);
+		}
 	}
 	
 	@Override

@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: ImageChooser.java 6051 2010-02-02 17:25:48Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 

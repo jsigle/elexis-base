@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ContentProvider.java 6418 2010-06-07 10:57:10Z marcode79 $
  *******************************************************************************/
 
 package ch.elexis.artikel_at.model;

@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TextView.java 6228 2010-03-18 14:02:57Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -39,6 +38,7 @@ import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
+import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Person;
 import ch.elexis.dialogs.DocumentSelectDialog;
@@ -150,6 +150,34 @@ public class TextView extends ViewPart implements IActivationListener {
 		actBrief =
 			txt.createFromTemplate(Konsultation.getAktuelleKons(), template, Brief.UNKNOWN, null,
 				subject);
+		setName();
+		if (actBrief == null) {
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Ein Document von Vorlage erstellen. Adressat kann hier angegeben werden
+	 * 
+	 * @param template
+	 *            die Vorlage
+	 * @param subject
+	 *            Titel, kann null sein
+	 * @param adressat
+	 *            der Adressat, der im Dokument angezeigt werden soll
+	 * @return true bei erfolg
+	 */
+	public boolean createDocument(Brief template, String subject, Kontakt adressat){
+		if (template == null) {
+			SWTHelper
+				.showError(
+					Messages.getString("TextView.noTemplateSelected"), Messages.getString("TextView.pleaseSelectTemplate")); //$NON-NLS-1$ //$NON-NLS-2$
+			return false;
+		}
+		actBrief =
+			txt.createFromTemplate(Konsultation.getAktuelleKons(), template, Brief.UNKNOWN,
+				adressat, subject);
 		setName();
 		if (actBrief == null) {
 			return false;

@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: TICode.java 5738 2009-09-16 16:57:21Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;

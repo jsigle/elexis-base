@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ZahlungsJournal.java 1051 2008-12-21 16:10:18Z  $
  *******************************************************************************/
 package ch.elexis.buchhaltung.model;
 

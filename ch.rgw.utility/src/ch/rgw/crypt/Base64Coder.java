@@ -1,5 +1,3 @@
-package ch.rgw.crypt;
-
 /**
  * A Base64 Encoder/Decoder.
  * 
@@ -23,6 +21,8 @@ package ch.rgw.crypt;
  * &nbsp; New method encode(byte[],int) added.<br>
  * &nbsp; New method decode(String) added.<br>
  */
+
+package ch.rgw.crypt;
 
 public class Base64Coder {
 	

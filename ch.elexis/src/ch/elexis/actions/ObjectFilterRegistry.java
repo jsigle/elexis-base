@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich and D. Lutz - initial implementation
  *    
- * $Id: ObjectFilterRegistry.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;

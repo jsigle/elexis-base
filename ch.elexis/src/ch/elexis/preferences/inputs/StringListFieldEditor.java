@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MultilineFieldEditor.java 1281 2006-11-14 16:59:49Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences.inputs;

@@ -8,7 +8,6 @@
  * Contributors:
  *    A. Kaufmann - initial implementation 
  *    
- * $Id: Messwert.java 5766 2009-10-04 13:21:21Z freakypenguin $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.data;

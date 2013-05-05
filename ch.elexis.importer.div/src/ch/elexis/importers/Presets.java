@@ -9,7 +9,6 @@
  *    G. Weirich - initial implementation
  *    Niklaus Giger - Made universal importer really import patients
  *    
- * $Id$
  *******************************************************************************/
 
 package ch.elexis.importers;

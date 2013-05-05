@@ -9,7 +9,6 @@
  *    G. Weirich - initial implementation
  *    M. Descher - extracted from elexis main and adapted for usage
  * 
- *  $Id$
  *******************************************************************************/
 package ch.elexis.eigenartikel;
 

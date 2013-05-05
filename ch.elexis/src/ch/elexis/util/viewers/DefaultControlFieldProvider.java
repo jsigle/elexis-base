@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DefaultControlFieldProvider.java 5739 2009-09-18 09:37:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util.viewers;

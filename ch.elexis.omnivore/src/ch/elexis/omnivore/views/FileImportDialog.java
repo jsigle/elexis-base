@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FileImportDialog.java 1584 2007-01-08 18:05:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.omnivore.views;

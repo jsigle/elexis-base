@@ -11,7 +11,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id$
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;

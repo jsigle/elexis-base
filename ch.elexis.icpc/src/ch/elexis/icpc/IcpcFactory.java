@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: IcpcFactory.java 1715 2007-02-02 16:30:02Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc;

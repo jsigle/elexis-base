@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NotizInputDialog.java 4716 2008-12-04 10:10:01Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatnotizen;

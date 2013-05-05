@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AgendaFarben.java 956 2006-09-16 19:39:08Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.util;
 

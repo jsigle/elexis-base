@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: TICodeDetail.java 4357 2008-09-02 16:31:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;

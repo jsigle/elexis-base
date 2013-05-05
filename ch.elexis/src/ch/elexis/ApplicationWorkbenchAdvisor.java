@@ -9,7 +9,6 @@
  *    G. Weirich - initial implementation
  *    N. Giger - Bypass Login Dialog for development environments
  *    
- *  $Id$
  *******************************************************************************/
 
 package ch.elexis;

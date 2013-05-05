@@ -49,9 +49,9 @@ h2. Use the correct Target Platform
 
 Open the file @ch.ngiger.elexis.opensource/desktop.dev.target@ (from the repository elexis-addons). If you have installed the delta pack to
 
-Click on "Set Target Platform".
+Click on "Set as Target Platform".
 
-!images/setup_1.png!:http://www.rgw.ch/elexis/dox/developer/
+!images/setup_1.png!
 
 This will take some time as it will download over 300 MB of plug-ins.
 
@@ -72,17 +72,17 @@ If you want to test your cool plug-in or more plug-in proceed like this:
 
 * In Eclipse, choose Run-Run configurations. Right click on "Eclipse Application" and select "ch.elexis.branding.product". Change it to a convenient name, eg. "Elexis Praxis"
 
-!images/runconfig1.png!:http://www.rgw.ch/elexis/dox/developer/
+!images/runconfig1.png!
 
 Then, go to the tab "Arguments":
 
-!images/runconfig2.png!:http://www.rgw.ch/elexis/dox/developer/
+!images/runconfig2.png!
 
 * If you want use the demo database to play with some real data, unpack the "demoDB_elexis_2.1.5.4.zip":https://downloads.sourceforge.net/project/elexis/elexis%20full%20installation/Elexis-2.1.5.4/demoDB_elexis_2.1.5.4.zip?r=&ts=1354451696&use_mirror=switch into the sub-directory @.metadata@ of the "Location" specified.
 * If you do not change anything, elexis will run in the default locale of your operating system. If you want to try a different locale and language, you can add an -nl parameter in the upper box "Program arguments". The lower box "VM arguments" can be left empty for the beginning.
 * Proceed to the tab "Plug-Ins"
 
-!images/runconfig3.png!:http://www.rgw.ch/elexis/dox/developer/
+!images/runconfig3.png!
 
 * Select the Plugins you want to include (at least those above)
 * Click "add required plugins"

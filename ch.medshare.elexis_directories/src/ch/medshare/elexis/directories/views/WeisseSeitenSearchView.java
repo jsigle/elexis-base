@@ -8,7 +8,6 @@
  * Contributors:
  *    M. Imhof - initial implementation
  *    
- * $Id: WeisseSeitenSearchView.java 3349 2007-11-16 13:26:57Z michael_imhof $
  *******************************************************************************/
 
 package ch.medshare.elexis.directories.views;

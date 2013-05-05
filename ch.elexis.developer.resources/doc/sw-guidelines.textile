@@ -125,7 +125,7 @@ h3. Java Codestyle
 Adhering to our style guide is easy in eclipse:
 In _Window-Preferences-Java-Codestyle-Formatter_ select _import..._ and import the elexis formatter profile "ElexisFormatterProfile.xml":ElexisFormatterProfile.xml in this directory.
 
-!images/setup_2.png!:http://www.rgw.ch/elexis/dox/developer/
+!images/setup_2.png!
 
 Then, anytime or at least before comitting your code, press CTRL-SHIFT-F to apply the style.
 

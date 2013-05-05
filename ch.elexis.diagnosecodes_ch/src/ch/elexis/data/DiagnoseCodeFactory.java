@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: DiagnoseCodeFactory.java 1749 2007-02-06 21:04:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;

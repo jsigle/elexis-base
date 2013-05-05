@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: SampleDataType.java 6119 2010-02-12 06:16:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.developer.resources.model;

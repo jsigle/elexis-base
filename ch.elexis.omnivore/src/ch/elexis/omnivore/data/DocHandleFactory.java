@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DocHandleFactory.java 4250 2008-08-08 14:41:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.omnivore.data;

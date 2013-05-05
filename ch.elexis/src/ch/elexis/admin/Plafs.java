@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: Plafs.java 5845 2009-11-28 08:44:19Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.admin;
 

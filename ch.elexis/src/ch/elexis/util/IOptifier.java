@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: IOptifier.java 5361 2009-06-18 12:07:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.util;
 

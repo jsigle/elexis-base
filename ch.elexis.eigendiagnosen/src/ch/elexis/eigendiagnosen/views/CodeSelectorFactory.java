@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: CodeSelectorFactory.java 5023 2009-01-23 16:34:34Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.eigendiagnosen.views;
 

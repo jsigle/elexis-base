@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LaborleistungImporter.java 1632 2007-01-21 14:51:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;

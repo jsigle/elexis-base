@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LabResult.java 2736 2007-07-07 14:07:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -16,6 +15,7 @@ package ch.elexis.views;
 import java.util.logging.Level;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -40,8 +40,8 @@ import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.Heartbeat;
-import ch.elexis.actions.RestrictedAction;
 import ch.elexis.actions.Heartbeat.HeartListener;
+import ch.elexis.actions.RestrictedAction;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.LabResult;
 import ch.elexis.data.Patient;
@@ -261,9 +261,14 @@ public class LabNotSeenView extends ViewPart implements HeartListener {
 				
 				@Override
 				public void doRun(){
-					tv.setAllChecked(true);
-					for (LabResult lr : LabResult.getUnseen()) {
-						lr.removeFromUnseen();
+					if (MessageDialog.openConfirm(getViewSite().getShell(),
+						Messages.getString("LabNotSeenView.reallyMarkCaption"), //$NON-NLS-1$
+						Messages.getString("LabNotSeenView.markAllOfPatientToolTip"))) //$NON-NLS-1$
+						tv.setAllChecked(true);
+					{
+						for (LabResult lr : LabResult.getUnseen()) {
+							lr.removeFromUnseen();
+						}
 					}
 				}
 				

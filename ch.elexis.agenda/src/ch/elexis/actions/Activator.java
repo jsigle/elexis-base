@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  * 
- *  $Id$
  *******************************************************************************/
 package ch.elexis.actions;
 

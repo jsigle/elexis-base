@@ -9,7 +9,6 @@
  *    G. Weirich - initial implementation
  *    D. Lutz    - show records in a table
  *    
- *  $Id$
  *******************************************************************************/
 package ch.elexis.banking;
 

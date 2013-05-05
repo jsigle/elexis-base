@@ -8,7 +8,6 @@
  * Contributors:
  *    St. Schenk - initial implementation
  *    
- * $Id: Services.java 6350 2010-05-10 15:40:26Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;

@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaWeek.java 5311 2009-05-17 14:41:45Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.agenda.ui.week;
 

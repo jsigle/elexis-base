@@ -43,9 +43,13 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.ISaveablePart2;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -54,6 +58,7 @@ import org.eclipse.ui.progress.IProgressService;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEventDispatcher;
 import ch.elexis.actions.RestrictedAction;
@@ -65,20 +70,24 @@ import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.dialogs.KonsZumVerrechnenWizardDialog;
-import ch.elexis.text.TextContainer;
 import ch.elexis.text.ITextPlugin.ICallback;
+import ch.elexis.text.TextContainer;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
 import ch.elexis.util.viewers.BasicTreeContentProvider;
 import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.CommonViewer.DoubleClickListener;
 import ch.elexis.util.viewers.SimpleWidgetProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;
+import ch.elexis.views.FallDetailView;
+import ch.elexis.views.KonsDetailView;
+import ch.elexis.views.PatientDetailView2;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.JdbcLink.Stm;
 import ch.rgw.tools.LazyTree;
+import ch.rgw.tools.LazyTree.LazyTreeListener;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.Tree;
-import ch.rgw.tools.JdbcLink.Stm;
-import ch.rgw.tools.LazyTree.LazyTreeListener;
 
 import com.tiff.common.ui.datepicker.DatePickerCombo;
 
@@ -159,6 +168,38 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 		cLeft.setLayout(new GridLayout());
 		cv.create(vc, cLeft, SWT.NONE, tAll);
 		cv.getViewerWidget().setComparator(new KonsZumVerrechnenViewViewerComparator());
+		
+		cv.addDoubleClickListener(new DoubleClickListener() {
+			@Override
+			public void doubleClicked(PersistentObject obj, CommonViewer cv){
+				if (obj instanceof Patient) {
+					try {
+						ElexisEventDispatcher.fireSelectionEvent((Patient) obj);
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+							.showView(PatientDetailView2.ID);
+					} catch (PartInitException e) {
+						e.printStackTrace();
+					}
+				} else if (obj instanceof Fall) {
+					try {
+						ElexisEventDispatcher.fireSelectionEvent((Fall) obj);
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+							.showView(FallDetailView.ID);
+					} catch (PartInitException e) {
+						e.printStackTrace();
+					}
+				} else if (obj instanceof Konsultation) {
+					try {
+						ElexisEventDispatcher.fireSelectionEvent((Konsultation) obj);
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+							.showView(KonsDetailView.ID);
+					} catch (PartInitException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		
 		right = tk.createForm(sash);
 		Composite cRight = right.getBody();
 		right.setText(Messages.getString("KonsZumVerrechnenView.selected")); //$NON-NLS-1$
@@ -225,6 +266,38 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 			
 		});
 		tvSel.getControl().setMenu(selMenu.createContextMenu(tvSel.getControl()));
+		
+		tvSel.getControl().addListener(SWT.MouseDoubleClick, new Listener() {
+			@Override
+			public void handleEvent(Event event){
+				org.eclipse.swt.widgets.Tree theWidget =
+					(org.eclipse.swt.widgets.Tree) (event.widget);
+				TreeItem obj = theWidget.getSelection()[0];
+				TreeItem parent = obj.getParentItem();
+				String viewID = "";
+				if (parent == null) {
+					// no parent at all -> must be patient
+					viewID = PatientDetailView2.ID;
+				} else {
+					// may be case or cons
+					TreeItem grandpa = parent.getParentItem();
+					if (grandpa == null) {
+						// must be case
+						viewID = FallDetailView.ID;
+					} else {
+						// must be cons
+						viewID = KonsDetailView.ID;
+					}
+				}
+				try {
+					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+						.showView(viewID);
+				} catch (PartInitException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
 		menu = new ViewMenus(getViewSite());
 		menu.createToolbar(refreshAction, wizardAction, printAction, clearAction, null, billAction);
 		menu.createMenu(wizardAction, selectByDateAction);

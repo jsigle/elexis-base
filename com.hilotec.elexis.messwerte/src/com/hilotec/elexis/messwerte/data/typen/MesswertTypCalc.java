@@ -9,7 +9,6 @@
  *    A. Kaufmann - initial implementation
  *    G. Weirich - adapted to new Elexis scripting system by Ver. 2.1
  * 
- * $Id: MesswertTypCalc.java 5766 2009-10-04 13:21:21Z freakypenguin $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.data.typen;

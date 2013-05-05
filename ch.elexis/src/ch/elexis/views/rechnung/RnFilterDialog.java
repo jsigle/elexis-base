@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnFilterDialog.java 5938 2010-01-17 14:31:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;

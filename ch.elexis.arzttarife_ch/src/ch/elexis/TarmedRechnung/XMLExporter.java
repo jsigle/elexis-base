@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java a3cef6cbaa15 2011/08/21 08:21:35 thomashu $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -976,12 +975,12 @@ public class XMLExporter implements IRnOutputter {
 		balance.addContent(vat);
 		invoice.addContent(balance);
 		
-		String esrmode = actMandant.getInfoString(ta.ESR5OR9);
+		String esrmode = actMandant.getRechnungssteller().getInfoString(ta.ESR5OR9);
 		Element esr; // 10400
 		String userdata = rn.getRnId();
 		ESR besr =
-			new ESR(actMandant.getInfoString(ta.ESRNUMBER), actMandant.getInfoString(ta.ESRSUB),
-				userdata, ESR.ESR27);
+			new ESR(actMandant.getRechnungssteller().getInfoString(ta.ESRNUMBER), actMandant
+				.getRechnungssteller().getInfoString(ta.ESRSUB), userdata, ESR.ESR27);
 		
 		// String ESRNumber=m.getInfoString(ta.ESRNUMBER);
 		// String ESRSubid=m.getInfoString(ta.ESRSUB);
@@ -989,7 +988,7 @@ public class XMLExporter implements IRnOutputter {
 		if (esrmode.equals("esr5")) { // esr5 oder esr9 //$NON-NLS-1$
 			esr = new Element("esr5", ns); //$NON-NLS-1$
 			esr.setAttribute(ATTR_PARTICIPANT_NUMBER, besr.makeParticipantNumber(true)); // Teilnehmernummer
-			esr.setAttribute(ATTR_TYPE, actMandant.getInfoString(ta.ESRPLUS)); // 15
+			esr.setAttribute(ATTR_TYPE, actMandant.getRechnungssteller().getInfoString(ta.ESRPLUS)); // 15
 			// oder
 			// 15plus
 			// (mit
@@ -1018,7 +1017,7 @@ public class XMLExporter implements IRnOutputter {
 				Messages.XMLExporter_MandatorErrorText);
 			return null;
 		}
-		String bankid = actMandant.getInfoString(ta.RNBANK);
+		String bankid = actMandant.getRechnungssteller().getInfoString(ta.RNBANK);
 		if (!bankid.equals("")) { // Bankverbindung -> BESR 10480 //$NON-NLS-1$
 			Organisation bank = Organisation.load(bankid);
 			Element eBank = new Element("bank", ns); // 10500 //$NON-NLS-1$
@@ -1031,7 +1030,7 @@ public class XMLExporter implements IRnOutputter {
 		Element eTiers = null;
 		if (tiers.equals(TIERS_GARANT)) {
 			eTiers = new Element(ELEMENT_TIERS_GARANT, ns); // 11020 //$NON-NLS-1$
-			String paymentPeriode = actMandant.getInfoString("rnfrist"); //$NON-NLS-1$
+			String paymentPeriode = actMandant.getRechnungssteller().getInfoString("rnfrist"); //$NON-NLS-1$
 			if (StringTool.isNothing(paymentPeriode)) {
 				paymentPeriode = "30"; //$NON-NLS-1$
 			}
@@ -1049,18 +1048,28 @@ public class XMLExporter implements IRnOutputter {
 		// 11402
 		biller.setAttribute(ATTR_EAN_PARTY,
 			TarmedRequirements.getEAN(actMandant.getRechnungssteller())); // 11402
-		biller.setAttribute("zsr", TarmedRequirements.getKSK(actMandant)); // actMandant.getInfoString //$NON-NLS-1$
+		biller.setAttribute("zsr", TarmedRequirements.getKSK(actMandant.getRechnungssteller())); // actMandant.getInfoString //$NON-NLS-1$
 		// ("KSK"));
 		// // 11403
-		String spec = actMandant.getInfoString(ta.SPEC);
+		String spec = actMandant.getRechnungssteller().getInfoString(ta.SPEC);
 		if (!spec.equals("")) { //$NON-NLS-1$
 			biller.setAttribute("specialty", spec); // 11404 //$NON-NLS-1$
 		}
-		biller.addContent(buildAdressElement(actMandant)); // 11600-11680
+		biller.addContent(buildAdressElement(actMandant.getRechnungssteller())); // 11600-11680
 		eTiers.addContent(biller);
 		
-		Element provider = (Element) biller.clone(); // 11080
-		provider.setName("provider"); //$NON-NLS-1$
+		Element provider = new Element("provider", ns); // 11080 -> 11800 //$NON-NLS-1$
+		// 11802
+		provider.setAttribute(ATTR_EAN_PARTY,
+			TarmedRequirements.getEAN(actMandant)); // 11802
+		provider.setAttribute("zsr", TarmedRequirements.getKSK(actMandant)); // actMandant.getInfoString //$NON-NLS-1$
+		// ("KSK"));
+		// // 11803
+		spec = actMandant.getInfoString(ta.SPEC);
+		if (!spec.equals("")) { //$NON-NLS-1$
+			provider.setAttribute("specialty", spec); // 11804 //$NON-NLS-1$
+		}
+		provider.addContent(buildAdressElement(actMandant)); // 11830-11680
 		eTiers.addContent(provider);
 		
 		Element onlineElement = null; // tschaller: see comments in

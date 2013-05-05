@@ -8,7 +8,6 @@
  * Contributors:
  *    D. Lutz - initial implementation
  *    
- *  $Id: PatientenListeControlFieldProvider.java 5322 2009-05-29 10:59:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util.viewers;

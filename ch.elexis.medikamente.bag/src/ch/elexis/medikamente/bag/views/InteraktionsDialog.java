@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: InteraktionsDialog.java 3182 2007-09-19 05:18:32Z rgw_ch $
  *****************************************************************************/
 
 package ch.elexis.medikamente.bag.views;

@@ -73,6 +73,7 @@ public class TerminLabel extends Composite {
 		lblFontData = lbl.getFont().getFontData()[0];
 		originalFontHeightPoint = lblFontData.getHeight();
 		originalFontHeightPixel = lblGc.getFontMetrics().getHeight();
+		lblGc.dispose();
 		
 		state = new Composite(this, SWT.NONE);
 		state.setLayoutData(new GridData());

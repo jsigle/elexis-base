@@ -117,6 +117,7 @@ public class Leistungscodes extends PreferencePage implements IWorkbenchPreferen
 					Hub.globalCfg.set(key + "/bedingungen", result[3]); //$NON-NLS-1$
 					Hub.globalCfg.set(key + "/fakultativ", result[4]); //$NON-NLS-1$
 					Hub.globalCfg.set(key + "/unused", result[5]); //$NON-NLS-1$
+					Hub.globalCfg.set(key + "/disabled", result[6]); //$NON-NLS-1$
 					systeme = Hub.globalCfg.nodes(CFG_KEY);
 					reload();
 				}
@@ -155,13 +156,14 @@ public class Leistungscodes extends PreferencePage implements IWorkbenchPreferen
 					String ssel = sel.getText(0);
 					for (String s1 : systeme) {
 						if (s1.equals(ssel)) {
-							String[] pre = new String[6];
+							String[] pre = new String[7];
 							pre[0] = s1;
 							pre[1] = Fall.getCodeSystem(s1);
 							pre[2] = Fall.getDefaultPrintSystem(s1);
 							pre[3] = Fall.getRequirements(s1);
 							pre[4] = Fall.getOptionals(s1);
 							pre[5] = Fall.getUnused(s1);
+							pre[6] = "" + isBillingSystemDisabled(s1); //$NON-NLS-1$
 							AbrechnungsTypDialog at = new AbrechnungsTypDialog(getShell(), pre);
 							if (at.open() == Dialog.OK) {
 								String[] result = at.getResult();
@@ -172,6 +174,7 @@ public class Leistungscodes extends PreferencePage implements IWorkbenchPreferen
 								Hub.globalCfg.set(key + "/bedingungen", result[3]); //$NON-NLS-1$
 								Hub.globalCfg.set(key + "/fakultativ", result[4]); //$NON-NLS-1$
 								Hub.globalCfg.set(key + "/unused", result[5]); //$NON-NLS-1$
+								Hub.globalCfg.set(key + "/disabled", result[6]); //$NON-NLS-1$
 								systeme = Hub.globalCfg.nodes(CFG_KEY);
 								reload();
 							}
@@ -226,6 +229,21 @@ public class Leistungscodes extends PreferencePage implements IWorkbenchPreferen
 	}
 	
 	/**
+	 * returns true if the billing system specified by the param is DISabled else returns false
+	 * 
+	 * @param billingSystem
+	 *            String, the name of the billing system to be tested
+	 */
+	public static boolean isBillingSystemDisabled(final String billingSystem){
+		String ret = Hub.globalCfg.get(Leistungscodes.CFG_KEY + "/" //$NON-NLS-1$
+			+ billingSystem + "/disabled", "0"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (ret.equalsIgnoreCase("0")) //$NON-NLS-1$
+			return false;
+		else
+			return true;
+	}
+	
+	/**
 	 * (re)build the table for the billing systems, populate the table with items
 	 */
 	public void reload(){
@@ -238,11 +256,11 @@ public class Leistungscodes extends PreferencePage implements IWorkbenchPreferen
 				TableItem it = new TableItem(table, SWT.NONE);
 				String name = Hub.globalCfg.get(cfgkey + "name", "default"); //$NON-NLS-1$ //$NON-NLS-2$
 				it.setText(0, name);
-				it.setText(1, Hub.globalCfg.get(cfgkey + "leistungscodes", "?")); //$NON-NLS-1$
+				it.setText(1, Hub.globalCfg.get(cfgkey + "leistungscodes", "?")); //$NON-NLS-1$ //$NON-NLS-2$
 				it.setText(2, Hub.globalCfg.get(cfgkey + "standardausgabe", "?")); //$NON-NLS-1$ //$NON-NLS-2$
 				StringBuilder sql = new StringBuilder();
 				TimeTool actdat = new TimeTool();
-				MultiplikatorList multis = new MultiplikatorList("VK_PREISE", name);
+				MultiplikatorList multis = new MultiplikatorList("VK_PREISE", name); //$NON-NLS-1$
 				String tp = Double.toString(multis.getMultiplikator(actdat));
 				if (StringTool.isNothing(tp)) {
 					if (Hub.getSystemLogLevel() > Log.INFOS) {
@@ -316,6 +334,7 @@ public class Leistungscodes extends PreferencePage implements IWorkbenchPreferen
 		Combo changeCombo;
 		String[] cChangeTypeItems;
 		String cCurrentFieldType;
+		String cBilllingSystemDisabled;
 		
 		/**
 		 * 
@@ -529,11 +548,13 @@ public class Leistungscodes extends PreferencePage implements IWorkbenchPreferen
 		 * [4] boolean styled text</li>
 		 * <li>
 		 * [5] String new field type</li>
+		 * <li>
+		 * [6] boolean billing system disabled</li>
 		 */
 		@Override
 		protected void okPressed(){
 			// *** build result String Array
-			result = new String[6];
+			result = new String[7];
 			result[0] = tName.getText();
 			result[1] =
 				(tTextEditor == null || tTextEditor.isDisposed()) ? StringTool.leer : tTextEditor
@@ -545,6 +566,7 @@ public class Leistungscodes extends PreferencePage implements IWorkbenchPreferen
 			result[4] =
 				(chStyled == null || chStyled.isDisposed()) ? "0" : ((chStyled.getSelection()) ? "1" : "0"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			result[5] = cCurrentFieldType;
+			result[6] = cBilllingSystemDisabled;
 			
 			// *** do some validation: needs a name, some characters are not
 			// allowed, no duplicates are allowed
@@ -617,6 +639,7 @@ public class Leistungscodes extends PreferencePage implements IWorkbenchPreferen
 		Text tName;
 		Combo cbLstg;
 		Combo cbRechn;
+		Button cbDisabled;
 		Label lbTaxp;
 		String[] result;
 		MultiplikatorEditor mke;
@@ -646,7 +669,7 @@ public class Leistungscodes extends PreferencePage implements IWorkbenchPreferen
 			ret.setLayoutData(SWTHelper.getFillGridData(1, false, 1, true));
 			ret.setLayout(new GridLayout(1, false));
 			
-			// ****** upper part: three combos, has separator below
+			// ****** upper part: three combos and a checkbox, has separator below
 			Composite upperPartComp = new Composite(ret, SWT.NONE);
 			upperPartComp.setLayoutData(SWTHelper.getFillGridData(1, false, 1, false));
 			upperPartComp.setLayout(new GridLayout(2, false));
@@ -678,6 +701,14 @@ public class Leistungscodes extends PreferencePage implements IWorkbenchPreferen
 			for (IConfigurationElement ic : lo) {
 				cbRechn.add(ic.getAttribute("name")); //$NON-NLS-1$
 			}
+			
+			// *** checkbox if system is disabled
+			new Label(upperPartComp, SWT.NONE).setText(""); //$NON-NLS-1$
+			cbDisabled = new Button(upperPartComp, SWT.CHECK);
+			cbDisabled.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+			cbDisabled.setText(Messages.Leistungscodes_systemDisabled);
+			
+			// *** separator
 			new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(SWTHelper.getFillGridData(
 				2, true, 1, false));
 			
@@ -687,6 +718,11 @@ public class Leistungscodes extends PreferencePage implements IWorkbenchPreferen
 				tName.setText(result[0]);
 				cbLstg.setText(result[1]);
 				cbRechn.setText(result[2]);
+				boolean checked = true;
+				if ((result[6] == null) || (result[6].isEmpty())
+					|| (result[6].equalsIgnoreCase("0")) || (result[6].equalsIgnoreCase("false"))) //$NON-NLS-1$ //$NON-NLS-2$
+					checked = false;
+				cbDisabled.setSelection(checked);
 				name = result[0];
 			}
 			
@@ -858,7 +894,7 @@ public class Leistungscodes extends PreferencePage implements IWorkbenchPreferen
 		 */
 		@Override
 		protected void okPressed(){
-			result = new String[6];
+			result = new String[7];
 			result[0] = tName.getText();
 			result[1] = cbLstg.getText();
 			result[2] = cbRechn.getText();
@@ -867,6 +903,7 @@ public class Leistungscodes extends PreferencePage implements IWorkbenchPreferen
 			if (ldUnused != null) {
 				result[5] = StringTool.join(ldUnused.getAll(), DEFINITIONSDELIMITER);
 			}
+			result[6] = (cbDisabled.getSelection() == true) ? "1" : "0"; //$NON-NLS-1$ //$NON-NLS-2$
 			super.okPressed();
 		}
 		
@@ -888,7 +925,7 @@ public class Leistungscodes extends PreferencePage implements IWorkbenchPreferen
 		final String tempCaseID = "marlovits-14x@8w1"; //$NON-NLS-1$
 		
 		JdbcLink j = PersistentObject.getConnection();
-		String minID = "";
+		String minID = ""; //$NON-NLS-1$
 		try {
 			// *** get just any case
 			minID = j.queryString("select id from faelle limit 1"); //$NON-NLS-1$

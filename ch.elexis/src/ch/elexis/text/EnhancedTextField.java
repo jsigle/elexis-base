@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: EnhancedTextField.java 6247 2010-03-21 06:36:34Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;

@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Substance.java 6380 2010-05-18 11:57:21Z marcode79 $
  *******************************************************************************/
 
 package ch.elexis.artikel_at.data;

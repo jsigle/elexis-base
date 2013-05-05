@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NotesContentProvider.java 5056 2009-01-27 13:04:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.notes;
 

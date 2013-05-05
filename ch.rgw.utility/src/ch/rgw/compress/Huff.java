@@ -1,11 +1,16 @@
-// $Id: Huff.java 66 2006-03-27 14:43:54Z rgw_ch $
+/*******************************************************************************
+ * Copyright (c) 2005-2011, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ *******************************************************************************/
 
 package ch.rgw.compress;
-
-import ch.rgw.compress.HuffmanTree.Node;
-import ch.rgw.io.BitInputStream;
-import ch.rgw.io.BitOutputStream;
-import ch.rgw.tools.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -14,6 +19,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.prefs.Preferences;
+
+import ch.rgw.compress.HuffmanTree.Node;
+import ch.rgw.io.BitInputStream;
+import ch.rgw.io.BitOutputStream;
+import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.IntTool;
 
 /**
  * Simple implementation of the Huffman compression algorithm. Consists solely of static functions.<br>

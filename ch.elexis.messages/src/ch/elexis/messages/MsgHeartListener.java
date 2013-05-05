@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: MsgHeartListener.java 4371 2008-09-04 13:47:51Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.messages;

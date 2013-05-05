@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistungsselektor.java 5021 2009-01-23 16:34:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.views;

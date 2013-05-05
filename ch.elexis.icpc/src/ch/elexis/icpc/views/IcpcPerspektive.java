@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: IcpcPerspektive.java 5196 2009-02-24 16:31:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.views;

@@ -10,7 +10,6 @@
  *    H. Marlovits added noPatientHandled test to avoid flickering on startupwhen
  *                 no patient selected in some cases
  *    
- *  $Id: FallListeView.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -104,7 +103,9 @@ public class FallListeView extends ViewPart implements IActivationListener, ISav
 			fallViewer.getViewerWidget().refresh(false);
 		}
 	};
-	private ElexisEventListenerImpl eeli_fall = new ElexisEventListenerImpl(Fall.class) {
+	private ElexisEventListenerImpl eeli_fall = new ElexisEventListenerImpl(Fall.class,
+		ElexisEvent.EVENT_CREATE | ElexisEvent.EVENT_DELETE | ElexisEvent.EVENT_RELOAD
+			| ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_UPDATE) {
 		
 		public void runInUi(final ElexisEvent ev){
 			Fall f = (Fall) ev.getObject();
@@ -182,7 +183,12 @@ public class FallListeView extends ViewPart implements IActivationListener, ISav
 			public Image getImage(Object element){
 				if (element instanceof Fall) {
 					if (((Fall) element).isOpen()) {
-						return null;
+						// show red/green dot is case invalid/valid
+						if (((Fall) element).isValid()) {
+							return Desk.getImage(Desk.IMG_OK);
+						} else {
+							return Desk.getImage(Desk.IMG_FEHLER);
+						}
 					} else {
 						return iClosed;
 					}

@@ -9,7 +9,6 @@
  *    Daniel Lutz - initial implementation
  *    Gerry Weirich - Programmverzeichnis von OpenOffice auch hier definieren
  *    
- * $Id: OOPrefs.java 2397 2007-05-18 16:17:50Z rgw_ch $
  *******************************************************************************/
 package ch.rgw.oowrapper;
 

@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id$
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -281,5 +280,20 @@ public class Sticker extends PersistentObject implements Comparable<ISticker>, I
 			return o.getWert() - getWert();
 		}
 		return 1;
+	}
+	
+	@Override
+	public boolean getVisibility(){
+		if (getWert() >= 0)
+			return true;
+		else
+			return false;
+	}
+	
+	@Override
+	public void setVisibility(boolean visibility){
+		if (getVisibility() == visibility)
+			return;
+		setWert((visibility == true) ? 0 : -1);
 	}
 }

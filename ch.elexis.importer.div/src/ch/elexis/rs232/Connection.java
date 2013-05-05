@@ -9,7 +9,6 @@
  *    G. Weirich - initial implementation
  *    M. Descher - honor flow control
  *    
- * $Id$
  *******************************************************************************/
 
 package ch.elexis.rs232;

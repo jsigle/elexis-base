@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: Desk.java 3916 2008-05-11 14:48:53Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -149,6 +148,8 @@ public class Desk implements IApplication {
 	public static final String IMG_MOVETOUPPERLIST = "movetoupperlist"; // $NON_NLS-1$ //$NON-NLS-1$
 	/** Move to lower list */
 	public static final String IMG_MOVETOLOWERLIST = "movetolowerlist"; // $NON_NLS-1$ //$NON-NLS-1$
+	/** Arrow down to rect */
+	public static final String IMG_ARROWDOWNTORECT = "arrow_down_to_rect"; // $NON_NLS-1$ //$NON-NLS-1$
 	/** clear input field */
 	public static final String IMG_CLEAR = "cross_small"; // $NON_NLS-1$ //$NON-NLS-1$
 	/** pencil 8px - edit representor **/
@@ -281,6 +282,7 @@ public class Desk implements IApplication {
 				theImageRegistry.put(IMG_ARROWDOWN, getImageDescriptor(IMG_ARROWDOWN));
 				theImageRegistry.put(IMG_MOVETOUPPERLIST, getImageDescriptor(IMG_MOVETOUPPERLIST));
 				theImageRegistry.put(IMG_MOVETOLOWERLIST, getImageDescriptor(IMG_MOVETOLOWERLIST));
+				theImageRegistry.put(IMG_ARROWDOWNTORECT, getImageDescriptor(IMG_ARROWDOWNTORECT));
 				theImageRegistry.put(IMG_CLEAR, getImageDescriptor(IMG_CLEAR));
 			}
 		}

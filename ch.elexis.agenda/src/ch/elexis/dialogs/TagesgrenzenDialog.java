@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: Activator.java 1184 2006-10-29 15:16:31Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 

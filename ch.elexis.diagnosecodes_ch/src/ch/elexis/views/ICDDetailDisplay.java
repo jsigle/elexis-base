@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: ICDDetailDisplay.java 4769 2008-12-08 13:35:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;

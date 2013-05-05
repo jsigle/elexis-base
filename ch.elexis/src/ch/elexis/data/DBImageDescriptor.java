@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: DBImageDescriptor.java 3786 2008-04-19 09:57:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;

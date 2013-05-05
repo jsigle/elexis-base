@@ -9,7 +9,6 @@
  *    G. Weirich - initial implementation
  *    
  *
- * $Id$
  *    
  *******************************************************************************/
 package elexis_db_shaker.actions;

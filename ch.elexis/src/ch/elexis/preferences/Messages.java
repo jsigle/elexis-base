@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *
- * $Id$
  *    
  *******************************************************************************/
 
@@ -322,6 +321,8 @@ public class Messages extends NLS {
 	public static String Leistungscodes_defaultOutput;
 	
 	public static String Leistungscodes_defaultOutputLabel;
+	
+	public static String Leistungscodes_systemDisabled;
 	
 	public static String Leistungscodes_defineBillingSystem;
 	
@@ -639,6 +640,16 @@ public class Messages extends NLS {
 	
 	public static String Zugriff_AccessRights;
 	
+	public static String UserCasePreferences_InfoLabelForSortingBillingSystems;
+
+	public static String UserCasePreferences_MoveItemDownInList;
+
+	public static String UserCasePreferences_MoveItemToAlphabeticallySortedList;
+
+	public static String UserCasePreferences_MoveItemToManualSortedList;
+
+	public static String UserCasePreferences_MoveItemUpInList;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

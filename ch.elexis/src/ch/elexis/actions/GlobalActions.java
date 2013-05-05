@@ -696,6 +696,7 @@ public class GlobalActions {
 					.append(Messages.getString("GlobalActions.PhoneWorkLabelText")).append(patient.get("Telefon2")) //$NON-NLS-1$ //$NON-NLS-2$
 					.append(Messages.getString("GlobalActions.PhoneMobileLabelText")).append(patient.get("Natel")); //$NON-NLS-1$ //$NON-NLS-2$
 				gc.drawString(tel.toString(), 0, y);
+				gc.dispose();
 				prn.endPage();
 				prn.endJob();
 				prn.dispose();
@@ -742,6 +743,7 @@ public class GlobalActions {
 					.append(Messages.getString("GlobalActions.PhoneWorkLabelText")).append(patient.get("Telefon2")) //$NON-NLS-1$ //$NON-NLS-2$
 					.append(Messages.getString("GlobalActions.PhoneMobileLabelText")).append(patient.get("Natel")); //$NON-NLS-1$ //$NON-NLS-2$
 				gc.drawString(tel.toString(), 0, y);
+				gc.dispose();
 				prn.endPage();
 				prn.endJob();
 				prn.dispose();
@@ -784,6 +786,7 @@ public class GlobalActions {
 					gc.drawString(line, 0, y);
 					y += fmt.getHeight();
 				}
+				gc.dispose();
 				prn.endPage();
 				prn.endJob();
 				prn.dispose();

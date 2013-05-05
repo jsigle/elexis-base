@@ -3,7 +3,6 @@
  * Alle Rechte vorbehalten / All rights reserved
  * http://www.medelexis.ch
  * 
- * $Id$
  ********************************************************/
 package ch.elexis.laborimport.medics.util;
 

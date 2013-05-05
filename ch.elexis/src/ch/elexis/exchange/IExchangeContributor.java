@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: IExchangeContributor.java 2618 2007-06-24 10:08:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange;

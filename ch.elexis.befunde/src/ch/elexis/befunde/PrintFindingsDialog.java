@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PrintFindingsDialog.java 6225 2010-03-18 14:01:32Z michael_imhof $
  *******************************************************************************/
 package ch.elexis.befunde;
 

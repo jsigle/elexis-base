@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsDrucker.java 4897 2009-01-02 14:10:18Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung2.rechnung;

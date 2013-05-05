@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ACLContributor.java 6168 2010-02-28 14:55:06Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.agenda.acl;
 

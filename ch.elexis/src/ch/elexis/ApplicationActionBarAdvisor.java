@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: ApplicationActionBarAdvisor.java 5948 2010-01-18 17:59:10Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;

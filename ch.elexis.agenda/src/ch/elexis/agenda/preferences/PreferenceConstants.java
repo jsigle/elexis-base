@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PreferenceConstants.java 6354 2010-05-13 11:47:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.preferences;

@@ -8,18 +8,21 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: RnControlFieldProvider.java 5688 2009-08-28 06:26:36Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -82,6 +85,7 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider {
 	private HyperlinkAdapter /* hlStatus, */hlPatient;
 	private Label /* hDateFrom, hDateUntil, */lPatient;
 	Text tNr, tBetrag;
+	String oldSelectedBillingSystem = ""; //$NON-NLS-1$
 	
 	Patient actPatient;
 	
@@ -136,8 +140,52 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider {
 		lPatient = new Label(ret, SWT.NONE);
 		lPatient.setText(ALLE);
 		cbZType = new Combo(ret, SWT.SINGLE | SWT.READ_ONLY);
-		cbZType.setItems(Fall.getAbrechnungsSysteme());
+		// sort items according to prefs
+		cbZType.setItems(ch.elexis.preferences.UserCasePreferences.sortBillingSystems(Fall
+			.getAbrechnungsSysteme()));
 		cbZType.add(ALL);
+		// focus listener needed because view may be created BEFORE a user is active
+		// but for the sorting we need the user prefs for sorting
+		// AND if the prefs have just been modified...
+		cbZType.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e){
+				// only set items if there ARE changes to avoid unnecessary flickering
+				String[] currItems = cbZType.getItems();
+				String[] newItems =
+					ch.elexis.preferences.UserCasePreferences.sortBillingSystems(Fall
+						.getAbrechnungsSysteme());
+				if (!Arrays.equals(currItems, newItems)) {
+					String savedItem = cbZType.getText();
+					cbZType.setItems(newItems);
+					cbZType.setText(savedItem);
+					cbZType.add(ALL);
+				}
+				oldSelectedBillingSystem = cbZType.getText();
+				
+			}
+			
+			@Override
+			public void focusLost(FocusEvent e){}
+		});
+		
+		// added to prevent selection of separator
+		cbZType.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				int separatorPos =
+					ch.elexis.preferences.UserCasePreferences
+						.getBillingSystemsMenuSeparatorPos(Fall.getAbrechnungsSysteme());
+				if (cbZType.getSelectionIndex() == separatorPos)
+					cbZType.select(cbZType.indexOf(oldSelectedBillingSystem));
+				else
+					oldSelectedBillingSystem = cbZType.getText();
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e){}
+		});
+		
 		/*
 		 * GridData gdlp=new GridData(); gdlp.widthHint=150; gdlp.minimumWidth=150;
 		 */

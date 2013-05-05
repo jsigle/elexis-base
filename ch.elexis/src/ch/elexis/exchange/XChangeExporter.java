@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: XChangeExporter.java 5899 2009-12-24 12:42:10Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange;
 

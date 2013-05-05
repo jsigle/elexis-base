@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: XrefExtension.java 6242 2010-03-20 12:29:52Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.text;
 

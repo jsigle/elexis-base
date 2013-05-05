@@ -8,8 +8,8 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id$
  *******************************************************************************/
+
 package ch.elexis.medikamente.bag.data;
 
 import java.io.FileInputStream;

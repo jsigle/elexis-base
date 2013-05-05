@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MahnlaufCommand.java 5931 2010-01-14 22:14:25Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.commands;
 

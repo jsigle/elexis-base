@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: MesswertFactory.java 1185 2006-10-29 15:29:30Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.befunde;

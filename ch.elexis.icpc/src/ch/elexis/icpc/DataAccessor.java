@@ -8,7 +8,6 @@
  * Contributors:
  *    A. Kaufmann - initial implementation 
  *    
- * $Id$
  *******************************************************************************/
 
 package ch.elexis.icpc;

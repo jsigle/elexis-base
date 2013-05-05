@@ -8,7 +8,6 @@
  * Contributors:
  *    D. Lutz - initial implementation
  *    
- * $Id: GenericImporterBlatt.java 6137 2010-02-14 09:45:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.importers;

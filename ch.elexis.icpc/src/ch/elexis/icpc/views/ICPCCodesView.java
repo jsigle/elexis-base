@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: ICPCCodesView.java 4356 2008-09-02 16:20:10Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc.views;
 

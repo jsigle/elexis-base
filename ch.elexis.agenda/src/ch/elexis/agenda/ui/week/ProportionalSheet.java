@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ProportionalSheet.java 5311 2009-05-17 14:41:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui.week;
@@ -76,6 +75,11 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 			
 			@Override
 			public void mouseDoubleClick(MouseEvent e){
+				String startOfDayTimeInMinutes =
+					Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
+				int sodtHours = Integer.parseInt(startOfDayTimeInMinutes.substring(0, 2));
+				int sodtMinutes = Integer.parseInt(startOfDayTimeInMinutes.substring(2));
+
 				int minute = (int) Math.round(e.y / ppm);
 				TimeTool tt = new TimeTool(Activator.getDefault().getActDate());
 				int hour = minute / 60;
@@ -83,8 +87,8 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 				int raster = 15;
 				minute = ((minute + (raster >> 1)) / raster) * raster;
 				tt.set(TimeTool.AM_PM, TimeTool.AM);
-				tt.set(TimeTool.HOUR, hour);
-				tt.set(TimeTool.MINUTE, minute);
+				tt.set(TimeTool.HOUR, hour + sodtHours);
+				tt.set(TimeTool.MINUTE, minute + sodtMinutes);
 				
 				TerminDialog dlg = new TerminDialog(null);
 				dlg.create();

@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BBSView.java 5322 2009-05-29 10:59:45Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 

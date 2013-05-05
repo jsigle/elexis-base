@@ -46,7 +46,9 @@ import ch.elexis.banking.ESRRecordDialog;
 import ch.elexis.banking.Messages;
 import ch.elexis.core.data.IPersistentObject;
 import ch.elexis.data.Anwender;
+import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
+import ch.elexis.data.Rechnung;
 import ch.rgw.tools.TimeTool;
 
 public class ESRView extends ViewPart {
@@ -59,6 +61,8 @@ public class ESRView extends ViewPart {
 	private TimeTool startDate;
 	private TimeTool endDate;
 	
+	private TimeTool compTT1, compTT2; // for comparison only
+			
 	protected final SimpleDateFormat sdf = (SimpleDateFormat) DateFormat
 		.getDateInstance(DateFormat.MEDIUM);
 	
@@ -101,6 +105,9 @@ public class ESRView extends ViewPart {
 		endDate = new TimeTool();
 		startDate = new TimeTool();
 		startDate.add(Calendar.MONTH, -3);
+		
+		compTT1 = new TimeTool(TimeTool.BEGINNING_OF_UNIX_EPOCH);
+		compTT2 = new TimeTool(TimeTool.BEGINNING_OF_UNIX_EPOCH);
 	}
 	
 	/**
@@ -114,6 +121,7 @@ public class ESRView extends ViewPart {
 		
 		GC gc = new GC(parent);
 		FontMetrics fm = gc.getFontMetrics();
+		gc.dispose();
 		int dateLength = (sdf.toPattern().length() + 2) * fm.getAverageCharWidth();
 		
 		Composite headerContainer = new Composite(parent, SWT.NONE);
@@ -151,6 +159,7 @@ public class ESRView extends ViewPart {
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		
+		// Datum
 		TableViewerColumn tableViewerColumnDate = new TableViewerColumn(tableViewer, SWT.NONE);
 		TableColumn tblclmnDate = tableViewerColumnDate.getColumn();
 		tcl_tableViewerComposite.setColumnData(tblclmnDate, new ColumnPixelData(dateLength, true,
@@ -161,16 +170,32 @@ public class ESRView extends ViewPart {
 			protected int doCompare(Viewer viewer, Object e1, Object e2){
 				ESRRecord esr1 = (ESRRecord) e1;
 				ESRRecord esr2 = (ESRRecord) e2;
-				return esr1.getVerarbeitungsdatum().compareTo(esr2.getVerarbeitungsdatum());
+				if (!compTT1.set(esr1.get(ESRRecord.FLD_DATE)))
+					compTT1.set(TimeTool.BEGINNING_OF_UNIX_EPOCH);
+				if (!compTT2.set(esr2.get(ESRRecord.FLD_DATE)))
+					compTT2.set(TimeTool.BEGINNING_OF_UNIX_EPOCH);
+				return compTT1.compareTo(compTT2);
 			}
 		};
 		
+		// Rechnungs-Nummer
 		TableViewerColumn tableViewerColumnBillNumber =
 			new TableViewerColumn(tableViewer, SWT.NONE);
 		TableColumn tblclmnRnnum = tableViewerColumnBillNumber.getColumn();
 		tcl_tableViewerComposite.setColumnData(tblclmnRnnum, new ColumnPixelData(70, true, true));
 		tblclmnRnnum.setText(COLUMN_TEXTS[1]);
+		new TableViewerColumnSorter(tableViewerColumnBillNumber) {
+			@Override
+			protected int doCompare(Viewer viewer, Object e1, Object e2){
+				Rechnung r1 = ((ESRRecord) e1).getRechnung();
+				Rechnung r2 = ((ESRRecord) e2).getRechnung();
+				String rNr1 = (r1 != null) ? r1.getNr() : "";
+				String rNr2 = (r2 != null) ? r2.getNr() : "";
+				return rNr1.compareTo(rNr2);
+			}
+		};
 		
+		// Betrag
 		TableViewerColumn tableViewerColumnAmount = new TableViewerColumn(tableViewer, SWT.NONE);
 		TableColumn tblclmnAmount = tableViewerColumnAmount.getColumn();
 		tcl_tableViewerComposite.setColumnData(tblclmnAmount, new ColumnPixelData(70, true, true));
@@ -184,6 +209,7 @@ public class ESRView extends ViewPart {
 			}
 		};
 		
+		// Eingelesen Datum
 		TableViewerColumn tableViewerColumnEingelesen =
 			new TableViewerColumn(tableViewer, SWT.NONE);
 		TableColumn tblclmnEingelesen = tableViewerColumnEingelesen.getColumn();
@@ -195,10 +221,15 @@ public class ESRView extends ViewPart {
 			protected int doCompare(Viewer viewer, Object e1, Object e2){
 				ESRRecord esr1 = (ESRRecord) e1;
 				ESRRecord esr2 = (ESRRecord) e2;
-				return esr1.getVerarbeitungsdatum().compareTo(esr2.getVerarbeitungsdatum());
+				if (!compTT1.set(esr1.getEinlesedatatum()))
+					compTT1.set(TimeTool.BEGINNING_OF_UNIX_EPOCH);
+				if (!compTT2.set(esr2.getEinlesedatatum()))
+					compTT2.set(TimeTool.BEGINNING_OF_UNIX_EPOCH);
+				return compTT1.compareTo(compTT2);
 			}
 		};
 		
+		// Verrechnet Datum
 		TableViewerColumn tableViewerColumnVerrechnet =
 			new TableViewerColumn(tableViewer, SWT.NONE);
 		TableColumn tblclmnVerrechnet = tableViewerColumnVerrechnet.getColumn();
@@ -210,10 +241,15 @@ public class ESRView extends ViewPart {
 			protected int doCompare(Viewer viewer, Object e1, Object e2){
 				ESRRecord esr1 = (ESRRecord) e1;
 				ESRRecord esr2 = (ESRRecord) e2;
-				return esr1.getVerarbeitungsdatum().compareTo(esr2.getVerarbeitungsdatum());
+				if (!compTT1.set(esr1.getVerarbeitungsdatum()))
+					compTT1.set(TimeTool.BEGINNING_OF_UNIX_EPOCH);
+				if (!compTT2.set(esr2.getVerarbeitungsdatum()))
+					compTT2.set(TimeTool.BEGINNING_OF_UNIX_EPOCH);
+				return compTT1.compareTo(compTT2);
 			}
 		};
 		
+		// Gutgeschrieben Datum
 		TableViewerColumn tableViewerColumnGutgeschrieben =
 			new TableViewerColumn(tableViewer, SWT.NONE);
 		TableColumn tblclmnGutgeschrieben = tableViewerColumnGutgeschrieben.getColumn();
@@ -225,21 +261,49 @@ public class ESRView extends ViewPart {
 			protected int doCompare(Viewer viewer, Object e1, Object e2){
 				ESRRecord esr1 = (ESRRecord) e1;
 				ESRRecord esr2 = (ESRRecord) e2;
-				return esr1.getVerarbeitungsdatum().compareTo(esr2.getVerarbeitungsdatum());
+				if (!compTT1.set(esr1.getValuta()))
+					compTT1.set(TimeTool.BEGINNING_OF_UNIX_EPOCH);
+				if (!compTT2.set(esr2.getValuta()))
+					compTT2.set(TimeTool.BEGINNING_OF_UNIX_EPOCH);
+				return compTT1.compareTo(compTT2);
 			}
 		};
 		
+		// Patient
 		TableViewerColumn tableViewerColumnPatient = new TableViewerColumn(tableViewer, SWT.NONE);
 		TableColumn tblclmnPatient = tableViewerColumnPatient.getColumn();
 		tcl_tableViewerComposite.setColumnData(tblclmnPatient, new ColumnWeightData(1,
 			ColumnWeightData.MINIMUM_WIDTH, true));
 		tblclmnPatient.setText(COLUMN_TEXTS[6]);
+		new TableViewerColumnSorter(tableViewerColumnPatient) {
+			@Override
+			protected int doCompare(Viewer viewer, Object e1, Object e2){
+				Patient pat1 = ((ESRRecord) e1).getPatient();
+				Patient pat2 = ((ESRRecord) e2).getPatient();
+				String patLab1 = (pat1 != null) ? pat1.getLabel() : "";
+				String patLab2 = (pat2 != null) ? pat2.getLabel() : "";
+				return patLab1.compareTo(patLab2);
+			}
+		};
 		
+		// Buchungs Datum
 		TableViewerColumn tableViewerColumnBooking = new TableViewerColumn(tableViewer, SWT.NONE);
 		TableColumn tblclmnBuchung = tableViewerColumnBooking.getColumn();
 		tcl_tableViewerComposite.setColumnData(tblclmnBuchung, new ColumnWeightData(1,
 			ColumnWeightData.MINIMUM_WIDTH, true));
 		tblclmnBuchung.setText(COLUMN_TEXTS[7]);
+		new TableViewerColumnSorter(tableViewerColumnBooking) {
+			@Override
+			protected int doCompare(Viewer viewer, Object e1, Object e2){
+				ESRRecord esr1 = (ESRRecord) e1;
+				ESRRecord esr2 = (ESRRecord) e2;
+				if (!compTT1.set(esr1.getGebucht()))
+					compTT1.set(TimeTool.BEGINNING_OF_UNIX_EPOCH);
+				if (!compTT2.set(esr2.getGebucht()))
+					compTT2.set(TimeTool.BEGINNING_OF_UNIX_EPOCH);
+				return compTT1.compareTo(compTT2);
+			}
+		};
 		
 		TableViewerColumn tableViewerColumnFile = new TableViewerColumn(tableViewer, SWT.NONE);
 		TableColumn tblclmnDatei = tableViewerColumnFile.getColumn();

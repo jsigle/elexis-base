@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PhysioPrefs.java 6143 2010-02-15 20:52:17Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.tarmedprefs;
 

@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: SimpleWidgetProvider.java 5090 2009-02-05 12:28:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util.viewers;

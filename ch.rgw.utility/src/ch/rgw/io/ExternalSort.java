@@ -1,8 +1,18 @@
 package ch.rgw.io;
 
 // filename: ExternalSort.java
-import java.util.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Vector;
 
 /**
  * Goal: offer a generic external-memory sorting program in Java.

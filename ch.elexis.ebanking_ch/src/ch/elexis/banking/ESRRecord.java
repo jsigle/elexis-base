@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: ESRRecord.java 6058 2010-02-03 15:02:13Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -30,6 +29,8 @@ import ch.rgw.tools.VersionInfo;
  */
 public class ESRRecord extends PersistentObject {
 	public static final String FLD_REJECT_CODE = "RejectCode"; //$NON-NLS-1$
+	public static final String FLD_DATE = "Datum"; //$NON-NLS-1$
+	public static final String FLD_BOOKING_DATE = "Gebucht"; //$NON-NLS-1$
 	public static final String MANDANT_ID = "MandantID"; //$NON-NLS-1$
 	public static final String PATIENT_ID = "PatientID"; //$NON-NLS-1$
 	public static final String RECHNUNGS_ID = "RechnungsID"; //$NON-NLS-1$
@@ -57,7 +58,7 @@ public class ESRRecord extends PersistentObject {
 		"ID			VARCHAR(25) PRIMARY KEY," + //$NON-NLS-1$
 		"lastupdate BIGINT," + //$NON-NLS-1$
 		"deleted	CHAR(1) default '0'," + //$NON-NLS-1$
-		"DATUM			CHAR(8)," + //$NON-NLS-1$
+		FLD_DATE + " CHAR(8)," + //$NON-NLS-1$
 		"EINGELESEN		CHAR(8)," + //$NON-NLS-1$
 		"VERARBEITET	CHAR(8)," + //$NON-NLS-1$
 		"GUTSCHRIFT		CHAR(8)," + //$NON-NLS-1$
@@ -68,7 +69,7 @@ public class ESRRecord extends PersistentObject {
 		"MANDANTID	 VARCHAR(25)," + //$NON-NLS-1$
 		"REJECTCODE	 CHAR(3)," + //$NON-NLS-1$
 		"KOSTEN		 CHAR(4)," + //$NON-NLS-1$
-		"GEBUCHT	 CHAR(8)," + //$NON-NLS-1$
+		FLD_BOOKING_DATE + " CHAR(8)," + //$NON-NLS-1$
 		"FILE		 VARCHAR(80));" + //$NON-NLS-1$
 		"CREATE INDEX ESR1 ON " + TABLENAME + " (DATUM);" + //$NON-NLS-1$ //$NON-NLS-2$
 		"CREATE INDEX ESR2 ON " + TABLENAME + " (PATIENTID);" + //$NON-NLS-1$ //$NON-NLS-2$
@@ -138,7 +139,7 @@ public class ESRRecord extends PersistentObject {
 		if (date == null) {
 			date = new TimeTool();
 		}
-		set("Gebucht", date.toString(TimeTool.DATE_GER)); //$NON-NLS-1$
+		set(FLD_BOOKING_DATE, date.toString(TimeTool.DATE_GER)); //$NON-NLS-1$
 		set(FLD_REJECT_CODE, "0"); //$NON-NLS-1$
 	}
 	
@@ -248,7 +249,7 @@ public class ESRRecord extends PersistentObject {
 		}
 		vals[9] = Integer.toString(rejectCode.ordinal());
 		set(new String[] {
-			"Datum", "Eingelesen", "Verarbeitet", "Gutgeschrieben", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			FLD_DATE, "Eingelesen", "Verarbeitet", "Gutgeschrieben", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			"BetragInRp", CODE, RECHNUNGS_ID, PATIENT_ID, MANDANT_ID, FLD_REJECT_CODE, "File"}, vals); //$NON-NLS-1$ //$NON-NLS-2$
 		
 	}
@@ -290,7 +291,7 @@ public class ESRRecord extends PersistentObject {
 	}
 	
 	public String getGebucht(){
-		return get("Gebucht"); //$NON-NLS-1$
+		return get(FLD_BOOKING_DATE); //$NON-NLS-1$
 	}
 	
 	public String getFile(){

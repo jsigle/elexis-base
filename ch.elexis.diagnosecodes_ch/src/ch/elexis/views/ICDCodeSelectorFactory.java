@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: ICDCodeSelectorFactory.java 5018 2009-01-23 16:33:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;

@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: ACE.java 6102 2010-02-11 15:21:12Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.admin;
 

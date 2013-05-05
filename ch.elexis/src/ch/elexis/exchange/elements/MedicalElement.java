@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: MedicalElement.java 5890 2009-12-22 11:18:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;

@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: Analyzer.java 5771 2009-10-05 10:02:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.fire.handlers;

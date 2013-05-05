@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnSucheDialog.java 5941 2010-01-17 14:47:05Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 

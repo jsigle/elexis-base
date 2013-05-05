@@ -1,5 +1,15 @@
-// (c) 2008-2011 by G. Weirich
-// $Id$
+/*******************************************************************************
+ * Copyright (c) 2005-2011, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ *******************************************************************************/
+
 
 package ch.rgw.io;
 
@@ -74,12 +84,13 @@ public class LockFile {
 	}
 	
 	private boolean isLockValid(File file) throws IOException{
-		if (!file.canWrite()) {
-			throw new IOException(("Can't write " + file.getAbsolutePath()));
-		}
 		if (!file.exists()) {
 			return false;
 		}
+		if(!file.canWrite()){
+			throw new IOException(("Can't write "+file.getAbsolutePath()));
+		}
+
 		TimeTool now = new TimeTool();
 		DataInputStream dais = new DataInputStream(new FileInputStream(file));
 		String ts = dais.readUTF();

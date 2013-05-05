@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: ESRFile.java 5915 2010-01-05 07:14:29Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 

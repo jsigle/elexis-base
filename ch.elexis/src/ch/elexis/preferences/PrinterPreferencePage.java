@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PrinterPreferencePage.java 6235 2010-03-19 11:20:20Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.preferences;

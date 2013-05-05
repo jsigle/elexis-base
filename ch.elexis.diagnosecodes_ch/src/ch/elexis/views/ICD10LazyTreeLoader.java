@@ -9,7 +9,6 @@
  *    G. Weirich - initial implementation
  *    M. Descher / MEDEVIT - adaption
  *    
- * $Id$
  *******************************************************************************/
 
 package ch.elexis.views;

@@ -1,6 +1,9 @@
 /**
- * (c) 2007-2010 by G. Weirich
- * All rights reserved
+ * Copyright (c) 2007-2010, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Adapted from Viollier to Bioanalytica by Daniel Lutz <danlutz@watz.ch>
  * Important changes:
@@ -18,7 +21,6 @@
  * - Re-Adapted to Viollier
  * - Added -allInOne option from OpenMedical
  * 
- * $Id: Importer.java 6046 2010-02-01 18:23:57Z rgw_ch $
  */
 
 package ch.elexis.laborimport.viollier;
@@ -40,6 +42,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -202,15 +205,38 @@ public class Importer extends ImporterPage {
 		if ((type != FILE) && (type != DIRECT)) {
 			type = FILE;
 		}
-		
-		if (type == FILE) {
-			String filename = results[1];
-			return ResultAdapter.getResultAsStatus(hlp.importFile(filename, false));
-		} else {
-			return ResultAdapter.getResultAsStatus(importDirect());
-		}
+		// run work in display thread
+		DoImportRunnable runner = new DoImportRunnable(type);
+		// wait for the import to complete
+		Display.getDefault().syncExec(runner);
+
+		return runner.result;
 	}
 	
+	/**
+	 * Private Runnable doing the actual import with a result value.
+	 * 
+	 * @author thomashu
+	 */
+	private class DoImportRunnable implements Runnable {
+		int type;
+		IStatus result;
+		
+		public DoImportRunnable(int type){
+			this.type = type;
+		}
+		
+		@Override
+		public void run(){
+			if (type == FILE) {
+				String filename = results[1];
+				result = ResultAdapter.getResultAsStatus(hlp.importFile(filename, false));
+			} else {
+				result = ResultAdapter.getResultAsStatus(importDirect());
+			}
+		}
+	}
+
 	@Override
 	public String getDescription(){
 		return "Bitte wählen Sie eine Datei im HL7-Format oder die Direktübertragung zum Import aus";

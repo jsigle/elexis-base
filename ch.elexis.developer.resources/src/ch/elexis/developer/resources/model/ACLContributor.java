@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: ACLContributor.java 6116 2010-02-11 21:40:19Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.developer.resources.model;
 

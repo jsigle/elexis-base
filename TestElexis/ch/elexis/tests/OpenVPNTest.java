@@ -1,18 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2010, Niklaus Giger and Medelexis
+ * Copyright (c) 2006-2010, Gerry Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Niklaus Giger - initial implementation
+ *    Gerry Weirich - initial implementation
  *    
- *  $Id: NumberInput.java 5321 2009-05-28 12:06:28Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -26,7 +25,6 @@ import org.junit.Test;
 
 import ch.ngiger.comm.ftp.FtpServer;
 import ch.ngiger.comm.vpn.OpenVPN;
-import ch.elexis.tests.Preferences;
 
 public class OpenVPNTest {
 	static OpenVPN ovpn;

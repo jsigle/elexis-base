@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PhysioDetailDisplay.java 5192 2009-02-24 15:48:29Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 

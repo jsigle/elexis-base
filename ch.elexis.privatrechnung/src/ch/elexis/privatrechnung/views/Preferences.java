@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Preferences.java 4470 2008-09-27 19:53:47Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.views;

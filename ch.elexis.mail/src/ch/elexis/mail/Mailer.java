@@ -9,7 +9,6 @@
  *    G. Weirich - initial implementation
  *    R. Zweifel - SMTP-Authentifizierung
  *    
- *  $Id: Mailer.java 5953 2010-01-22 20:51:41Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.mail;

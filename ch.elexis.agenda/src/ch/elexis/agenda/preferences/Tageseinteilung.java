@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TagesView.java 916 2006-09-13 08:33:14Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.agenda.preferences;
 

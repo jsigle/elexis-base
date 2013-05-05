@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: XChangeContributor.java 6014 2010-01-31 19:17:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.images;
 

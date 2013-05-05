@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: ElexisText.java 6099 2010-02-11 07:42:18Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.text;
 

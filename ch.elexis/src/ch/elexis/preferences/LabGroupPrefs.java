@@ -8,7 +8,6 @@
  * Contributors:
  *    D. Lutz - initial implementation
  *    
- *  $Id: LabGroupPrefs.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;

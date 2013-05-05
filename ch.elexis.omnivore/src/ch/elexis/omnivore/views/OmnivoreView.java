@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: OmnivoreView.java 5975 2010-01-28 10:59:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.omnivore.views;

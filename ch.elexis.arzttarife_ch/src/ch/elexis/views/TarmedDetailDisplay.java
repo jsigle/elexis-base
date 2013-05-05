@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedDetailDisplay.java 4392 2008-09-08 09:47:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;

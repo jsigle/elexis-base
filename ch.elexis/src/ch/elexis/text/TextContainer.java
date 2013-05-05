@@ -10,7 +10,6 @@
  *    A. Kaufmann - better support for IDataAccess
  *    H. Marlovits - introduced SQL Fields
  * 
- *  $Id$
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -39,6 +38,10 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -66,6 +69,7 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Person;
 import ch.elexis.data.Query;
 import ch.elexis.data.Script;
+import ch.elexis.dialogs.DocumentSelectDialog;
 import ch.elexis.dialogs.KontaktSelektor;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.preferences.TextTemplatePreferences;
@@ -871,6 +875,9 @@ public class TextContainer {
 			}
 			brief.save(tmpl, plugin.getMimeType());
 			// text.clear();
+			// set sticker for this template if not to ask for addressee
+			DocumentSelectDialog.setDontAskForAddresseeForThisTemplate(brief,
+				std.dontShowAddresseeSelection);
 		}
 	}
 	
@@ -898,6 +905,8 @@ public class TextContainer {
 		List<Mandant> lMands;
 		Mandant selectedMand;
 		String tmplName;
+		Button checkBoxDontShowAddresseeSelection;
+		boolean dontShowAddresseeSelection;
 		
 		protected SaveTemplateDialog(final Shell parentShell, String templateName){
 			super(parentShell);
@@ -920,12 +929,38 @@ public class TextContainer {
 			new Label(ret, SWT.NONE).setText(Messages.TextContainer_TemplateName);
 			name = new Text(ret, SWT.BORDER);
 			name.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-			if (tmplName != null) {
-				name.setText(tmplName);
-			}
+			name.addModifyListener(new ModifyListener() {
+				@Override
+				public void modifyText(ModifyEvent e){
+					// checkbox for sys template
+					boolean isSysTemplate = isSystemTemplate(name.getText());
+					btSysTemplate.setSelection(isSysTemplate);
+					checkBoxDontShowAddresseeSelection.setSelection(isSysTemplate);
+					checkBoxDontShowAddresseeSelection.setEnabled(!isSysTemplate);
+					// checkbox for dont show addressee selection dialog
+					if (!isSysTemplate)
+						checkBoxDontShowAddresseeSelection.setSelection(DocumentSelectDialog
+							.getDontAskForAddresseeForThisTemplateName(name.getText()));
+					// show mandator: if no template matching then clear selection
+					Brief brief = getBriefForTemplateName(name.getText());
+					String lMandator = StringTool.leer;
+					if (brief != null) {
+						String mandatorID = brief.get(Brief.FLD_DESTINATION_ID);
+						if (mandatorID != null) {
+							Mandant lMand = Mandant.load(mandatorID);
+							if (lMand != null)
+								lMandator = lMand.get(Mandant.FLD_NAME3);
+						}
+					}
+					cMands.setText(lMandator);
+				}
+			});
 			new Label(ret, SWT.NONE).setText(Messages.TextContainer_Mandator);
 			Composite line = new Composite(ret, SWT.NONE);
-			line.setLayout(new FillLayout());
+			GridLayout gridLayout = new GridLayout(2, false);
+			gridLayout.marginWidth = 0;
+			gridLayout.marginHeight = 0;
+			line.setLayout(gridLayout);
 			line.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			cMands = new Combo(line, SWT.SINGLE);
 			Query<Mandant> qbe = new Query<Mandant>(Mandant.class);
@@ -936,6 +971,29 @@ public class TextContainer {
 			}
 			btSysTemplate = new Button(line, SWT.CHECK);
 			btSysTemplate.setText(Messages.TextContainer_SystemTemplate);
+			btSysTemplate.addSelectionListener(new SelectionListener() {
+				@Override
+				public void widgetSelected(SelectionEvent e){
+					checkBoxDontShowAddresseeSelection.setEnabled(!btSysTemplate.getSelection());
+					if (btSysTemplate.getSelection())
+						checkBoxDontShowAddresseeSelection.setSelection(true);
+				}
+				
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e){}
+			});
+			
+			// checkbox whether an address selection should be shown when creating the doc
+			checkBoxDontShowAddresseeSelection = new Button(ret, SWT.CHECK);
+			checkBoxDontShowAddresseeSelection.setText(Messages.TextContainer_DontAskForAddressee);
+			checkBoxDontShowAddresseeSelection.setLayoutData(SWTHelper.getFillGridData(2, true, 1,
+				false));
+			
+			// at the end -> checkboxes will be set correctly by the listeners
+			if (tmplName != null)
+				name.setText(tmplName);
+			name.setSelection(32000); // caret at end of text field instead of start
+			
 			return ret;
 		}
 		
@@ -981,9 +1039,47 @@ public class TextContainer {
 					return;
 				}
 			}
+			// save value into boolean for access from the outside world
+			dontShowAddresseeSelection = checkBoxDontShowAddresseeSelection.getSelection();
 			super.okPressed();
 		}
 		
+		/**
+		 * get the template brief for this template name
+		 * 
+		 * @param templateName
+		 *            the template name to be tested
+		 * @return the brief object or null if not found
+		 * @author marlovitsh
+		 */
+		Brief getBriefForTemplateName(String templateName){
+			Query<Brief> qry = new Query<Brief>(Brief.class);
+			qry.add(Brief.FLD_SUBJECT, Query.EQUALS, templateName, true);
+			qry.add(Brief.FLD_TYPE, Query.EQUALS, Brief.TEMPLATE, true);
+			List<Brief> result = qry.execute();
+			if (result.size() > 0)
+				return result.get(0);
+			return null;
+		}
+		
+		/**
+		 * check whether this is a system template - has "SYS" in "BehandlungsID"
+		 * 
+		 * @param templateName
+		 *            the template name to be tested
+		 * @return true if is a system template, false if not
+		 * @author marlovitsh
+		 */
+		boolean isSystemTemplate(String templateName){
+			Query<Brief> qry = new Query<Brief>(Brief.class);
+			qry.add(Brief.FLD_SUBJECT, Query.EQUALS, templateName, true);
+			qry.add(Brief.FLD_TYPE, Query.EQUALS, Brief.TEMPLATE, true);
+			qry.add(Brief.FLD_KONSULTATION_ID, Query.EQUALS, "SYS", true); //$NON-NLS-1$
+			List<Brief> result = qry.execute();
+			if (result.size() > 0)
+				return true;
+			return false;
+		}
 	}
 	
 	public boolean replace(final String pattern, final ReplaceCallback cb){

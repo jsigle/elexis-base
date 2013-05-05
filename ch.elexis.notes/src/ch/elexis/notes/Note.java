@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Note.java 5179 2009-02-24 15:46:47Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.notes;
 

@@ -9,7 +9,6 @@
  *    G. Weirich - initial implementation
  * 	  M. Descher - added executable link type
  *    
- * $Id$
  *******************************************************************************/
 package ch.elexis.util;
 

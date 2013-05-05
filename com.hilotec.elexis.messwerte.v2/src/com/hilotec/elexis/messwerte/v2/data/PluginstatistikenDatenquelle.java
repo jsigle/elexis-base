@@ -9,7 +9,6 @@
  *    A. Kaufmann - initial implementation 
  *    P. Chaubert - adapted to Messwerte V2
  *    
- * $Id: Messwert.java 5386 2009-06-23 11:34:17Z rgw_ch $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.v2.data;

@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: EigendiagnoseFactory.java 2881 2007-07-23 19:10:44Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.eigendiagnosen.data;
 

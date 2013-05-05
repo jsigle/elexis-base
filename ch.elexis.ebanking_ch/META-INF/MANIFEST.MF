@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: E-Banking Modul für Schweizer Zahlungsverkehr
 Bundle-SymbolicName: ch.elexis.ebanking_ch;singleton:=true
-Bundle-Version: 2.0.6.1
+Bundle-Version: 2.0.6.3
 Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
 Require-Bundle: ch.elexis,

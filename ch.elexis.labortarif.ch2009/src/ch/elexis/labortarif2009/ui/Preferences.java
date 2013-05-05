@@ -1,7 +1,13 @@
 /*******************************************************************************
  * Copyright (c) 2009, G. Weirich and medelexis AG
- * All rights reserved.
- * $Id: Preferences.java 132 2009-06-14 17:34:31Z  $
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ * 
  *******************************************************************************/
 
 package ch.elexis.labortarif2009.ui;
@@ -10,6 +16,8 @@ import java.util.LinkedList;
 
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
@@ -24,19 +32,27 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ch.elexis.Hub;
 import ch.elexis.StringConstants;
 import ch.elexis.labortarif2009.data.Importer;
-import ch.elexis.labortarif2009.data.Labor2009Tarif;
 import ch.elexis.labortarif2009.data.Importer.Fachspec;
+import ch.elexis.labortarif2009.data.Labor2009Tarif;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.preferences.inputs.MultiplikatorEditor;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.io.Settings;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
+import ch.rgw.tools.TimeTool;
+
+import com.tiff.common.ui.datepicker.DatePickerCombo;
 
 public class Preferences extends PreferencePage implements IWorkbenchPreferencePage {
 	private static final String SPECNUM = "specnum"; //$NON-NLS-1$
 	public static final String FACHDEF = "abrechnung/labor2009/fachdef"; //$NON-NLS-1$
 	public static final String OPTIMIZE = "abrechnung/labor2009/optify"; //$NON-NLS-1$
+	public static final String OPTIMIZE_ADDITION_DEADLINE =
+		"abrechnung/labor2009/optify/addition/deadline"; //$NON-NLS-1$
+
+	public static final String OPTIMIZE_ADDITION_INITDEADLINE = "30.06.2013"; //$NON-NLS-1$
+
 	int langdef = 0;
 	Settings cfg = Hub.mandantCfg;
 	LinkedList<Button> buttons = new LinkedList<Button>();
@@ -75,7 +91,12 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 			}
 			buttons.add(b);
 		}
-		final Button bOptify = new Button(ret, SWT.CHECK);
+		
+		Group groupOptify = new Group(ret, SWT.NONE);
+		groupOptify.setText(Messages.Preferences_automaticAdditionsGroup);
+		groupOptify.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		groupOptify.setLayout(new GridLayout(2, false));
+		final Button bOptify = new Button(groupOptify, SWT.CHECK);
 		bOptify.setSelection(Hub.localCfg.get(OPTIMIZE, true));
 		bOptify.setText(Messages.Preferences_automaticallyCalculatioAdditions);
 		bOptify.addSelectionListener(new SelectionAdapter() {
@@ -84,6 +105,31 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 				Hub.localCfg.set(OPTIMIZE, bOptify.getSelection());
 			}
 		});
+		bOptify.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
+		
+		Label lbl = new Label(groupOptify, SWT.NONE);
+		lbl.setText(Messages.Preferences_automaticAdditionsToLabel);
+		final DatePickerCombo dpc = new DatePickerCombo(groupOptify, SWT.BORDER);
+		dpc.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		// set selected date on focus lost due to selection event will not fire if text changed
+		dpc.addFocusListener(new FocusListener() {
+			public void focusLost(FocusEvent e){
+				if (dpc.getDate() != null) {
+					TimeTool time = new TimeTool(dpc.getDate().getTime());
+					time.set(TimeTool.HOUR_OF_DAY, 23);
+					time.set(TimeTool.MINUTE, 59);
+					time.set(TimeTool.SECOND, 59);
+					Hub.globalCfg.set(OPTIMIZE_ADDITION_DEADLINE, time);
+					System.out.println(time.toString(TimeTool.DATE_GER));
+				}
+			}
+			public void focusGained(FocusEvent e){}
+		});
+		TimeTool deadline = Hub.globalCfg.getDate(OPTIMIZE_ADDITION_DEADLINE);
+		if (deadline == null)
+			deadline = new TimeTool(OPTIMIZE_ADDITION_INITDEADLINE);
+		dpc.setDate(deadline.getTime());
+
 		return ret;
 	}
 	

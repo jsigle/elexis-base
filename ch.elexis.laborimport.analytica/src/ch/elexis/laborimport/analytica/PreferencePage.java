@@ -1,13 +1,17 @@
 /**
- * (c) 2007 by G. Weirich
- * All rights reserved
+ * Copyright (c) 2010 by Niklaus Giger
+ * based on importer.java by G. Weirich
+ * Adapted from Viollier to Bioanalytica by Daniel Lutz <danlutz@watz.ch>
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
  * From: Laborimport Viollier
  * 
  * Adapted to Bioanalytica by Daniel Lutz <danlutz@watz.ch>
  * Adapted to Risch by Gerry Weirich
  * 
- * $Id: PreferencePage.java 396 2007-12-17 05:37:27Z Gerry $
  */
 
 package ch.elexis.laborimport.analytica;
@@ -15,9 +19,7 @@ package ch.elexis.laborimport.analytica;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
-import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 

@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: ElexisEventListener.java 6048 2010-02-01 20:35:29Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;

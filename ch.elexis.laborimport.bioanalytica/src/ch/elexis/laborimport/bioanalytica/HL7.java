@@ -1,8 +1,13 @@
 /**
- * (c) 2007-2010 by G. Weirich
- * All rights reserved
- * $Id: HL7.java 2491 2007-06-08 07:14:29Z rgw_ch $
+ * Copyright (c) 2007-2010, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
+ * Contributors:
+ *     G. Weirich - initial API and implementation
+ * All the rest is done generically. See plug-in elexis-importer.
  * Adapted to Bioanalytica by Daniel Lutz <danlutz@watz.ch>
  */
 

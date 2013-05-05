@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BefundePerspektive.java 5195 2009-02-24 16:31:44Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.befunde;

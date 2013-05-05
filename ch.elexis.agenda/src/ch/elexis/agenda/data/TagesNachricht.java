@@ -9,7 +9,6 @@
  *    G. Weirich - initial implementation
  *    M. Descher - fixes on table creation and correct updating
  * 
- *  $Id: TagesNachricht.java 6377 2010-05-18 10:29:41Z marcode79 $
  *******************************************************************************/
 package ch.elexis.agenda.data;
 

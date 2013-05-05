@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Importer.java 4678 2008-11-12 14:15:18Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.data;

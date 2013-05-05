@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ArtikelFactory.java 4927 2009-01-10 21:26:30Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_at.data;

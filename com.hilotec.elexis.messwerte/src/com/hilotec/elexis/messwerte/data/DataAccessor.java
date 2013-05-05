@@ -10,7 +10,6 @@
  *    A. Kaufmann - Allow extraction of single fields and of first occurance
  *    A. Kaufmann - copied from befunde-Plugin and adapted to new data structure 
  *    
- * $Id: DataAccessor.java 6200 2010-03-16 07:26:09Z michael_imhof $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.data;

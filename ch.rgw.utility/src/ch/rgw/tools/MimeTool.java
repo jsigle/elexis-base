@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MimeTool.java 4247 2008-08-08 14:40:22Z rgw_ch $
  *******************************************************************************/
 package ch.rgw.tools;
 

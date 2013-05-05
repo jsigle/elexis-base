@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: ServiceBlockElement.java 5980 2010-01-29 05:55:25Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;

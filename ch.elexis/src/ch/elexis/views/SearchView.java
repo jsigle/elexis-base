@@ -8,7 +8,6 @@
  * Contributors:
  *    Daniel Lutz - initial implementation
  *    
- *  $Id: SearchView.java 5326 2009-05-29 20:08:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;

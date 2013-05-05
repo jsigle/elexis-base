@@ -8,7 +8,6 @@
  * Contributors:
  *    Daniel Lutz - initial implementation
  *    
- *  $Id$
  *******************************************************************************/
 
 package org.iatrix.help.wiki.views;

@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ETFTextPlugin.java 5548 2009-07-11 21:29:11Z tschaller $
  *******************************************************************************/
 package ch.elexis.text;
 

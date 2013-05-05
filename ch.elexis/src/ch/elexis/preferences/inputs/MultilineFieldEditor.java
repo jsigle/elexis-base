@@ -8,13 +8,15 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MultilineFieldEditor.java 5320 2009-05-27 16:51:14Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences.inputs;
 
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -45,6 +47,7 @@ public class MultilineFieldEditor extends StringFieldEditor {
 		GridData gd = (GridData) textField.getLayoutData();
 		GC gc = new GC(textField);
 		Point pt = gc.textExtent("X"); //$NON-NLS-1$
+		gc.dispose();
 		gd.minimumHeight = pt.y * numLines;
 		gd.heightHint = pt.y * numLines;
 		gd.grabExcessHorizontalSpace = true;

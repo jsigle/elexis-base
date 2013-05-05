@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESRRecordDialog.java 5316 2009-05-20 11:34:51Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 

@@ -9,7 +9,6 @@
  *    A. Kaufmann - initial implementation 
  *    G. Weirich - modify to API Changes in 2.1 (ElexisEventDispatcher)
  *    
- * $Id: OurComboWidget.java 5981 2010-01-29 05:56:10Z rgw_ch $
  *******************************************************************************/
 
 package com.hilotec.elexis.pluginstatistiken;

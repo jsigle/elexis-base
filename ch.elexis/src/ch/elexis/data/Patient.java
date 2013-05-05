@@ -9,7 +9,6 @@
  *    G. Weirich - initial implementation
  *    M. Descher - added loadByPatientID
  * 
- *  $Id$
  *******************************************************************************/
 package ch.elexis.data;
 

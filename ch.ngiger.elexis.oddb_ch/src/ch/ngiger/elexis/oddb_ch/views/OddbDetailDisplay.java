@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id$
  *******************************************************************************/
 
 package ch.ngiger.elexis.oddb_ch.views;

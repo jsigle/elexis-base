@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: RechnungsDrucker.java 6332 2010-05-03 16:19:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;

@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: DetailDisplay.java 4772 2008-12-08 13:36:54Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.eigendiagnosen.views;
 

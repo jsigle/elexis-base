@@ -16,6 +16,7 @@ package ch.elexis.views;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
@@ -63,6 +64,7 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.dialogs.KontaktSelektor;
 import ch.elexis.preferences.Leistungscodes;
+import ch.elexis.preferences.UserCasePreferences;
 import ch.elexis.text.ITextPlugin;
 import ch.elexis.text.ITextPlugin.ICallback;
 import ch.elexis.text.TextContainer;
@@ -95,7 +97,8 @@ public class FallDetailBlatt2 extends Composite {
 	private static final String ITEMDELIMITER = "\t"; //$NON-NLS-1$
 	private final FormToolkit tk;
 	private final ScrolledForm form;
-	String[] Abrechnungstypen = Fall.getAbrechnungsSysteme();
+	String[] Abrechnungstypen = UserCasePreferences
+		.sortBillingSystems(Fall.getAbrechnungsSysteme());
 	private Fall actFall;
 	DayDateCombo ddc;
 	
@@ -190,42 +193,83 @@ public class FallDetailBlatt2 extends Composite {
 			@Override
 			public void widgetSelected(final SelectionEvent e){
 				int i = cAbrechnung.getSelectionIndex();
+				String abrechungsMethodeStr = cAbrechnung.getItem(i);
+				int separatorPos =
+					UserCasePreferences.getBillingSystemsMenuSeparatorPos(Abrechnungstypen);
+				boolean isDisabled = Leistungscodes.isBillingSystemDisabled(abrechungsMethodeStr);
 				Fall fall = getFall();
-				if (fall != null) {
-					if (fall.getBehandlungen(false).length > 0) {
-						if (Hub.acl.request(AccessControlDefaults.CASE_MODIFY)) {
-							if (SWTHelper.askYesNo(Messages
-								.getString("FallDetailBlatt2.DontChangeBillingSystemCaption"), //$NON-NLS-1$
-								Messages.getString("FallDetailBlatt2.DontChangeBillingSystemBody"))) { //$NON-NLS-1$
-								fall.setAbrechnungsSystem(cAbrechnung.getItem(i));
-								setFall(fall);
-								ElexisEventDispatcher.fireSelectionEvent(fall.getPatient());
-								return;
+				// get previously selected item/gesetz if we need to reset
+				String gesetz = ""; //$NON-NLS-1$
+				if (fall != null)
+					gesetz = fall.getAbrechnungsSystem();
+				if (ch.rgw.tools.StringTool.isNothing(gesetz))
+					gesetz = Messages.getString("FallDetailBlatt2.free"); //$NON-NLS-1$
+				if (i == separatorPos) {
+					// this is the separator - cannot select - simply reset to previous selection
+					cAbrechnung.select(cAbrechnung.indexOf(gesetz));
+				} else if (isDisabled) {
+					// selection not allowed - reset previous selection after message
+					SWTHelper.alert(
+						Messages.getString("FallDetailBlatt2.ChangeBillingSystemNotAllowedCaption"), //$NON-NLS-1$
+						Messages.getString("FallDetailBlatt2.ChangeBillingSystemNotAllowedBody")); //$NON-NLS-1$
+					cAbrechnung.select(cAbrechnung.indexOf(gesetz));
+				} else {
+					if (fall != null) {
+						if (fall.getBehandlungen(false).length > 0) {
+							if (Hub.acl.request(AccessControlDefaults.CASE_MODIFY)) {
+								if (SWTHelper.askYesNo(Messages
+									.getString("FallDetailBlatt2.DontChangeBillingSystemCaption"), //$NON-NLS-1$
+									Messages
+										.getString("FallDetailBlatt2.DontChangeBillingSystemBody"))) { //$NON-NLS-1$
+									fall.setAbrechnungsSystem(cAbrechnung.getItem(i));
+									setFall(fall);
+									ElexisEventDispatcher.fireSelectionEvent(fall.getPatient());
+									return;
+								}
+							} else {
+								SWTHelper.alert(Messages
+									.getString("FallDetailBlatt2.CantChangeBillingSystemCaption"), //$NON-NLS-1$
+									Messages
+										.getString("FallDetailBlatt2.CantChangeBillingSystemBody")); //$NON-NLS-1$
 							}
+							cAbrechnung.select(cAbrechnung.indexOf(gesetz));
+							
 						} else {
-							SWTHelper.alert(Messages
-								.getString("FallDetailBlatt2.CantChangeBillingSystemCaption"), //$NON-NLS-1$
-								Messages.getString("FallDetailBlatt2.CantChangeBillingSystemBody")); //$NON-NLS-1$
+							fall.setAbrechnungsSystem(Abrechnungstypen[i]);
+							setFall(fall);
+							ElexisEventDispatcher.fireSelectionEvent(fall.getPatient());
+							// Falls noch kein Garant gesetzt ist: Garanten des
+							// letzten Falles zum
+							// selben Gesetz nehmen
 						}
-						String gesetz = fall.getAbrechnungsSystem();
-						if (ch.rgw.tools.StringTool.isNothing(gesetz)) {
-							gesetz = Messages.getString("FallDetailBlatt2.free"); //$NON-NLS-1$
-						}
-						cAbrechnung.select(cAbrechnung.indexOf(gesetz));
-						
-					} else {
-						fall.setAbrechnungsSystem(Abrechnungstypen[i]);
-						setFall(fall);
-						ElexisEventDispatcher.fireSelectionEvent(fall.getPatient());
-						// Falls noch kein Garant gesetzt ist: Garanten des
-						// letzten Falles zum
-						// selben Gesetz nehmen
 					}
 					
 				}
 			}
 			
 		});
+		
+		// focus listener needed because view may be created BEFORE a user is active
+		// but for the sorting we need the user prefs for sorting
+		// AND if the prefs have just been modified...
+		cAbrechnung.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e){
+				// only set items if there ARE changes to avoid unnecessary flickering
+				String[] currItems = cAbrechnung.getItems();
+				String[] newItems =
+					UserCasePreferences.sortBillingSystems(Fall.getAbrechnungsSysteme());
+				if (!Arrays.equals(currItems, newItems)) {
+					String savedItem = cAbrechnung.getText();
+					cAbrechnung.setItems(newItems);
+					cAbrechnung.setText(savedItem);
+				}
+			}
+			
+			@Override
+			public void focusLost(FocusEvent e){}
+		});
+		
 		tk.createLabel(top, LABEL);
 		tBezeichnung = tk.createText(top, StringTool.leer);
 		tBezeichnung.addFocusListener(new FocusAdapter() {
@@ -335,6 +379,17 @@ public class FallDetailBlatt2 extends Composite {
 		tGarant.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tk.paintBordersFor(top);
 		setFall(getFall());
+	}
+	
+	/**
+	 * reload the billing systems menu (user dependent) and ensure that the right item is still
+	 * selected
+	 */
+	public void reloadBillingSystemsMenu(){
+		Abrechnungstypen = UserCasePreferences.sortBillingSystems(Fall.getAbrechnungsSysteme());
+		String currItem = cAbrechnung.getText();
+		cAbrechnung.setItems(Abrechnungstypen);
+		cAbrechnung.setText(currItem);
 	}
 	
 	class TristateSelection implements SelectionListener {
@@ -481,7 +536,7 @@ public class FallDetailBlatt2 extends Composite {
 		lReqs.clear();
 		
 		// *** fill billing systems into combo, set current system
-		cAbrechnung.setItems(Fall.getAbrechnungsSysteme());
+		cAbrechnung.setItems(Abrechnungstypen);
 		if (f == null) {
 			form.setText(Messages.getString("FallDetailBlatt2.NoCaseSelected")); //$NON-NLS-1$
 			tBezeichnung.setText(Messages.getString("FallDetailBlatt2.29")); //$NON-NLS-1$

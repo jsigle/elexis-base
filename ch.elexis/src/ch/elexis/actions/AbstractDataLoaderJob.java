@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AbstractDataLoaderJob.java 4778 2008-12-08 17:04:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;

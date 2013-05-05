@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *
- * $Id: AeskulapImporter.java 231 2007-08-23 19:12:43Z Gerry $
  *******************************************************************************/
 
 package ch.elexis.importer.aeskulap;

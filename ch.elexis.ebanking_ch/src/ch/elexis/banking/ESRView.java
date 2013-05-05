@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: ESRView.java 6039 2010-02-01 11:04:53Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 

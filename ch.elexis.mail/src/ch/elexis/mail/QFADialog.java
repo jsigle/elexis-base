@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: QFADialog.java 4718 2008-12-04 10:10:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.mail;

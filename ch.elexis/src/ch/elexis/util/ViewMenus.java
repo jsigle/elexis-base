@@ -9,7 +9,6 @@
  *    G. Weirich - initial implementation
  *    M. Descher - Declarative access to the contextMenu
  *    
- *    $Id$
  *******************************************************************************/
 
 package ch.elexis.util;

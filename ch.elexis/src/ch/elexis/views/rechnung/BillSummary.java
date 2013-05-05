@@ -8,7 +8,6 @@
  * Contributors:
  *    Daniel Lutz - initial implementation
  *    
- *  $Id: BillSummary.java 6155 2010-02-20 15:36:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;

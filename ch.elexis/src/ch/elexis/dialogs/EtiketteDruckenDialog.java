@@ -8,7 +8,6 @@
  * Contributors:
  *    M. Imhof - initial implementation
  *    
- *  $Id: EtiketteDruckenDialog.java 6237 2010-03-19 11:24:39Z michael_imhof $
  *******************************************************************************/
 package ch.elexis.dialogs;
 

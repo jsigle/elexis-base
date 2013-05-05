@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: TICodeSelectorFactory.java 5041 2009-01-25 19:50:03Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;

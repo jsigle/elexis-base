@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: IntegerField.java 5355 2009-06-14 10:35:19Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.selectors;
 

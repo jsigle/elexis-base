@@ -4,7 +4,6 @@
  * Contributors:
  *    M. Descher - Modifications due to performance problems on selector (WiP)
  *    
- *  $Id$
  *******************************************************************************/
 package ch.elexis.artikel_at.data;
 

@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Validator.java 4381 2008-09-07 13:58:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;

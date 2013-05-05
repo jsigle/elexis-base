@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: SendQFA.java 4742 2008-12-04 21:35:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.mail;

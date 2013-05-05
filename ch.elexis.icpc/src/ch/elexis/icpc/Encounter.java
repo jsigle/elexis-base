@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Encounter.java 5178 2009-02-24 15:46:41Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc;
 

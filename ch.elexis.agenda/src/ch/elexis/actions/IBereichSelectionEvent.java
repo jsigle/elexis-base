@@ -8,7 +8,6 @@
  * Contributors:
  *    M. Descher - Initial implementation
  *    
- *  $Id$
  *******************************************************************************/
 package ch.elexis.actions;
 

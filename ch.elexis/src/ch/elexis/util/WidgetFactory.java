@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: WidgetFactory.java 23 2006-03-24 15:36:01Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;

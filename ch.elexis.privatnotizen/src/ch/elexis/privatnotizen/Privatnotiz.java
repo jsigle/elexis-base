@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Privatnotiz.java 814 2006-08-28 20:00:33Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatnotizen;

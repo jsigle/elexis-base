@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KonsListe.java 6364 2010-05-15 12:36:21Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;

@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: SafeElement.java 5319 2009-05-26 14:55:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;

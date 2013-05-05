@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PatientMenuPopulator.java 5873 2009-12-17 22:51:30Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 

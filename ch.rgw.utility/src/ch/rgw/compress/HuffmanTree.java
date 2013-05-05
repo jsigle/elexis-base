@@ -1,4 +1,14 @@
-// $Id: HuffmanTree.java 536 2006-07-08 04:58:10Z rgw_ch $
+/*******************************************************************************
+ * Copyright (c) 2005-2011, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ *******************************************************************************/
 
 package ch.rgw.compress;
 
@@ -6,11 +16,21 @@ package ch.rgw.compress;
  * Huffmann tree with several creation and persistency options.
  * @author Gerry
  */
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.prefs.Preferences;
 
-import ch.rgw.tools.*;
+import ch.rgw.tools.BinConverter;
+import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.IntTool;
+import ch.rgw.tools.StringTool;
 
 public class HuffmanTree {
 	public static String Version(){

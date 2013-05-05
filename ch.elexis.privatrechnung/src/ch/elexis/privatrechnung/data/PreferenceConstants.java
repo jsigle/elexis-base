@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PreferenceConstants.java 3335 2007-11-11 18:06:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.data;

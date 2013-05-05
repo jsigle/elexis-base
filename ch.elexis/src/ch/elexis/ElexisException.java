@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: ElexisException.java 6147 2010-02-16 14:49:46Z rgw_ch $
  *******************************************************************************/
 package ch.elexis;
 

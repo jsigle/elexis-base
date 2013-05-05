@@ -8,7 +8,6 @@
  * Contributors:
  *    D. Lutz - initial implementation
  *    
- *  $Id$
  *******************************************************************************/
 
 package ch.elexis.data;

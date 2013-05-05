@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: Activator.java 5745 2009-09-22 09:34:47Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc;

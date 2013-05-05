@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Preferences.java 5203 2009-03-15 21:17:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.fire.ui;

@@ -9,7 +9,6 @@
  *    G. Weirich - initial implementation
  *    M. Descher - extracted Eigenartikel to ch.elexis.eigenartikel
  * 
- *  $Id$
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;

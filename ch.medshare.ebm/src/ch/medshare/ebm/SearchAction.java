@@ -9,7 +9,6 @@
  *    D. Lutz - initial implementation
  *    G. Weirich - Adapted for API changes
  * 
- *    $Id: LaborLink.java 6043 2010-02-01 14:34:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.medshare.ebm;

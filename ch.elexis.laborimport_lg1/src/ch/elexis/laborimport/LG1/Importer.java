@@ -27,17 +27,19 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.Hub;
 import ch.elexis.importers.HL7Parser;
-import ch.elexis.util.ImporterPage; // import ch.elexis.util.Messages;
+import ch.elexis.util.ImporterPage;
 import ch.elexis.util.ResultAdapter;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.Result.SEVERITY;
+// import ch.elexis.util.Messages;
 
 public class Importer extends ImporterPage {
 	public static final String MY_LAB = "LG1";
@@ -189,11 +191,35 @@ public class Importer extends ImporterPage {
 			type = FILE;
 		}
 		
-		if (type == FILE) {
-			String filename = results[1];
-			return ResultAdapter.getResultAsStatus(hlp.importFile(filename, false));
-		} else {
-			return ResultAdapter.getResultAsStatus(importDirect());
+		// run work in display thread
+		DoImportRunnable runner = new DoImportRunnable(type);
+		// wait for the import to complete
+		Display.getDefault().syncExec(runner);
+		
+		return runner.result;
+	}
+	
+	/**
+	 * Private Runnable doing the actual import with a result value.
+	 * 
+	 * @author thomashu
+	 */
+	private class DoImportRunnable implements Runnable {
+		int type;
+		IStatus result;
+		
+		public DoImportRunnable(int type){
+			this.type = type;
+		}
+		
+		@Override
+		public void run(){
+			if (type == FILE) {
+				String filename = results[1];
+				result = ResultAdapter.getResultAsStatus(hlp.importFile(filename, false));
+			} else {
+				result = ResultAdapter.getResultAsStatus(importDirect());
+			}
 		}
 	}
 	

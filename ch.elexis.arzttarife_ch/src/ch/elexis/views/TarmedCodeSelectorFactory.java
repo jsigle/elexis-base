@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedCodeSelectorFactory.java 5017 2009-01-23 16:33:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;

@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: JobPool.java 4695 2008-11-22 05:58:01Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;

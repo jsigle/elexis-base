@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: StringConstants.java 6141 2010-02-14 16:21:10Z rgw_ch $
  *******************************************************************************
  */
 package ch.elexis;

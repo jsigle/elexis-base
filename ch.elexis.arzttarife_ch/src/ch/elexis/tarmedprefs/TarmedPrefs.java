@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedPrefs.java 2831 2007-07-18 15:05:48Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.tarmedprefs;
 

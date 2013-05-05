@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BildFactory.java 4248 2008-08-08 14:40:49Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.images;
 

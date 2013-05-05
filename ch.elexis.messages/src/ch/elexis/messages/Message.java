@@ -8,7 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Message.java 5182 2009-02-24 15:47:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.messages;
