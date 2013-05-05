@@ -835,7 +835,7 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 		};		//js: tidySelectedAddressesAction = new Action()
 	
 			
-		/*
+		/* 201303141833js same or similar code is now also included in Patientenblatt2.java
 		 * 201202161220js:
 		 * Copy selected contact data (complete) to the clipboard, so it/they can be easily pasted into a target document
 		 * for various further usage. This variant produces a more complete data set than copySelectedAddresses... below;
@@ -1067,7 +1067,7 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 			};  	//js: copySelectedContactInfosToClipboardAction.run()
 		};
 
-		/*
+		/* 201303141833js same or similar code is now also included in Patientenblatt2.java
 		 * 201201280147js:
 		 * Copy selected address(es) to the clipboard, so it/they can be easily pasted into a letter for printing.
 		 * Two actions with identical / similar code has also been added to PatientenListeView.java 

@@ -1,12 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2008-2010, G. Weirich and Elexis
+ * Portions (c) 2012-2013, Joerg M. Sigle (js, jsigle)
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    G. Weirich - initial implementation
+ *    G. Weirich -  initial implementation
+ *    Joerg Sigle - Added ability to copy selected addresses to the clipboard
  *    
  *******************************************************************************/
 
@@ -25,6 +28,9 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyEvent;
@@ -78,6 +84,7 @@ import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
 import ch.elexis.util.WidgetFactory;
 import ch.rgw.tools.StringTool;
+import ch.rgw.tools.TimeTool;
 
 /**
  * Detailansicht eines Patientrecords Ersatz für Patientenblatt mit erweiterter Funktionalität
@@ -88,7 +95,9 @@ public class Patientenblatt2 extends Composite implements IActivationListener {
 	private static final String KEY_PATIENTENBLATT = "Patientenblatt/"; //$NON-NLS-1$
 	private final FormToolkit tk;
 	private InputPanel ipp;
-	private IAction lockAction, removeZAAction, showZAAction;
+	private IAction lockAction, removeZAAction, showZAAction,
+			copySelectedContactInfosToClipboardAction,	//201303141833js adopted from KontakteView.java: 201202161250js: Added copySelectedContactInfosToClipboardAction
+			copySelectedAddressesToClipboardAction;		//201303141833js adopted from KontakteView.java: 201201280152js: Added copySelectedAddressesToClipboardAction
 	// MenuItem delZA;
 	public final static String CFG_BEZUGSKONTAKTTYPEN = "views/patientenblatt/Bezugskontakttypen"; //$NON-NLS-1$
 	public final static String CFG_EXTRAFIELDS = "views/patientenblatt/extrafelder"; //$NON-NLS-1$
@@ -332,9 +341,17 @@ public class Patientenblatt2 extends Composite implements IActivationListener {
 					return "?"; //$NON-NLS-1$
 				}
 			});
+		
+		//Hyperlink "Hinzu..." über der Adressliste hinzufügen
 		inpZusatzAdresse.addHyperlinks(Messages.getString("Patientenblatt2.add")); //$NON-NLS-1$
+		
+		//Das Kontext-Menü jedes Eintrags in der Adressliste erzeugen
+		
 		// inpZusatzAdresse.setMenu(createZusatzAdressMenu());
-		inpZusatzAdresse.setMenu(removeZAAction, showZAAction);
+		inpZusatzAdresse.setMenu(removeZAAction, showZAAction,
+				copySelectedContactInfosToClipboardAction,							//201303141833js adopted from KontakteView.java: 201202161250js: Added copySelectedContactInfosToClipboardAction
+				copySelectedAddressesToClipboardAction);							//201303141833js adopted from KontakteView.java: 201201280152js: Added copySelectedAddressesToClipboardAction
+		
 		
 		ecZA.setClient(inpZusatzAdresse);
 		for (int i = 0; i < lbExpandable.length; i++) {
@@ -382,7 +399,12 @@ public class Patientenblatt2 extends Composite implements IActivationListener {
 		
 		viewmenu = new ViewMenus(viewsite);
 		viewmenu.createMenu(GlobalActions.printEtikette, GlobalActions.printAdresse,
-			GlobalActions.printBlatt, GlobalActions.printRoeBlatt);
+			GlobalActions.printBlatt, GlobalActions.printRoeBlatt,
+		copySelectedContactInfosToClipboardAction,							//201303141833js adopted from KontakteView.java: 201202161250js: Added copySelectedContactInfosToClipboardAction
+		copySelectedAddressesToClipboardAction);							//201303141833js adopted from KontakteView.java: 201201280152js: Added copySelectedAddressesToClipboardAction
+	
+		viewmenu.createToolbar(copySelectedContactInfosToClipboardAction);	//201303141833js adopted from KontakteView.java: 201202161250js: Added copySelectedContactInfosToClipboardAction
+		viewmenu.createToolbar(copySelectedAddressesToClipboardAction);		//201303141833js adopted from KontakteView.java: 201201280152js: Added copySelectedAddressesToClipboardAction
 		viewmenu.createToolbar(lockAction);
 		GlobalEventDispatcher.addActivationListener(this, site.getPart());
 		tk.paintBordersFor(form.getBody());
@@ -531,6 +553,357 @@ public class Patientenblatt2 extends Composite implements IActivationListener {
 					KontaktDetailDialog kdd = new KontaktDetailDialog(form.getShell(), a);
 					kdd.open();
 				}
+			};
+
+	
+			/* 201303141833js adopted from KontakteView.java
+			 * 201202161220js:
+			 * Copy selected contact data (complete) to the clipboard, so it/they can be easily pasted into a target document
+			 * for various further usage. This variant produces a more complete data set than copySelectedAddresses... below;
+			 * it also includes the phone numbers and does not use the postal address, but all the individual data fields.
+			 * Two actions with identical / similar code has also been added to PatientenListeView.java 
+			 */
+			copySelectedContactInfosToClipboardAction = new Action(Messages.getString("KontakteView.copySelectedContactInfosToClipboard")) { //$NON-NLS-1$
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_CLIPBOARD));
+					setToolTipText(Messages.getString("KontakteView.copySelectedContactInfosToClipboard")); //$NON-NLS-1$
+				}
+				
+				@Override
+				public void run(){
+					
+					//Adopted from KontakteView.printList:			
+					//Convert the selected contacts into a list
+
+					StringBuffer SelectedContactInfosText = new StringBuffer();
+
+					//Here's a handling difference between Patientenblatt2.java and KontakteView.java:
+					//Apparently, the method getSelection() from ListDisplay.java returns only the first selected entry.
+					//Actually, in the List of addresses in section "Hinzu", it is only possible to select one address at a time. 
+					//Moreover, it doesn't return Object[], but T, which is a list to be displayed with GUI, extending composite.
+					//Object[] sel = inpZusatzAdresse.getSelection();    					//This would not work for inpZusatzAdresse
+					BezugsKontakt sel = (BezugsKontakt) inpZusatzAdresse.getSelection();	//This works, but returns only one entry.
+					
+					//js: If you enable the following line for debug output,
+					//    you should also enable the SelectedContactInfosText.setLength(0) line below,
+					//    and enable output of SelectedContactInfosText even for the case of an empty selection further below.
+					//SelectedContactInfosText.append("jsdebug: Sorry, your selection is empty.");
+					
+					//if (sel != null && sel.length > 0) {									//This would not work for inpZusatzAdresse
+					if (sel != null) {
+						//SelectedContactInfosText.setLength(0);
+						//SelectedContactInfosText.append("jsdebug: Your selection includes "+sel.length+" element(s):"+System.getProperty("line.separator"));
+						
+						//for (int i = 0; i < sel.length; i++) {							//This would not work for inpZusatzAdresse
+							//Kontakt k = (Kontakt) sel[i];									//This would not work for inpZusatzAdresse
+							Kontakt k = sel.getBezugsKontakt();
+							
+							//System.out.print("jsdebug: SelectedContactInfos.k.toString(): \n"+k.toString()+"\n");
+
+							//The following code is adopted from Kontakt.createStdAnschrift for a different purpose/layout:
+							//ggf. hier zu Person.getPersonalia() eine abgewandelte Fassung hinzufügen und von hier aus aufrufen.
+							
+							//This highly similar (but still different) code has been adopted from my addition
+							//to PatientenListeView.java CopySelectedPatInfosToClipboard... 201202161313js
+
+							//optional code; this could be made configurable. For now: disabled by if (false)...
+							if (false) {
+								//I put the field of "Kürzel" in front. It contains a Patient ID number,
+								//and optionally kk... for health insurances, or vn initials as Vorname Nachname for physicians. 
+								String thisKontaktFLD_SHORT_LABEL = k.get(k.FLD_SHORT_LABEL); //$NON-NLS-1$
+								if (!StringTool.isNothing(thisKontaktFLD_SHORT_LABEL)) {
+									SelectedContactInfosText.append(thisKontaktFLD_SHORT_LABEL).append(",").append(StringTool.space);
+								}
+							}					
+							
+							if (k.istPerson()) {
+								// Here, we need to look at the Person variant of a Kontakt to obtain their sex; 201202161326js
+								// Kontakt cannot simply be cast to Person - if we try, we'll throw an error, and the remainder of this action will be ignored.
+								// Person p = (Person) sel[i]; //THIS WILL NOT WORK.
+								// So obtain the corresponding Person for a Kontakt via the ID:
+								Person p = Person.load(k.getId());
+
+								String salutation;
+								// TODO default salutation might be configurable (or a "Sex missing!" Info might appear) js 
+								if (p.getGeschlecht().equals(Person.MALE)) {							
+									salutation = Messages.getString("KontakteView.SalutationM"); //$NON-NLS-1$
+								} else  //We do not use any default salutation for unknown sex to avoid errors!
+								if (p.getGeschlecht().equals(Person.FEMALE)) {							
+									salutation = Messages.getString("KontakteView.SalutationF"); //$NON-NLS-1$
+								} else { salutation = ""; //$NON-NLS-1$
+								}
+								
+								if (!StringTool.isNothing(salutation)) {	//salutation should currently never be empty, but paranoia...
+									SelectedContactInfosText.append(salutation);
+									SelectedContactInfosText.append(StringTool.space);
+								}
+									
+								String titel = p.get(p.TITLE); //$NON-NLS-1$
+								if (!StringTool.isNothing(titel)) {
+									SelectedContactInfosText.append(titel).append(StringTool.space);
+								}
+								//js: A comma between Family Name and Given Name would be generally helpful to reliably tell them apart:
+								//SelectedContactInfosText.append(k.getName()+","+StringTool.space+k.getVorname());
+								//js: But Jürg Hamacher prefers this in his letters without a comma in between:
+								//SelectedContactInfosText.append(p.getName()+StringTool.space+p.getVorname());
+								//Whereas I use the above variant for PatientenListeView.java;
+								//I put the Vorname first in KontakteView. And I only use a spacer, if the first field is not empty!
+								//SelectedContactInfosText.append(p.getVorname()+StringTool.space+p.getName());
+								if (!StringTool.isNothing(p.getVorname())) {
+									SelectedContactInfosText.append(p.getVorname()+StringTool.space);
+								}
+								if (!StringTool.isNothing(p.getName())) {
+									SelectedContactInfosText.append(p.getName());
+								}
+								
+								//Also, in KontakteView, I copy the content of fields "Bemerkung" and "Zusatz" as well.
+								//"Zusatz" is mapped to "Bezeichnung3" in Person.java.
+								String thisPersonFLD_REMARK = p.get(p.FLD_REMARK); //$NON-NLS-1$
+								if (!StringTool.isNothing(thisPersonFLD_REMARK)) {
+									SelectedContactInfosText.append(",").append(StringTool.space).append(thisPersonFLD_REMARK);
+								}
+								String thisPersonFLD_NAME3 = p.get(p.FLD_NAME3); //$NON-NLS-1$
+								if (!StringTool.isNothing(thisPersonFLD_NAME3)) {
+									SelectedContactInfosText.append(",").append(StringTool.space).append(thisPersonFLD_NAME3);
+								}						
+
+								String thisPatientBIRTHDATE = (String) p.get(p.BIRTHDATE);
+								if (!StringTool.isNothing(thisPatientBIRTHDATE)) {
+								//js: This would add the term "geb." (born on the) before the date of birth:
+								//	SelectedContactInfosText.append(","+StringTool.space+"geb."+StringTool.space+new TimeTool(thisPatientBIRTHDATE).toString(TimeTool.DATE_GER));
+								//js: But Jürg Hamacher prefers the patient information in his letters without that term:
+								SelectedContactInfosText.append(","+StringTool.space+new TimeTool(thisPatientBIRTHDATE).toString(TimeTool.DATE_GER));
+								}
+							} else {	//if (k.istPerson())... else...
+								String thisAddressFLD_NAME1 = (String) k.get(k.FLD_NAME1);
+								String thisAddressFLD_NAME2 = (String) k.get(k.FLD_NAME2);
+								String thisAddressFLD_NAME3 = (String) k.get(k.FLD_NAME3);
+								if (!StringTool.isNothing(thisAddressFLD_NAME1)) {
+									SelectedContactInfosText.append(thisAddressFLD_NAME1);
+									if (!StringTool.isNothing(thisAddressFLD_NAME2+thisAddressFLD_NAME3)) {
+										SelectedContactInfosText.append(StringTool.space);
+									}
+								}
+								if (!StringTool.isNothing(thisAddressFLD_NAME2)) {
+									SelectedContactInfosText.append(thisAddressFLD_NAME2);
+								}
+								if (!StringTool.isNothing(thisAddressFLD_NAME3)) {
+									SelectedContactInfosText.append(thisAddressFLD_NAME3);
+								}
+								if (!StringTool.isNothing(thisAddressFLD_NAME3)) {
+									SelectedContactInfosText.append(StringTool.space);
+								}
+							}
+
+							String thisAddressFLD_STREET = (String) k.get(k.FLD_STREET);
+							if (!StringTool.isNothing(thisAddressFLD_STREET)) {
+								SelectedContactInfosText.append(","+StringTool.space+thisAddressFLD_STREET);
+							}
+
+							String thisAddressFLD_COUNTRY = (String) k.get(k.FLD_COUNTRY);
+							if (!StringTool.isNothing(thisAddressFLD_COUNTRY)) {
+								SelectedContactInfosText.append(","+StringTool.space+thisAddressFLD_COUNTRY+"-");
+							}
+								
+							String thisAddressFLD_ZIP = (String) k.get(k.FLD_ZIP);
+							if (!StringTool.isNothing(thisAddressFLD_ZIP)) {
+									if (StringTool.isNothing(thisAddressFLD_COUNTRY)) {
+											SelectedContactInfosText.append(","+StringTool.space);
+										};
+								SelectedContactInfosText.append(thisAddressFLD_ZIP);
+							};
+											
+							String thisAddressFLD_PLACE = (String) k.get(k.FLD_PLACE);
+							if (!StringTool.isNothing(thisAddressFLD_PLACE)) {
+								if (StringTool.isNothing(thisAddressFLD_COUNTRY) && StringTool.isNothing(thisAddressFLD_ZIP)) {
+									SelectedContactInfosText.append(",");
+								};
+								SelectedContactInfosText.append(StringTool.space+thisAddressFLD_PLACE);
+							}
+
+							String thisAddressFLD_PHONE1 = (String) k.get(k.FLD_PHONE1);
+							if (!StringTool.isNothing(thisAddressFLD_PHONE1)) {
+									SelectedContactInfosText.append(","+StringTool.space+StringTool.space+thisAddressFLD_PHONE1);
+							}
+								
+							String thisAddressFLD_PHONE2 = (String) k.get(k.FLD_PHONE2);
+							if (!StringTool.isNothing(thisAddressFLD_PHONE2)) {
+								SelectedContactInfosText.append(","+StringTool.space+StringTool.space+thisAddressFLD_PHONE2);
+							}
+								
+							String thisAddressFLD_MOBILEPHONE = (String) k.get(k.FLD_MOBILEPHONE);
+							if (!StringTool.isNothing(thisAddressFLD_MOBILEPHONE)) {
+								//With a colon after the label:
+								//SelectedContactInfosText.append(","+StringTool.space+k.FLD_MOBILEPHONE+":"+StringTool.space+thisAddressFLD_MOBILEPHONE);
+								//Without a colon after the label:
+								SelectedContactInfosText.append(","+StringTool.space+k.FLD_MOBILEPHONE+StringTool.space+thisAddressFLD_MOBILEPHONE);
+							}
+								
+							String thisAddressFLD_FAX = (String) k.get(k.FLD_FAX);
+							if (!StringTool.isNothing(thisAddressFLD_FAX)) {
+								//With a colon after the label:
+								//SelectedContactInfosText.append(","+StringTool.space+k.FLD_FAX+":"+StringTool.space+thisAddressFLD_FAX);
+								//Without a colon after the label:
+								SelectedContactInfosText.append(","+StringTool.space+k.FLD_FAX+StringTool.space+thisAddressFLD_FAX);
+							}
+								
+							String thisAddressFLD_E_MAIL = (String) k.get(k.FLD_E_MAIL);
+							if (!StringTool.isNothing(thisAddressFLD_E_MAIL)) {
+								SelectedContactInfosText.append(","+StringTool.space+thisAddressFLD_E_MAIL);
+							}							
+
+							/*																		//This would not work for inpZusatzAdresse
+							//Add another empty line (or rather: paragraph), if at least one more address will follow.
+							if (i<sel.length-1) {
+								SelectedContactInfosText.append(System.getProperty("line.separator"));
+							}
+							*/
+							
+						//}		//js: for each element in sel do									//This would not work for inpZusatzAdresse
+
+						/*
+						 * 20120130js:
+						 * I would prefer to move the following code portions down behind the "if sel not empty" block,
+						 * so that (a) debugging output can be produced and (b) the clipboard will be emptied
+						 * when NO Contacts have been selected. I did this to avoid the case where a user would assume
+						 * they had selected some address, copied data to the clipboard, and pasted them - and, even
+						 * when they erred about their selection, which was indeed empty, they would not immediately
+						 * notice that because some (old, unchanged) content would still come out of the clipboard.
+						 * 
+						 * But if I do so, and there actually is no address selected, I get an error window:
+						 * Unhandled Exception ... not valid. So to avoid that message without any further research
+						 * (I need to get this work fast now), I move the code back up and leave the clipboard
+						 * unchanged for now, if no Contacts had been selected to process.
+						 * 
+						 * (However, I may disable the toolbar icon / menu entry for this action in that case later on.) 
+					 	 */				 	 
+						
+					    //System.out.print("jsdebug: SelectedContactInfosText: \n"+SelectedContactInfosText+"\n");
+						
+						//Adopted from BestellView.exportClipboardAction:
+						//Copy some generated object.toString() to the clipoard
+						
+						Clipboard clipboard = new Clipboard(Desk.getDisplay());
+						TextTransfer textTransfer = TextTransfer.getInstance();
+						Transfer[] transfers = new Transfer[] {
+							textTransfer
+						};
+						Object[] data = new Object[] {
+							SelectedContactInfosText.toString()
+						};
+						clipboard.setContents(data, transfers);
+						clipboard.dispose();
+					}			//js: if sel not empty
+				};  	//js: copySelectedContactInfosToClipboardAction.run()
+			};
+
+			/* 201303141833js adopted from KontakteView.java
+			 * 201201280147js:
+			 * Copy selected address(es) to the clipboard, so it/they can be easily pasted into a letter for printing.
+			 * Two actions with identical / similar code has also been added to PatientenListeView.java 
+			 */
+			copySelectedAddressesToClipboardAction = new Action(Messages.getString("KontakteView.copySelectedAddressesToClipboard")) { //$NON-NLS-1$
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_CLIPBOARD));
+					setToolTipText(Messages.getString("KontakteView.copySelectedAddressesToClipboard")); //$NON-NLS-1$
+				}
+				
+				@Override
+				public void run(){
+					
+					//Adopted from KontakteView.printList:			
+					//Convert the selected addresses into a list
+
+					StringBuffer selectedAddressesText = new StringBuffer();
+									
+					//Here's a handling difference between Patientenblatt2.java and KontakteView.java:
+					//Apparently, the method getSelection() from ListDisplay.java returns only the first selected entry.
+					//Actually, in the List of addresses in section "Hinzu", it is only possible to select one address at a time. 
+					//Moreover, it doesn't return Object[], but T, which is a list to be displayed with GUI, extending composite.
+					//Object[] sel = inpZusatzAdresse.getSelection();    					//This would not work for inpZusatzAdresse
+					BezugsKontakt sel = (BezugsKontakt) inpZusatzAdresse.getSelection();	//This works, but returns only one entry.
+					
+					//js: If you enable the following line for debug output,
+					//    you should also enable the SelectedContactInfosText.setLength(0) line below,
+					//    and enable output of SelectedContactInfosText even for the case of an empty selection further below.
+					//SelectedContactInfosText.append("jsdebug: Sorry, your selection is empty.");
+					
+					//if (sel != null && sel.length > 0) {									//This would not work for inpZusatzAdresse
+					if (sel != null) {
+						//SelectedContactInfosText.setLength(0);
+						//SelectedContactInfosText.append("jsdebug: Your selection includes "+sel.length+" element(s):"+System.getProperty("line.separator"));
+						
+						//for (int i = 0; i < sel.length; i++) {							//This would not work for inpZusatzAdresse
+							//Kontakt k = (Kontakt) sel[i];									//This would not work for inpZusatzAdresse
+							Kontakt k = sel.getBezugsKontakt();
+
+							/*
+							 * Synthesize the address lines to output from the entries in Kontakt k;
+							 * added to implement the output format desired for the copyAddressToClipboard()
+							 * buttons added to version 2.1.6.js as of 2012-01-28ff
+						 	 *
+							 * We might synthesize our own "Anschrift" for each Kontakt,
+							 * completely according to our own requirements,
+							 * OR use any of the methods defined for Kontakt like:
+							 * getLabel...(), getPostAnschrift, createStandardAnschrift, List<BezugsKontakt>... -
+							 * 
+							 * The Declaration of Kontakt with field definitions is available in Kontakt.java, please look
+							 * therein for additional details, please. Click-Right -> Declaration on Kontakt in Eclipse works.
+							 * You can also look above to see the fields that printList would use.
+							 */ 
+
+							//selectedAddressesText.append("jsdebug: Item "+Integer.toString(i)+" "+k.toString()+System.getProperty("line.separator"));
+
+							//getPostAnschriftPhoneFaxEmail() already returns a line separator after the address
+							//The first parameter controls multiline or single line output
+							//The second parameter controls whether the phone numbers shall be included
+							selectedAddressesText.append(k.getPostAnschriftPhoneFaxEmail(true,true));
+
+							/*																		//This would not work for inpZusatzAdresse
+							//Add another empty line (or rather: paragraph), if at least one more address will follow.
+							if (i<sel.length-1) {
+								selectedAddressesText.append(System.getProperty("line.separator"));
+											
+							}
+							*/
+							
+						//}		//js: for each element in sel do									//This would not work for inpZusatzAdresse
+
+						/*
+						 * 20120130js:
+						 * I would prefer to move the following code portions down behind the "if sel not empty" block,
+						 * so that (a) debugging output can be produced and (b) the clipboard will be emptied
+						 * when NO addresses have been selected. I did this to avoid the case where a user would assume
+						 * they had selected some address, copied data to the clipboard, and pasted them - and, even
+						 * when they erred about their selection, which was indeed empty, they would not immediately
+						 * notice that because some (old, unchanged) content would still come out of the clipboard.
+						 * 
+						 * But if I do so, and there actually is no address selected, I get an error window:
+						 * Unhandled Exception ... not valid. So to avoid that message without any further research
+						 * (I need to get this work fast now), I move the code back up and leave the clipboard
+						 * unchanged for now, if no addresses had been selected to process.
+						 * 
+						 * (However, I may disable the toolbar icon / menu entry for this action in that case later on.) 
+					 	 */				 	 
+						
+					    //System.out.print("jsdebug: selectedAddressesText: \n"+selectedAddressesText+"\n");
+						
+						//Adopted from BestellView.exportClipboardAction:
+						//Copy some generated object.toString() to the clipoard
+						
+						Clipboard clipboard = new Clipboard(Desk.getDisplay());
+						TextTransfer textTransfer = TextTransfer.getInstance();
+						Transfer[] transfers = new Transfer[] {
+							textTransfer
+						};
+						Object[] data = new Object[] {
+							selectedAddressesText.toString()
+						};
+						clipboard.setContents(data, transfers);
+						clipboard.dispose();
+					}			//js: if sel not empty
+				};  	//js: copySelectedAddressesToClipboardAction.run()
+
 			};
 	}
 	
