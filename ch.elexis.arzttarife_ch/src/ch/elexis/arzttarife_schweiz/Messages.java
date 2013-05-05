@@ -1,5 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2006-2010, Gerry Weirich and Elexis
+ * Copyright (c) 2006-2010, Gerry Weirich and Elexis; portions Copyright (c) 2013 Joerg Sigle.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +8,7 @@
  *
  * Contributors:
  *    Gerry Weirich - initial implementation
+ *    Joerg Sigle   - warning if a position is about to be billed at 0.00
  *    
  *******************************************************************************/
 package ch.elexis.arzttarife_schweiz;
@@ -124,6 +126,10 @@ public class Messages extends NLS {
 	
 	public static String TarmedOptifier_NotYetValid;
 	
+	public static String TarmedOptifier_PriceZeroNotAllowed;				//201303130140js: Eine Rechnung mit einer Position zu 0.00 wird von der Aerztekasse zurueckgewiesen.
+	public static String TarmedOptifier_PriceZeroAskSupplementNoPrimary;	//201303130140js: Eine Rechnung mit einer Position zu 0.00 wird von der Aerztekasse zurueckgewiesen.
+	public static String TarmedOptifier_PriceZeroAskDrugNoSellingPrice;		//201303130140js: Eine Rechnung mit einer Position zu 0.00 wird von der Aerztekasse zurueckgewiesen.
+					
 	public static String TarmedImporter_singleLst;
 	public static String TarmedImporter_enterSource;
 	public static String TarmedImporter_successTitle;
