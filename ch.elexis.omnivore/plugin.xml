@@ -31,5 +31,14 @@
             value="1">
       </Service>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.preferences.transporters"
+            class="ch.elexis.omnivore.preferences.PreferencePage"
+            id="ch.elexis.omnivore_js.Preferences"
+            name="Omnivore_js · Version 1.4.3 · 2013-03-25 · joerg.sigle@jsigle.com · www.jsigle.com">
+      </page>
+   </extension>
 
 </plugin>

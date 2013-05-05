@@ -35,6 +35,9 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
 
+import ch.elexis.omnivore.preferences.PreferencePage;
+
+
 public class DocHandle extends PersistentObject implements IOpaqueDocument {
 	public static final String TABLENAME = "CH_ELEXIS_OMNIVORE_DATA"; //$NON-NLS-1$
 	public static final String DBVERSION = "1.2.1"; //$NON-NLS-1$
@@ -197,7 +200,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		Patient act = ElexisEventDispatcher.getSelectedPatient();
 		if (act == null) {
 			SWTHelper.showError(Messages.DocHandle_noPatientSelected,
-				Messages.DocHandle_pleaseSelectPatien);
+				Messages.DocHandle_pleaseSelectPatient);
 			return;
 		}
 		File file = new File(f);
@@ -206,6 +209,24 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 				MessageFormat.format(Messages.DocHandle_cantReadMessage, f));
 			return;
 		}
+
+		//FIXME: Warum ist es eigentlich so, dass nur 80 Zeichen funktionieren? Notfalls könnte ja auch Omnivore das Umbenennen veranlassen, und den Namen einfach (oder interaktiv) kürzen, statt eine Fehlermeldung auszugeben...
+		
+		//20130325js: From Omnivore version 1.4.2 to Omnivore_js version 1.4.3,
+		//I changed the fixed limit from 255 for the last part of the filename to a configurable one with default 80 chars. 
+		//Linux and MacOS may be able to handle longer filenames,
+		//but we observed and verified that Windows 7 64-bit would not import files with names longer than 80 chars.
+		//20130325js: Also, put the filename length check *before* displaying the file import dialog.
+		//Otherwise, users would have to type in a bunch of text first, and learn only afterwards, that that would be discarded.
+	    Integer maxOmnivoreFilenameLength=ch.elexis.omnivore.preferences.PreferencePage.getOmnivore_jsMax_Filename_Length();
+
+	    String nam = file.getName();
+		if (nam.length() > maxOmnivoreFilenameLength) {																											//20130325js: The checked limit is now configurable.
+			SWTHelper.showError(Messages.DocHandle_importErrorCaption,
+				MessageFormat.format(Messages.DocHandle_importErrorMessage, maxOmnivoreFilenameLength));	//20130325js: The error message is also dynamically generated.
+			return;
+		}		
+		
 		FileImportDialog fid = new FileImportDialog(file.getName());
 		if (fid.open() == Dialog.OK) {
 			try {
@@ -217,18 +238,139 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 				}
 				bis.close();
 				baos.close();
-				String nam = file.getName();
-				if (nam.length() > 255) {
-					SWTHelper.showError(Messages.DocHandle_importErrorCaption,
-						Messages.DocHandle_importErrorMessage);
-					return;
-				}
-				new DocHandle(baos.toByteArray(), act, fid.title, file.getName(), fid.keywords);
+
+				//FIXME: The original file name should be preserved in a separate field when the file content is imported into the database.			
+				new DocHandle(baos.toByteArray(), act, fid.title.trim(), file.getName(), fid.keywords.trim());	//20130325js: Added trim() to title and keywords, to avoid unnecessary extra lines in the omnivore content listing.
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
 				SWTHelper.showError(Messages.DocHandle_importErrorCaption,
 					Messages.DocHandle_importErrorMessage2);
+				//20130325js: Wenn das Importieren einen Fehler wirft, nacher die Datei nicht automatisch wegarchivieren. Deshalb hier return eingefügt.
+				return;
 			}
+			
+			//20130325js: Now, process all defined rules for automatic archiving of imported documents, as configured in omnivore_js preferences.
+
+			//Anything will be done *only* when SrcPattern and DestDir are both at least defined strings.
+			//A rule, where both SrcPattern and DestDir are empty strings, will be ignored and have no effect. Especially, it will not stop further rules from being evaluated.
+
+			//A (usually final) rule that is matched by all files may contain either strings like ".", oder be empty.
+			
+			//If DestDir ist not an empty string, the program will test:
+			//	if it is a file, it will be overwritten by the source file (hopefully...), except if it has the same name as the source file, where nothing will happen.
+			//	if it is a directory, the program will try to put the source file into it - but before doing so, will ensure that neither a dir nor a file of the same name are already there.
+			//To automatically delete source files after importing, you may either specify one fixed filename for all targets (they will overwrite each other), or /dev/null or c:\NUL or the like.
+			
+			//If you specify an empty string for DestDir, but a non-empty String for the SrcPattern, that will protect matching files from being automatically archived.
+			
+			//Every file will only be handled by the first matching rule.
+			
+			try	{
+				for (Integer i=0;i<ch.elexis.omnivore.preferences.PreferencePage.getOmnivore_jsnRulesForAutoArchiving();i++) {
+					String SrcPattern =ch.elexis.omnivore.preferences.PreferencePage.getOmnivore_jsRuleForAutoArchivingSrcPattern(i);
+					String DestDir = ch.elexis.omnivore.preferences.PreferencePage.getOmnivore_jsRuleForAutoArchivingDestDir(i);
+				
+					if ((SrcPattern != null) && (DestDir != null) && ( (SrcPattern != "" || DestDir != ""))) {
+						//Unter win für Dateien vom Explorer hineingezogen liefern getAbsolutePath und getAbsoluteFile dasselbe - jeweils laufwerk+path+dateiname.
+						//getCanonicalXYZ liefert schon einen Fehler in Eclipse
+						//getName liefert nur den Dateinamen ohne Laufwerk und/oder Pfad.
+					
+						System.out.println("js Omnivore DocHandle: Automatic archiving found matching rule #"+(i+1)+" (1-based index):");	
+						System.out.println("js Omnivore DocHandle: file.getAbsolutePath(): "+file.getAbsolutePath());	
+						//System.out.println("js Omnivore DocHandle: file.getAbsoluteFile(): "+file.getAbsoluteFile());
+						//System.out.println("js Omnivore DocHandle: file.getCanonicalPath(): "+file.getCanonicalPath());
+						//System.out.println("js Omnivore DocHandle: file.getCanonicalFile(): "+file.getCanonicalFile());
+						//System.out.println("js Omnivore DocHandle: file.getName(): "+file.getName());
+						System.out.println("js Omnivore DocHandle: Pattern: "+SrcPattern);
+						System.out.println("js Omnivore DocHandle: DestDir: "+DestDir);
+						
+						if (file.getAbsolutePath().contains(SrcPattern)) {
+							System.out.println("js Omnivore DocHandle: SrcPattern found in file.getAbsolutePath()"+i);	
+							
+							if (DestDir == "") {
+								System.out.println("js Omnivore DocHandle: DestDir is empty. No more rules will be evaluated for this file. Returning.");	
+								return;
+							}	//An empty DestDir protects a matching file from being processed by any further rules.
+							
+							//renameTo is (a) platform dependent, and (b) needs a file, not just a string, as a target.
+							//I.e. I must check whether the DestDir ist a directory, make a valid filename from it, etc.
+							//So before I would do that, let me try move first, which javas doc says should be platform independent etc.
+							//Well, move would truly operate on PathNames, rather than files, but still require some overhead.
+
+							/* All this doesn't work, because the "browse" button in the settings returns a selected directory WITHOUT a trailing sepchar.
+							 * Don't expect users to add that.
+							 * Instead, I will check whether DestDir is already a directory, and add the filename, if yes. 
+							//For now, I support TargetDirectory names only if they end with separatorChar; NOT with pathSeparatorChar (i.e.: ":" on Windows).
+							//First, it is not so probable that anybody wants to put the result to c:\ or the like.
+							//Second, they can wirte c:\ as DestDir, no need to especially support c: as well.
+							//Third, formally, c: might also mean: use the "current working directory" (whatever that may be) for that drive. In DOS shell, it is (or may be?) like that.
+							//Fourth, it would require more code lines, including checking which system we're running on. Not now.
+							
+							File NewFile;
+							if (DestDir.endsWith(file.separatorChar+""))	{		//I use +"" to get the desired String argument for endsWith
+							//If DestDir supplies a directory name, then the renameTo destination file name is that + old file name without the old path: 
+									NewFile = new File(DestDir+file.getName());
+							} else {
+							//If DestDir supplies a single file (like /dev/nul or \\anyserver\anywhere\the-file-that-was-last-imported-by-omnivore.dat) then use that directly.
+								NewFile = new File(DestDir);
+							}
+							*/ 
+													
+							//So, first I use DestDir as supplied.
+							//If that's a simple file already (like /dev/null), I just use it as rename destination.
+							//If that's a directory however, I add the name of the source file to it.
+							//And just to make sure: If that is *STILL* a directory - that may not occur often, but is still possible -
+							//the user probably selected the wrong target, or tried to import a file that should not be stored in the target folder because a directory of the same name is already there.
+							//In that case, we don't rename, in order to protect that directory from being overwritten.
+							//Even if DestDir should end with a separatorChar, that should not hurt, because sequences of separatorChar in a filename should probably be treated as a single one.
+							File NewFile = new File (DestDir);
+							if (NewFile.isDirectory() ) {
+								System.out.println("js Omnivore DocHandle: DestDir is a directory. Adding file.getName()...");	
+								NewFile = new File(DestDir+file.separatorChar+file.getName());
+							}
+						
+							//First, make sure that any destination name is NOT currently a directory.
+							//If we copy or move a simple file over a directory name, on some systems, that might lose the original directory with its previous content completely!
+							//If the target exists, java on windows would currently just not carry out the renameTo(). But the user would not be informed.
+							//So I'll provide a separate error message for that case.
+							if (NewFile.isDirectory()) {
+								System.out.println("js Omnivore DocHandle: NewFile.isDirectory==true; renaming not attempted");	
+								SWTHelper.showError(Messages.DocHandle_jsMoveErrorCaption,MessageFormat.format(Messages.DocHandle_jsMoveErrorDestIsDir,DestDir,file.getName()));
+							} else {					
+								if (NewFile.isFile()) {
+									System.out.println("js Omnivore DocHandle: NewFile.isFile==true; renaming not attempted");	
+									SWTHelper.showError(Messages.DocHandle_jsMoveErrorCaption,MessageFormat.format(Messages.DocHandle_jsMoveErrorDestIsFile,DestDir,file.getName()));
+								} else {
+									System.out.println("js Omnivore DocHandle: renaming incoming file to: "+NewFile.getAbsolutePath());
+								
+									if (file.renameTo(NewFile)) {
+										System.out.println("js Omnivore DocHandle: renaming ok");	
+										//do nothing, everything worked out fine
+									} else {
+										System.out.println("js Omnivore DocHandle: renaming attempted, but returned false.");
+										System.out.println("js Omnivore DocHandle: However, I may probably have observed this after successful moves?! So I won't show an error dialog here. js");	
+										System.out.println("js Omnivore DocHandle: So I won't show an error dialog here; if a real exception occured, that would suffice to trigger it.");	
+										//SWTHelper.showError(Messages.DocHandle_jsMoveErrorCaption,Messages.DocHandle_jsMoveError);
+									}
+								}
+							}
+							
+							//Java's concept of files and their filenames differs substantially from filenames and file handles of other environments.
+							//I hope I can just re-use the NewFile object on something different if the first attempt does not return what I wanted,
+							//and after the "renaming" has taken place - no matter how that is actually carried out on a given platform -
+							//that all of the involved temporary constructs are reliably removed from memory again.
+							//Well, after all, Java promises just to take care of that...
+
+						break;	//SrcPattern matched. Only one the first matching rule shall be processed per file.
+						}
+					} //if SrcPattern, DestPattern <> null & either one <>""
+				} //for i... 
+			} catch (Throwable throwable) {
+					ExHandler.handle(throwable);
+					SWTHelper.showError(Messages.DocHandle_jsMoveErrorCaption,
+						Messages.DocHandle_jsMoveError);
+			}
+		
 		}
 		
 	}

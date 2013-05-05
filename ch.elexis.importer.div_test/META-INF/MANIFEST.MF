@@ -8,3 +8,4 @@ Fragment-Host: ch.elexis.importer.div;bundle-version="1.4.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.junit
 Export-Package: ch.elexis.importer.div
+Import-Package: org.junit.runner

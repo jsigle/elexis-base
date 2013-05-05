@@ -8,3 +8,4 @@ Fragment-Host: com.hilotec.elexis.messwerte.v2;bundle-version="2.1.6"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.junit,
  ch.elexis.scripting.beanshell;bundle-version="1.0.1"
+Import-Package: org.junit.runner

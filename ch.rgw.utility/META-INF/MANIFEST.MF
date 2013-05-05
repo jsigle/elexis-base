@@ -103,4 +103,3 @@ Require-Bundle: ch.elexis.postgresql.connector;bundle-version="1.0.0";resolution
  ch.qos.logback.core;bundle-version="1.0.0"
 Import-Package: org.eclipse.swt.widgets,
  org.slf4j
-

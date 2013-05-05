@@ -25,9 +25,14 @@ public class Messages extends NLS {
 	public static String DocHandle_importErrorMessage;
 	public static String DocHandle_importErrorMessage2;
 	public static String DocHandle_noPatientSelected;
-	public static String DocHandle_pleaseSelectPatien;
+	public static String DocHandle_pleaseSelectPatient;
 	public static String DocHandle_readErrorCaption;
 	public static String DocHandle_readErrorMessage;
+	public static String DocHandle_jsMoveErrorCaption;
+	public static String DocHandle_jsMoveError;
+	public static String DocHandle_jsMoveErrorDestIsDir;
+	public static String DocHandle_jsMoveErrorDestIsFile;
+	
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
