@@ -105,23 +105,35 @@ public class TextView extends ViewPart implements IActivationListener {
 	}
 	
 	public boolean openDocument(Brief doc){
+		//20140421js: Added more monitoring code to see what's happening...
+		//System.out.println("js ch.elexis.views/TextView.java openDocument(Brief doc): about to txt.open("+doc.getBetreff().toString()+")");
+
 		if (txt.open(doc) == true) {
 			actBrief = doc;
 			setName();
+		
+			//System.out.println("js ch.elexis.views/TextView.java openDocument(Brief doc) successful. Returning true; actBrief == ("+actBrief.getBetreff().toString()+")");
 			return true;
 		} else {
+			//System.out.println("js ch.elexis.views/TextView.java WARNING: openDocument(Brief doc) returned false.");
+			
 			actBrief = null;
 			setName();
+
 			String ext = MimeTool.getExtension(doc.getMimeType());
+			
 			if (ext.length() == 0) {
 				ext = "ods"; //$NON-NLS-1$
 			}
 			try {
+				//System.out.println("js ch.elexis.views/TextView.java WARNING: now trying to createTempFile(\"+elexis*brief."+ext+"\") to store the ByteArrayInputStream...");
 				File tmp = File.createTempFile("elexis", "brief." + ext); //$NON-NLS-1$ //$NON-NLS-2$
 				tmp.deleteOnExit();
 				ByteArrayInputStream bais = new ByteArrayInputStream(doc.loadBinary());
 				FileOutputStream fos = new FileOutputStream(tmp);
 				FileTool.copyStreams(bais, fos);
+				//System.out.println("js ch.elexis.views/TextView.java WARNING: now returning (attempted) Program.launch(tmp.getAbsolutePath())...");
+				//System.out.println("js ch.elexis.views/TextView.java WARNING: tmp.getAbsolutePath()==<"+tmp.getAbsolutePath()+">");
 				return Program.launch(tmp.getAbsolutePath());
 			} catch (IOException e) {
 				ExHandler.handle(e);
