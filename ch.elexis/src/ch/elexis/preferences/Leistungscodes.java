@@ -720,7 +720,7 @@ public class Leistungscodes extends PreferencePage implements IWorkbenchPreferen
 				cbRechn.setText(result[2]);
 				boolean checked = true;
 				if ((result[6] == null) || (result[6].isEmpty())
-					|| (result[6].equalsIgnoreCase("0"))) //$NON-NLS-1$
+					|| (result[6].equalsIgnoreCase("0")) || (result[6].equalsIgnoreCase("false"))) //$NON-NLS-1$ //$NON-NLS-2$
 					checked = false;
 				cbDisabled.setSelection(checked);
 				name = result[0];
