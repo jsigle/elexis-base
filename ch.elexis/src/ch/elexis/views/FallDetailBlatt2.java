@@ -64,12 +64,14 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.dialogs.KontaktSelektor;
 import ch.elexis.preferences.Leistungscodes;
+import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.preferences.UserCasePreferences;
 import ch.elexis.text.ITextPlugin;
 import ch.elexis.text.ITextPlugin.ICallback;
 import ch.elexis.text.TextContainer;
 import ch.elexis.util.DayDateCombo;
 import ch.elexis.util.SWTHelper;
+import ch.elexis.util.SortedList;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -97,8 +99,7 @@ public class FallDetailBlatt2 extends Composite {
 	private static final String ITEMDELIMITER = "\t"; //$NON-NLS-1$
 	private final FormToolkit tk;
 	private final ScrolledForm form;
-	String[] Abrechnungstypen = UserCasePreferences
-		.sortBillingSystems(Fall.getAbrechnungsSysteme());
+	String[] Abrechnungstypen = Fall.getAbrechnungsSysteme();
 	private Fall actFall;
 	DayDateCombo ddc;
 	
@@ -187,7 +188,7 @@ public class FallDetailBlatt2 extends Composite {
 				setFall(f);
 			}
 		});
-		cAbrechnung.setItems(Abrechnungstypen);
+		cAbrechnung.setItems(UserCasePreferences.sortBillingSystems(Abrechnungstypen));
 		
 		cAbrechnung.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -381,17 +382,6 @@ public class FallDetailBlatt2 extends Composite {
 		setFall(getFall());
 	}
 	
-	/**
-	 * reload the billing systems menu (user dependent) and ensure that the right item is still
-	 * selected
-	 */
-	public void reloadBillingSystemsMenu(){
-		Abrechnungstypen = UserCasePreferences.sortBillingSystems(Fall.getAbrechnungsSysteme());
-		String currItem = cAbrechnung.getText();
-		cAbrechnung.setItems(Abrechnungstypen);
-		cAbrechnung.setText(currItem);
-	}
-	
 	class TristateSelection implements SelectionListener {
 		TristateSelection(){}
 		
@@ -536,7 +526,7 @@ public class FallDetailBlatt2 extends Composite {
 		lReqs.clear();
 		
 		// *** fill billing systems into combo, set current system
-		cAbrechnung.setItems(Abrechnungstypen);
+		cAbrechnung.setItems(UserCasePreferences.sortBillingSystems(Abrechnungstypen));
 		if (f == null) {
 			form.setText(Messages.getString("FallDetailBlatt2.NoCaseSelected")); //$NON-NLS-1$
 			tBezeichnung.setText(Messages.getString("FallDetailBlatt2.29")); //$NON-NLS-1$

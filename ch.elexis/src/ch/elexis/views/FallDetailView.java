@@ -25,7 +25,6 @@ import ch.elexis.actions.ElexisEventListenerImpl;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEventDispatcher;
 import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
-import ch.elexis.data.Anwender;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
@@ -34,15 +33,6 @@ import ch.elexis.util.SWTHelper;
 public class FallDetailView extends ViewPart implements ISaveablePart2, IActivationListener {
 	public static final String ID = "ch.elexis.FallDetailView"; //$NON-NLS-1$
 	FallDetailBlatt2 fdb;
-	
-	private final ElexisEventListenerImpl eeli_user = new ElexisEventListenerImpl(Anwender.class,
-		ElexisEvent.EVENT_USER_CHANGED) {
-		
-		@Override
-		public void runInUi(ElexisEvent ev){
-			fdb.reloadBillingSystemsMenu();
-		}
-	};
 	
 	private final ElexisEventListenerImpl eeli_kons = new ElexisEventListenerImpl(
 		Konsultation.class) {
@@ -132,12 +122,10 @@ public class FallDetailView extends ViewPart implements ISaveablePart2, IActivat
 	
 	public void visible(boolean mode){
 		if (mode) {
-			ElexisEventDispatcher.getInstance().addListeners(eeli_fall, eeli_pat, eeli_kons,
-				eeli_user);
+			ElexisEventDispatcher.getInstance().addListeners(eeli_fall, eeli_pat, eeli_kons);
 			eeli_pat.catchElexisEvent(ElexisEvent.createPatientEvent());
 		} else {
-			ElexisEventDispatcher.getInstance().removeListeners(eeli_fall, eeli_pat, eeli_kons,
-				eeli_user);
+			ElexisEventDispatcher.getInstance().removeListeners(eeli_fall, eeli_pat, eeli_kons);
 			
 		}
 		
