@@ -36,6 +36,7 @@ import ch.rgw.tools.StringTool;
  * 
  */
 public class Kontakt extends PersistentObject {
+	// 201303041746js: If you add new fields, please be sure to update KontakteView.java tidySelectedAddressesAction (and, most probably, other places)
 	// public static final String FLD_KUERZEL = "Kuerzel";
 	public static final String FLD_E_MAIL = "E-Mail";
 	public static final String FLD_WEBSITE = "Website";

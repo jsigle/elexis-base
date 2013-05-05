@@ -69,6 +69,7 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 	private CommonViewer cv;
 	private ViewerConfigurer vc;
 	IAction dupKontakt, delKontakt, createKontakt, printList,
+			tidySelectedAddressesAction,				//201303041746js: Added tidySelectedAddressesAction
 			copySelectedContactInfosToClipboardAction,	//201202161250js: Added copySelectedContactInfosToClipboardAction
 			copySelectedAddressesToClipboardAction;	//201201280152js: Added copySelectedAddressesToClipboardAction
 	PersistentObjectLoader loader;
@@ -104,10 +105,14 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 		menu = new ViewMenus(getViewSite());
 		menu.createViewerContextMenu(cv.getViewerWidget(), delKontakt, dupKontakt);
 		
+		
+		
+		menu.createMenu(tidySelectedAddressesAction);						//201303041746js: Added tidySelectedAddressesAction
 		menu.createMenu(copySelectedContactInfosToClipboardAction);				//201202161250js: Added copySelectedContactInfosToClipboardAction
 		menu.createMenu(copySelectedAddressesToClipboardAction);			//201201280152js: Added copySelectedAddressesToClipboardAction
 		menu.createMenu(printList);
 		
+		menu.createToolbar(tidySelectedAddressesAction);					//201303041746js: Added tidySelectedAddressesAction
 		menu.createToolbar(copySelectedContactInfosToClipboardAction);			//201202161220js: Added copySelectedContactInfosToClipboardAction
 		menu.createToolbar(copySelectedAddressesToClipboardAction);			//201201280152js: Added copySelectedAddressesToClipboardAction
 		menu.createToolbar(printList);
@@ -293,6 +298,294 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 			}
 		};
 		
+
+		/*
+		 * 201303041746js:
+		 * Clean selected address(es):
+		 * For all selected addresses do:
+		 * If FLD_IS_PATIENT==true, then set FLD_IS_PERSON=true (otherwise, invalid xml invoices may be produced, addressed to institutions instead of persons)
+		 * For each address field: remove leading and trailing spaces. 
+		 */
+		tidySelectedAddressesAction = new Action(Messages.getString("KontakteView.tidySelectedAddresses")) { //$NON-NLS-1$
+			{
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_WIZARD));
+				setToolTipText(Messages.getString("KontakteView.tidySelectedAddresses")); //$NON-NLS-1$
+			}
+			
+			@Override
+			public void run(){
+				
+				//Adopted from KontakteView.printList:			
+				//Convert the selected addresses into a list
+				System.out.println("KontakteView tidySelectedAddressesAction.run begin");
+				
+				Object[] sel = cv.getSelection();
+								
+				if (sel != null && sel.length > 0) {
+					//selectedAddressesText.setLength(0);
+					//selectedAddressesText.append("jsdebug: Your selection includes "+sel.length+" element(s):"+System.getProperty("line.separator"));
+					
+					System.out.println("KontakteView tidySelectedAddressesAction.run Processing "+sel.length+" entries...");
+					for (int i = 0; i < sel.length; i++) {
+
+						if (i % 100 == 0) {
+							System.out.println("KontakteView tidySelectedAddressesAction.run Processing entry "+i+"...");		
+						};
+						
+						Kontakt k = (Kontakt) sel[i];
+
+						/*
+						 * Tidy all fields of the address
+						 */
+						
+						//Maybe we should also tidy the PostAnschrift?
+						//But that would probably be too complicated -
+						//step 1: check whether it's made from the other available fields ONLY,
+						//        if the slightest suspicion exists that user mods are included - don't touch,
+						//        or get very intelligent first.
+						//System.out.println(k.getPostAnschrift(true));
+						//System.out.println(k.getPostAnschriftPhoneFaxEmail(true,true));
+						
+						//System.out.println(k.get(Kontakt.FLD_IS_PERSON));
+						//System.out.println(k.get(Kontakt.FLD_IS_PATIENT));
+						
+						if (k.istPatient() && !k.istPerson()) {				
+							System.out.println("KontakteView tidySelectedAddressesAction: corrected: FLD_IS_PATIENT w/o FLD_IS_PERSON: FLD_IS_PERSON set to StringContstants.ONE");
+							k.set(Kontakt.FLD_IS_PERSON,StringConstants.ONE);						
+						};
+						
+						//The following field identifiers are derived from Kontakt.java
+						//Is there any way to evaluate all field definitions that exist over there,
+						//and program a loop that would process all fields automatically?
+						
+						//replace three spaces in a row by one space
+						//replace two spaces in a row by one space
+						//remove leading and trailing spaces for each field that may contain free text input
+						
+						k.set(Kontakt.FLD_E_MAIL,k.get(Kontakt.FLD_E_MAIL).trim().replace("  "," ").replace("   "," "));
+						k.set(Kontakt.FLD_WEBSITE,k.get(Kontakt.FLD_WEBSITE).trim().replace("  "," ").replace("   "," "));
+						k.set(Kontakt.FLD_MOBILEPHONE,k.get(Kontakt.FLD_MOBILEPHONE).trim().replace("  "," ").replace("   "," "));
+						k.set(Kontakt.FLD_FAX,k.get(Kontakt.FLD_FAX).trim().replace("  "," ").replace("   "," "));
+						//k.set(Kontakt.FLD_IS_LAB,k.get(Kontakt.FLD_IS_LAB).trim().replace("  "," ").replace("   "," "));
+						//k.set(Kontakt.FLD_IS_MANDATOR,k.get(Kontakt.FLD_IS_MANDATOR).trim().replace("  "," ").replace("   "," "));
+						//k.set(Kontakt.FLD_IS_USER,k.get(Kontakt.FLD_IS_USER).trim().replace("  "," ").replace("   "," "));
+						k.set(Kontakt.FLD_SHORT_LABEL,k.get(Kontakt.FLD_SHORT_LABEL).trim().replace("  "," ").replace("   "," "));
+						//k.set(Kontakt.FLD_IS_ORGANIZATION,k.get(Kontakt.FLD_IS_ORGANIZATION).trim().replace("  "," ").replace("   "," "));
+						//k.set(Kontakt.FLD_IS_PATIENT,k.get(Kontakt.FLD_IS_PATIENT).trim().replace("  "," ").replace("   "," "));
+						//k.set(Kontakt.FLD_IS_PERSON,k.get(Kontakt.FLD_IS_PERSON).trim().replace("  "," ").replace("   "," "));
+						k.set(Kontakt.FLD_ANSCHRIFT,k.get(Kontakt.FLD_ANSCHRIFT).trim().replace("  "," ").replace("   "," "));
+						k.set(Kontakt.FLD_COUNTRY,k.get(Kontakt.FLD_COUNTRY).trim().replace("  "," ").replace("   "," "));
+						k.set(Kontakt.FLD_PLACE,k.get(Kontakt.FLD_PLACE).trim().replace("  "," ").replace("   "," "));
+						k.set(Kontakt.FLD_ZIP,k.get(Kontakt.FLD_ZIP).trim().replace("  "," ").replace("   "," "));
+						k.set(Kontakt.FLD_STREET,k.get(Kontakt.FLD_STREET).trim().replace("  "," ").replace("   "," "));
+						k.set(Kontakt.FLD_PHONE2,k.get(Kontakt.FLD_PHONE2).trim().replace("  "," ").replace("   "," "));
+						k.set(Kontakt.FLD_PHONE1,k.get(Kontakt.FLD_PHONE1).trim().replace("  "," ").replace("   "," "));
+						k.set(Kontakt.FLD_REMARK,k.get(Kontakt.FLD_REMARK).trim().replace("  "," ").replace("   "," "));
+						k.set(Kontakt.FLD_NAME3,k.get(Kontakt.FLD_NAME3).trim().replace("  "," ").replace("   "," "));
+						k.set(Kontakt.FLD_NAME2,k.get(Kontakt.FLD_NAME2).trim().replace("  "," ").replace("   "," "));
+						k.set(Kontakt.FLD_NAME1,k.get(Kontakt.FLD_NAME1).trim().replace("  "," ").replace("   "," "));
+										
+						//Replace Facharzt f. xyz or Facharzt FMH f. xyz by Facharzt für xyz or Facharzt FMH für xyz
+						k.set(Kontakt.FLD_NAME3,k.get(Kontakt.FLD_NAME3).replace("Facharzt f.","Facharzt für"));
+						k.set(Kontakt.FLD_NAME3,k.get(Kontakt.FLD_NAME3).replace("Facharzt FMH f.","Facharzt FMH für"));
+						k.set(Kontakt.FLD_NAME3,k.get(Kontakt.FLD_NAME3).replace("Fachärztin f.","Fachärztin für"));
+						k.set(Kontakt.FLD_NAME3,k.get(Kontakt.FLD_NAME3).replace("Fachärztin FMH f.","Fachärztin FMH für"));		
+
+						if (k.istPerson()) {
+							Person p = Person.load(k.getId());
+
+							//Interestingly, k.set(,k.get()) worked in this section with Person.TITLE
+							//But p.set(,p.get)) do NOT work.
+							//Gerrys comment says: A person is a contact with additional fields,
+							//so well, it might be correct that the person is accessed via k...
+							//and p.get() throws a no such method error.
+							
+							//Normalize a title like "Dr.med.", "Dr.Med." etc. to "Dr. med."
+							//Or "Prof.Dr.med." to "Prof. Dr. med.",
+							//But "h.c." shall remain "h.c."
+							
+							//Enforce certain uppercase/lowercase conventions
+							
+							k.set(Person.TITLE,k.get(Person.TITLE).replace("prof.","Prof."));
+							k.set(Person.TITLE,k.get(Person.TITLE).replace("dr.","Dr."));
+							k.set(Person.TITLE,k.get(Person.TITLE).replace("Med.","med."));
+							k.set(Person.TITLE,k.get(Person.TITLE).replace("Jur.","jur."));
+							k.set(Person.TITLE,k.get(Person.TITLE).replace("Rer.","rer."));
+							k.set(Person.TITLE,k.get(Person.TITLE).replace("Nat.","nat."));
+							k.set(Person.TITLE,k.get(Person.TITLE).replace("H.c.","h.c."));
+							k.set(Person.TITLE,k.get(Person.TITLE).replace("H.C.","h.c."));
+							k.set(Person.TITLE,k.get(Person.TITLE).replace("h.C.","h.c."));
+							k.set(Person.TITLE,k.get(Person.TITLE).replace("H. c.","h.c."));
+							k.set(Person.TITLE,k.get(Person.TITLE).replace("H. C.","h.c."));
+							k.set(Person.TITLE,k.get(Person.TITLE).replace("h. C.","h.c."));
+														
+							//Add a space after dots after Dr., Prof. and med.
+							//Adding spaces generally after each dot might produce too many unwanted changes.
+							//This will produce one trailing space, which will be removed in the next step.
+							
+							//Very funny. replaceAll searches for regexp, where "." matches any character,
+							//but Eclipse thinks that in the first argument, "\." is an invalid special character...
+							//And yes. Tested. replaceAll("Prof.","Prof. ")) would really change "Profxmed." to "Prof. med."
+							//So I'll search for ASCII character \x2E (hex) instead. Nope: "Prof\x2E": Invalid escape sequence again.
+							//I'll use replace() instead of replaceAll) - both will replace all occurences; only the latter will use regexp.
+							//But so I can't construct something like "replaceAll("Prof.([:alnum])",... to insert a space only, where more text follows.
+							k.set(Person.TITLE,k.get(Person.TITLE).replace("Prof.","Prof. "));
+							k.set(Person.TITLE,k.get(Person.TITLE).replace("Dr.","Dr. "));
+							k.set(Person.TITLE,k.get(Person.TITLE).replace("med.","med. "));
+							k.set(Person.TITLE,k.get(Person.TITLE).replace("jur.","jur. "));
+							k.set(Person.TITLE,k.get(Person.TITLE).replace("rer.","rer. "));
+							k.set(Person.TITLE,k.get(Person.TITLE).replace("nat.","nat. "));
+							k.set(Person.TITLE,k.get(Person.TITLE).replace("h.c.","h.c. "));
+							//remove spaces within "h. c." to "h.c."
+							k.set(Person.TITLE,k.get(Person.TITLE).replace("h. c.","h.c."));
+
+							//The following field identifiers are derived from Person.java
+							//Is there any way to evaluate all field definitions that exist over there,
+							//and program a loop that would process all fields automatically?
+
+							k.set(Person.TITLE,k.get(Person.TITLE).trim().replace("  "," ").replace("   "," "));
+							k.set(Person.MOBILE,k.get(Person.MOBILE).trim().replace("  "," ").replace("   "," "));
+							k.set(Person.SEX,k.get(Person.SEX).trim().replace("  "," ").replace("   "," "));
+							k.set(Person.BIRTHDATE,k.get(Person.BIRTHDATE).trim().replace("  "," ").replace("   "," "));
+							k.set(Person.FIRSTNAME,k.get(Person.FIRSTNAME).trim().replace("  "," ").replace("   "," "));
+							k.set(Person.NAME,k.get(Person.NAME).trim().replace("  "," ").replace("   "," "));
+							//k.set(Person.MALE,k.get(Person.MALE).trim().replace("  "," ").replace("   "," "));
+							//k.set(Person.FEMALE,k.get(Person.FEMALE).trim().replace("  "," ").replace("   "," "));
+
+							//Now, let's replace "xyz FMH" by "Facharzt/Fachärztin für xyz FMH",
+							//like in: Ron Ammann: "Dermatologie/Venerologie FMH"
+							//We need to take the sex into account (if known), 
+							//that's why we do this down here in the "person" related section.
+						
+							//Ich schalte das mal aus - weil es zusätzlich Sprachunterstützung bräuchte.
+							//Also, die Strings müssten ggf. aus messages.properties geholt werden,
+							//und wegen der Umlaute dann auch noch in mehreren Varianten vorliegen oder regexp verwenden.
+							//Facharzt für... = spécialiste en ...; und in italienisch will ich es gerade nicht nachschauen.
+							if (false) {
+								if ( k.get(Person.SEX).equals(Person.MALE)
+										&& (k.get(Kontakt.FLD_NAME3).toUpperCase().indexOf("FACHARZT") < 0)
+										&& (k.get(Kontakt.FLD_NAME3).toUpperCase().indexOf("FMH") >=0) ) {
+										k.set(Kontakt.FLD_NAME3,k.get(Kontakt.FLD_NAME3).replaceAll("(.*) FMH$","Facharzt für $1 FMH"));		
+								} else if ( k.get(Person.SEX).equals(Person.FEMALE)
+										&& (k.get(Kontakt.FLD_NAME3).toUpperCase().indexOf("FACHÄRZT") < 0)
+										&& (k.get(Kontakt.FLD_NAME3).toUpperCase().indexOf("FACHAERZT") < 0)
+										&& (k.get(Kontakt.FLD_NAME3).toUpperCase().indexOf("FMH") >=0) ) {
+										k.set(Kontakt.FLD_NAME3,k.get(Kontakt.FLD_NAME3).replaceAll("(.*) FMH$","Fachärztin für $1 FMH"));		
+								}
+							}  //js: if (false)
+						
+						}
+
+					//I DON'T know whether this is required - most probably not,
+					//I guess that something equivalent is included in the implementation of k.set();
+					//anyway - it will NOT cause any window display contents to be updated at all.
+					//Inform the system that the given persistent element has changed
+					//ElexisEventDispatcher.update(k);
+						
+					}		//js: for each element in sel do
+
+				
+					
+				}			//js: if sel not empty
+			
+			//update display to reflect changed information
+				
+			//This updates the "Kontakte" window, but not the "Kontakt Detail" window:
+			System.out.println("KontakteView tidySelectedAddressesAction.run Triggering update of the 'Kontakte' Window.");
+			System.out.println("KontakteView tidySelectedAddressesAction.run This will lose the selection, but sadly NOT update 'Kontakt Detail'.");			
+			cv.getConfigurer().getControlFieldProvider().fireChangedEvent();
+
+			//Wenn mehrere Einträge aktualisiert waren, und nach obigem die Selektion verschwindet,
+			//wird inhärent auch der Inhalt von Kontakt Detail geändert (weil wahrscheinlich ein anderer Eintrag selektiert wird),
+			//und somit auch dieses aktualisiert. Bei nur einem a priori selektierten und per tidy... behandelten Eintrag
+			//erfolgt das Update aber erst, wenn man einen anderen und dann wieder diesen Patienten selektiert. :-(
+			
+			//Nachfolgend noch diverse Versuche, das zu erreichen - aber da sitz ich schon wieder Stunden,
+			//möglicherweise bräuchte KontaktDetailView oder KontaktBlatt dafür eine Methode,
+			//und/oder man muss irgendwas mit parent.layout aufrufen etc. Das ist jetzt NICHT vordringlich - keine Zeit dafür.
+					
+
+			/*
+			 * Was folgt, liefert einige Informationen - offenbar ist Kontakt Details ein scrolled form,
+			 * mit zwei Teilen - aber das hilft mir alles nichts. Ich kann es nicht einfach redrawen. 
+			try {
+				KontaktDetailView kdv =
+					(KontaktDetailView) getSite().getPage().showView(KontaktDetailView.ID);
+				
+				//kdv.getClass().
+				
+				//das reicht alles nicht, auch nicht zusammen - es betrifft wohl eher das Layout als den Inhalt:
+				System.out.println(kdv.getTitle());
+				
+				kdv.kb.changed(kdv.kb.getChildren());
+				
+				Object[] kbvch = kdv.kb.getChildren();
+				if (kbvch != null && kbvch.length>0) {
+					for (int i=0;i<kbvch.length;i++) {
+						//This returns only one child:
+						//kbvch[0] = ScrolledForm {}; class org.eclipse.ui.forms.widgets.ScrolledForm
+						System.out.println("kbvch["+i+"] = "+kbvch[i].toString()+"; "+kbvch[i].getClass().toString());
+						
+						Object[] kbvchscrolledformfields = kbvch[i].getClass().getFields();
+
+						if (kbvchscrolledformfields != null && kbvchscrolledformfields.length>0) {
+							for (int j=0;j<kbvchscrolledformfields.length;j++) {
+								//This returns two children:
+								//kbvchscrolledformfields[0] = public long org.eclipse.swt.widgets.Composite.embeddedHandle; class java.lang.reflect.Field
+								//kbvchscrolledformfields[1] = public long org.eclipse.swt.widgets.Widget.handle; class java.lang.reflect.Field
+							
+								System.out.println("kbvchscrolledformfields["+j+"] = "+kbvchscrolledformfields[j].toString()+"; "+kbvchscrolledformfields[j].getClass().toString());
+								
+								Object[] kbvchlevel3 = kbvchscrolledformfields[j].getClass().getFields();
+
+								if (kbvchlevel3 != null && kbvchlevel3.length>0) {
+									for (int k=0;k<kbvchlevel3.length;k++) {
+										//This returns ... children:
+										//kbvchscrolledformfields[0] = public long org.eclipse.swt.widgets.Composite.embeddedHandle; class java.lang.reflect.Field
+										//kbvchlevel3[0] = public static final int java.lang.reflect.Member.PUBLIC; class java.lang.reflect.Field
+										//kbvchlevel3[1] = public static final int java.lang.reflect.Member.DECLARED; class java.lang.reflect.Field
+										//kbvchscrolledformfields[1] = public long org.eclipse.swt.widgets.Widget.handle; class java.lang.reflect.Field
+										//kbvchlevel3[0] = public static final int java.lang.reflect.Member.PUBLIC; class java.lang.reflect.Field
+										//kbvchlevel3[1] = public static final int java.lang.reflect.Member.DECLARED; class java.lang.reflect.Field
+									
+										System.out.println("kbvchlevel3["+k+"] = "+kbvchlevel3[k].toString()+"; "+kbvchlevel3[k].getClass().toString());
+								
+									}
+								} //js: for k
+								
+								
+							}
+						} //js: for j
+			
+					}
+				} //js: for i
+				
+				kdv.kb.redraw();
+				kdv.kb.update();
+				kdv.kb.layout(true);
+				
+				//kdv.kb.catchElexisEvent(new ElexisEvent(nullKontakt.class,ElexisEvent.EVENT_UPDATE));
+		
+				//kdv.kb.catchElexisEvent(new ElexisEvent(obj, obj.getClass(),
+				//	ElexisEvent.EVENT_SELECTED));
+			} catch (PartInitException e) {
+				ExHandler.handle(e);
+			}
+			*/
+			
+			
+			//Inform the system that all objects of a given class have to be loaded from storage.
+			//Sorry, but it will NOT cause any window content to be updated.
+			//ElexisEventDispatcher.reload(Kontakt.class);
+			
+			System.out.println("KontakteView tidySelectedAddressesAction.run TODO: Update display w/o losing selection, including Kontakt Details, even for only 1 entry processed.");			
+			System.out.println("KontakteView tidySelectedAddressesAction.run TODO: Maybe add a progress bar.");			
+			
+			System.out.println("KontakteView tidySelectedAddressesAction.run end");
+			};  	//js: copySelectedAddressesToClipboardAction.run()
+		};		//js: tidySelectedAddressesAction = new Action()
+	
+			
 		/*
 		 * 201202161220js:
 		 * Copy selected contact data (complete) to the clipboard, so it/they can be easily pasted into a target document

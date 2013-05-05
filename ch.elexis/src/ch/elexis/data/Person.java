@@ -24,6 +24,7 @@ import ch.rgw.tools.TimeTool;
  * 
  */
 public class Person extends Kontakt {
+	// 201303041746js: If you add new fields, please be sure to update KontakteView.java tidySelectedAddressesAction (and, most probably, other places)
 	public static final String TITLE = "Titel"; //$NON-NLS-1$
 	public static final String MOBILE = "Natel"; //$NON-NLS-1$
 	public static final String SEX = "Geschlecht"; //$NON-NLS-1$
