@@ -822,17 +822,48 @@ public class TextContainer {
 	 *            Typ des Dokuments
 	 */
 	public void saveBrief(Brief brief, final String typ){
+		System.out.println("js ch.elexis.views/TextContainer.java saveBrief(Brief brief, final String typ): begin");
+
+		if (brief == null) { 
+			System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): WARNING: brief == null"); 
+		} else {
+				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): brief == "+brief.toString());
+				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): brief.getBetreff() == "+brief.getBetreff());
+				//20130425js: Das hier lieber nicht machen: Das öffnet interaktiv das Dialogfenster zur Adressauswahl; unpassend als Debug-Output.
+				//System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): brief.getAdressat() == "+brief.getAdressat());
+		}
+		
 		if ((brief == null) || (brief.getAdressat() == null)) {
+		
+			//TODO: 20130425js added this: Nur Hinweis auf möglichen Bedienfehler im Log (Keine Konsultation beim Erstellen eines Briefes)
+			if ( Konsultation.getAktuelleKons() == null )
+				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW");
+				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): WARNING: Konsultation.getAktuelleKonsultation == null"); 
+				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): WARNING: Soll hier (oder etwas früher!!) vielleicht ein Abbruch der Brief-Erstellung in den Code?"); 
+				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW;");
+			} else {
+				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): Konsultation.getAktuelleKons()=="+Konsultation.getAktuelleKons()+": "+Konsultation.getAktuelleKons().getDatum());
+			}
+		
 			KontaktSelektor ksl =
 				new KontaktSelektor(shell, Kontakt.class,
 					Messages.TextContainer_SelectAdresseeHeader,
 					Messages.TextContainer_SelectAdresseeBody, Kontakt.DEFAULT_SORT);
+
 			if (ksl.open() == Dialog.OK) {
-				brief =
-					new Brief(Messages.TextContainer_Letter, null, Hub.actUser,
+				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): about to brief = new Brief(...)");
+				brief = new Brief(Messages.TextContainer_Letter, null, Hub.actUser,
 						(Kontakt) ksl.getSelection(), Konsultation.getAktuelleKons(), typ);
-			}
 		}
+		
+		if (brief == null) { 
+				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): WARNING: STILL: brief == null"); 
+			} else {
+					System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): brief == "+brief.toString());
+					System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): brief.getBetreff() == "+brief.getBetreff());
+					System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): brief.getAdressat() == "+brief.getAdressat());
+			}
+
 		if (brief != null) {
 			if (StringTool.isNothing(brief.getBetreff())) {
 				InputDialog dlg =
@@ -844,11 +875,20 @@ public class TextContainer {
 					brief.setBetreff(brief.getTyp());
 				}
 			}
+			
+			System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): about to byte[] contents = plugin.storeToByteArray();");
+			//TODO: js: why should this variable be named "contents" here, and "arr" in "open()" below? Please refactor and use similar names for similar things.
+			
 			byte[] contents = plugin.storeToByteArray();
 			if (contents == null) {
+				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): WARNING: contents == null - still proceding to brief.save(contents,...)...");
 				log.log(Messages.TextContainer_NullSaveHeader, Log.ERRORS);
 			}
+			
+			System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): about to brief.save(contents,plugin.getMimeType()...");
 			brief.save(contents, plugin.getMimeType());
+			
+			System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): about to ElexisEventDispatcher.reload(Brief.class)");
 			ElexisEventDispatcher.reload(Brief.class);
 		}
 	}
@@ -883,16 +923,25 @@ public class TextContainer {
 	
 	/** Einen Brief einlesen */
 	public boolean open(final Brief brief){
+		System.out.println("js ch.elexis.views/TextContainer.java open(final Brief brief): begin - brief=="+brief.toString()+": "+brief.getBetreff());
+		
 		if (brief == null) {
+			System.out.println("js ch.elexis.views/TextContainer.java open(): WARNING: brief == null -> about to return false...");
 			log.log(Messages.TextContainer_NullOpen, Log.WARNINGS);
 			return false;
 		}
-		System.out.print(brief.getLabel());
+
+		System.out.println("js ch.elexisviews/TextContainer.java.open(): brief.getLabel())==" +brief.getLabel());
+		System.out.println("js ch.elexisviews/TextContainer.java.open(): about to byte[] arr = brief.loadBinary()...");
+		
 		byte[] arr = brief.loadBinary();
 		if (arr == null) {
+			System.out.println("js ch.elexis.views/TextContainer.java open(): WARNING: arr == null -> about to return false...");
 			log.log(Messages.TextContainer_ErroneousLetter + brief.getLabel(), Log.WARNINGS);
 			return false;
 		}
+
+		System.out.println("js ch.elexis.views/TextContainer.java open(): about to return plugin.loadFromByteArray(arr, false) and end...");
 		return plugin.loadFromByteArray(arr, false);
 	}
 	

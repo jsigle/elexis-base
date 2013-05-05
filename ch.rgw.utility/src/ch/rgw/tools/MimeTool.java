@@ -16,7 +16,9 @@ public class MimeTool {
 		{
 			"pdf", "application/pdf"
 		}, {
-			"ods", "application/vnd.oasis.opendocument.text"
+			//20130423js: Using standard open document text extension .odt and not .ods, which was in previous versions of MimeTool.java and TextView.java 
+			//"ods", "application/vnd.oasis.opendocument.text"
+			"odt", "application/vnd.oasis.opendocument.text"
 		}, {
 			"jpg", "image/jpeg"
 		}, {
