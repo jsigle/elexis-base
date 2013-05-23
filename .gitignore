@@ -12,6 +12,10 @@
 bin/
 target/
 
+#
+# Mercurial Meta Info #
+#######################
+.hg
 
 #
 # SVN Meta Info #
