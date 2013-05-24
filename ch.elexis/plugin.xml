@@ -96,28 +96,24 @@
       <product
             application="ch.elexis.ElexisApp"
             description="%elexis.banner"
-            name="Elexis">
+            name="Elexis OpenSource">
          <property
                name="appName"
-               value="Elexis"/>
+               value="Elexis OpenSource"/>
          <property
                name="preferenceCustomization"
                value="elexisprefs.ini"/>
          <property
-               name="aboutImage"
-               value="rsc/elexis48.gif">
-         </property>
-         <property
                name="aboutText"
-               value="Elexis - die Praxis.&#x0A;(c) 2005-2009 by G. Weirich and Elexis&#x0A;http://www.elexis.ch&#x0A;&#x0A;Informationen und Referenzinstallation:&#x0A;Gerry Weirich&#x0A;Rietstrasse 30&#x0A;8201 Schaffhausen">
-         </property>
-         <property
-               name="windowImages"
-               value="rsc/elexis2_16.gif,rsc/elexis32_2.gif,rsc/elexis48.gif">
+               value="%aboutText">
          </property>
          <property
                name="startupProgressRect"
                value="5,275,445,15">
+         </property>
+         <property
+               name="windowImages"
+               value="rsc/elexis2_16.gif,rsc/elexis32_2.gif,rsc/elexis48.gif">
          </property>
       </product>
    </extension>
@@ -754,16 +750,6 @@
             name="%RezeptAusgabe"
             type="ch.elexis.data.Rezept">
       </Transporter>
-   </extension>
-   <extension
-         point="ch.elexis.ServiceRegistry">
-      <Service
-            actor="ch.elexis.text.DefaultRenderer"
-            description="IRangeRenderer for simple markups"
-            name="TextContentsExtension"
-            value="50"
-            variant="markup">
-      </Service>
    </extension>
    <extension
          point="org.eclipse.ui.services">

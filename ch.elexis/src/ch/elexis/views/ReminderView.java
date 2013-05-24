@@ -30,9 +30,9 @@ import ch.elexis.actions.ElexisEvent;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.ElexisEventListenerImpl;
 import ch.elexis.actions.GlobalEventDispatcher;
-import ch.elexis.actions.RestrictedAction;
 import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.actions.Heartbeat.HeartListener;
+import ch.elexis.actions.RestrictedAction;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
@@ -59,6 +59,7 @@ public class ReminderView extends ViewPart implements IActivationListener, Heart
 	private RestrictedAction selectPatientAction;
 	private boolean bVisible;
 	
+	// 1079 - nur wenn der View offen ist werden bei Patienten-Wechsel die Reminders abgefragt!
 	private ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(Patient.class) {
 		
 		public void runInUi(final ElexisEvent ev){
@@ -69,23 +70,26 @@ public class ReminderView extends ViewPart implements IActivationListener, Heart
 			if (bVisible) {
 				cv.notify(CommonViewer.Message.update);
 			}
-			Desk.asyncExec(new Runnable() {
-				
-				public void run(){
-					List<Reminder> list =
-						Reminder.findRemindersDueFor((Patient) ev.getObject(), Hub.actUser, true);
-					if (list.size() != 0) {
-						StringBuilder sb = new StringBuilder();
-						for (Reminder r : list) {
-							sb.append(r.getMessage()).append("\n\n"); //$NON-NLS-1$
-						}
-						SWTHelper.alert(Messages
-							.getString("ReminderView.importantRemindersCaption"), sb.toString()); //$NON-NLS-1$
-					}
-				}
-				
-			});
 			
+			if (!Hub.userCfg.get(PreferenceConstants.USR_SHOWPATCHGREMINDER, true)) {
+				Desk.asyncExec(new Runnable() {
+					
+					public void run(){
+						List<Reminder> list =
+							Reminder.findRemindersDueFor((Patient) ev.getObject(), Hub.actUser,
+								true);
+						if (list.size() != 0) {
+							StringBuilder sb = new StringBuilder();
+							for (Reminder r : list) {
+								sb.append(r.getMessage()).append("\n\n"); //$NON-NLS-1$
+							}
+							SWTHelper.alert(Messages
+								.getString("ReminderView.importantRemindersCaption"), sb.toString()); //$NON-NLS-1$
+						}
+					}
+					
+				});
+			}
 		}
 	};
 	

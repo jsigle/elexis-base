@@ -93,6 +93,18 @@ public class OrderImportDialog extends TitleAreaDialog {
 		}
 	}
 	
+	public OrderImportDialog(Shell parentShell, List<Bestellung.Item> items){
+		super(parentShell);
+		
+		setShellStyle(getShellStyle() | SWT.SHELL_TRIM);
+		
+		orderElements = new ArrayList<OrderElement>();
+		for (Bestellung.Item item : items) {
+			OrderElement orderElement = new OrderElement(item.art, item.num);
+			orderElements.add(orderElement);
+		}
+	}
+
 	@Override
 	protected Control createDialogArea(Composite parent){
 		Composite mainArea = new Composite(parent, SWT.NONE);

@@ -23,20 +23,23 @@
  *******************************************************************************/
 package ch.elexis.importer.div;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.util.List;
 
-import org.junit.BeforeClass;
 import org.junit.After;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 import ch.elexis.data.LabItem;
+import ch.elexis.data.LabItem.typ;
 import ch.elexis.data.LabResult;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
-import ch.elexis.data.LabItem.typ;
 import ch.elexis.importers.HL7Parser;
 import ch.elexis.util.PlatformHelper;
 import ch.rgw.tools.Result;
@@ -104,6 +107,7 @@ public class Test_HL7_parser {
 				}
 			}
 			// System.out.println("parseOneHL7file " + name + "  " + f.length() + " bytes ");
+			hlp.setTestMode(true);
 			Result<?> rs = hlp.importFile(f, f.getParentFile(), true);
 			if (!rs.isOK()) {
 				String info = "Datei " + name + " fehlgeschlagen";
@@ -151,6 +155,32 @@ public class Test_HL7_parser {
 		parseAllHL7files(new File(PlatformHelper.getBasePath("ch.elexis.importer.div_test"), "rsc"));
 	}
 	
+	@Test
+	public void testOverwrite(){
+		removeAllPatientsAndDependants();
+		removeAllLaboWerte();
+		parseOneHL7file(new File(PlatformHelper.getBasePath("ch.elexis.importer.div_test"),
+			"rsc/overwrite_test_1.hl7"), false, true);
+		
+		parseOneHL7file(new File(PlatformHelper.getBasePath("ch.elexis.importer.div_test"),
+			"rsc/overwrite_test_2.hl7"), false, true);
+
+		// test if values are imported and overwritten
+		Query<LabResult> qr = new Query<LabResult>(LabResult.class);
+		qr.orderBy(false, LabResult.ITEM_ID, LabResult.DATE, LabResult.RESULT);
+		List<LabResult> qrr = qr.execute();
+		
+		int foundCnt = 0;
+		for (LabResult labResult : qrr) {
+			String name = labResult.getItem().getName();
+			if (name.equals("AST (GOT)")) {
+				assertEquals("33", labResult.getResult());
+				foundCnt++;
+			}
+		}
+		assertEquals(1, foundCnt);
+	}
+
 	/**
 	 * Rothen filled the HL7 field(8) with 'N' if there was no patholical value found
 	 */

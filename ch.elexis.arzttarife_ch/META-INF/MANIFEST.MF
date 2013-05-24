@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Tarife für ambulante Arztbehandlungen in der Schweiz
 Bundle-SymbolicName: ch.elexis.arzttarife_ch;singleton:=true
-Bundle-Version: 2.0.20
+Bundle-Version: 2.0.23
 Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
 Require-Bundle: ch.elexis,
@@ -22,3 +22,4 @@ Export-Package: ch.elexis.TarmedRechnung,
  ch.elexis.views
 Bundle-ClassPath: .
 Import-Package: org.jdom
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

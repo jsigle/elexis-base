@@ -54,6 +54,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormText;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.Desk;
 import ch.elexis.ElexisException;
@@ -74,7 +76,6 @@ import ch.elexis.dialogs.KontaktSelektor;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.preferences.TextTemplatePreferences;
 import ch.elexis.text.model.Samdas;
-import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ScriptUtil;
 import ch.rgw.tools.ExHandler;
@@ -93,7 +94,7 @@ public class TextContainer {
 		Messages.TextContainer_TemplateNotFoundBody;
 	
 	private ITextPlugin plugin = null;
-	private static Log log = Log.get("TextContainer"); //$NON-NLS-1$
+	private static Logger log = LoggerFactory.getLogger("TextContainer"); //$NON-NLS-1$
 	private Shell shell;
 	private static final String DONT_SHOW_REPLACEMENT_ERRORS = "*";
 	public static final String MATCH_TEMPLATE =
@@ -304,7 +305,6 @@ public class TextContainer {
 		return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private Object replaceFields(final Brief brief, final String b){
 		String bl = b;
 		boolean showErrors = true;
@@ -314,7 +314,7 @@ public class TextContainer {
 		}
 		String[] q = bl.split("\\."); //$NON-NLS-1$
 		if (q.length != 2) {
-			log.log(Messages.TextContainer_BadVariableFormat + bl, Log.WARNINGS); // Kann
+			log.warn(Messages.TextContainer_BadVariableFormat + bl); // Kann
 			// eigentlich
 			// nie
 			// vorkommen
@@ -347,7 +347,7 @@ public class TextContainer {
 					return an;
 				}
 			}
-			log.log("Nicht erkanntes Feld in " + bl, Log.WARNINGS); //$NON-NLS-1$
+			log.warn("Nicht erkanntes Feld in " + bl); //$NON-NLS-1$
 			if (showErrors) {
 				return "???" + bl + "???";
 			} else {
@@ -420,7 +420,7 @@ public class TextContainer {
 		
 		String value = o.get(valueToken);
 		if ((value == null) || (value.startsWith("**"))) { //$NON-NLS-1$
-			log.log("Nicht erkanntes Feld in " + fieldl, Log.WARNINGS); //$NON-NLS-1$
+			log.warn("Nicht erkanntes Feld in " + fieldl); //$NON-NLS-1$
 			if (showErrors) {
 				return WARNING_SIGN + fieldl + WARNING_SIGN;
 			} else {
@@ -438,10 +438,8 @@ public class TextContainer {
 	private PersistentObject resolveIndirectObject(PersistentObject parent, String field){
 		if (parent instanceof Fall) {
 			String fieldl = field;
-			boolean showErrors = true;
 			if (fieldl.substring(0, 1).equalsIgnoreCase(DONT_SHOW_REPLACEMENT_ERRORS)) {
 				fieldl = fieldl.substring(1);
-				showErrors = false;
 			}
 			Fall fall = (Fall) parent;
 			
@@ -465,7 +463,7 @@ public class TextContainer {
 	private String executeScript(final Brief ret, final String in){
 		String[] q = in.split(":");
 		if (q.length != 2) {
-			log.log("Falsches SCRIPT format: " + in, Log.ERRORS);
+			log.error("Falsches SCRIPT format: " + in);
 			return "???SYNTAX???";
 			
 		}
@@ -499,7 +497,7 @@ public class TextContainer {
 			}
 		}
 		if (q.length != 3) {
-			log.log("falsches genderize Format " + inl, Log.ERRORS); //$NON-NLS-1$
+			log.error("falsches genderize Format " + inl); //$NON-NLS-1$
 			return null;
 		}
 		if (!(o instanceof Kontakt)) {
@@ -546,10 +544,8 @@ public class TextContainer {
 	
 	private PersistentObject resolveObject(final Brief actBrief, final String k){
 		String kl = k;
-		boolean showErrors = true;
 		if (kl.substring(0, 1).equalsIgnoreCase(DONT_SHOW_REPLACEMENT_ERRORS)) {
 			kl = kl.substring(1);
-			showErrors = false;
 		}
 		PersistentObject ret = null;
 		if (kl.equalsIgnoreCase("Mandant")) { //$NON-NLS-1$
@@ -563,12 +559,12 @@ public class TextContainer {
 				String fqname = "ch.elexis.data." + kl; //$NON-NLS-1$
 				ret = ElexisEventDispatcher.getSelected(Class.forName(fqname));
 			} catch (Throwable ex) {
-				log.log(Messages.TextContainer_UnrecognizedFieldType + kl, Log.WARNINGS);
+				log.warn(Messages.TextContainer_UnrecognizedFieldType + kl);
 				ret = null;
 			}
 		}
 		if (ret == null) {
-			log.log(Messages.TextContainer_UnrecognizedFieldType + kl, Log.WARNINGS);
+			log.warn(Messages.TextContainer_UnrecognizedFieldType + kl);
 		}
 		return ret;
 	}
@@ -822,27 +818,27 @@ public class TextContainer {
 	 *            Typ des Dokuments
 	 */
 	public void saveBrief(Brief brief, final String typ){
-		System.out.println("js ch.elexis.views/TextContainer.java saveBrief(Brief brief, final String typ): begin");
+		log.debug("ch.elexis.views/TextContainer.java saveBrief(Brief brief, final String typ): begin");
 
 		if (brief == null) { 
-			System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): WARNING: brief == null"); 
+			log.debug("ch.elexis.views/TextContainer.java saveBrief(): WARNING: brief == null"); 
 		} else {
-				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): brief == "+brief.toString());
-				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): brief.getBetreff() == "+brief.getBetreff());
+				log.debug("ch.elexis.views/TextContainer.java saveBrief(): brief == "+brief.toString());
+				log.debug("ch.elexis.views/TextContainer.java saveBrief(): brief.getBetreff() == "+brief.getBetreff());
 				//20130425js: Das hier lieber nicht machen: Das öffnet interaktiv das Dialogfenster zur Adressauswahl; unpassend als Debug-Output.
-				//System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): brief.getAdressat() == "+brief.getAdressat());
+				//log.debug("ch.elexis.views/TextContainer.java saveBrief(): brief.getAdressat() == "+brief.getAdressat());
 		}
 		
 		if ((brief == null) || (brief.getAdressat() == null)) {
 		
 			//TODO: 20130425js added this: Nur Hinweis auf möglichen Bedienfehler im Log (Keine Konsultation beim Erstellen eines Briefes)
 			if ( Konsultation.getAktuelleKons() == null )
-				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW");
-				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): WARNING: Konsultation.getAktuelleKonsultation == null"); 
-				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): WARNING: Soll hier (oder etwas früher!!) vielleicht ein Abbruch der Brief-Erstellung in den Code?"); 
-				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW;");
+				log.debug("ch.elexis.views/TextContainer.java saveBrief(): TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW");
+				log.debug("ch.elexis.views/TextContainer.java saveBrief(): WARNING: Konsultation.getAktuelleKonsultation == null"); 
+				log.debug("ch.elexis.views/TextContainer.java saveBrief(): WARNING: Soll hier (oder etwas früher!!) vielleicht ein Abbruch der Brief-Erstellung in den Code?"); 
+				log.debug("ch.elexis.views/TextContainer.java saveBrief(): TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW;");
 			} else {
-				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): Konsultation.getAktuelleKons()=="+Konsultation.getAktuelleKons()+": "+Konsultation.getAktuelleKons().getDatum());
+				log.debug("ch.elexis.views/TextContainer.java saveBrief(): Konsultation.getAktuelleKons()=="+Konsultation.getAktuelleKons()+": "+Konsultation.getAktuelleKons().getDatum());
 			}
 		
 			KontaktSelektor ksl =
@@ -851,17 +847,17 @@ public class TextContainer {
 					Messages.TextContainer_SelectAdresseeBody, Kontakt.DEFAULT_SORT);
 
 			if (ksl.open() == Dialog.OK) {
-				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): about to brief = new Brief(...)");
+				log.debug("ch.elexis.views/TextContainer.java saveBrief(): about to brief = new Brief(...)");
 				brief = new Brief(Messages.TextContainer_Letter, null, Hub.actUser,
 						(Kontakt) ksl.getSelection(), Konsultation.getAktuelleKons(), typ);
 		}
 		
 		if (brief == null) { 
-				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): WARNING: STILL: brief == null"); 
+				log.debug("ch.elexis.views/TextContainer.java saveBrief(): WARNING: STILL: brief == null"); 
 			} else {
-					System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): brief == "+brief.toString());
-					System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): brief.getBetreff() == "+brief.getBetreff());
-					System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): brief.getAdressat() == "+brief.getAdressat());
+					log.debug("ch.elexis.views/TextContainer.java saveBrief(): brief == "+brief.toString());
+					log.debug("ch.elexis.views/TextContainer.java saveBrief(): brief.getBetreff() == "+brief.getBetreff());
+					log.debug("ch.elexis.views/TextContainer.java saveBrief(): brief.getAdressat() == "+brief.getAdressat());
 			}
 
 		if (brief != null) {
@@ -876,19 +872,19 @@ public class TextContainer {
 				}
 			}
 			
-			System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): about to byte[] contents = plugin.storeToByteArray();");
+			log.debug("ch.elexis.views/TextContainer.java saveBrief(): about to byte[] contents = plugin.storeToByteArray();");
 			//TODO: js: why should this variable be named "contents" here, and "arr" in "open()" below? Please refactor and use similar names for similar things.
 			
 			byte[] contents = plugin.storeToByteArray();
 			if (contents == null) {
-				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): WARNING: contents == null - still proceding to brief.save(contents,...)...");
-				log.log(Messages.TextContainer_NullSaveHeader, Log.ERRORS);
+				log.debug("ch.elexis.views/TextContainer.java saveBrief(): WARNING: contents == null - still proceding to brief.save(contents,...)...");
+				log.error(Messages.TextContainer_NullSaveHeader);
 			}
 			
-			System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): about to brief.save(contents,plugin.getMimeType()...");
+			log.debug("ch.elexis.views/TextContainer.java saveBrief(): about to brief.save(contents,plugin.getMimeType()...");
 			brief.save(contents, plugin.getMimeType());
 			
-			System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): about to ElexisEventDispatcher.reload(Brief.class)");
+			log.debug("ch.elexis.views/TextContainer.java saveBrief(): about to ElexisEventDispatcher.reload(Brief.class)");
 			ElexisEventDispatcher.reload(Brief.class);
 		}
 	}
@@ -911,7 +907,7 @@ public class TextContainer {
 			}
 			byte[] tmpl = plugin.storeToByteArray();
 			if (tmpl == null) {
-				log.log(Messages.TextContainer_NullSaveBody, Log.ERRORS);
+				log.error(Messages.TextContainer_NullSaveBody);
 			}
 			brief.save(tmpl, plugin.getMimeType());
 			// text.clear();
@@ -923,25 +919,18 @@ public class TextContainer {
 	
 	/** Einen Brief einlesen */
 	public boolean open(final Brief brief){
-		System.out.println("js ch.elexis.views/TextContainer.java open(final Brief brief): begin - brief=="+brief.toString()+": "+brief.getBetreff());
-		
-		if (brief == null) {
-			System.out.println("js ch.elexis.views/TextContainer.java open(): WARNING: brief == null -> about to return false...");
-			log.log(Messages.TextContainer_NullOpen, Log.WARNINGS);
-			return false;
-		}
-
-		System.out.println("js ch.elexisviews/TextContainer.java.open(): brief.getLabel())==" +brief.getLabel());
-		System.out.println("js ch.elexisviews/TextContainer.java.open(): about to byte[] arr = brief.loadBinary()...");
+		log.debug("ch.elexis.views/TextContainer.java open(final Brief brief): begin - brief=="+brief.toString()+": "+brief.getBetreff());	
+		log.debug("ch.elexisviews/TextContainer.java.open(): brief.getLabel())==" +brief.getLabel());
+		log.debug("ch.elexisviews/TextContainer.java.open(): about to byte[] arr = brief.loadBinary()...");
 		
 		byte[] arr = brief.loadBinary();
 		if (arr == null) {
-			System.out.println("js ch.elexis.views/TextContainer.java open(): WARNING: arr == null -> about to return false...");
-			log.log(Messages.TextContainer_ErroneousLetter + brief.getLabel(), Log.WARNINGS);
+			log.debug("ch.elexis.views/TextContainer.java open(): WARNING: arr == null -> about to return false...");
+			log.warn(Messages.TextContainer_ErroneousLetter + brief.getLabel());
 			return false;
 		}
 
-		System.out.println("js ch.elexis.views/TextContainer.java open(): about to return plugin.loadFromByteArray(arr, false) and end...");
+		log.debug("ch.elexis.views/TextContainer.java open(): about to return plugin.loadFromByteArray(arr, false) and end...");
 		return plugin.loadFromByteArray(arr, false);
 	}
 	

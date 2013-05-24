@@ -31,7 +31,6 @@ Arbeitsunfähigkeit.[AUF.Grund]=Grund des aktuellen AUF (Unfall/ Krankheit).
 Arbeitsunfähigkeit.[AUF.Prozent]=Prozentsatz der aktuell ausgewählten Auftrag.
 Arbeitsunfähigkeit.[AUF.Zusatz]=Allfälliger Zusatztext.
 
-Fall.AHV-Nummer=AHV-Nummer. Funkioniert bei IV-Fällen.
 Fall.ArbeitgeberName=Name des Arbeitgebers, wenn eingetragen. Funktioniert nicht in allgemeinen Briefen.
 Fall.Fallnummer
 Fall.Gesetz=Bei KVG entspricht dies der Versicherungsnummer. Bei IV der AHV-Nummer. Funktioniert nur, wenn KK-Fall markiert beim Erstellen des Briefes.
@@ -84,6 +83,7 @@ Patient.PersAnamnese=Anamnese wie auf dem Titelblatt
 Patient.Medikation=Aktuelle Fixmedikation des aktuell selektierten Patienten
 Patient.Allergien=Allergien wie auf dem Titelblatt
 Patient.Diagnosen=Diagnosen wie auf dem Titelblatt genannt
+Patient.Stammarzt=Hausarzt des Patienten
 Patient:mw:Er/Sie='Er' oder 'Sie' je nach Geschlecht
 Patient:mw:Herr/Frau='Herr' oder 'Frau' je nach Geschlecht
 

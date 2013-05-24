@@ -1,5 +1,124 @@
 hg log --template '{node|short}: {date|shortdate}: {author|person}: {desc}\n' -b 2.1.7
 
+Changelog fo 2.1.7.1
+8a7e89462703: 2013-05-20: Niklaus Giger: [#1596]Added ch.elexis.logback to provide a default for logback.xml
+a541e242bf9d: 2013-05-17: Niklaus Giger: [#1596]Don't redirect System.out if -console or -consoleLog given
+0ad518fcec11: 2013-05-16: Niklaus Giger: [#1205]Improved logging of TextView
+fa5ead0f98fa: 2013-05-16: Niklaus Giger: [#1596]Add system.out for logging tests
+a0fbaabbaa22: 2013-05-16: Niklaus Giger: [#1596]Avoid substituteLogger warning
+742b22650784: 2013-05-16: Niklaus Giger: [#491]Add new time format DATE_GER_SHORT as dd.MM.yy
+256ee5769812: 2013-05-16: Niklaus Giger: [#1205]Avoid NPE in double-click
+cc0672354c8d: 2013-05-16: Niklaus Giger: [#1596]Avoid substituteLogger warning
+ec90e60808b1: 2013-05-16: Niklaus Giger: [#1596]Direct all system.out/err to the logging system
+79e2c7438786: 2013-05-15: Niklaus Giger: [#1663]Fix rsc in build.properties
+4b4678cbd2c6: 2013-05-13: Niklaus Giger: [#1659]pack all files under ch.elexis.support.dbshaker/rsc as resources
+b1958cd79a99: 2013-05-04: Niklaus Giger: More fixes for charset problem in messages
+4e4912af6d3d: 2013-05-03: Niklaus Giger: Fixed charset problem in messages
+1f4dc9c35568: 2013-05-02: Niklaus Giger: [#1643]Fix wrong includes
+bbe515901270: 2013-05-02: Niklaus Giger: [#1643]Refactoring
+87e3cf7a375b: 2013-05-02: thomashu: [1632] fixed problem with import of empty NTE line, ch.elexis.laborimport.analytica v1.2.4
+57d6f1f7bb2f: 2013-05-02: Niklaus Giger: [#1643]Readd messages about regular physician
+e7d4f5032ba8: 2013-05-02: Joerg M. Sigle: [#1010]Various checks while creating bills
+0cf433c4528d: 2013-04-29: Joerg M. Sigle: [#1010]Various checks while creating bills
+0bff638f8bc6: 2013-05-02: Joerg M. Sigle: [#1643]copy data from Kontakte into readily usable addresses or oneline patient descriptions
+d4a060b291c2: 2013-04-28: Joerg M. Sigle: [#1643]tidy fiels of table Kontakte; enforce isPerson if isPatient
+3f6080a5976a: 2013-04-28: Joerg M. Sigle: [#1643]tidySelectedAddressesAction
+a16c7ebb0952: 2013-04-28: Joerg M. Sigle: [#1643]Adressen in Zwischenablage kopieren & Putzen der Adressdatenbank auf Knopfdruck
+28e1f5ca4af7: 2013-04-28: Joerg M. Sigle: TODO: Eingefügte Tabellen ohne Rahmen produzieren
+95f304efe4de: 2013-04-28: Joerg M. Sigle: TODO Weitere Prüfungen/Refactoring.
+d7360fcb978b: 2013-04-28: Joerg M. Sigle: Tippfehler korrigiert
+fce47f339d3d: 2013-04-28: Joerg M. Sigle: [#1642] Correct MIME type for OpenDocument Text
+1bb12a383342: 2013-05-02: Niklaus Giger: [#1593]Interventionelle Schmerztherapie Position 29.2090
+71965219078a: 2013-05-02: Niklaus Giger: [#1642]Stresstest only for administrators. Cleanup logging
+f8a822af3a57: 2013-04-28: Joerg M. Sigle: [#1642] Stresstest für Text-Plug-In
+84f95c53b447: 2013-05-02: Niklaus Giger: [#1641]Transformed println into proper logging message
+0926e20d1bc7: 2013-04-28: Joerg M. Sigle: [#1641,#1640,#1639,#1638]Several improvements for Omnivore
+a96960ba0b5e: 2013-05-01: Niklaus Giger: Better documentation of logback.xml. Added more debug messages to ch.elexis.text.TextContainer
+bda097b7273a: 2013-04-25: Niklaus Giger: [1601]localCfg in XML-Datei speichern. DB-Connection in localCfg verlagert
+16f82ed2b925: 2013-04-25: gerry: only textual corrections
+f58d64f8c1bf: 2013-04-25: rgw@iMac: better documentation for scala support
+5e0c787d8478: 2013-04-25: rgw@iMac: Merge with 06712836d5f020ffedba0c9c566648fe91920dc7
+bbd0b55c6ec7: 2013-04-24: rgw@iMac: remove obsolete IRangeHandler
+06712836d5f0: 2013-04-24: marcode79: Backed out of changeset 5861:191149f1efa9
+882d07751ec3: 2013-04-24: rgw@iMac: removed some obsolete classes around SImpleStructuredDocument
+345b8924c22f: 2013-04-24: rgw@iMac: removed some obsolete classes around SImpleStructuredDocument
+e0d6204b73a1: 2013-04-23: rgw@iMac: Merge with 953259517025cbd4048fed977018851125e817d1
+953259517025: 2013-04-22: gerry: some design for documentation
+0735c1e2ab95: 2013-04-22: gerry: introduced beginner information and a first css for "corporate design"
+5eaa068b8a0b: 2013-04-23: rgw@iMac: first gradle bildfile. small changes
+191149f1efa9: 2013-04-22: marcode79: [1087] agenda v2.1.8.4
+c4a2ebc9c35a: 2013-04-19: Niklaus Giger: Added forgotten README.txt for LogBackend
+de3ef31d2f1a: 2013-04-19: thomashu: [1546] added checks for limit per day to tarmed optifier, ch.elexis.arzttarife_ch v2.0.23
+260b28eb3c63: 2013-04-19: thomashu: [1502] fixed statistic of paid values on Rechnungsliste
+25931b0b9c80: 2013-04-16: thomashu: [1347] removed debug console message
+cecc047a216a: 2013-04-16: thomashu: [1347] fixed deselecting Konsultation in KonsDetailView
+7d85090b4610: 2013-04-16: thomashu: [1615] added option to restart KG import, ch.elexis.importer.aeskulap v0.1.3
+e33d634129d8: 2013-04-16: thomashu: [1615] fixed db table initialization of Termin
+f82d88e00517: 2013-04-16: thomashu: [1615] fixed leak in MandantSelectionContributionItem
+909cb954039b: 2013-04-11: thomashu: [1549] provide access to selected Prescription of FixMediDisplay via ElexisEventDispatcher
+1e0ba924ea39: 2013-04-11: thomashu: [1174] [1512] ch.elexis.buchhaltung.basis v2.0.4
+1f24f1681147: 2013-04-11: thomashu: [1174] [1512] added doctor to AlleLeistungen statistics, fixed NPE if Verrechenbar with null as code is encountered
+2d6204496a56: 2013-03-21: tony: Hilotec Messwerte Korrektur bei readXML
+e98855752477: 2013-03-05: tony: Hilotec Messwerte Übersicht V20 entfernt und auf 2.1.7 portiert
+52b269ade9ea: 2013-03-07: tschaller: Tags added
+5520f5cbcfc8: 2013-03-07: tony: Elexis – Medics Connector Plugin auf Version 2.1.7 aktualisiert
+f261d5a4ccf3: 2013-03-28: marcode79: Merge with branch Bug1214 - 23ee144702e49528445ee9752ebd3ad7be1554dd
+b705b17c2b8f: 2013-03-19: marcode79: [1439] Rechnungsdruck bzw. Fall.AHV-Nummer
+2c2d666cf2d0: 2013-03-04: thomashu: [1234] added side info to printed tarmed bill, ch.elexis.arzttarife_ch v2.0.22
+bcb815d3961e: 2013-02-26: Niklaus Giger: [1389]Handbuch kann wieder geöffnet werden
+5709b1b0ebbe: 2013-02-25: Niklaus Giger: Fix Elexis about text
+49d624517e7d: 2013-02-26: thomashu: [1507] fixed Font resource leak, ch.elexis.agenda v.2.1.7.9
+fd03fc1d2332: 2013-02-25: thomashu: [1234] fixed problem when same position with side info should be charged, ch.elexis.arzttarife_ch v2.0.21
+6652f93740e9: 2013-02-20: marcode79: [1079] option show patient reminder on patient change w/o view open
+36415b9e9ce0: 2013-02-14: marcode79: [1497] IndexOutOfBoundsException in PersistentObjectFactory
+99e0fffe1fe6: 2013-02-12: thomashu: [1484] applied fix for empty Bestellung selection
+ed21cc80418a: 2013-02-07: thomashu: fixed startup problem with space characters
+96bcae07f6e1: 2013-02-07: marlovitsh: [1345]fix sortable billing systems
+650647df17b8: 2013-02-07: thomashu: [1372] reworked order workflow, added SelectBestellungDialog, added new Bestellung Action to BestellView, added context menu to checkin ordered articles to LagerView
+7b5ea8147fe3: 2013-02-06: thomashu: [1147] unified the name "Abrechnugssystem" in views
+87339d6673d0: 2013-01-31: thomashu: [1347] partial fix, do not change selection if Fall or Konsultation matches the patient
+904453b68b2f: 2013-01-30: marcode79: Log RunFromScratch DB Location
+bc478f6a3e02: 2013-01-24: thomashu: [1331] ch.elexis.importer.div v1.5.3
+68414cfb6ccd: 2013-01-24: thomashu: [1331] fixed HL7Parser open overwrite dialog causing invalid thread access, and overwrite implementation
+f910a44a6d85: 2013-01-24: thomashu: [1331] fixed KontaktMatcher matching date of birth, as Person#getGeburtsdatum does not return a String in TimeTool.DATE_GER format
+b41269afd840: 2013-01-22: thomashu: [1259] added additional test if there is a Rechnung for the AccountTransaction, ch.elexis.buchhaltung.basis v2.0.3
+dbc4382cf734: 2013-01-22: marcode79: [1392] Zusatzfeld Stammarzt
+026a7644c7b8: 2013-01-17: marcode79: [1385] ESR sorter fix/enhance
+78e7ccbcea02: 2013-01-16: marcode79: Merge with dc595a66acb128db090d06ec899d757b80349409
+670b3c16b533: 2013-01-16: marcode79: [1378] Create letter without case and consultation
+dc595a66acb1: 2013-01-15: thomashu: [1400] fixed resource leak due to not disposing GC objects, ch.elexis.agenda v2.1.7.8 ch.elexis.ebanking_ch v2.0.6.2
+7231175cd1e2: 2013-01-10: thomashu: [1325] updated Bestellung table initialization as last change resulted in update on every load
+5435a6be447f: 2013-01-08: thomashu: [1295] tarmed XML invoice now gets bank data and biller data from rechnungssteller and provider data from current mandant, ch.elexis.arzttarife_ch v2.0.20
+7f46b3202eab: 2013-01-08: thomashu: [754] deadline for additional fee of practice lab can be set on preference page, ch.elexis.labortarif.ch2009 v1.0.7
+77b3592819b3: 2013-01-04: thomashu: [1354] fixed invalid thread access on import, ch.elexis.laborimport_lg1 v1.3.2
+359784e81bc3: 2013-01-03: thomashu: [1325] updated Bestellung table initialization due to lazy loading of content
+e313f774d537: 2012-12-21: marlovitsh: [1341]possibility to avoid displaying of addressee selection dialog when creating new documents
+debdbf3c3f0d: 2012-12-21: marlovitsh: [1243]DoubleClick Actions for KonsZumVerrechnenView, RechnungsListeView
+57d84c44fbbe: 2012-12-21: marlovitsh: [1345]make the billing systems menu sortable, top-part manually sortable; added possibility to disable a billing system
+the top-sorting of the billing systems menu can be specified in case-prefs for each user - the remainder of the menu is sorted alphabetically
+if the sorting is not specifically set, then the menu is simply alphabetically sorted
+added checkbox "Abrechnungssystem inaktiv" in Prefs "Abrechnungsystem definieren" - selecting such an item is then disallowed
+(Niklaus manually resolved differences because of Elexis-Formatter)
+542319e5aea1: 2012-10-28: marlovitsh: [1342]FallListeView.java: added red/green dots if case valid/invalid as already present in FaelleView.java
+d3abbad549b4: 2012-10-20: marlovitsh: [1344]ScriptView: added sorting scripts alphabetically
+15f4c79f37e1: 2012-12-21: rgw@macbook: [1314]corrected validity check for newly created lockfile
+0ae9fc1776ee: 2012-12-21: Niklaus Giger: [1306] Ask for confirmation before marking all entries of all patients as read
+ec89b1c46b8b: 2012-12-20: Niklaus Giger: Updated copyright of Textplugin. bogdan314 was paid by Gerry Weirich for it
+22696c95b1f5: 2012-12-20: Niklaus Giger: Added some missing copyrights
+066c6cfc3dfa: 2012-12-20: thomashu: [1331] fixed invalid thread access when overwriting old lab values, ch.elexis.laborimport_viollier v1.3.2
+d47176a6b20c: 2012-12-17: thomashu: [1325] fixed HEAP2 to BESTELLUNGEN table update code and added lazy loading of items
+153e38c13804: 2012-12-13: thomashu: [1001] fixed problem on week and parallel view when start of day is configured, ch.elexis.agenda v2.1.7.7
+3b69e6aaad71: 2012-12-13: thomashu: Updated license info
+539e22c63410: 2012-12-10: Niklaus Giger: 2.1.7.0 with cleanup of copyright, .classfiles, dos2unix elexis-formatter
+f0910d2c2a0f: 2012-12-10: Niklaus Giger: RM: removed obsolete absolute path entries in .classpath files
+2e59b739bda8: 2012-12-08: Niklaus Giger: Manually grafted commit f0f09d0a974a upgrade copyright/license info from trunk
+dd3d4b84cb44: 2012-12-08: Niklaus Giger: Removed $ID lines from java files
+37e1ec9f5612: 2012-12-05: Niklaus Giger: Fix small error in docu
+a549dcb9c8ef: 2012-12-05: Niklaus Giger: Corrected images path in doc
+d42c5283970a: 2012-12-02: Niklaus Giger: RM: Updated developers documentation
+c31de1b79480: 2012-12-01: Niklaus Giger: Enforce Elexis formatting. execpt ch.elexis.noatext org.ekkescorner.logging.osgi LogBackend
+28805a5ae354: 2012-12-01: Niklaus Giger: dos2unix for all java files
+
 Changelog fo 2.1.7.0
 ccfdbcd9ce57: 2012-11-22: marcode79: ch.elexis.developer.resources add code formatter off possibility
 2de8cce78e00: 2012-11-19: thomashu: [1261] highlight hyperlink in blue

@@ -20,11 +20,13 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.text.MessageFormat;
 
-import java.security.SecureRandom;		//20130411js: Omnivore_js: To generate random string for unique_temp_ID
-import java.math.BigInteger;						//20130411js: Omnivore_js: To generate random string for unique_temp_ID
+import java.security.SecureRandom;		//Omnivore_js: To generate random string for unique_temp_ID
+import java.math.BigInteger;						//Omnivore_js: To generate random string for unique_temp_ID
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.program.Program;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.core.PersistenceException;
@@ -66,6 +68,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 			"ALTER TABLE " + TABLENAME + " Modify Path VARCHAR(255);"; //$NON-NLS-1$ //$NON-NLS-2$
 	
 	private static final String upd121 = "ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;"; //$NON-NLS-1$ //$NON-NLS-2$
+	private static Logger log = LoggerFactory.getLogger("ch.elexis.omnivore.DocHandle"); //$NON-NLS-1$
 	
 	static {
 		addMapping(TABLENAME, "PatID", "Datum=S:D:Datum", "Titel=Title", "Keywords", "Path", "Doc", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
@@ -107,7 +110,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 				"PatID", "Datum", "Titel", "Keywords", "Mimetype" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 			}, pat.getId(), new TimeTool().toString(TimeTool.DATE_GER), title, keyw, mime);
 		} catch (PersistenceException pe) {
-			log.log(Messages.DocHandle_dataNotWritten + "; " + pe.getMessage(), Log.ERRORS);
+			log.error(Messages.DocHandle_dataNotWritten + "; " + pe.getMessage());
 		}
 	}
 	
@@ -163,28 +166,28 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 				ext = typname.substring(r + 1);
 			}
 			
-  			//20130411js: Make the temporary filename configurable
+  			//Make the temporary filename configurable
 			StringBuffer configured_temp_filename=new StringBuffer();
-			System.out.println("Omnivore_js:DocHandle: configured_temp_filename="+configured_temp_filename.toString());
+			log.debug("configured_temp_filename="+configured_temp_filename.toString());
 			configured_temp_filename.append(PreferencePage.getOmnivore_jsTemp_Filename_Element("constant1",""));
-			System.out.println("Omnivore_js:DocHandle: configured_temp_filename="+configured_temp_filename.toString());
+			log.debug("configured_temp_filename="+configured_temp_filename.toString());
 			configured_temp_filename.append(PreferencePage.getOmnivore_jsTemp_Filename_Element("PID",getPatient().getKuerzel()));	//getPatient() liefert in etwa: ch.elexis.com@1234567; getPatient().getId() eine DB-ID; getPatient().getKuerzel() die Patientennummer.
-			System.out.println("Omnivore_js:DocHandle: configured_temp_filename="+configured_temp_filename.toString());
+			log.debug("configured_temp_filename="+configured_temp_filename.toString());
 			configured_temp_filename.append(PreferencePage.getOmnivore_jsTemp_Filename_Element("fn",getPatient().getName()));
-			System.out.println("Omnivore_js:DocHandle: configured_temp_filename="+configured_temp_filename.toString());
+			log.debug("configured_temp_filename="+configured_temp_filename.toString());
 			configured_temp_filename.append(PreferencePage.getOmnivore_jsTemp_Filename_Element("gn",getPatient().getVorname()));
-			System.out.println("Omnivore_js:DocHandle: configured_temp_filename="+configured_temp_filename.toString());
+			log.debug("configured_temp_filename="+configured_temp_filename.toString());
 			configured_temp_filename.append(PreferencePage.getOmnivore_jsTemp_Filename_Element("dob",getPatient().getGeburtsdatum()));
-			System.out.println("Omnivore_js:DocHandle: configured_temp_filename="+configured_temp_filename.toString());
+			log.debug("configured_temp_filename="+configured_temp_filename.toString());
 
 			configured_temp_filename.append(PreferencePage.getOmnivore_jsTemp_Filename_Element("dt",getTitle()));				//not more than 80 characters, laut javadoc
-			System.out.println("Omnivore_js:DocHandle: configured_temp_filename="+configured_temp_filename.toString());
+			log.debug("configured_temp_filename="+configured_temp_filename.toString());
 			configured_temp_filename.append(PreferencePage.getOmnivore_jsTemp_Filename_Element("dk",getKeywords()));
-			System.out.println("Omnivore_js:DocHandle: configured_temp_filename="+configured_temp_filename.toString());
+			log.debug("configured_temp_filename="+configured_temp_filename.toString());
 			//Da könnten auch noch Felder wie die Document Create Time etc. rein - siehe auch unten, die Methoden getPatient() etc.
 			
 			configured_temp_filename.append(PreferencePage.getOmnivore_jsTemp_Filename_Element("dguid",getGUID()));
-			System.out.println("Omnivore_js:DocHandle: configured_temp_filename="+configured_temp_filename.toString());
+			log.debug("configured_temp_filename="+configured_temp_filename.toString());
 			
 			//N.B.: We may NOT REALLY assume for sure that another filename, derived from a createTempFile() result, where the random portion would be moved forward in the name, may also be guaranteed unique!
 			//So *if* we should use createTempFile() to obtain such a filename, we should put constant2 away from configured_temp_filename and put it in the portion provided with "ext", if a unique_temp_id was requested.
@@ -203,10 +206,10 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 			SecureRandom random = new SecureRandom();
 			int  needed_bits = (int) Math.round(Math.ceil(Math.log(PreferencePage.nOmnivore_jsPREF_cotf_element_digits_max)/Math.log(2)));
 			configured_temp_filename.append(PreferencePage.getOmnivore_jsTemp_Filename_Element("random",new BigInteger(needed_bits , random).toString() ));
-			System.out.println("Omnivore_js:DocHandle: configured_temp_filename="+configured_temp_filename.toString());
+			log.debug("configured_temp_filename="+configured_temp_filename.toString());
 			
 			configured_temp_filename.append(PreferencePage.getOmnivore_jsTemp_Filename_Element("constant2",""));
-			System.out.println("Omnivore_js:DocHandle: configured_temp_filename="+configured_temp_filename.toString());
+			log.debug("configured_temp_filename="+configured_temp_filename.toString());
 			
 			File temp;
 			if (configured_temp_filename.length()>0) {
@@ -217,8 +220,8 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 				uniquetemp.delete(); 
 				
 				//remove the _unique variable part from the temporary filename and create a new file in the same directory as the previously automatically created unique temp file
-				System.out.println(temp_pathname);
-				System.out.println(configured_temp_filename+"."+ext);
+				log.debug(temp_pathname);
+				log.debug(configured_temp_filename+"."+ext);
 				temp = new File(temp_pathname,configured_temp_filename+"."+ext);
 				temp.createNewFile();
 			}
@@ -280,18 +283,18 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 
 		//FIXME: Warum ist es eigentlich so, dass nur 80 Zeichen funktionieren? Notfalls könnte ja auch Omnivore das Umbenennen veranlassen, und den Namen einfach (oder interaktiv) kürzen, statt eine Fehlermeldung auszugeben...
 		
-		//20130325js: From Omnivore version 1.4.2 to Omnivore_js version 1.4.3,
+		//From Omnivore version 1.4.2 to Omnivore_js version 1.4.3,
 		//I changed the fixed limit from 255 for the last part of the filename to a configurable one with default 80 chars. 
 		//Linux and MacOS may be able to handle longer filenames,
 		//but we observed and verified that Windows 7 64-bit would not import files with names longer than 80 chars.
-		//20130325js: Also, put the filename length check *before* displaying the file import dialog.
+		//Also, put the filename length check *before* displaying the file import dialog.
 		//Otherwise, users would have to type in a bunch of text first, and learn only afterwards, that that would be discarded.
 	    Integer maxOmnivoreFilenameLength=ch.elexis.omnivore.preferences.PreferencePage.getOmnivore_jsMax_Filename_Length();
 
 	    String nam = file.getName();
-		if (nam.length() > maxOmnivoreFilenameLength) {																											//20130325js: The checked limit is now configurable.
+		if (nam.length() > maxOmnivoreFilenameLength) {																											//The checked limit is now configurable.
 			SWTHelper.showError(Messages.DocHandle_importErrorCaption,
-				MessageFormat.format(Messages.DocHandle_importErrorMessage, maxOmnivoreFilenameLength));	//20130325js: The error message is also dynamically generated.
+				MessageFormat.format(Messages.DocHandle_importErrorMessage, maxOmnivoreFilenameLength));	//The error message is also dynamically generated.
 			return;
 		}		
 		
@@ -308,16 +311,16 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 				baos.close();
 
 				//FIXME: The original file name should be preserved in a separate field when the file content is imported into the database.			
-				new DocHandle(baos.toByteArray(), act, fid.title.trim(), file.getName(), fid.keywords.trim());	//20130325js: Added trim() to title and keywords, to avoid unnecessary extra lines in the omnivore content listing.
+				new DocHandle(baos.toByteArray(), act, fid.title.trim(), file.getName(), fid.keywords.trim());	//Added trim() to title and keywords, to avoid unnecessary extra lines in the omnivore content listing.
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
 				SWTHelper.showError(Messages.DocHandle_importErrorCaption,
 					Messages.DocHandle_importErrorMessage2);
-				//20130325js: Wenn das Importieren einen Fehler wirft, nacher die Datei nicht automatisch wegarchivieren. Deshalb hier return eingefügt.
+				//Wenn das Importieren einen Fehler wirft, nacher die Datei nicht automatisch wegarchivieren. Deshalb hier return eingefügt.
 				return;
 			}
 			
-			//20130325js: Now, process all defined rules for automatic archiving of imported documents, as configured in omnivore_js preferences.
+			//Now, process all defined rules for automatic archiving of imported documents, as configured in omnivore_js preferences.
 
 			//Anything will be done *only* when SrcPattern and DestDir are both at least defined strings.
 			//A rule, where both SrcPattern and DestDir are empty strings, will be ignored and have no effect. Especially, it will not stop further rules from being evaluated.
@@ -343,20 +346,16 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 						//getCanonicalXYZ liefert schon einen Fehler in Eclipse
 						//getName liefert nur den Dateinamen ohne Laufwerk und/oder Pfad.
 					
-						System.out.println("js Omnivore DocHandle: Automatic archiving found matching rule #"+(i+1)+" (1-based index):");	
-						System.out.println("js Omnivore DocHandle: file.getAbsolutePath(): "+file.getAbsolutePath());	
-						//System.out.println("js Omnivore DocHandle: file.getAbsoluteFile(): "+file.getAbsoluteFile());
-						//System.out.println("js Omnivore DocHandle: file.getCanonicalPath(): "+file.getCanonicalPath());
-						//System.out.println("js Omnivore DocHandle: file.getCanonicalFile(): "+file.getCanonicalFile());
-						//System.out.println("js Omnivore DocHandle: file.getName(): "+file.getName());
-						System.out.println("js Omnivore DocHandle: Pattern: "+SrcPattern);
-						System.out.println("js Omnivore DocHandle: DestDir: "+DestDir);
+						log.debug("Automatic archiving found matching rule #"+(i+1)+" (1-based index):");	
+						log.debug("file.getAbsolutePath(): "+file.getAbsolutePath());	
+						log.debug("Pattern: "+SrcPattern);
+						log.debug("DestDir: "+DestDir);
 						
 						if (file.getAbsolutePath().contains(SrcPattern)) {
-							System.out.println("js Omnivore DocHandle: SrcPattern found in file.getAbsolutePath()"+i);	
+							log.debug("SrcPattern found in file.getAbsolutePath()"+i);	
 							
 							if (DestDir == "") {
-								System.out.println("js Omnivore DocHandle: DestDir is empty. No more rules will be evaluated for this file. Returning.");	
+								log.debug("DestDir is empty. No more rules will be evaluated for this file. Returning.");	
 								return;
 							}	//An empty DestDir protects a matching file from being processed by any further rules.
 							
@@ -393,7 +392,7 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 							//Even if DestDir should end with a separatorChar, that should not hurt, because sequences of separatorChar in a filename should probably be treated as a single one.
 							File NewFile = new File (DestDir);
 							if (NewFile.isDirectory() ) {
-								System.out.println("js Omnivore DocHandle: DestDir is a directory. Adding file.getName()...");	
+								log.debug("DestDir is a directory. Adding file.getName()...");	
 								NewFile = new File(DestDir+file.separatorChar+file.getName());
 							}
 						
@@ -402,22 +401,22 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 							//If the target exists, java on windows would currently just not carry out the renameTo(). But the user would not be informed.
 							//So I'll provide a separate error message for that case.
 							if (NewFile.isDirectory()) {
-								System.out.println("js Omnivore DocHandle: NewFile.isDirectory==true; renaming not attempted");	
+								log.debug("NewFile.isDirectory==true; renaming not attempted");	
 								SWTHelper.showError(Messages.DocHandle_jsMoveErrorCaption,MessageFormat.format(Messages.DocHandle_jsMoveErrorDestIsDir,DestDir,file.getName()));
 							} else {					
 								if (NewFile.isFile()) {
-									System.out.println("js Omnivore DocHandle: NewFile.isFile==true; renaming not attempted");	
+									log.debug("NewFile.isFile==true; renaming not attempted");	
 									SWTHelper.showError(Messages.DocHandle_jsMoveErrorCaption,MessageFormat.format(Messages.DocHandle_jsMoveErrorDestIsFile,DestDir,file.getName()));
 								} else {
-									System.out.println("js Omnivore DocHandle: renaming incoming file to: "+NewFile.getAbsolutePath());
+									log.debug("renaming incoming file to: "+NewFile.getAbsolutePath());
 								
 									if (file.renameTo(NewFile)) {
-										System.out.println("js Omnivore DocHandle: renaming ok");	
+										log.debug("renaming ok");	
 										//do nothing, everything worked out fine
 									} else {
-										System.out.println("js Omnivore DocHandle: renaming attempted, but returned false.");
-										System.out.println("js Omnivore DocHandle: However, I may probably have observed this after successful moves?! So I won't show an error dialog here. js");	
-										System.out.println("js Omnivore DocHandle: So I won't show an error dialog here; if a real exception occured, that would suffice to trigger it.");	
+										log.debug("renaming attempted, but returned false.");
+										log.debug("However, I may probably have observed this after successful moves?! So I won't show an error dialog here. js");	
+										log.debug("So I won't show an error dialog here; if a real exception occured, that would suffice to trigger it.");	
 										//SWTHelper.showError(Messages.DocHandle_jsMoveErrorCaption,Messages.DocHandle_jsMoveError);
 									}
 								}

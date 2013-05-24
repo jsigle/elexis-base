@@ -1,16 +1,34 @@
+<link rel="stylesheet" type="text/css" href="elexis.css" />
+
+!images/elexis48.png! <span class="logo">The Elexis Project</span>
+<hr />
+
 h1. Elexis-Plugins: Programming in Scala
+
+p=(small). Version 1.1 (c) 2013 by G. Weirich
 
 h2. Installing Scala in Eclipse
 
-Install http://www.scala-lang.org/scala-eclipse-plugin-rc as a new update site in eclipse (as of this writing, Scala v 2.8 is Release Candidate. Later, the url should read http://www.scala-lang.org/scala-eclipse-plugin. We do recommend that you use Scala 2.8 or higher.
+You can add Scala support from the eclipse marketplace. Unfortunately, if doing so, the support for scalatest is not loaded. You can, however, still test Scala classes with JUnit (or install scalatest later)
+
+The other possibility is, to load the Scala IDE from its website.In that case, scalatest is included by default.
+
+Install http://download.scala-ide.org/sdk/e38/scala210/stable/site as a new update site in eclipse. From there you can install scala-ide 3.0, scala 2.10 and the scalatest integration for scala-ide / eclipse.
+
+Scalatest itself is not included in the above download. It is available from "scalatest.org":http://www.scalatest.org/download Get the .jar file and store it somewhere appropriate. I use ~/dev/contrib. Then, create a user library "scalatest" in eclipse and add this jar to it. Thereafter it is sufficient to add a dependency to scalatest to your test projects.
+
 
 h2. Creating a mixed-language plugin
 
 An elexis plugin can be made up from java and scala parts. Just create a plugin project, as you would do normally, then right-click on the project and chose: "Add scala nature". Then you can program some files in scala. Unfortunately, on executing such a plugin, it will complain about "Classloader Exception: scala/object not found."
 
-To circumvent this, you must add a dependency to elexis-scala-runtime (found in the elexis-addons.googlecode.com repository)
+To circumvent this, you must add a dependency to elexis-scala-runtime (found in the elexis-addons  repository)
 
 h2. Recommended reading
 
 "The Scala Website":http://www.scala-lang.org
-   
+"Scalatest website":http://www.scalatest.org
+"Scala IDE":http://scala-ide.org   
+
+The Book of Martin Odersky, the inventor of Scala: "Programming in Scala":http://www.artima.com/pins1ed/ (Note: This is the first edition. The second edition is not freely available)
+

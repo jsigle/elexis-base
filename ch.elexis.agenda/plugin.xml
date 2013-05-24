@@ -119,6 +119,11 @@
                   optional="false">
             </commandParameter>
          </command>
+         <command
+               defaultHandler="ch.elexis.agenda.series.command.AddReccuringDateHandler"
+               id="ch.elexis.agenda.series.command.AddReccuringDate"
+               name="add reccuring date">
+         </command>
       </extension>
       <extension
             point="ch.elexis.PersistentReference">
@@ -133,6 +138,69 @@
                class="ch.elexis.agenda.data.DataAccessor"
                name="Termin">
          </DataAccess>
+      </extension>
+      <extension
+            point="org.eclipse.ui.menus">
+         <menuContribution
+               allPopups="false"
+               locationURI="toolbar:ch.elexis.agenda.tagesview">
+            <command
+                  commandId="ch.elexis.agenda.series.command.AddReccuringDate"
+                  icon="icons/arrow-repeat.png"
+                  label="%Add_Recurring_Appointment"
+                  style="push">
+            </command>
+         </menuContribution>
+         <menuContribution
+               allPopups="false"
+               locationURI="toolbar:ch.elexis.agenda.largeview">
+            <command
+                  commandId="ch.elexis.agenda.series.command.AddReccuringDate"
+                  icon="icons/arrow-repeat.png"
+                  label="%Add_Recurring_Appointment"
+                  style="push">
+            </command>
+         </menuContribution>
+         <menuContribution
+               allPopups="false"
+               locationURI="toolbar:ch.elexis.agenda.week">
+            <command
+                  commandId="ch.elexis.agenda.series.command.AddReccuringDate"
+                  icon="icons/arrow-repeat.png"
+                  label="%Add_Recurring_Appointment"
+                  style="push">
+            </command>
+         </menuContribution>
+         <menuContribution
+               allPopups="false"
+               locationURI="toolbar:ch.elexis.agenda.Views">
+            <command
+                  commandId="ch.elexis.agenda.series.command.AddReccuringDate"
+                  icon="icons/arrow-repeat.png"
+                  label="%Add_Recurring_Appointment"
+                  style="push">
+            </command>
+         </menuContribution>
+         <menuContribution
+               allPopups="false"
+               locationURI="toolbar:ch.elexis.agenda.parallelview">
+            <command
+                  commandId="ch.elexis.agenda.series.command.AddReccuringDate"
+                  icon="icons/arrow-repeat.png"
+                  label="%Add_Recurring_Appointment"
+                  style="push">
+            </command>
+         </menuContribution>
+         <menuContribution
+               allPopups="false"
+               locationURI="toolbar:ch.elexis.agenda.Terminliste">
+            <command
+                  commandId="ch.elexis.agenda.series.command.AddReccuringDate"
+                  icon="icons/arrow-repeat.png"
+                  label="%Add_Recurring_Appointment"
+                  style="push">
+            </command>
+         </menuContribution>
       </extension>
    
 

@@ -17,6 +17,7 @@ import java.io.FileFilter;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.swt.widgets.Display;
 
 import ch.elexis.Desk;
 import ch.elexis.actions.ElexisEventDispatcher;
@@ -38,11 +39,22 @@ public class HL7Parser {
 	private static final String COMMENT_GROUP = Messages.HL7Parser_CommentGroup;
 	
 	public String myLab = "?"; //$NON-NLS-1$
+	private boolean testMode = false;
 	
 	public HL7Parser(String mylab){
 		myLab = mylab;
 	}
 	
+	/**
+	 * Method sets testMode which will prevent dialogs from opening. Should only be used by unit
+	 * tests.
+	 * 
+	 * @param value
+	 */
+	public void setTestMode(boolean value) {
+		testMode = value;
+	}
+
 	public Result<Object> parse(final HL7 hl7, boolean createPatientIfNotFound){
 		Result<Kontakt> res = hl7.getLabor();
 		if (!res.isOK()) {
@@ -95,20 +107,31 @@ public class HL7Parser {
 					LabResult lrr = qrr.get(0);
 					
 					if (overWriteAll) {
+						overWriteLabResult(lrr, obx);
 						obx = obr.nextOBX(obx);
 						continue;
 					}
 					
-					QueryOverwriteDialog qod =
-						new QueryOverwriteDialog(Desk.getTopShell(),
-							Messages.HL7Parser_LabAlreadyImported + pat.getLabel(), lrr.getLabel()
-								+ Messages.HL7Parser_AskOverwrite);
-					int retVal = qod.open();
+					int retVal;
+					if (!testMode) {
+						QueryOverwriteDialogRunnable runnable =
+							new QueryOverwriteDialogRunnable(pat, lrr);
+						Display.getDefault().syncExec(runnable);
+						retVal = runnable.result;
+					} else {
+						retVal = IDialogConstants.YES_TO_ALL_ID;
+					}
+					
 					if (retVal == IDialogConstants.YES_ID) {
+						overWriteLabResult(lrr, obx);
 						obx = obr.nextOBX(obx);
 						continue;
 					} else if (retVal == IDialogConstants.YES_TO_ALL_ID) {
 						overWriteAll = true;
+						overWriteLabResult(lrr, obx);
+						obx = obr.nextOBX(obx);
+						continue;
+					} else {
 						obx = obr.nextOBX(obx);
 						continue;
 					}
@@ -178,6 +201,54 @@ public class HL7Parser {
 		return new Result<Object>("OK"); //$NON-NLS-1$
 	}
 	
+	/**
+	 * Open overwrite dialog with a result value.
+	 * 
+	 * @author thomashu
+	 */
+	private class QueryOverwriteDialogRunnable implements Runnable {
+		int result;
+		private Patient pat;
+		private LabResult lrr;
+		
+		public QueryOverwriteDialogRunnable(Patient pat, LabResult lrr){
+			this.pat = pat;
+			this.lrr = lrr;
+		}
+		
+		@Override
+		public void run(){
+			QueryOverwriteDialog qod =
+				new QueryOverwriteDialog(Desk.getTopShell(), Messages.HL7Parser_LabAlreadyImported
+					+ pat.getLabel(), lrr.getLabel() + Messages.HL7Parser_AskOverwrite);
+			result = qod.open();
+		}
+	}
+	
+	private void overWriteLabResult(LabResult labResult, HL7.OBX obx){
+		// do some magic decision making if result is text ...
+		boolean importAsLongText = (obx.isFormattedText() || obx.isPlainText());
+		if (importAsLongText) {
+			if (obx.isNumeric())
+				importAsLongText = false;
+		}
+		if (importAsLongText) {
+			if (obx.getResultValue().length() < 20)
+				importAsLongText = false;
+		}
+
+		if (importAsLongText) {
+			labResult.set(LabResult.COMMENT, obx.getResultValue() + "\n" + obx.getComment());
+		} else {
+			labResult.set(LabResult.COMMENT, obx.getComment());
+			labResult.set(LabResult.RESULT, obx.getResultValue());
+		}
+		
+		if (obx.isPathologic()) {
+			labResult.setFlag(LabResult.PATHOLOGIC, true);
+		}
+	}
+
 	/**
 	 * Import the given HL7 file. Optionally, move the file into the given archive directory
 	 * 

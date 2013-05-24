@@ -300,7 +300,15 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 		
 
 		/*
-		 * 201303041746js:
+		 * TODO: Refactor this procedure into different class(es)
+		 *   TODO: Should each field be capable of cleaning its content ? (Jörg Sigle & Niklaus Giger)
+		 *   TODO: We must find a way to handle different languages + research actual content of database columns
+		 *   TODO: Configuratability following preferences of diffferent users
+		 *   
+		 * @remark please note if at least one field of a contact is changed, all fields of the contact will be appended
+		 *         to the clipboard. The result can be pasted into a spreadshead, and a macro exists to highlight then changed fields
+		 *         This allows checking whether your algorithm is good or not 
+		 * 
 		 * Clean selected address(es):
 		 * For all selected addresses do:
 		 * If FLD_IS_PATIENT==true, then set FLD_IS_PERSON=true (otherwise, invalid xml invoices may be produced, addressed to institutions instead of persons)
@@ -744,6 +752,9 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 			System.out.println("KontakteView tidySelectedAddressesAction.run This will lose the selection, but sadly NOT update 'Kontakt Detail'.");			
 			cv.getConfigurer().getControlFieldProvider().fireChangedEvent();
 
+			// TODO: Wenn nur ein einziger Kontakt markiert und geputzt wurde, sollte die Anzeige in KontaktDetail
+			//       anschliessend sofort aktualisiert werden, damit der Nutzer den neuen Content sieht.
+			
 			//Wenn mehrere Einträge aktualisiert waren, und nach obigem die Selektion verschwindet,
 			//wird inhärent auch der Inhalt von Kontakt Detail geändert (weil wahrscheinlich ein anderer Eintrag selektiert wird),
 			//und somit auch dieses aktualisiert. Bei nur einem a priori selektierten und per tidy... behandelten Eintrag

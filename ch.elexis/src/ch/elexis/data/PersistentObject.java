@@ -42,10 +42,7 @@ import java.util.zip.ZipOutputStream;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.preferences.ConfigurationScope;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -67,7 +64,6 @@ import ch.elexis.data.cache.IPersistentObjectCache;
 import ch.elexis.data.cache.SoftCache;
 import ch.elexis.dialogs.ErsterMandantDialog;
 import ch.elexis.preferences.PreferenceConstants;
-import ch.elexis.preferences.PreferenceInitializer;
 import ch.elexis.status.ElexisStatus;
 import ch.elexis.util.DBUpdate;
 import ch.elexis.util.Log;
@@ -121,6 +117,7 @@ import ch.rgw.tools.net.NetTool;
  */
 public abstract class PersistentObject implements IPersistentObject {
 	protected static final String MAPPING_ERROR_MARKER = "**ERROR:";
+	public static final String CFG_FOLDED_CONNECTION = "verbindung/folded_string";
 	public static final String CFG_CONNECTSTRING = "connectionstring";
 	public static final String CFG_TYPE = "typ";
 	public static final String CFG_PWD = "pwd";
@@ -218,14 +215,16 @@ public abstract class PersistentObject implements IPersistentObject {
 		log.log("Verzeichnis Demo-Datenbank via Hub.getBasePath(): " + demo.getAbsolutePath(),
 			Log.INFOS);
 		log.log("osgi.install.area: " + System.getProperty("osgi.install.area"), Log.INFOS);
-		String demo2path = org.eclipse.core.runtime.Platform.getInstanceLocation().getURL().getPath()+ "demoDB";
+		String demo2path =
+			org.eclipse.core.runtime.Platform.getInstanceLocation().getURL().getPath() + "demoDB";
 		File demo2 = new File(demo2path);
 		if (demo2.exists()) {
 			demo = demo2;
 		}
 		
 		if (!demo.exists()) {
-			URI demoName = URI.create(System.getProperty("osgi.install.area"));
+			URI demoName =
+				URI.create(System.getProperty("osgi.install.area").replaceAll(" ", "%20"));
 			demo = new File(demoName.getPath() + File.separator + "demoDB");
 			log.log("Verzeichnis Demo-Datenbank via osgi.install.area: " + demo.getAbsolutePath(),
 				Log.INFOS);
@@ -274,6 +273,8 @@ public abstract class PersistentObject implements IPersistentObject {
 		} else if (runningAsTest) {
 			try {
 				File dbFile = File.createTempFile("elexis", "db");
+				log.log("RunFromScratch test database created in " + dbFile.getAbsolutePath(),
+					Log.INFOS);
 				dbUser = "sa";
 				dbPw = StringTool.leer;
 				j = JdbcLink.createH2Link(dbFile.getAbsolutePath());
@@ -290,25 +291,13 @@ public abstract class PersistentObject implements IPersistentObject {
 			}
 		}
 		
-		// IPreferenceStore localstore = new SettingsPreferenceStore(cfg);
-		/*
-		 * String driver = localstore.getString(PreferenceConstants.DB_CLASS); String connectstring
-		 * = localstore .getString(PreferenceConstants.DB_CONNECT);
-		 * 
-		 * String user = localstore.getString(PreferenceConstants.DB_USERNAME); String pwd =
-		 * localstore.getString(PreferenceConstants.DB_PWD); String typ =
-		 * localstore.getString(PreferenceConstants.DB_TYP);
-		 */
 		String driver = "";
 		String user = "";
 		String pwd = "";
 		String typ = "";
 		String connectstring = "";
 		Hashtable<Object, Object> hConn = null;
-		String connection = Hub.getCfgVariant();
-		ConfigurationScope pref = new ConfigurationScope();
-		IEclipsePreferences node = pref.getNode("connection");
-		String cnt = node.get(connection, null);
+		String cnt = Hub.localCfg.get(CFG_FOLDED_CONNECTION, null);
 		if (cnt != null) {
 			hConn = fold(StringTool.dePrintable(cnt));
 			if (hConn != null) {
@@ -321,24 +310,14 @@ public abstract class PersistentObject implements IPersistentObject {
 		}
 		log.log("Driver is " + driver, Log.INFOS);
 		if (StringTool.leer.equals(driver)) {
-			String provider = System.getProperty("elexis-provider");
-			log.log("Provider is " + provider, Log.INFOS);
-			if ((provider != null) && provider.startsWith("Medelexis")) {
-				WizardDialog wd = new WizardDialog(loginshell, new DBConnectWizard());
-				wd.create();
-				SWTHelper.center(wd.getShell());
-				wd.open();
-				Hub.localCfg.flush();
-				SWTHelper.showInfo("Datenbankverbindung geändert",
-					"Bitte starten Sie Elexis erneut");
-				System.exit(-1);
-			} else {
-				String d = PreferenceInitializer.getDefaultDBPath();
-				j = JdbcLink.createH2Link(d + File.separator + "elexisdb");
-				user = "sa";
-				pwd = StringTool.leer;
-				typ = getConnection().DBFlavor;
-			}
+			WizardDialog wd = new WizardDialog(loginshell, new DBConnectWizard());
+			wd.create();
+			SWTHelper.center(wd.getShell());
+			wd.open();
+			Hub.localCfg.flush();
+			SWTHelper.showInfo("Datenbankverbindung geändert",
+				"Bitte starten Sie Elexis erneut");
+			System.exit(-1);
 		} else {
 			j = new JdbcLink(driver, connectstring, typ);
 		}
@@ -2486,7 +2465,6 @@ public abstract class PersistentObject implements IPersistentObject {
 			String[] onlyTables = {
 				"TABLE"
 			};
-			
 			ResultSet rs = dmd.getTables(null, null, "%", onlyTables);
 			if (rs != null) {
 				while (rs.next()) {

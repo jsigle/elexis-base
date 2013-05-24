@@ -1,0 +1,155 @@
+\BOOKMARK [-1][-]{part.1}{Introduction}{}% 1
+\BOOKMARK [0][-]{chapter.1}{Conditions pour l'utilisation}{part.1}% 2
+\BOOKMARK [1][-]{section.1.1}{Clause de non-r\351sponsabilit\351}{chapter.1}% 3
+\BOOKMARK [1][-]{section.1.2}{Licence}{chapter.1}% 4
+\BOOKMARK [0][-]{chapter.2}{Description et instruction rapide}{part.1}% 5
+\BOOKMARK [1][-]{section.2.1}{Installation standard}{chapter.2}% 6
+\BOOKMARK [2][-]{subsection.2.1.1}{Windows 2000/XP/Vista}{section.2.1}% 7
+\BOOKMARK [2][-]{subsection.2.1.2}{Linux}{section.2.1}% 8
+\BOOKMARK [2][-]{subsection.2.1.3}{Apple Macintosh OS-X}{section.2.1}% 9
+\BOOKMARK [2][-]{subsection.2.1.4}{base de donn\351es version d\351mo}{section.2.1}% 10
+\BOOKMARK [-1][-]{part.2}{Visite guid\351e}{}% 11
+\BOOKMARK [0][-]{chapter.3}{Saisir une nouvelle patiente}{part.2}% 12
+\BOOKMARK [1][-]{section.3.1}{Saisir donn\351es des patients}{chapter.3}% 13
+\BOOKMARK [1][-]{section.3.2}{Saisir donn\351es du cas}{chapter.3}% 14
+\BOOKMARK [1][-]{section.3.3}{G\351rer le dossier m\351dical}{chapter.3}% 15
+\BOOKMARK [0][-]{chapter.4}{Am\351nager l'interface utilisateur}{part.2}% 16
+\BOOKMARK [1][-]{section.4.1}{Principe de fonctionnement}{chapter.4}% 17
+\BOOKMARK [2][-]{subsection.4.1.1}{Bureau / Perspective}{section.4.1}% 18
+\BOOKMARK [2][-]{subsection.4.1.2}{Am\351nager et sauvegarder des perspectives}{section.4.1}% 19
+\BOOKMARK [-1][-]{part.3}{R\351f\351rence syst\351matique}{}% 20
+\BOOKMARK [0][-]{chapter.5}{Concepts}{part.3}% 21
+\BOOKMARK [1][-]{section.5.1}{Contacts}{chapter.5}% 22
+\BOOKMARK [1][-]{section.5.2}{Utilisateurs et Mandants}{chapter.5}% 23
+\BOOKMARK [1][-]{section.5.3}{Consultations, cas, garants et r\351pondant des co\373ts}{chapter.5}% 24
+\BOOKMARK [1][-]{section.5.4}{Sticker}{chapter.5}% 25
+\BOOKMARK [1][-]{section.5.5}{D\351compte des prestations}{chapter.5}% 26
+\BOOKMARK [2][-]{subsection.5.5.1}{Blocs de prestations et prestations propres}{section.5.5}% 27
+\BOOKMARK [1][-]{section.5.6}{Articles et stocks}{chapter.5}% 28
+\BOOKMARK [1][-]{section.5.7}{Importation des donn\351es externes}{chapter.5}% 29
+\BOOKMARK [1][-]{section.5.8}{Plusieurs instances simultan\351ment}{chapter.5}% 30
+\BOOKMARK [1][-]{section.5.9}{Plugins}{chapter.5}% 31
+\BOOKMARK [0][-]{chapter.6}{Menu et barre d'outils}{part.3}% 32
+\BOOKMARK [1][-]{section.6.1}{Menu}{chapter.6}% 33
+\BOOKMARK [1][-]{section.6.2}{Barre d'outils}{chapter.6}% 34
+\BOOKMARK [0][-]{chapter.7}{'Views' du syst\350me central}{part.3}% 35
+\BOOKMARK [1][-]{section.7.1}{Introduction}{chapter.7}% 36
+\BOOKMARK [2][-]{subsection.7.1.1}{Ouverture et fermeture d'une 'View'}{section.7.1}% 37
+\BOOKMARK [2][-]{subsection.7.1.2}{Ouverture et sauvegarde d'une perspective}{section.7.1}% 38
+\BOOKMARK [1][-]{section.7.2}{'Views' des donn\351es de base}{chapter.7}% 39
+\BOOKMARK [2][-]{subsection.7.2.1}{patients}{section.7.2}% 40
+\BOOKMARK [2][-]{subsection.7.2.2}{Patients - d\351tail}{section.7.2}% 41
+\BOOKMARK [2][-]{subsection.7.2.3}{Contacts}{section.7.2}% 42
+\BOOKMARK [2][-]{subsection.7.2.4}{Contacts - d\351tail}{section.7.2}% 43
+\BOOKMARK [2][-]{subsection.7.2.5}{Artikel}{section.7.2}% 44
+\BOOKMARK [2][-]{subsection.7.2.6}{Listing des articles}{section.7.2}% 45
+\BOOKMARK [2][-]{subsection.7.2.7}{Stocks et commandes}{section.7.2}% 46
+\BOOKMARK [1][-]{section.7.3}{'Views' en rapport avec les consultations}{chapter.7}% 47
+\BOOKMARK [2][-]{subsection.7.3.1}{Cas}{section.7.3}% 48
+\BOOKMARK [2][-]{subsection.7.3.2}{Cas et consultations}{section.7.3}% 49
+\BOOKMARK [2][-]{subsection.7.3.3}{Historique des Consultations}{section.7.3}% 50
+\BOOKMARK [2][-]{subsection.7.3.4}{Consultation}{section.7.3}% 51
+\BOOKMARK [2][-]{subsection.7.3.5}{Certificat d'incapacit\351 de travail}{section.7.3}% 52
+\BOOKMARK [2][-]{subsection.7.3.6}{Ordonnances}{section.7.3}% 53
+\BOOKMARK [2][-]{subsection.7.3.7}{D\351tails du cas}{section.7.3}% 54
+\BOOKMARK [2][-]{subsection.7.3.8}{Diagnostics}{section.7.3}% 55
+\BOOKMARK [1][-]{section.7.4}{'View' - R\351sultats de laboratoire}{chapter.7}% 56
+\BOOKMARK [2][-]{subsection.7.4.1}{Introduction manuelle}{section.7.4}% 57
+\BOOKMARK [2][-]{subsection.7.4.2}{Introduction automatis\351e}{section.7.4}% 58
+\BOOKMARK [2][-]{subsection.7.4.3}{Impression d'une feuille de labo}{section.7.4}% 59
+\BOOKMARK [1][-]{section.7.5}{Laboratoire Nouveau}{chapter.7}% 60
+\BOOKMARK [1][-]{section.7.6}{'Views' en relation avec la facturation}{chapter.7}% 61
+\BOOKMARK [2][-]{subsection.7.6.1}{Consultations selon date}{section.7.6}% 62
+\BOOKMARK [2][-]{subsection.7.6.2}{Consultations \340 facturer}{section.7.6}% 63
+\BOOKMARK [2][-]{subsection.7.6.3}{Factures}{section.7.6}% 64
+\BOOKMARK [2][-]{subsection.7.6.4}{Compte du patient}{section.7.6}% 65
+\BOOKMARK [2][-]{subsection.7.6.5}{Liste des comptes des patients}{section.7.6}% 66
+\BOOKMARK [2][-]{subsection.7.6.6}{Prestations}{section.7.6}% 67
+\BOOKMARK [1][-]{section.7.7}{'Views' divers}{chapter.7}% 68
+\BOOKMARK [2][-]{subsection.7.7.1}{Affichage des donn\351es}{section.7.7}% 69
+\BOOKMARK [2][-]{subsection.7.7.2}{M\351dication fixe}{section.7.7}% 70
+\BOOKMARK [2][-]{subsection.7.7.3}{Historique de la m\351dication}{section.7.7}% 71
+\BOOKMARK [2][-]{subsection.7.7.4}{Compendium online}{section.7.7}% 72
+\BOOKMARK [2][-]{subsection.7.7.5}{Open Drug Database}{section.7.7}% 73
+\BOOKMARK [2][-]{subsection.7.7.6}{Affaires pendantes}{section.7.7}% 74
+\BOOKMARK [0][-]{chapter.8}{Plugins}{part.3}% 75
+\BOOKMARK [1][-]{section.8.1}{Pourquoi des Plugins ?}{chapter.8}% 76
+\BOOKMARK [2][-]{subsection.8.1.1}{Installer un Plugin}{section.8.1}% 77
+\BOOKMARK [2][-]{subsection.8.1.2}{D\351sinstaller un Plugin}{section.8.1}% 78
+\BOOKMARK [2][-]{subsection.8.1.3}{Liste des Plugins}{section.8.1}% 79
+\BOOKMARK [1][-]{section.8.2}{Agenda de Elexis}{chapter.8}% 80
+\BOOKMARK [2][-]{subsection.8.2.1}{Configuration}{section.8.2}% 81
+\BOOKMARK [2][-]{subsection.8.2.2}{Utilisation de l'agenda}{section.8.2}% 82
+\BOOKMARK [1][-]{section.8.3}{R\351sultats dans Elexis}{chapter.8}% 83
+\BOOKMARK [2][-]{subsection.8.3.1}{Configuration}{section.8.3}% 84
+\BOOKMARK [2][-]{subsection.8.3.2}{Application}{section.8.3}% 85
+\BOOKMARK [2][-]{subsection.8.3.3}{Variables dans un texte}{section.8.3}% 86
+\BOOKMARK [1][-]{section.8.4}{Elexis et les Tarifs pour les m\351decins en Suisse}{chapter.8}% 87
+\BOOKMARK [2][-]{subsection.8.4.1}{R\351glages}{section.8.4}% 88
+\BOOKMARK [2][-]{subsection.8.4.2}{Les Factures}{section.8.4}% 89
+\BOOKMARK [2][-]{subsection.8.4.3}{'Views' de ce Plugin}{section.8.4}% 90
+\BOOKMARK [0][-]{chapter.9}{Traitement de texte}{part.3}% 91
+\BOOKMARK [1][-]{section.9.1}{Introduction}{chapter.9}% 92
+\BOOKMARK [1][-]{section.9.2}{Mod\350les}{chapter.9}% 93
+\BOOKMARK [2][-]{subsection.9.2.1}{Mod\350les pour tout le syst\350me}{section.9.2}% 94
+\BOOKMARK [2][-]{subsection.9.2.2}{Mod\350les de l'utilisateur individuels}{section.9.2}% 95
+\BOOKMARK [1][-]{section.9.3}{Variables pour type de donn\351es}{chapter.9}% 96
+\BOOKMARK [1][-]{section.9.4}{Libell\351 selon sexe}{chapter.9}% 97
+\BOOKMARK [1][-]{section.9.5}{Donn\351es de provenance des Plugins externes}{chapter.9}% 98
+\BOOKMARK [0][-]{chapter.10}{Fonctionnement multi-client}{part.3}% 99
+\BOOKMARK [1][-]{section.10.1}{Introduction}{chapter.10}% 100
+\BOOKMARK [1][-]{section.10.2}{R\364les \(anciennement groupes\) et droits}{chapter.10}% 101
+\BOOKMARK [1][-]{section.10.3}{D\351finition du profil des utilisateurs}{chapter.10}% 102
+\BOOKMARK [2][-]{subsection.10.3.1}{R\351glages individuelles du programme}{section.10.3}% 103
+\BOOKMARK [2][-]{subsection.10.3.2}{Mise en page individuelle des perspectives}{section.10.3}% 104
+\BOOKMARK [-1][-]{part.4}{Annexes}{}% 105
+\BOOKMARK [0][-]{appendix.A}{Configuration du syst\350me requise}{part.4}% 106
+\BOOKMARK [1][-]{section.A.1}{Pr\351requis minimale au hardware}{appendix.A}% 107
+\BOOKMARK [1][-]{section.A.2}{Syst\350mes d'exploitation support\351s}{appendix.A}% 108
+\BOOKMARK [0][-]{appendix.B}{Transformer la version d'\351valuation en version compl\350te}{part.4}% 109
+\BOOKMARK [1][-]{section.B.1}{Ce dont vous avez besoin}{appendix.B}% 110
+\BOOKMARK [1][-]{section.B.2}{Installation du moteur de base de donn\351es}{appendix.B}% 111
+\BOOKMARK [1][-]{section.B.3}{Effacer la base de donn\351e de la version d'\351valuation}{appendix.B}% 112
+\BOOKMARK [1][-]{section.B.4}{Cr\351er un lien avec la base de donn\351es}{appendix.B}% 113
+\BOOKMARK [1][-]{section.B.5}{Lier avec Open-Office}{appendix.B}% 114
+\BOOKMARK [1][-]{section.B.6}{Entrer les donn\351es de base}{appendix.B}% 115
+\BOOKMARK [2][-]{subsection.B.6.1}{Tarmed}{section.B.6}% 116
+\BOOKMARK [2][-]{subsection.B.6.2}{CIM-10 \(ICD-10\)}{section.B.6}% 117
+\BOOKMARK [2][-]{subsection.B.6.3}{M\351dicaments et Medicals}{section.B.6}% 118
+\BOOKMARK [2][-]{subsection.B.6.4}{Liste des analyses}{section.B.6}% 119
+\BOOKMARK [2][-]{subsection.B.6.5}{LiMA}{section.B.6}% 120
+\BOOKMARK [1][-]{section.B.7}{Configuration de base}{appendix.B}% 121
+\BOOKMARK [2][-]{subsection.B.7.1}{Installer les mandants et les utilisateurs}{section.B.7}% 122
+\BOOKMARK [2][-]{subsection.B.7.2}{Introduire les param\350tres du laboratoire}{section.B.7}% 123
+\BOOKMARK [2][-]{subsection.B.7.3}{Configurer le programme de texte}{section.B.7}% 124
+\BOOKMARK [2][-]{subsection.B.7.4}{Installer le module de facturation}{section.B.7}% 125
+\BOOKMARK [0][-]{appendix.C}{R\351glages}{part.4}% 126
+\BOOKMARK [1][-]{section.C.1}{Syst\350mes de facturation}{appendix.C}% 127
+\BOOKMARK [1][-]{section.C.2}{G\351n\351ral}{appendix.C}% 128
+\BOOKMARK [2][-]{subsection.C.2.1}{R\351glages pour le log}{section.C.2}% 129
+\BOOKMARK [1][-]{section.C.3}{Utilisateur}{appendix.C}% 130
+\BOOKMARK [2][-]{subsection.C.3.1}{Utilisateur - Aper\347u}{section.C.3}% 131
+\BOOKMARK [2][-]{subsection.C.3.2}{Utilisateur - Police de caract\350res}{section.C.3}% 132
+\BOOKMARK [1][-]{section.C.4}{Echange des donn\351es}{appendix.C}% 133
+\BOOKMARK [1][-]{section.C.5}{Base de donn\351es}{appendix.C}% 134
+\BOOKMARK [1][-]{section.C.6}{R\351glage de l'imprimante}{appendix.C}% 135
+\BOOKMARK [1][-]{section.C.7}{E-Mail}{appendix.C}% 136
+\BOOKMARK [1][-]{section.C.8}{R\364les \(Groupes\) et droits}{appendix.C}% 137
+\BOOKMARK [1][-]{section.C.9}{Valeurs de laboratoire}{appendix.C}% 138
+\BOOKMARK [2][-]{subsection.C.9.1}{Valeurs de laboratoire calcul\351es \(Type Formule\)}{section.C.9}% 139
+\BOOKMARK [1][-]{section.C.10}{Codes de prestations}{appendix.C}% 140
+\BOOKMARK [1][-]{section.C.11}{Traitement de texte}{appendix.C}% 141
+\BOOKMARK [0][-]{appendix.D}{Sujets \351largis}{part.4}% 142
+\BOOKMARK [1][-]{section.D.1}{Scripting}{appendix.D}% 143
+\BOOKMARK [0][-]{appendix.E}{R\351flexions concernant la s\351curit\351 des donn\351es}{part.4}% 144
+\BOOKMARK [1][-]{section.E.1}{Comment \351viter la perte des donn\351es ?}{appendix.E}% 145
+\BOOKMARK [1][-]{section.E.2}{Comment \351viter la falsification des donn\351es ?}{appendix.E}% 146
+\BOOKMARK [1][-]{section.E.3}{Comment \351viter l'acc\350s non autoris\351 \340 la base de donn\351es ?}{appendix.E}% 147
+\BOOKMARK [2][-]{subsection.E.3.1}{Attaque contre des ports ouverts}{section.E.3}% 148
+\BOOKMARK [2][-]{subsection.E.3.2}{Attaque par exploitation des failles de s\351curit\351}{section.E.3}% 149
+\BOOKMARK [2][-]{subsection.E.3.3}{Attaque par interception du trafic du r\351seau}{section.E.3}% 150
+\BOOKMARK [2][-]{subsection.E.3.4}{Attaques en profitant de la na\357vet\351 de l'utilisateur}{section.E.3}% 151
+\BOOKMARK [1][-]{section.E.4}{Et qu'est-ce que tout \347a a avoir avec Elexis?}{appendix.E}% 152
+\BOOKMARK [1][-]{section.E.5}{Last but not least: Attaque par acc\350s direct sur le disque dur}{appendix.E}% 153
+\BOOKMARK [2][-]{subsection.E.5.1}{Mat\351riel pour le Backup}{section.E.5}% 154
+\BOOKMARK [0][-]{appendix.F}{Index}{part.4}% 155

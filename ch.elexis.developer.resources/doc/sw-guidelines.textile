@@ -1,4 +1,6 @@
-h1. SW guidelines (preliminary version 0.2 as of december2 2012)
+<link rel="stylesheet" type="text/css" href="elexis.css" />
+
+h1. SW guidelines (preliminary version 0.2 as of december 2, 2012)
 
 p(klein). (c) 2010-2012 by G. Weirich and Niklaus Giger
 

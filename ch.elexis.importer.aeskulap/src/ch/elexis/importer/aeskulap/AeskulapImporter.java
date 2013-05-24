@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
 import au.com.bytecode.opencsv.CSVReader;
+import ch.elexis.Hub;
 import ch.elexis.data.Anschrift;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
@@ -83,7 +84,7 @@ public class AeskulapImporter extends ImporterPage {
 	static float numtasks = 0;
 	static float MONITOR_PERTASK = MONITOR_TOTAL;
 	
-	Button bFile, bDir, bOnlyF, bOnlyM, bGuess, bAgenda, bTexte, bKG, bStamm;
+	Button bFile, bDir, bOnlyF, bOnlyM, bGuess, bAgenda, bTexte, bKG, bStamm, bNeu;
 	FileBasedImporter fbi;
 	DirectoryBasedImporter dbi;
 	String fname;
@@ -91,7 +92,7 @@ public class AeskulapImporter extends ImporterPage {
 	
 	int assumeGender;
 	
-	boolean bType, bImportAgenda, bImportDocs, bImportKG, bImportStamm;
+	boolean bType, bImportAgenda, bImportDocs, bImportKG, bImportStamm, bImportNeu;
 	
 	static {
 		Xid.localRegisterXIDDomainIfNotExists(PATID, "Alte KG-ID", Xid.ASSIGNMENT_LOCAL);
@@ -166,6 +167,8 @@ public class AeskulapImporter extends ImporterPage {
 		bTexte.setText("c) Briefe/Dokumente");
 		bKG = new Button(ret, SWT.CHECK);
 		bKG.setText("d) KG-Einträge");
+		bNeu = new Button(ret, SWT.CHECK);
+		bNeu.setText("Import neu beginnen");
 		return ret;
 	}
 	
@@ -206,6 +209,9 @@ public class AeskulapImporter extends ImporterPage {
 		if (bKG.getSelection()) {
 			bImportKG = true;
 			numtasks++;
+		}
+		if (bNeu.getSelection()) {
+			bImportNeu = true;
 		}
 		MONITOR_PERTASK = MONITOR_TOTAL / numtasks;
 		super.collect();
@@ -311,6 +317,9 @@ public class AeskulapImporter extends ImporterPage {
 			new AgendaImporter(dir, monitor);
 		}
 		if (bImportKG) {
+			if (bImportNeu) {
+				Hub.localCfg.remove("importaeskulap/lastimported");
+			}
 			System.gc();
 			Thread.sleep(100);
 			new KGImporter(new File(dir, "KG_DATA.xml"), monitor);

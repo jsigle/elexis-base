@@ -30,6 +30,9 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
+import uk.org.lidalia.sysoutslf4j.context.LogLevel;
+import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
+
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.core.util.StatusPrinter;
 
@@ -74,6 +77,14 @@ public class Activator implements BundleActivator {
 		
 		// route java.util.logging to slf4j
 		SLF4JBridgeHandler.install();
+		if (System.getProperty("console") == null && System.getProperty("eclipse.consoleLog") == null)
+		{
+			SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
+			SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(LogLevel.DEBUG, LogLevel.WARN);
+			System.out.println("This string is only here to check, whether System.out goes to the log, too"); //$NON-NLS-1$		
+		} else {
+			System.out.println("System.out not redirected to logging as -console or -consoleLog passed as argument"); //$NON-NLS-1$					
+		}
 		logger.info(ID+": started SLF4JBridgeHandler");
 		
 		// print internal state

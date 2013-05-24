@@ -14,7 +14,7 @@
 
 package ch.elexis.data;
 
-//201303130626js: WARNING: A lot of code from this file also exists in ch.elexis.arzttarife_ch.src.TarmedRechnung.Validator.java.
+//WARNING: A lot of code from this file also exists in ch.elexis.arzttarife_ch.src.TarmedRechnung.Validator.java.
 //And over there, maybe it is in a more advanced state, regarding modularization and internationalization.
 //But this file here appears to be actually used. 
 
@@ -111,13 +111,10 @@ public class Rechnung extends PersistentObject {
 				"Die Rechnung enthält keine Behandlungen (Konsultationen)", null, true); //js: added (Konsultationen) to match nomenclature elsewhere in Elexis.
 		}
 
-		//201303130742js: Jetzt schaue ich auch, ob ich hier noch schnell prüfen kann, ob ein Patient auch Person ist.
+		//On the fly prüfen, ob ein Patient auch Person ist; ggf. korrigieren.
 		//Alle Tarmed-Rechnungen an Patienten sollten vermutlich an Personen adressiert sein;
-		//mit einer Organisations-Adresse für den Patienten kommen sie jedenfalls nicht durch die TrustX TCTest Prüfung. 
-		System.out.println("js Rechnung: build(): Check whether the patient is a person; set the flag if not.");
-		System.out.println("js Rechnung: build(): TODO: Prüfen: Verhindert das irgendwelche erforderliche Funktionalität,");
-		System.out.println("js Rechnung: build(): TODO: z.B. in der Abrechnung mit Intermediären?");
-		System.out.println("js Rechnung: build(): TODO: Möglicherweise muss dieser Test hier noch auf Tarmed-Rechnungen beschränkt werden?");
+		//mit einer Organisations-Adresse für den Patienten kommen sie jedenfalls nicht durch
+		//die TrustX TCTest Prüfung. 
 		for (Konsultation b : behandlungen) {
 			Patient pat=b.getFall().getPatient();
 			if (!pat.istPerson()) {
@@ -127,23 +124,33 @@ public class Rechnung extends PersistentObject {
 			}
 		}	
 		
-		//201303130500js: Lets check whether a consultation contains a non-Zero sum
-		//of recorded Verrechnungen. This will interrupt creation of a bill for a case
-		//that has at least one consultation where the sum of all verrechnungen is 0.00 -
-		//or, where no Verrechnung has been recorded yet.
+		//Lets check whether a consultation contains at least one Verrechnungen entry,
+		//and a total sum > 0, and at least warn if at least one entry == 0.00
+		//This will interrupt creation of a bill. The user must, however, be offered to
+		//continue, as there are a few examples where such an entry may actually be intended
+		//i.e. Gehörgangsspülung as part of an Allgemeine Grundleistung in the Tarmed CH.
+		//(For details and examples, refer to Stefan Henzi.)
+		
 		//The following block was first added to arzttarife_ch...Validator.checkBill().
 		//But as it is apparently not called over there when I create an invoice for a case,
-		//I copy/adopt this code over to Rechnung.build(); where other coarse checks are already located (and used) as well.
-		//In the long term, I guess that this code here should replace the code over there. Best bet will be to ask Gerry/Niklaus.
+		//I copy/adopt this code over to Rechnung.build(); where other coarse checks are
+		//already located (and used) as well.
+		
+		//In the long term, I guess that this code here should replace the code over there.
+		//Best bet will be to ask Gerry/Niklaus.
+		
 		System.out.println("js Rechnung: build(): Check whether all consultations contain Verrechnungen > 0 and a total sum > 0");
 		System.out.println("js Rechnung: build(): TODO: This functionality might possibly be moved to Fall.isValid()");
 		System.out.println("js Rechnung: build(): TODO: or even by definition of Abrechnungsregeln outside of the program.");
 		System.out.println("js Rechnung: build(): TODO: Möglicherweise muss dieser Test hier noch auf Tarmed-Rechnungen beschränkt werden?");
+		
 		//The unwanted case behandlungen.size()==0 was already caught (and returned from) above.
+		
 		System.out.println("js Rechnung: build(): number of consultations: "+behandlungen.size());
 		for (Konsultation b : behandlungen) {
 			//b.getUmsatz() ist als deprecated geflaggt.
-			//Wenn es wirklich irgendwann einmal nicht mehr gehen sollte, dann kann man den Umsatz auch aufsummieren,
+			//Wenn es wirklich irgendwann einmal nicht mehr gehen sollte,
+			//dann kann man den Umsatz auch aufsummieren,
 			//wie es weiter unten getan wird. 
 			if (b.getLeistungen().isEmpty() || b.getUmsatz()==0) {
 				Patient pat=b.getFall().getPatient();
@@ -164,10 +171,22 @@ public class Rechnung extends PersistentObject {
 				for (Verrechnet l : lstg) {
 					if (l.getNettoPreis().isZero()) {
 						Patient pat=b.getFall().getPatient();
-						return result.add(Result.SEVERITY.WARNING, 1,
-						"Eine Konsultation vom "+b.getDatum().toString()+" für\nPatient Nr. "+pat.getPatCode()+", "+pat.getName()+", "+pat.getVorname()+", "+pat.getGeburtsdatum()+"\n"+
-						"enthält mindestens eine Leistung zum Preis 0.00.\n"+
-						"\nDie Ärztekasse würde so eine Rechnung zurückgeben.\nDeshalb erstelle ich sie nicht.\n\nBitte prüfen Sie die verrechneten Leistungen, oder verschieben Sie die Konsultation zu einem später zu verrechnenden Fall.", null, true);
+						String msg = "Eine Konsultation vom "+b.getDatum().toString()+" für\nPatient Nr. "+pat.getPatCode()+", "+pat.getName()+", "+pat.getVorname()+", "+pat.getGeburtsdatum()+"\n"+
+										"enthält mindestens eine Leistung zum Preis 0.00.\n"+
+										"\nDie Ärztekasse würde so eine Rechnung zurückgeben.\n\n";
+						if (MessageDialog.openQuestion(null, "WARNUNG: Leistung zu Fr. 0.00 !", msg+
+							"Soll die Rechnung trotzdem erstellt werden?"))
+						{ 
+							System.out.println("Test do nothing");
+							// do nothing
+						} else {
+							System.out.println("Return");
+							return result.add(Result.SEVERITY.WARNING, 1, 
+								msg+"Diese Rechnung wird jetzt nicht erstellt."+
+								"\n\nBitte prüfen Sie die verrechneten Leistungen,"+
+								"oder verschieben Sie die Konsultation zu einem später zu verrechnenden Fall!",
+								null, true);							
+						}
 					}
 				}
 			}

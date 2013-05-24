@@ -40,15 +40,17 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 
+import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.actions.Activator;
 import ch.elexis.actions.ElexisEventDispatcher;
-import ch.elexis.actions.IBereichSelectionEvent;
 import ch.elexis.agenda.BereichSelectionHandler;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.TagesNachricht;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
+import ch.elexis.agenda.series.SerienTermin;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
@@ -285,6 +287,13 @@ public class AgendaGross extends BaseAgendaView {
 		}
 		
 		public Image getColumnImage(Object element, int columnIndex){
+			if (columnIndex != 4)
+				return null;
+			if (element instanceof IPlannable) {
+				IPlannable ip = (IPlannable) element;
+				if (ip.isRecurringDate())
+					return Desk.getImage(Activator.IMG_RECURRING_DATE);
+			}
 			/*
 			 * if(element instanceof IPlannable){ IPlannable p=(IPlannable)element; return
 			 * Plannables.getTypImage(p); }
@@ -295,6 +304,8 @@ public class AgendaGross extends BaseAgendaView {
 		public String getColumnText(Object element, int columnIndex){
 			if (element instanceof IPlannable) {
 				IPlannable ip = (IPlannable) element;
+				if (ip.isRecurringDate())
+					ip = new SerienTermin(ip).getRootTermin();
 				switch (columnIndex) {
 				case 0:
 					return Plannables.getStartTimeAsString(ip);

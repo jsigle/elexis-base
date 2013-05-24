@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Hilotec Messwerte V2
 Bundle-SymbolicName: com.hilotec.elexis.messwerte.v2;singleton:=true
-Bundle-Version: 2.1.6
+Bundle-Version: 2.1.7
 Bundle-Activator: com.hilotec.elexis.messwerte.v2.Activator
 Bundle-Vendor: hilotec.com enhanced by medshare.net
 Require-Bundle: org.eclipse.ui,

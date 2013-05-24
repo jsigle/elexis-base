@@ -202,7 +202,7 @@ public class MessungenUebersichtV21 extends ViewPart implements ElexisEventListe
 	
 	private void initializeContent(){
 		tableViewers.clear();
-		config.readFromXML(null);
+		config.readFromXML();
 		for (MessungTyp t : config.getTypes()) {
 			TableViewer tv = createTableViewer(tabfolder, t);
 			Control c = tv.getControl();

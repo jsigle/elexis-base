@@ -436,14 +436,11 @@ public class KontaktMatcher {
 				String vorname1 = StringTool.unambiguify(simpleName(a.getVorname()));
 				String vorname2 = StringTool.unambiguify(simpleName(firstnameB));
 				if (vorname1.equals(vorname2)) {
-					String gd1 = a.getGeburtsdatum();
-					if (StringTool.isNothing(gd1)) {
+					if (StringTool.isNothing(a.getGeburtsdatum()) || StringTool.isNothing(gebDatB)) {
 						return true;
 					}
-					if (StringTool.isNothing(gebDatB)) {
-						return true;
-					}
-					String gd2 = new TimeTool(gebDatB).toString(TimeTool.DATE_GER);
+					TimeTool gd1 = new TimeTool(a.getGeburtsdatum());
+					TimeTool gd2 = new TimeTool(gebDatB);
 					if (gd1.equals(gd2)) {
 						return true;
 					}

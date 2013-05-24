@@ -80,6 +80,7 @@ public class PreferenceConstants {
 	public static final String USR_REMINDERSOPEN = "reminder/onlyopen"; //$NON-NLS-1$
 	public static final String USR_REMINDEROWN = "reminder/originator"; //$NON-NLS-1$
 	public static final String USR_REMINDEROTHERS = "reminder/others"; //$NON-NLS-1$
+	public static final String USR_SHOWPATCHGREMINDER = "reminder/showPatientChangeReminder"; //$NON-NLS-1$
 	public static final String USR_MFU_LIST_SIZE = "mfulist/size"; //$NON-NLS-1$
 	public static final String USR_PLAF = "anwender/plaf"; //$NON-NLS-1$
 	public static final String USR_DEFAULTFONT = "anwender/stdfont"; //$NON-NLS-1$

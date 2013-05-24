@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.ekkescorner.logging.osgi;singleton:=true
-Bundle-Version: 0.9.40.qualifier
+Bundle-Version: 0.9.50.qualifier
 Bundle-Vendor: %Bundle-Vendor
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Import-Package: org.eclipse.equinox.log;version="1.0.0",
@@ -18,3 +18,5 @@ Service-Component: OSGI-INF/osgi-logservice-component.xml
 Require-Bundle: org.eclipse.osgi,
  ch.qos.logback.classic;bundle-version="1.0.0",
  ch.qos.logback.core;bundle-version="1.0.0"
+Bundle-ClassPath: sysout-over-slf4j-1.0.1.jar,
+ .

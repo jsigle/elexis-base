@@ -13,8 +13,6 @@ package ch.elexis.agenda.views;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -27,14 +25,8 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
@@ -57,6 +49,8 @@ import ch.elexis.agenda.data.ICalTransfer;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
+import ch.elexis.agenda.series.SerienTermin;
+import ch.elexis.agenda.series.ui.SerienTerminDialog;
 import ch.elexis.agenda.ui.BereichMenuCreator;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.data.Anwender;
@@ -137,9 +131,16 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener,
 				if (pl == null) {
 					newTerminAction.run();
 				} else {
-					TerminDialog dlg = new TerminDialog(pl);
-					dlg.open();
-					tv.refresh(true);
+					if (pl.isRecurringDate()) {
+						SerienTermin st = new SerienTermin(pl);
+						new SerienTerminDialog(Desk.getTopShell(), st).open();
+						tv.refresh(true);
+					} else {
+						TerminDialog dlg = new TerminDialog(pl);
+						dlg.open();
+						tv.refresh(true);
+					}
+					
 				}
 			}
 			
@@ -190,10 +191,7 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener,
 	}
 	
 	@Override
-	public void setFocus(){
-		// TODO Auto-generated method stub
-		
-	}
+	public void setFocus(){}
 	
 	public void heartbeat(){
 		log.log("Heartbeat", Log.DEBUGMSG); //$NON-NLS-1$

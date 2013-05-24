@@ -1,0 +1,23 @@
+body {
+}
+	
+h1 {
+	color: #000099;
+	font-size: 1.6em;
+}
+
+h2 {
+	color: #4D4DB8;
+	font-size: 1.4em;
+}
+
+.small {
+	font-size: 0.5em;
+}
+
+.logo {
+	color: grey;
+	font-size: 1.1em;
+	font-weight: bold;
+	
+}

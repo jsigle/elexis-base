@@ -1,0 +1,199 @@
+\begin{theindex}
+
+  \item \IeC {\'e}tiquettes, \hyperpage{39}
+
+  \indexspace
+
+  \item administrateur, \hyperpage{39}
+  \item Affichage, \hyperpage{28}
+  \item Agenda
+    \subitem \IeC {\'e}tat du rendez-vous, \hyperpage{97}
+    \subitem ic\IeC {\^o}nes, \hyperpage{97}
+    \subitem impression, \hyperpage{99}
+    \subitem type de rendez-vous, \hyperpage{97}
+    \subitem Zone d'utilisateur, \hyperpage{96}
+  \item agenda-fen\IeC {\^e}tre, \hyperpage{100}
+  \item Apple, \hyperpage{18}
+  \item Article, \hyperpage{64}
+  \item article, \hyperpage{45}
+  \item Articles, \hyperpage{65}
+
+  \indexspace
+
+  \item Backup, \hyperpage{164}
+  \item BeanShell, \hyperpage{162}
+  \item blocs de prestations, \hyperpage{44}
+
+  \indexspace
+
+  \item Cabinet communautaire, \hyperpage{128}
+  \item Cabinet de groupe, \hyperpage{128}
+  \item cabinet de groupe, \hyperpage{96}
+  \item cas
+    \subitem d\IeC {\'e}finition, \hyperpage{39}
+  \item Centre de sant\IeC {\'e}, \hyperpage{128}
+  \item Certificat, \hyperpage{71}
+  \item Certificat d'incapacit\IeC {\'e} de travail, \hyperpage{71}
+  \item CIM-10 (ICD-10), \hyperpage{144}
+  \item Codes de prestation, \hyperpage{43}
+  \item Commande de d\IeC {\'e}veloppement, \hyperpage{16}
+  \item commandes
+    \subitem article, \hyperpage{65}
+  \item Compte, \hyperpage{88}
+  \item Configuration de base, \hyperpage{145}
+  \item Consultation
+    \subitem nouvelle, \hyperpage{24}
+  \item consultation
+    \subitem d\IeC {\'e}finition, \hyperpage{39}
+    \subitem diagnostic, \hyperpage{25}
+  \item contact
+    \subitem d\IeC {\'e}finition, \hyperpage{38}
+
+  \indexspace
+
+  \item D\IeC {\'e}tails du cas, \hyperpage{73}
+  \item Datenfelder
+    \subitem extern, \hyperpage{125}
+  \item Diagnostics, \hyperpage{75}
+  \item droit d'acc\IeC {\`e}s, \hyperpage{128}
+  \item droits, \hyperpage{38}, \hyperpage{128}
+
+  \indexspace
+
+  \item facturation, \hyperpage{39}, \hyperpage{80}
+  \item Facturation automatique, \hyperpage{80}
+  \item faire les comptes, \hyperpage{43}
+  \item Filtre consultations, \hyperpage{70}
+  \item filtrer
+    \subitem consultations, \hyperpage{68}
+  \item Formule, \hyperpage{158}
+
+  \indexspace
+
+  \item groupes, \hyperpage{38}, \hyperpage{128}
+
+  \indexspace
+
+  \item Import
+    \subitem contacts, \hyperpage{46}
+  \item importation, \hyperpage{45}
+  \item installation, \hyperpage{17}
+
+  \indexspace
+
+  \item jour de la semaine, \hyperpage{99}
+
+  \indexspace
+
+  \item LA, \hyperpage{145}
+  \item LAA, \hyperpage{152}
+  \item Laboratoire - Introduction automatis\IeC {\'e}e, \hyperpage{77}
+  \item Laboratoire - Introduction manuelle, \hyperpage{76}
+  \item Laboratoire - Visualiser r\IeC {\'e}sultats, \hyperpage{76}
+  \item LAMAL, \hyperpage{152}
+  \item les changements de l'\IeC {\'e}tat du rendez-vous, 
+		\hyperpage{103}
+  \item LFA, \hyperpage{145}
+  \item LiMA, \hyperpage{145}
+  \item Linux, \hyperpage{17}
+  \item Liste des analyses, \hyperpage{145}
+  \item Liste des cas, \hyperpage{68}
+  \item liste des consultations, \hyperpage{70}
+  \item Liste des patients, \hyperpage{57}
+    \subitem filtrer, \hyperpage{58}
+
+  \indexspace
+
+  \item m\IeC {\'e}dicament, \hyperpage{45}
+  \item m\IeC {\'e}dicaments, \hyperpage{144}
+  \item Macintosh, \hyperpage{18}
+  \item mandant, \hyperpage{38}
+    \subitem d\IeC {\'e}fintion, \hyperpage{38}
+  \item marquage, \hyperpage{39}
+  \item Medicals, \hyperpage{144}
+  \item mod\IeC {\`e}les
+    \subitem Druckvorlagen, \hyperpage{149}
+    \subitem ordonnance, \hyperpage{150}
+  \item mod\IeC {\`e}les de lettres, \hyperpage{121}
+  \item mod\IeC {\`e}les de texte, \hyperpage{121}
+
+  \indexspace
+
+  \item ordonnance, \hyperpage{72}
+  \item organisation de la journ\IeC {\'e}e, \hyperpage{98}
+
+  \indexspace
+
+  \item patient
+    \subitem d\IeC {\'e}tail, \hyperpage{59}
+    \subitem nouveau, \hyperpage{22}
+  \item Patient No, \hyperpage{58}
+  \item patients
+    \subitem marquer, \hyperpage{58}
+  \item Perspective, \hyperpage{28}
+  \item perspective, \hyperpage{54}
+    \subitem perspective de d\IeC {\'e}marrage, \hyperpage{55}
+  \item perte des donn\IeC {\'e}es, \hyperpage{164}
+  \item Plugin
+    \subitem d\IeC {\'e}finition, \hyperpage{48}
+    \subitem programmer, \hyperpage{16}
+  \item Plugins suppl\IeC {\'e}mentaires, \hyperpage{16}
+  \item prestation
+    \subitem comptabiliser, \hyperpage{43}
+  \item prestations propres, \hyperpage{44}
+  \item Principe de fonctionnement, \hyperpage{28}
+
+  \indexspace
+
+  \item r\IeC {\'e}initialiser la perspective, \hyperpage{33}
+  \item R\IeC {\'e}sultats, \hyperpage{106}
+  \item r\IeC {\^o}les, \hyperpage{128}
+  \item rendez-vous, \hyperpage{96}
+
+  \indexspace
+
+  \item s\IeC {\'e}curit\IeC {\'e} des donn\IeC {\'e}es, 
+		\hyperpage{164}
+  \item s\IeC {\'e}rie de r\IeC {\'e}sultats Quick/TP, \hyperpage{106}
+  \item Saisie
+    \subitem prestations, \hyperpage{25}
+  \item saisie, \hyperpage{25}
+  \item Saisir
+    \subitem cas, \hyperpage{23}
+  \item Sauvegarder la perspective, \hyperpage{33}
+  \item Script, \hyperpage{162}
+  \item simultan\IeC {\'e}ment, \hyperpage{48}
+  \item SL, \hyperpage{144}
+  \item stickers, \hyperpage{39}
+  \item stock, \hyperpage{45}
+  \item Syst\IeC {\`e}me de facturation, \hyperpage{152}
+
+  \indexspace
+
+  \item TarMed, \hyperpage{152}
+  \item Tarmed, \hyperpage{144}
+
+  \indexspace
+
+  \item utilisateur, \hyperpage{38}
+    \subitem d\IeC {\'e}finition, \hyperpage{38}
+    \subitem droits, \hyperpage{38}, \hyperpage{128}
+  \item utilisateurs, \hyperpage{147}
+
+  \indexspace
+
+  \item valeurs de laboratoire
+    \subitem formule, \hyperpage{158}
+  \item variables, \hyperpage{109}
+  \item variables dans un texte, \hyperpage{109}
+  \item version compl\IeC {\`e}te, \hyperpage{138}
+  \item version d\IeC {\'e}mo, \hyperpage{17}
+  \item View, \hyperpage{28}
+  \item Vista, \hyperpage{17}
+
+  \indexspace
+
+  \item Website, \hyperpage{16}
+  \item Windows, \hyperpage{17}
+
+\end{theindex}

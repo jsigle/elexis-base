@@ -77,12 +77,9 @@ public class FakturaJournalDetail extends AbstractTimeSeries {
 		String actMnId = Hub.actMandant.getId();
 		for (AccountTransaction at : transactions) {
 			Patient pat = at.getPatient();
-			if (pat != null) {
+			Rechnung rn = at.getRechnung();
+			if (pat != null && rn != null) {
 				if (bOnlyActiveMandator) {
-					Rechnung rn = at.getRechnung();
-					if (rn == null) {
-						continue;
-					}
 					Mandant mn = rn.getMandant();
 					if (mn != null) {
 						if (!mn.getId().equals(actMnId)) {
@@ -90,8 +87,8 @@ public class FakturaJournalDetail extends AbstractTimeSeries {
 						}
 					}
 				}
-				Kontakt garant = at.getRechnung().getFall().getGarant();
-				Mandant mandant = at.getRechnung().getMandant();
+				Kontakt garant = rn.getFall().getGarant();
+				Mandant mandant = rn.getMandant();
 				Kontakt rechnungssteller = null;
 				if (mandant.getRechnungssteller() != null)
 					rechnungssteller = mandant.getRechnungssteller();

@@ -38,19 +38,26 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.StringConstants;
 import ch.elexis.actions.ElexisEvent;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.ElexisEventListener;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEventDispatcher;
 import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
+import ch.elexis.admin.ACE;
+import ch.elexis.admin.AccessControl;
+import ch.elexis.data.Anwender;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Kontakt;
+import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
@@ -73,21 +80,36 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 		ISaveablePart2 {
 	
 	public final static String ID = "ch.elexis.BriefAuswahlView"; //$NON-NLS-1$
+	private static Logger log = LoggerFactory.getLogger(ID);
 	private final FormToolkit tk;
 	private Form form;
 	private Action briefNeuAction, briefLadenAction, editNameAction;
 	private Action deleteAction;
-	private Action stressTest1Action, stressTest2Action;	//20140421js: added stress test feature.
+	private Action stressTest1Action, stressTest2Action; // added stress test feature.
 	private ViewMenus menus;
 	private ArrayList<sPage> pages = new ArrayList<sPage>();
-	public CTabFolder ctab;	//20130414js: use temporary meaningful filenames: made this public to access it from NOAText.java; before that: simply ctab, w/o any visibility designator
+	public CTabFolder ctab; // use temporary meaningful filenames: made this public to access it
+// from NOAText.java; before that: simply ctab, w/o any visibility designator
 	
-	// private ViewMenus menu;
-	// private IAction delBriefAction;
 	public BriefAuswahl(){
 		tk = Desk.getToolkit();
 	}
 	
+	private boolean mayRunStressTest()
+	{
+		Anwender u = Hub.actUser;
+		if (u != null && u.getInfoString(AccessControl.KEY_GROUPS).contains(StringConstants.ROLE_ADMIN)) {
+			return true;
+		} else {
+			MessageDialog.openInformation(Desk.getTopShell(),
+				Messages.getString("BriefAuswahlNotAllowedToRunStresstess"),
+				Messages.getString("BriefAuswahlNotAllowedToRunStresstess"));
+			return false;
+		}
+
+	}
+	
+
 	@Override
 	public void createPartControl(final Composite parent){
 		StringBuilder sb = new StringBuilder();
@@ -141,7 +163,8 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 		});
 		
 		GlobalEventDispatcher.addActivationListener(this, this);
-		menus.createMenu(briefNeuAction, briefLadenAction, editNameAction, deleteAction, stressTest1Action, stressTest2Action);		//20140421js: added stress test feature.
+		menus.createMenu(briefNeuAction, briefLadenAction, editNameAction, deleteAction,
+			stressTest1Action, stressTest2Action); // added stress test feature.
 		menus.createToolbar(briefNeuAction, briefLadenAction, deleteAction);
 		ctab.setSelection(0);
 		relabel();
@@ -318,7 +341,8 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 						if (bs.open() == Dialog.OK) {
 							// trick: just supply a dummy address for creating the doc
 							Kontakt address = null;
-							if (DocumentSelectDialog.getDontAskForAddresseeForThisTemplate(bs.getSelectedDocument()))
+							if (DocumentSelectDialog.getDontAskForAddresseeForThisTemplate(bs
+								.getSelectedDocument()))
 								address = Kontakt.load("-1");
 							tv.createDocument(bs.getSelectedDocument(), bs.getBetreff(), address);
 							tv.setName();
@@ -334,8 +358,8 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 					}
 				}
 			};
-
-			briefLadenAction = new Action(Messages.getString("BriefAuswahlOpenButtonText")) { //$NON-NLS-1$
+		
+		briefLadenAction = new Action(Messages.getString("BriefAuswahlOpenButtonText")) { //$NON-NLS-1$
 				@Override
 				public void run(){
 					try {
@@ -358,210 +382,263 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 					} catch (PartInitException e) {
 						ExHandler.handle(e);
 					}
+					
+				}
+			};
+		Anwender u = Hub.actUser;
+		stressTest1Action =
+			new Action(Messages.getString("BriefAuswahlStressTestButtonText1")) { //$NON-NLS-1$
+				@Override
+				public void run(){
+					if (mayRunStressTest() == false)
+					{
+						return;
+					}
+					log.debug("****************************************************************");
+					log.debug("js ch.elexis.views/BriefAuswahl.java: Initiating stress test 1.");
+					log.debug("****************************************************************");
+					log.debug("This stress test will open the selected document repeatedly until you close the program or an error occurs.");
+					Integer stressTestPasses = 0;
+					Boolean continueStressTest = true;
+					while (continueStressTest) {
+						
+						stressTestPasses = stressTestPasses + 1;
+						log.debug("stress test pass: " + stressTestPasses
+							+ " - about to load document...");
+						
+						try {
+							TextView tv =
+								(TextView) getViewSite().getPage().showView(TextView.ID);
+							CTabItem sel = ctab.getSelection();
+							if (sel != null) {
+								log.debug("stress test pass: " + stressTestPasses
+									+ " - sel != null; sel.getText()=<"
+									+ sel.getText().toString() + ">");
+								CommonViewer cv = (CommonViewer) sel.getData();
+								Object[] o = cv.getSelection();
+								if ((o != null) && (o.length > 0)) {
+									Brief brief = (Brief) o[0];
+									log.debug("stress test pass: " + stressTestPasses
+										+ " - o !!= null; (Brief) o[0.getLabel()]=<"
+										+ brief.getLabel().toString() + ">");
+									log.debug("stress test pass: "
+										+ stressTestPasses
+										+ " - try {} section o != null; about to tv.openDocument(brief)....");
+									if (tv.openDocument(brief) == false) {
+										log.debug("stress test pass: "
+											+ stressTestPasses
+											+ " - try {} section tv.openDocument(brief) returned false. Setting continueStressTest=false.");
+										continueStressTest = false;
+										SWTHelper.alert(
+											Messages.getString("BriefAuswahlErrorHeading"), //$NON-NLS-1$
+											Messages.getString("BriefAuswahlCouldNotLoadText")); //$NON-NLS-1$
+									} else {
+										log.debug("stress test pass: "
+											+ stressTestPasses
+											+ " - try {} section tv.openDocument(brief) worked; document should have been loaded.");
+									}
+								} else {
+									log.debug("stress test pass: "
+										+ stressTestPasses
+										+ " - try {} section o == null; about to tv.createDocument(null,null). Setting continueStressTest=false.");
+									continueStressTest = false;
+									tv.createDocument(null, null);
+								}
+								log.debug("stress test pass: "
+									+ stressTestPasses
+									+ " - try {} section; about to cv.notify(CommonViewer.Message.update);...");
+								cv.notify(CommonViewer.Message.update);
+								log.debug("stress test pass: " + stressTestPasses
+									+ " - try {} section completed.");
+							}
+						} catch (PartInitException e) {
+							log.debug("stress test pass: "
+								+ stressTestPasses
+								+ " - catch {} section handling exception. Setting continueStressTest=false.");
+							continueStressTest = false;
+							ExHandler.handle(e);
+							log.debug("stress test pass: " + stressTestPasses
+								+ " - catch {} section completed.");
+						}
+						log.debug("stress test pass: " + stressTestPasses
+							+ " - try/catch completed.");
+						
+						if (stressTestPasses > 10) {
+							log.debug("stress test pass: " + stressTestPasses
+								+ " - Setting continueStressTest=false after "
+								+ stressTestPasses + " passes have completed.");
+							continueStressTest = false;
+						}
+						
+						try {
+							log.debug("stress test pass: "
+								+ stressTestPasses
+								+ " - about to Thread.sleep()...(Otherwise the Briefe view content would not be visibly updated.)");
+							Thread.sleep(1000);
+						} catch (Throwable throwable) {
+							// handle the interrupt that will happen after the sleep
+							log.debug("stress test pass: "
+								+ stressTestPasses
+								+ " - caught throwable; most probably the Thread.sleep() wakeup interrupt signal.");
+						}
+						
+						log.debug("****************************************************************");
+						
+					} // while true for stress test js
+					log.debug("stress test pass: " + stressTestPasses + " - stress test ends.");
 					
 				}
 			};
 		
-			//20140421js: added stress test feature.
-			stressTest1Action= new Action(Messages.getString("BriefAuswahlStressTestButtonText1")) { //$NON-NLS-1$
+		stressTest2Action =
+			new Action(Messages.getString("BriefAuswahlStressTestButtonText2")) { //$NON-NLS-1$
 				@Override
 				public void run(){
-					System.out.println();
-					System.out.println("****************************************************************");
-					System.out.println("js ch.elexis.views/BriefAuswahl.java: Initiating stress test 1.");
-					System.out.println("****************************************************************");
-					System.out.println();
-					System.out.println("This stress test will open the selected document repeatedly until you close the program or an error occurs.");
-					System.out.println();
-					Integer stressTestPasses=0;
-					Boolean continueStressTest=true;
-					while (continueStressTest) {
-					
-					stressTestPasses=stressTestPasses+1;
-					System.out.println("stress test pass: "+stressTestPasses+" - about to load document...");
-
-					try {
-						TextView tv = (TextView) getViewSite().getPage().showView(TextView.ID);
-						CTabItem sel = ctab.getSelection();
-						if (sel != null) {
-							System.out.println("stress test pass: "+stressTestPasses+" - sel != null; sel.getText()=<"+sel.getText().toString()+">");
-							CommonViewer cv = (CommonViewer) sel.getData();
-							Object[] o = cv.getSelection();
-							if ((o != null) && (o.length > 0)) {
-								Brief brief = (Brief) o[0];
-								System.out.println("stress test pass: "+stressTestPasses+" - o !!= null; (Brief) o[0.getLabel()]=<"+brief.getLabel().toString()+">");
-								System.out.println("stress test pass: "+stressTestPasses+" - try {} section o != null; about to tv.openDocument(brief)....");
-								if (tv.openDocument(brief) == false) {
-									System.out.println("stress test pass: "+stressTestPasses+" - try {} section tv.openDocument(brief) returned false. Setting continueStressTest=false.");
-									continueStressTest=false;
-									SWTHelper.alert(Messages.getString("BriefAuswahlErrorHeading"), //$NON-NLS-1$
-										Messages.getString("BriefAuswahlCouldNotLoadText")); //$NON-NLS-1$
-								}
-								else {
-									System.out.println("stress test pass: "+stressTestPasses+" - try {} section tv.openDocument(brief) worked; document should have been loaded.");
-								}
-							} else {
-								System.out.println("stress test pass: "+stressTestPasses+" - try {} section o == null; about to tv.createDocument(null,null). Setting continueStressTest=false.");
-								continueStressTest=false;
-								tv.createDocument(null, null);
-							}
-							System.out.println("stress test pass: "+stressTestPasses+" - try {} section; about to cv.notify(CommonViewer.Message.update);...");
-							cv.notify(CommonViewer.Message.update);
-							System.out.println("stress test pass: "+stressTestPasses+" - try {} section completed.");
-						}
-					} catch (PartInitException e) {
-						System.out.println("stress test pass: "+stressTestPasses+" - catch {} section handling exception. Setting continueStressTest=false.");
-						continueStressTest=false;
-						ExHandler.handle(e);
-						System.out.println("stress test pass: "+stressTestPasses+" - catch {} section completed.");
+					if (mayRunStressTest() == false)
+					{
+						return;
 					}
-					System.out.println("stress test pass: "+stressTestPasses+" - try/catch completed.");
-
-					if (stressTestPasses>10) {
-						System.out.println("stress test pass: "+stressTestPasses+" - Setting continueStressTest=false after "+stressTestPasses+" passes have completed.");						
-						continueStressTest=false;
-					}
-
-					try {
-						System.out.println("stress test pass: "+stressTestPasses+" - about to Thread.sleep()...(Otherwise the Briefe view content would not be visibly updated.)");
-						Thread.sleep(1000);
-					} catch (Throwable throwable) {
-						//handle the interrupt that will happen after the sleep 
-						System.out.println("stress test pass: "+stressTestPasses+" - caught throwable; most probably the Thread.sleep() wakeup interrupt signal.");
-					}
+					log.debug("****************************************************************");
+					log.debug("js ch.elexis.views/BriefAuswahl.java: Initiating stress test 2.");
+					log.debug("****************************************************************");
+					log.debug("This stress test will open all Briefe of the selected patient one after another, repeatedly, until you close the program or an error occurs.");
 					
-					System.out.println("****************************************************************");				
-				
-				}	//while true for stress test js
-				System.out.println("stress test pass: "+stressTestPasses+" - stress test ends.");
+					Integer stressTestPasses = 0;
+					Boolean continueStressTest = true;
 					
-				}
-			};
-
-			//20140421js: added stress test feature.
-			stressTest2Action = new Action(Messages.getString("BriefAuswahlStressTestButtonText2")) { //$NON-NLS-1$
-				@Override
-				public void run(){
-					System.out.println();
-					System.out.println("****************************************************************");
-					System.out.println("js ch.elexis.views/BriefAuswahl.java: Initiating stress test 2.");
-					System.out.println("****************************************************************");
-					System.out.println();
-					System.out.println("This stress test will open all Briefe of the selected patient one after another, repeatedly, until you close the program or an error occurs.");
-					System.out.println();
-					
-					Integer stressTestPasses=0;
-					Boolean continueStressTest=true;
-					
-					//obtain a list of all documents for the current patient
+					// obtain a list of all documents for the current patient
 					Patient actPat = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
 					if (actPat != null) {
 						Query<Brief> qbe = new Query<Brief>(Brief.class);
 						qbe.add(Brief.FLD_PATIENT_ID, Query.EQUALS, actPat.getId());
 						qbe.add(Brief.FLD_TYPE, Query.NOT_EQUAL, Brief.TEMPLATE);
-									
+						
 						List<Brief> list = qbe.execute();
-						//list.toArray()
-						System.out.println("Liste der Briefe des Patienten: "+list);
-					
-						//das noch hinzugefügt nach erster Fassung, die archiviert wurde...
+						// list.toArray()
+						log.debug("Liste der Briefe des Patienten: " + list);
+						
+						// das noch hinzugefügt nach erster Fassung, die archiviert wurde...
 						while (continueStressTest) {
 							
-							//open one document after annother; each adds another pass to the stress test pass count
+							// open one document after annother; each adds another pass to the
+							// stress test pass count
 							for (Brief brief : list) {
-	
-								if ( brief != null ) {
-									
-									stressTestPasses=stressTestPasses+1;
-									System.out.println("stress test pass: "+stressTestPasses+" - about to load document...");
 								
+								if (brief != null) {
+									
+									stressTestPasses = stressTestPasses + 1;
+									log.debug("stress test pass: " + stressTestPasses
+										+ " - about to load document...");
+									
 									try {
-										TextView tv = (TextView) getViewSite().getPage().showView(TextView.ID);
-	
-										System.out.println("stress test pass: "+stressTestPasses+" - o !!= null; (Brief) brief[0.getLabel()]=<"+brief.getLabel().toString()+">");
-										System.out.println("stress test pass: "+stressTestPasses+" - try {} section o != null; about to tv.openDocument(brief)....");
-																	
+										TextView tv =
+											(TextView) getViewSite().getPage().showView(
+												TextView.ID);
+										
+										log.debug("stress test pass: " + stressTestPasses
+											+ " - o !!= null; (Brief) brief[0.getLabel()]=<"
+											+ brief.getLabel().toString() + ">");
+										log.debug("stress test pass: "
+											+ stressTestPasses
+											+ " - try {} section o != null; about to tv.openDocument(brief)....");
+										
 										if (tv.openDocument(brief) == false) {
-											System.out.println("stress test pass: "+stressTestPasses+" - try {} section tv.openDocument(brief) returned false. Setting continueStressTest=false.");
-											SWTHelper.alert(Messages.getString("BriefAuswahlErrorHeading"), //$NON-NLS-1$
-														Messages.getString("BriefAuswahlCouldNotLoadText")); //$NON-NLS-1$
-											continueStressTest=false;
+											log.debug("stress test pass: "
+												+ stressTestPasses
+												+ " - try {} section tv.openDocument(brief) returned false. Setting continueStressTest=false.");
+											SWTHelper.alert(Messages
+												.getString("BriefAuswahlErrorHeading"), //$NON-NLS-1$
+												Messages
+													.getString("BriefAuswahlCouldNotLoadText")); //$NON-NLS-1$
+											continueStressTest = false;
 											break;
-										}	else {
+										} else {
 											
-											//Das ist jedenfalls kontraindiziert: Wirft eine unhandled exception, weil der Thread ja nicht darauf gewartet hat:
-											//tv.notify();
-											//Die folgenden verbessern nichts am Verhalten: Die ersten wenigen Dokumente  werden aktualisiert angezeigt, danach keines ausser dem letzten:
-											//tv.txt.setFocus();
-											
-											//tv.textContainer.update();
-											
-											//tv.textContainer.redraw();
-	
-											//tv.textContainer.update();
-											//tv.textContainer.redraw();
-											
-											//tv.textContainer.redraw();
-											//tv.textContainer.update();
+											// Das ist jedenfalls kontraindiziert: Wirft eine
+											// unhandled exception, weil der Thread ja nicht
+// darauf gewartet hat:
+											// tv.notify();
+											// Die folgenden verbessern nichts am Verhalten: Die
+											// ersten wenigen Dokumente werden aktualisiert
+// angezeigt, danach keines ausser dem letzten:
+											// tv.txt.setFocus();
+											// tv.textContainer.update();
+											// tv.textContainer.redraw();
 											
 											/*
-											while (tv.getViewSite()==null ) {
-												System.out.println("stress test pass: "+stressTestPasses+" - try {} section waiting for view to complete initialization...");
-	
-												try {
-													System.out.println("stress test pass: "+stressTestPasses+" - about to Thread.sleep(10)...");
-													Thread.sleep(10);
-												} catch (Throwable throwable) {
-													//handle the interrupt that will happen after the sleep 
-													System.out.println("stress test pass: "+stressTestPasses+" - caught throwable; most probably the Thread.sleep() wakeup interrupt signal.");
-												}
-											}
-											*/
-	
-											//tv.dispose();
+											 * while (tv.getViewSite()==null ) {
+											 * log.debug("stress test pass: "+stressTestPasses+
+											 * " - try {} section waiting for view to complete initialization..."
+											 * );
+											 * 
+											 * try {
+											 * log.debug("stress test pass: "+stressTestPasses+
+											 * " - about to Thread.sleep(10)...");
+											 * Thread.sleep(10); } catch (Throwable throwable) {
+											 * //handle the interrupt that will happen after the
+											 * sleep
+											 * log.debug("stress test pass: "+stressTestPasses+
+											 * " - caught throwable; most probably the Thread.sleep() wakeup interrupt signal."
+											 * ); } }
+											 */
 											
-											System.out.println("stress test pass: "+stressTestPasses+" - try {} section tv.openDocument(brief) worked; document should have been loaded.");
-											}
+											// tv.dispose();
+											
+											log.debug("stress test pass: "
+												+ stressTestPasses
+												+ " - try {} section tv.openDocument(brief) worked; document should have been loaded.");
+										}
 									} catch (PartInitException e) {
-										System.out.println("stress test pass: "+stressTestPasses+" - catch {} section handling exception. Setting continueStressTest=false.");
+										log.debug("stress test pass: "
+											+ stressTestPasses
+											+ " - catch {} section handling exception. Setting continueStressTest=false.");
 										ExHandler.handle(e);
-										System.out.println("stress test pass: "+stressTestPasses+" - catch {} section completed.");
-										continueStressTest=false;
+										log.debug("stress test pass: " + stressTestPasses
+											+ " - catch {} section completed.");
+										continueStressTest = false;
 										break;
 									}
-									System.out.println("stress test pass: "+stressTestPasses+" - try/catch completed.");
-		
-									if (stressTestPasses>100) {
-										System.out.println("stress test pass: "+stressTestPasses+" - Setting continueStressTest=false after "+stressTestPasses+" passes have completed.");						
-										continueStressTest=false;
-										break;
-									}
+									log.debug("stress test pass: " + stressTestPasses
+										+ " - try/catch completed.");
 									
+									if (stressTestPasses > 100) {
+										log.debug("stress test pass: " + stressTestPasses
+											+ " - Setting continueStressTest=false after "
+											+ stressTestPasses + " passes have completed.");
+										continueStressTest = false;
+										break;
+									}
 									
 									try {
-										System.out.println("stress test pass: "+stressTestPasses+" - about to Thread.sleep()...(Otherwise the Briefe view content would not be visibly updated.)");
-										//Nichts von den folgenden hilft tatsächlich gut gegen das mangelnde Updaten im LibreOffice Frame nach dem ca. 4. Dokument:
-										//Thread.sleep(10000);
-										//Thread.sleep(1000);
-										//Thread.yield();
+										log.debug("stress test pass: "
+											+ stressTestPasses
+											+ " - about to Thread.sleep()...(Otherwise the Briefe view content would not be visibly updated.)");
+										// Nichts von den folgenden hilft tatsächlich gut gegen
+// das
+										// mangelnde Updaten im LibreOffice Frame nach dem ca.
+// 4. Dokument:
+										// Thread.sleep(10000);
+										// Thread.sleep(1000);
+										// Thread.yield();
 									} catch (Throwable throwable) {
-										//handle the interrupt that will happen after the sleep 
-										System.out.println("stress test pass: "+stressTestPasses+" - caught throwable; most probably the Thread.sleep() wakeup interrupt signal.");
+										// handle the interrupt that will happen after the sleep
+										log.debug("stress test pass: "
+											+ stressTestPasses
+											+ " - caught throwable; most probably the Thread.sleep() wakeup interrupt signal.");
 									}
 									
+									log.debug("****************************************************************");
+									
+								} // if ( brief != null)
 								
-									System.out.println("****************************************************************");
-	
-								} //if ( brief != null)
-								
-							} //for ( brief : list )
-						} //while (continueStressTest)
-					} //if (actPat != null )
-				System.out.println("stress test pass: "+stressTestPasses+" - stress test ends.");
+							} // for ( brief : list )
+						} // while (continueStressTest)
+					} // if (actPat != null )
+					log.debug("stress test pass: " + stressTestPasses + " - stress test ends.");
 					
 				}
 			};
-			
+		
 		deleteAction = new Action(Messages.getString("BriefAuswahlDeleteButtonText")) { //$NON-NLS-1$
 				@Override
 				public void run(){

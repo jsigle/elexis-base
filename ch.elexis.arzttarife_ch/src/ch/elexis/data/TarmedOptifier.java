@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2010, G. Weirich and Elexis; portions Copyright (c) 2013 Joerg Sigle.
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,6 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    Joerg Sigle   - warning if a position is about to be billed at 0.00
  *    
  *******************************************************************************/
 
@@ -46,8 +45,6 @@ public class TarmedOptifier implements IOptifier {
 	public static final int LEISTUNGSTYP = 6;
 	public static final int NOTYETVALID = 7;
 	public static final int NOMOREVALID = 8;
-	public static final int ISZERO = 9;		//201303130140js: Eine Rechnung mit einer Position zu 0.00 wird von der Aerztekasse zurueckgewiesen.
-											//201303130140js: also see: ch.elexis.arzttarife_schweiz.TarmedOptifier.java, ch.elexis.medikamente_bag.BAGOptifier.java
 	
 	boolean bOptify = true;
 	
@@ -55,8 +52,6 @@ public class TarmedOptifier implements IOptifier {
 	 * Hier kann eine Konsultation als Ganzes nochmal überprüft werden
 	 */
 	public Result<Object> optify(Konsultation kons){
-		System.out.println("js TarmedOptifier optify(1) begin");
-		
 		LinkedList<TarmedLeistung> postponed = new LinkedList<TarmedLeistung>();
 		for (Verrechnet vv : kons.getLeistungen()) {
 			IVerrechenbar iv = vv.getVerrechenbar();
@@ -79,8 +74,6 @@ public class TarmedOptifier implements IOptifier {
 	 */
 	
 	public Result<IVerrechenbar> add(IVerrechenbar code, Konsultation kons){
-		System.out.println("js TarmedOptifier add(2) begin");
-		
 		bOptify = Hub.userCfg.get(Leistungscodes.OPTIFY, true);
 		if (code instanceof TarmedLeistung) {
 			TarmedLeistung tc = (TarmedLeistung) code;
@@ -124,7 +117,7 @@ public class TarmedOptifier implements IOptifier {
 			// Ist der Hinzuzufügende Code vielleicht schon in der Liste? Dann
 			// nur Zahl erhöhen.
 			for (Verrechnet v : lst) {
-				if (v.isInstance(code)) {
+				if (v.isInstance(code) && TarmedLeistung.getSide(v).equals("none")) {
 					check = v;
 					check.setZahl(check.getZahl() + 1);
 					if (bezugOK) {
@@ -172,6 +165,24 @@ public class TarmedOptifier implements IOptifier {
 							}
 						}
 					}
+
+					if (check.getCode().equals("00.0750") || check.getCode().equals("00.0010")) {
+						String excludeCode = null;
+						if (check.getCode().equals("00.0010")) {
+							excludeCode = "00.0750";
+						} else {
+							excludeCode = "00.0010";
+						}
+						for (Verrechnet v : lst) {
+							if (v.getCode().equals(excludeCode)) {
+								check.delete();
+								return new Result<IVerrechenbar>(
+									Result.SEVERITY.WARNING,
+									EXKLUSION,
+									"00.0750 ist nicht im Rahmen einer ärztlichen Beratung 00.0010 verrechnenbar.", null, false); //$NON-NLS-1$								
+							}
+						}
+					}
 				}
 				check.setDetail(AL, Integer.toString(tc.getAL()));
 				check.setDetail(TL, Integer.toString(tc.getTL()));
@@ -187,7 +198,7 @@ public class TarmedOptifier implements IOptifier {
 			 */
 			
 			// Prüfen, ob zu oft verrechnet - diese Version prüft nur "pro
-			// Sitzung".
+			// Sitzung" und "pro Tag".
 			if (bOptify) {
 				String lim = (String) ext.get("limits"); //$NON-NLS-1$
 				if (lim != null) {
@@ -204,7 +215,7 @@ public class TarmedOptifier implements IOptifier {
 									}
 								}
 								// todo check if electronic billing
-								if (f[2].equals("1")) { // 1 Sitzung //$NON-NLS-1$
+								if (f[2].equals("1") && f[0].equals("<=")) { // 1 Sitzung //$NON-NLS-1$
 									int menge = Math.round(Float.parseFloat(f[1]));
 									if (check.getZahl() > menge) {
 										check.setZahl(menge);
@@ -214,7 +225,18 @@ public class TarmedOptifier implements IOptifier {
 									}
 								}
 								break;
-							
+							case 21: // Pro Tag
+								if (f[2].equals("1") && f[0].equals("<=")) { // 1 Tag
+									int menge = Math.round(Float.parseFloat(f[1]));
+									if (check.getZahl() > menge) {
+										check.setZahl(menge);
+										return new Result<IVerrechenbar>(Result.SEVERITY.WARNING,
+											KUMULATION, Messages.TarmedOptifier_codemax + menge
+												+ "Mal pro Tag", null, false); //$NON-NLS-1$ //$NON-NLS-2$
+									}
+								}
+								
+								break;
 							default:
 								break;
 							}
@@ -254,6 +276,26 @@ public class TarmedOptifier implements IOptifier {
 				 * double scale=-0.4; check.setDetail("scale", Double.toString(scale));
 				 * sum=sumfactor/100.0; check.setPreis(new Money(sum));
 				 */
+			}
+			
+			// Interventionelle Schmerztherapie: Zuschlag cervical und thoracal
+			else if (tcid.equals("29.2090")) {
+				double sumAL = 0.0;
+				double sumTL = 0.0;
+				for (Verrechnet v : lst) {
+					if (v.getVerrechenbar() instanceof TarmedLeistung) {
+						TarmedLeistung tl = (TarmedLeistung) v.getVerrechenbar();
+						String tlc = tl.getCode();
+						double z = v.getZahl();
+						if (tlc.matches("29.20[13578]0") || (tlc.equals("29.2200"))) {
+							sumAL += (z * tl.getAL()) / 2;
+							sumTL += (z * tl.getTL()) / 4;
+						}
+					}
+				}
+				check.setTP(sumAL + sumTL);
+				check.setDetail(AL, Double.toString(sumAL));
+				check.setDetail(TL, Double.toString(sumTL));
 			}
 			
 			// Zuschlag Kinder
@@ -302,7 +344,6 @@ public class TarmedOptifier implements IOptifier {
 				check.setDetail(TL, Double.toString(sumTL));
 				check.setPrimaryScaleFactor(0.5);
 			}
-			
 			// Notfall-Zuschläge
 			if (tcid.startsWith("00.25")) { //$NON-NLS-1$
 				double sum = 0.0;
@@ -330,16 +371,6 @@ public class TarmedOptifier implements IOptifier {
 					check.setTP(sum);
 					check.setDetail(AL, Double.toString(sum));
 					check.setPrimaryScaleFactor(0.25);
-
-					//201303130140js: Eine Rechnung mit einer Position zu 0.00 wird von der Aerztekasse zurueckgewiesen.
-					//                Deshalb zumindest eine Warnung ausgeben.
-					//A dedicated handler is needed here, because we won't reach the generic tester after the following break. 
-					if (sum==0.00) {
-						return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, ISZERO,
-								tc.getCode() + " " + 
-								Messages.TarmedOptifier_PriceZeroNotAllowed + " " +
-								Messages.TarmedOptifier_PriceZeroAskSupplementNoPrimary, null, false);
-					}					
 					break;
 				case 40: // 22-7: 180 TP
 					break;
@@ -360,16 +391,6 @@ public class TarmedOptifier implements IOptifier {
 					check.setTP(sum);
 					check.setDetail(AL, Double.toString(sum));
 					check.setPrimaryScaleFactor(0.5);
-					
-					//201303130140js: Eine Rechnung mit einer Position zu 0.00 wird von der Aerztekasse zurueckgewiesen.
-					//                Deshalb zumindest eine Warnung ausgeben.
-					//A dedicated handler is needed here, because we won't reach the generic tester after the following break. 
-					if (sum==0.00) {
-						return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, ISZERO,
-								tc.getCode() + " " + 
-								Messages.TarmedOptifier_PriceZeroNotAllowed + " " +
-								Messages.TarmedOptifier_PriceZeroAskSupplementNoPrimary, null, false);
-					}					
 					break;
 				
 				case 60: // Tel. Mo-Fr 19-22, Sa 12-22, So 7-22: 30 TP
@@ -381,15 +402,6 @@ public class TarmedOptifier implements IOptifier {
 				return new Result<IVerrechenbar>(Result.SEVERITY.OK, PREISAENDERUNG,
 					"Preis", null, false); //$NON-NLS-1$
 			}
-			
-			//201303130140js: Eine Rechnung mit einer Position zu 0.00 wird von der Aerztekasse zurueckgewiesen.
-			//                Deshalb zumindest eine Warnung ausgeben.
-			if (tc.getTL()==0.00 && tc.getAL()==0.00) {
-				return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, ISZERO,
-						tc.getCode() + " " + 
-						Messages.TarmedOptifier_PriceZeroNotAllowed, null, false);
-			}
-			
 			return new Result<IVerrechenbar>(null);
 		}
 		return new Result<IVerrechenbar>(Result.SEVERITY.ERROR, LEISTUNGSTYP,
@@ -402,8 +414,6 @@ public class TarmedOptifier implements IOptifier {
 	 * verweigern. Diese Version macht keine Prüfungen, sondern erfüllt nur die Anfrage..
 	 */
 	public Result<Verrechnet> remove(Verrechnet code, Konsultation kons){
-		System.out.println("js TarmedOptifier remove(2) begin");
-		
 		List<Verrechnet> l = kons.getLeistungen();
 		l.remove(code);
 		code.delete();

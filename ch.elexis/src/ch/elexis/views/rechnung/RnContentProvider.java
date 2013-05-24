@@ -34,6 +34,7 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
+import ch.elexis.data.Zahlung;
 import ch.elexis.util.Log;
 import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.ViewerConfigurer;
@@ -312,7 +313,7 @@ class RnContentProvider implements ViewerConfigurer.ICommonViewerContentProvider
 				continue;
 			}
 			mAmount.addMoney(rn.getOffenerBetrag());
-			mOpen.addMoney(rn.getAnzahlung());
+			mOpen.addMoney(sumZahlungen(rn));
 			Fall fall = rn.getFall();
 			if (fall == null) {
 				log.log("Rechnung " + rn.getId() + " hat keinen Fall", Log.WARNINGS); //$NON-NLS-1$ //$NON-NLS-2$
@@ -354,6 +355,21 @@ class RnContentProvider implements ViewerConfigurer.ICommonViewerContentProvider
 		
 	}
 	
+	/**
+	 * Bereits bezahlten Betrag holen. Alle Zahlungen ausser Storno werden addiert.
+	 */
+	public Money sumZahlungen(Rechnung rn){
+		List<Zahlung> lz = rn.getZahlungen();
+		Money total = new Money();
+		for (Zahlung z : lz) {
+			Money abzahlung = z.getBetrag();
+			if (!z.getBemerkung().equalsIgnoreCase("storno")) {
+				total.addMoney(abzahlung);
+			}
+		}
+		return total;
+	}
+
 	private static class PatientComparator implements Comparator {
 		public int compare(final Object o1, final Object o2){
 			Patient p1 = (Patient) o1;

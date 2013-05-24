@@ -25,3 +25,4 @@
 	- [1087] wrong adaption of Sperrzeiten
 2.1.7.6 - 14. Nov 2012 - M. Descher
 	- [1220] Bereich wird bei grafischer Agenda nicht korrekt gesetzt
+2.1.8.0-Bug1214dev - Recurring Date Development Branch - M. Descher

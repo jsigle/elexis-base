@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Agenda Plugin für Elexis
 Bundle-SymbolicName: ch.elexis.agenda;singleton:=true
-Bundle-Version: 2.1.7.8
+Bundle-Version: 2.1.8.3
 Bundle-Vendor: elexis.ch
 Bundle-Activator: ch.elexis.actions.Activator
 Bundle-Localization: plugin
@@ -15,7 +15,13 @@ Require-Bundle: ch.elexis,
  org.eclipse.ui.forms,
  ch.rgw.utility,
  ch.medshare.base.external;bundle-version="1.0.0";resolution:=optional,
- ch.elexis.core;bundle-version="0.0.2"
+ ch.elexis.core;bundle-version="0.0.2",
+ org.eclipse.core.databinding,
+ org.eclipse.core.databinding.beans,
+ org.eclipse.core.databinding.observable,
+ org.eclipse.core.databinding.property,
+ org.eclipse.jface.databinding,
+ com.ibm.icu
 Eclipse-LazyStart: true
 Bundle-ClassPath: .,
  lib/ical4j-1.0.1.jar,

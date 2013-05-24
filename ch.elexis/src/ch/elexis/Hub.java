@@ -33,7 +33,6 @@ import org.osgi.framework.BundleContext;
 
 import ch.elexis.actions.ElexisEvent;
 import ch.elexis.actions.ElexisEventDispatcher;
-import ch.elexis.actions.ElexisEventListenerImpl;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.Heartbeat;
 import ch.elexis.actions.Heartbeat.HeartListener;
@@ -45,6 +44,7 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.PersistentObjectFactory;
 import ch.elexis.data.Query;
 import ch.elexis.data.Reminder;
+import ch.elexis.elexisevent.PatientEventListener;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.preferences.PreferenceInitializer;
 import ch.elexis.util.FileUtility;
@@ -79,6 +79,7 @@ public class Hub extends AbstractUIPlugin {
 	static final String[] mine = {
 		"ch.elexis", "ch.rgw"}; //$NON-NLS-1$ //$NON-NLS-2$
 	private static List<ShutdownJob> shutdownJobs = new LinkedList<ShutdownJob>();
+	private static String LocalCfgFile = null;
 	
 	// Globale Variable
 	/**
@@ -134,11 +135,18 @@ public class Hub extends AbstractUIPlugin {
 	 * */
 	private static File userDir;
 	
-	private final ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(Patient.class) {
-		public void runInUi(ElexisEvent ev){
-			setWindowText((Patient) ev.getObject());
-		}
-	};
+	/**
+	 * The listener for patient events
+	 */
+	private final PatientEventListener eeli_pat = new PatientEventListener();
+	
+	private void loadLocalCfg(String branch)
+	{
+		LocalCfgFile = Hub.getWritableUserDir() + "/localCfg_"+ branch + ".xml";
+		SysSettings cfg = new SysSettings(SysSettings.USER_SETTINGS, Desk.class);
+		cfg.read_xml(LocalCfgFile);
+		Hub.localCfg = cfg;
+	}
 	
 	/**
 	 * Constructor. No Eclipse dependend initializations here because the Platform has not been
@@ -151,8 +159,16 @@ public class Hub extends AbstractUIPlugin {
 			DEBUGMODE = false;
 		}
 		log = Log.get("Elexis startup"); //$NON-NLS-1$
+		System.out.println("ch.elexis.Hub: This string is only here to check, whether System.out goes to the log"); //$NON-NLS-1$
 		getWritableUserDir();
-		localCfg = new SysSettings(SysSettings.USER_SETTINGS, Desk.class);
+		loadLocalCfg("default");
+		
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			public void run(){
+				SysSettings localCfg = (SysSettings) Hub.localCfg;
+				localCfg.write_xml(LocalCfgFile);
+			}
+		});
 		setUserDir(userDir);
 		
 	}
@@ -163,10 +179,8 @@ public class Hub extends AbstractUIPlugin {
 	 */
 	private static void initializeLog(final Settings cfg){
 		// Not much to be done, as we use now ch.qos.logback and its configuration/logback.xml
-		Log.setLevel(cfg.get(PreferenceConstants.ABL_LOGLEVEL, Log.ERRORS));
 		Log.setAlertLevel(cfg.get(PreferenceConstants.ABL_LOGALERT, Log.FATALS));
 		ExHandler.setClasses(mine);
-		
 	}
 	
 	private static void initializeLock(){
@@ -232,7 +246,7 @@ public class Hub extends AbstractUIPlugin {
 			if (s.startsWith("--use-config=")) { //$NON-NLS-1$
 				String[] c = s.split("="); //$NON-NLS-1$
 				config = c[1];
-				localCfg = localCfg.getBranch(config, true);
+				loadLocalCfg(config);
 			} else if (s.startsWith("--plaf=")) { //$NON-NLS-1$
 				String[] c = s.split("="); //$NON-NLS-1$
 				String plaf = c[1];
@@ -246,9 +260,6 @@ public class Hub extends AbstractUIPlugin {
 		// keine NPE werfen
 		userCfg = localCfg;
 		mandantCfg = localCfg;
-		
-		String basePath = FileUtility.getFilepath(PlatformHelper.getBasePath("ch.elexis")); //$NON-NLS-1$
-		localCfg.set("elexis-basepath", FileUtility.getFilepath(basePath)); //$NON-NLS-1$
 		
 		// Java Version prüfen
 		VersionInfo vI = new VersionInfo(System.getProperty("java.version", "0.0.0")); //$NON-NLS-1$ //$NON-NLS-2$

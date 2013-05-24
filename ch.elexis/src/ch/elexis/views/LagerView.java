@@ -11,7 +11,15 @@
  *******************************************************************************/
 package ch.elexis.views;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -42,7 +50,9 @@ import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.commands.EditEigenartikelUi;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Bestellung;
+import ch.elexis.data.Bestellung.Item;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.dialogs.OrderImportDialog;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.CommonViewer.DoubleClickListener;
@@ -85,6 +95,18 @@ public class LagerView extends ViewPart implements DoubleClickListener, ISaveabl
 		cv.create(vc, parent, SWT.NONE, getViewSite());
 		cv.getConfigurer().getContentProvider().startListening();
 		cv.addDoubleClickListener(this);
+		
+		MenuManager contextMenu = new MenuManager();
+		contextMenu.setRemoveAllWhenShown(true);
+		
+		contextMenu.addMenuListener(new IMenuListener() {
+			@Override
+			public void menuAboutToShow(IMenuManager manager){
+				manager.add(new CheckInOrderedAction(cv.getViewerWidget()));
+			}
+		});
+
+		cv.setContextMenu(contextMenu);
 		GlobalEventDispatcher.addActivationListener(this, this);
 	}
 	
@@ -256,6 +278,51 @@ public class LagerView extends ViewPart implements DoubleClickListener, ISaveabl
 		
 	}
 	
+	public static class CheckInOrderedAction extends Action {
+		private Viewer viewer;
+		private Artikel artikel;
+
+		public CheckInOrderedAction(Viewer viewer){
+			this.viewer = viewer;
+		}
+		
+		@Override
+		public boolean isEnabled(){
+			IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+			if (selection != null && !selection.isEmpty()
+				&& selection.getFirstElement() instanceof Artikel) {
+				Artikel selectedArtikel = (Artikel) selection.getFirstElement();
+				if (selectedArtikel.getExt(Bestellung.ISORDERED).equalsIgnoreCase("true")) {
+					artikel = selectedArtikel;
+					return true;
+				}
+			}
+			return false;
+		}
+
+		@Override
+		public String getText(){
+			return Messages.getString("BestellView.CheckInCaption");
+		}
+		
+		@Override
+		public void run(){
+			Bestellung bestellung = Bestellung.lookupLastWithArticle(artikel);
+			if (bestellung != null) {
+				List<Item> orderedItem = new ArrayList<Bestellung.Item>();
+				List<Item> items = bestellung.asList();
+				for (Item item : items) {
+					if (item.art.getId().equals(artikel.getId()))
+						orderedItem.add(item);
+				}
+				OrderImportDialog dialog =
+					new OrderImportDialog(viewer.getControl().getShell(), orderedItem);
+				dialog.open();
+				viewer.refresh();
+			}
+		}
+	}
+
 	/***********************************************************************************************
 	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2 Wir benötigen das
 	 * Interface nur, um das Schliessen einer View zu verhindern, wenn die Perspektive fixiert ist.

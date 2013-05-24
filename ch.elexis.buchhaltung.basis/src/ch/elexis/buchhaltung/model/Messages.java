@@ -18,6 +18,7 @@ public class Messages extends NLS {
 	public static String AlleLeistungen_ActivityText;
 	public static String AlleLeistungen_BillState;
 	public static String AlleLeistungen_Description;
+	public static String AlleLeistungen_Doctor;
 	public static String AlleLeistungen_InvoicingParty;
 	public static String AlleLeistungen_Mandator;
 	public static String AlleLeistungen_NoBill;
