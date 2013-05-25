@@ -271,3 +271,4 @@ Export-Package: .,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .,
  bin/
+Import-Package: org.slf4j

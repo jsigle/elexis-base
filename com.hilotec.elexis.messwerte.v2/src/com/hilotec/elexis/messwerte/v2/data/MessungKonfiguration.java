@@ -119,8 +119,6 @@ public class MessungKonfiguration {
 	private final Log log = Log.get("DataConfiguration"); //$NON-NLS-1$
 	private final String defaultFile;
 	
-	private Boolean initialized = false;
-	
 	public static MessungKonfiguration getInstance(){
 		if (the_one_and_only_instance == null) {
 			the_one_and_only_instance = new MessungKonfiguration();
@@ -161,8 +159,11 @@ public class MessungKonfiguration {
 		
 	}
 	
+	public Boolean readFromXML() {
+		return readFromXML(defaultFile);
+	}
+	
 	public Boolean readFromXML(String path){
-		initialized = true;
 		types.clear();
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder;
@@ -348,6 +349,8 @@ public class MessungKonfiguration {
 						if (edtf.hasAttribute(ATTR_STARTVALUE))
 							counter.setStartValue(edtf.getAttribute(ATTR_STARTVALUE));
 						
+					} else if (edtf.getNodeName().equals(ELEMENT_LAYOUTDESIGN)) {
+						continue;
 					} else {
 						log.log(MessageFormat.format(
 							Messages.MessungKonfiguration_UnknownFieldType, edtf.getNodeName()),
@@ -423,8 +426,6 @@ public class MessungKonfiguration {
 	}
 	
 	public MessungTyp getTypeByName(String name){
-		if (!initialized)
-			readFromXML(null);
 		for (MessungTyp t : types) {
 			if (t.getName().compareTo(name) == 0) {
 				return t;

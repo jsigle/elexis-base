@@ -1,0 +1,148 @@
+\contentsline {part}{\numberline {I}Einf\IeC {\"u}hrung}{9}{part.1}
+\contentsline {chapter}{\numberline {1}Nutzungsbedingungen}{11}{chapter.1}
+\contentsline {section}{\numberline {1.1}Haftungsausschluss}{11}{section.1.1}
+\contentsline {section}{\numberline {1.2}Lizenz}{11}{section.1.2}
+\contentsline {chapter}{\numberline {2}Kurzbeschreibung und Schnelleinstieg}{13}{chapter.2}
+\contentsline {part}{\numberline {II}Gef\IeC {\"u}hrte Tour}{15}{part.2}
+\contentsline {chapter}{\numberline {3}Eine neue Patientin erfassen}{17}{chapter.3}
+\contentsline {section}{\numberline {3.1}Patientendaten erfassen}{18}{section.3.1}
+\contentsline {section}{\numberline {3.2}Falldaten erfassen}{19}{section.3.2}
+\contentsline {section}{\numberline {3.3}Krankengeschichte f\IeC {\"u}hren}{21}{section.3.3}
+\contentsline {chapter}{\numberline {4}Benutzeroberfl\IeC {\"a}che einrichten}{23}{chapter.4}
+\contentsline {section}{\numberline {4.1}Funktionsprinzip}{24}{section.4.1}
+\contentsline {subsection}{\numberline {4.1.1}Schreibtisch / Perspektive}{24}{subsection.4.1.1}
+\contentsline {subsubsection}{Perspektive und Views}{25}{section*.2}
+\contentsline {subsubsection}{Ansichten / Views}{26}{section*.3}
+\contentsline {subsubsection}{Views und Perspektiven anpassen}{26}{section*.4}
+\contentsline {subsection}{\numberline {4.1.2}Perspektiven einrichten und speichern}{27}{subsection.4.1.2}
+\contentsline {part}{\numberline {III}Systematische Referenz}{31}{part.3}
+\contentsline {chapter}{\numberline {5}Konzepte}{33}{chapter.5}
+\contentsline {section}{\numberline {5.1}Kontakte}{34}{section.5.1}
+\contentsline {section}{\numberline {5.2}Anwender und Mandanten}{34}{section.5.2}
+\contentsline {section}{\numberline {5.3}Konsultationen, F\IeC {\"a}lle, Garanten und Kostentr\IeC {\"a}ger}{35}{section.5.3}
+\contentsline {section}{\numberline {5.4}Sticker}{35}{section.5.4}
+\contentsline {section}{\numberline {5.5}Leistungsabrechnung}{39}{section.5.5}
+\contentsline {subsection}{\numberline {5.5.1}Leistungsbl\IeC {\"o}cke und Eigenleistungen}{40}{subsection.5.5.1}
+\contentsline {section}{\numberline {5.6}Artikel und Lager}{41}{section.5.6}
+\contentsline {section}{\numberline {5.7}Import von externen Daten}{41}{section.5.7}
+\contentsline {section}{\numberline {5.8}Mehrere Instanzen gleichzeitig}{44}{section.5.8}
+\contentsline {section}{\numberline {5.9}Plugins}{44}{section.5.9}
+\contentsline {chapter}{\numberline {6}Men\IeC {\"u} und Toolbar}{45}{chapter.6}
+\contentsline {section}{\numberline {6.1}Men\IeC {\"u}}{46}{section.6.1}
+\contentsline {section}{\numberline {6.2}Toolbar}{47}{section.6.2}
+\contentsline {chapter}{\numberline {7}Views des Kernsystems}{49}{chapter.7}
+\contentsline {section}{\numberline {7.1}Einleitung}{50}{section.7.1}
+\contentsline {subsection}{\numberline {7.1.1}\IeC {\"O}ffnen und Schliessen einer View}{50}{subsection.7.1.1}
+\contentsline {subsection}{\numberline {7.1.2}\IeC {\"O}ffnen und Speichern einer Perspektive}{50}{subsection.7.1.2}
+\contentsline {section}{\numberline {7.2}Stammdaten-Views}{53}{section.7.2}
+\contentsline {subsection}{\numberline {7.2.1}Patienten}{53}{subsection.7.2.1}
+\contentsline {subsubsection}{Markierungen / Sticker}{54}{section*.5}
+\contentsline {subsubsection}{Toolbar}{54}{section*.6}
+\contentsline {subsubsection}{Kontextmen\IeC {\"u}}{55}{section*.7}
+\contentsline {subsection}{\numberline {7.2.2}Patient-Detail}{55}{subsection.7.2.2}
+\contentsline {subsection}{\numberline {7.2.3}Kontakte}{57}{subsection.7.2.3}
+\contentsline {subsection}{\numberline {7.2.4}Kontakt-Detail}{57}{subsection.7.2.4}
+\contentsline {subsection}{\numberline {7.2.5}Artikel}{60}{subsection.7.2.5}
+\contentsline {subsection}{\numberline {7.2.6}Artikelliste}{60}{subsection.7.2.6}
+\contentsline {subsection}{\numberline {7.2.7}Lager und Bestellung}{61}{subsection.7.2.7}
+\contentsline {section}{\numberline {7.3}Konsultationsbezogene Views}{64}{section.7.3}
+\contentsline {subsection}{\numberline {7.3.1}F\IeC {\"a}lle}{64}{subsection.7.3.1}
+\contentsline {subsection}{\numberline {7.3.2}F\IeC {\"a}lle und Kons}{65}{subsection.7.3.2}
+\contentsline {subsection}{\numberline {7.3.3}Konsultationen}{66}{subsection.7.3.3}
+\contentsline {subsection}{\numberline {7.3.4}Konsultation}{67}{subsection.7.3.4}
+\contentsline {subsection}{\numberline {7.3.5}AUF}{67}{subsection.7.3.5}
+\contentsline {subsection}{\numberline {7.3.6}Rezepte}{68}{subsection.7.3.6}
+\contentsline {subsection}{\numberline {7.3.7}Falldetail}{69}{subsection.7.3.7}
+\contentsline {subsection}{\numberline {7.3.8}Diagnosen}{71}{subsection.7.3.8}
+\contentsline {section}{\numberline {7.4}Laboranzeige-View}{72}{section.7.4}
+\contentsline {subsection}{\numberline {7.4.1}Manuelle Eingabe}{72}{subsection.7.4.1}
+\contentsline {subsection}{\numberline {7.4.2}Automatisches Einlesen}{73}{subsection.7.4.2}
+\contentsline {subsection}{\numberline {7.4.3}Laborblatt drucken}{73}{subsection.7.4.3}
+\contentsline {section}{\numberline {7.5}Labor Neu}{73}{section.7.5}
+\contentsline {section}{\numberline {7.6}Abrechnungsbezogene Views}{75}{section.7.6}
+\contentsline {subsection}{\numberline {7.6.1}Konsultationen nach Datum}{75}{subsection.7.6.1}
+\contentsline {subsection}{\numberline {7.6.2}Konsultationen zum Verrechnen}{76}{subsection.7.6.2}
+\contentsline {subsubsection}{Rechnungsautomatk}{76}{section*.8}
+\contentsline {subsection}{\numberline {7.6.3}Rechnungen}{80}{subsection.7.6.3}
+\contentsline {subsubsection}{Viewmenu der Rechnungsliste}{82}{section*.9}
+\contentsline {subsubsection}{Rechnungen \IeC {\"a}ndern}{83}{section*.10}
+\contentsline {subsubsection}{Rechnungen ausgeben}{83}{section*.11}
+\contentsline {subsection}{\numberline {7.6.4}Konto}{84}{subsection.7.6.4}
+\contentsline {subsection}{\numberline {7.6.5}Konto-Liste}{84}{subsection.7.6.5}
+\contentsline {subsection}{\numberline {7.6.6}Leistungen}{84}{subsection.7.6.6}
+\contentsline {section}{\numberline {7.7}Diverse Views}{85}{section.7.7}
+\contentsline {subsection}{\numberline {7.7.1}Datenanzeige}{85}{subsection.7.7.1}
+\contentsline {subsection}{\numberline {7.7.2}Fixmedikation}{86}{subsection.7.7.2}
+\contentsline {subsection}{\numberline {7.7.3}Medikamenten-Verlauf}{86}{subsection.7.7.3}
+\contentsline {subsection}{\numberline {7.7.4}Kompendium online}{87}{subsection.7.7.4}
+\contentsline {subsection}{\numberline {7.7.5}Open Drug Database}{87}{subsection.7.7.5}
+\contentsline {subsection}{\numberline {7.7.6}Pendenzen}{87}{subsection.7.7.6}
+\contentsline {chapter}{\numberline {8}Plugins}{89}{chapter.8}
+\contentsline {section}{\numberline {8.1}Warum Plugins?}{90}{section.8.1}
+\contentsline {subsection}{\numberline {8.1.1}Ein Plugin installieren}{90}{subsection.8.1.1}
+\contentsline {subsection}{\numberline {8.1.2}Ein Plugin deinstallieren}{90}{subsection.8.1.2}
+\contentsline {subsection}{\numberline {8.1.3}Liste der Plugins}{90}{subsection.8.1.3}
+\contentsline {section}{\numberline {8.2}Elexis-Agenda}{92}{section.8.2}
+\contentsline {subsection}{\numberline {8.2.1}Konfiguration}{92}{subsection.8.2.1}
+\contentsline {subsection}{\numberline {8.2.2}Bedienung der Agenda}{96}{subsection.8.2.2}
+\contentsline {subsubsection}{Mehrere Agendafenster gleichzeitig}{99}{section*.12}
+\contentsline {subsubsection}{Gr\IeC {\"o}sseres Fenster}{100}{section*.13}
+\contentsline {subsubsection}{Terminkarten drucken}{101}{section*.14}
+\contentsline {section}{\numberline {8.3}Elexis-Befunde}{102}{section.8.3}
+\contentsline {subsection}{\numberline {8.3.1}Konfiguration}{102}{subsection.8.3.1}
+\contentsline {subsection}{\numberline {8.3.2}Anwendung}{103}{subsection.8.3.2}
+\contentsline {subsection}{\numberline {8.3.3}Text-Platzhalter}{104}{subsection.8.3.3}
+\contentsline {section}{\numberline {8.4}Elexis-Arzttarife-Schweiz}{105}{section.8.4}
+\contentsline {subsection}{\numberline {8.4.1}Einstellungen}{105}{subsection.8.4.1}
+\contentsline {subsubsection}{Drucker-Einstellungen}{108}{section*.15}
+\contentsline {subsection}{\numberline {8.4.2}Die Rechnung}{108}{subsection.8.4.2}
+\contentsline {subsection}{\numberline {8.4.3}Views dieses Plugins}{109}{subsection.8.4.3}
+\contentsline {subsubsection}{ESR}{109}{section*.16}
+\contentsline {chapter}{\numberline {9}Das Textsystem}{111}{chapter.9}
+\contentsline {section}{\numberline {9.1}Einleitung}{112}{section.9.1}
+\contentsline {section}{\numberline {9.2}Vorlagen}{115}{section.9.2}
+\contentsline {subsection}{\numberline {9.2.1}Systemvorlagen}{115}{subsection.9.2.1}
+\contentsline {subsection}{\numberline {9.2.2}Benutzervorlagen}{116}{subsection.9.2.2}
+\contentsline {section}{\numberline {9.3}Platzhalter f\IeC {\"u}r Datentypen}{117}{section.9.3}
+\contentsline {section}{\numberline {9.4}Geschlechtsspezifische Formulierungen}{118}{section.9.4}
+\contentsline {section}{\numberline {9.5}Daten aus externen Plugins}{119}{section.9.5}
+\contentsline {chapter}{\numberline {10}Mehrmandantenbetrieb}{121}{chapter.10}
+\contentsline {section}{\numberline {10.1}Einf\IeC {\"u}hrung}{122}{section.10.1}
+\contentsline {section}{\numberline {10.2}Gruppen/Rollen und Rechte}{122}{section.10.2}
+\contentsline {section}{\numberline {10.3}Definierbare Anwendereinstellungen}{124}{section.10.3}
+\contentsline {subsection}{\numberline {10.3.1}Individuelle Programmeinstellungen}{124}{subsection.10.3.1}
+\contentsline {subsection}{\numberline {10.3.2}Definierbare Perspektivenlayouts}{125}{subsection.10.3.2}
+\contentsline {part}{\numberline {IV}Anh\IeC {\"a}nge}{127}{part.4}
+\contentsline {chapter}{\numberline {A}Systemvoraussetzungen}{129}{appendix.A}
+\contentsline {section}{\numberline {A.1}Mindestanforderungen an die Hardware}{130}{section.A.1}
+\contentsline {section}{\numberline {A.2}Unterst\IeC {\"u}tzte Betriebssysteme}{130}{section.A.2}
+\contentsline {chapter}{\numberline {B}Einstellungen}{131}{appendix.B}
+\contentsline {section}{\numberline {B.1}Abrechnungssysteme}{132}{section.B.1}
+\contentsline {section}{\numberline {B.2}Allgemein}{133}{section.B.2}
+\contentsline {subsection}{\numberline {B.2.1}Einstellungen zum Log}{133}{subsection.B.2.1}
+\contentsline {section}{\numberline {B.3}Anwender}{134}{section.B.3}
+\contentsline {subsection}{\numberline {B.3.1}Anwender - Ansicht}{135}{subsection.B.3.1}
+\contentsline {subsection}{\numberline {B.3.2}Anwender - Schriftarten}{135}{subsection.B.3.2}
+\contentsline {section}{\numberline {B.4}Datenaustausch}{135}{section.B.4}
+\contentsline {section}{\numberline {B.5}Datenbank}{135}{section.B.5}
+\contentsline {section}{\numberline {B.6}Druckereinstellungen}{135}{section.B.6}
+\contentsline {section}{\numberline {B.7}E-Mail}{136}{section.B.7}
+\contentsline {section}{\numberline {B.8}Gruppen und Rechte}{136}{section.B.8}
+\contentsline {section}{\numberline {B.9}Laborwerte}{136}{section.B.9}
+\contentsline {subsection}{\numberline {B.9.1}Berechnete Laborwerte (Typ Formel)}{138}{subsection.B.9.1}
+\contentsline {section}{\numberline {B.10}Leistungscodes}{140}{section.B.10}
+\contentsline {section}{\numberline {B.11}Textverarbeitung}{140}{section.B.11}
+\contentsline {chapter}{\numberline {C}Weiterf\IeC {\"u}hrende Themen}{141}{appendix.C}
+\contentsline {section}{\numberline {C.1}Scripting}{142}{section.C.1}
+\contentsline {chapter}{\numberline {D}\IeC {\"U}berlegungen zur Datensicherheit}{143}{appendix.D}
+\contentsline {section}{\numberline {D.1}Sicherheit vor Datenverlust}{144}{section.D.1}
+\contentsline {section}{\numberline {D.2}Sicherheit vor Datenverf\IeC {\"a}lschungen}{145}{section.D.2}
+\contentsline {section}{\numberline {D.3}Sicherheit vor unbefugtem Zugriff auf die Datenbank}{145}{section.D.3}
+\contentsline {subsection}{\numberline {D.3.1}Angriff auf offene Ports}{145}{subsection.D.3.1}
+\contentsline {subsection}{\numberline {D.3.2}Angriff durch Ausnutzen von Sicherheitsl\IeC {\"u}cken}{147}{subsection.D.3.2}
+\contentsline {subsection}{\numberline {D.3.3}Angriffe durch Abh\IeC {\"o}ren des Netzwerkverkehrs}{148}{subsection.D.3.3}
+\contentsline {subsection}{\numberline {D.3.4}Angriffe durch Ausnutzen der Naivit\IeC {\"a}t des Anwenders}{149}{subsection.D.3.4}
+\contentsline {section}{\numberline {D.4}Was hat dies alles mit Elexis zu tun?}{149}{section.D.4}
+\contentsline {section}{\numberline {D.5}Last but not least: Angriff durch direkten Zugriff die Festplatte}{150}{section.D.5}
+\contentsline {subsection}{\numberline {D.5.1}Backup-Medien}{150}{subsection.D.5.1}
+\contentsline {chapter}{\numberline {E}Index}{153}{appendix.E}

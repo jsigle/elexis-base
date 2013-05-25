@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
@@ -57,6 +58,8 @@ import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.part.ViewPart;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
@@ -115,11 +118,13 @@ public class GlobalActions {
 	public IWorkbenchWindow mainWindow;
 	public static Action printKontaktEtikette;
 	private static IWorkbenchHelpSystem help;
+	private static Logger logger;
 	
 	public GlobalActions(final IWorkbenchWindow window){
 		if (Hub.mainActions != null) {
 			return;
 		}
+		logger = LoggerFactory.getLogger(this.getClass());
 		mainWindow = window;
 		help = Hub.plugin.getWorkbench().getHelpSystem();
 		exitAction = ActionFactory.QUIT.create(window);
@@ -161,16 +166,17 @@ public class GlobalActions {
 				
 				@Override
 				public void run(){
-					File base = new File(Hub.getBasePath()).getParentFile().getParentFile();
-					String book = base.getAbsolutePath() + File.separator + "elexis.pdf"; //$NON-NLS-1$
+					File book = new File(Platform.getInstallLocation().getURL().getPath() + "elexis.pdf"); //$NON-NLS-1$
 					Program proggie = Program.findProgram(".pdf"); //$NON-NLS-1$
 					if (proggie != null) {
-						proggie.execute(book);
+						logger.info("will open handbook: " + book.toString() + " using: " + proggie);
+						proggie.execute(book.toString());
 					} else {
-						if (Program.launch(book) == false) {
-							
+						logger.info("will launch handbook: " + book.toString());
+						if (Program.launch(book.toString()) == false) {
 							try {
-								Runtime.getRuntime().exec(book);
+								logger.info("will exec handbook: " + book.toString());
+								Runtime.getRuntime().exec(book.toString());
 							} catch (Exception e) {
 								ExHandler.handle(e);
 							}

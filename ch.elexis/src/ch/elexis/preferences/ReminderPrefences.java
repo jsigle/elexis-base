@@ -14,7 +14,9 @@ package ch.elexis.preferences;
 
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -30,6 +32,7 @@ import ch.rgw.io.Settings;
 public class ReminderPrefences extends PreferencePage implements IWorkbenchPreferencePage {
 	Settings cfg;
 	DecoratedString[] strings;
+	private Button showRemindersOnPatientSelectionEventBtn;
 	
 	public ReminderPrefences(){
 		super(Messages.ReminderPrefences_Reminders);
@@ -45,17 +48,28 @@ public class ReminderPrefences extends PreferencePage implements IWorkbenchPrefe
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new GridLayout());
 		new Label(ret, SWT.NONE).setText(Messages.ReminderPrefences_SetColors);
-		new DecoratedStringChooser(ret, cfg, strings);
+		DecoratedStringChooser chooser = new DecoratedStringChooser(ret, cfg, strings);
+		chooser.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+		
+		showRemindersOnPatientSelectionEventBtn = new Button(ret, SWT.CHECK);
+		showRemindersOnPatientSelectionEventBtn
+			.setText(Messages.ReminderPrefences_ShowPatientSelectionRedminders);
+		showRemindersOnPatientSelectionEventBtn.setSelection(Hub.userCfg.get(
+			PreferenceConstants.USR_SHOWPATCHGREMINDER, false));
+		showRemindersOnPatientSelectionEventBtn.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true,
+			false));
+		
 		return ret;
 	}
 	
 	public void init(IWorkbench workbench){
 		// TODO Auto-generated method stub
-		
 	}
 	
 	@Override
 	public boolean performOk(){
+		Hub.userCfg.set(PreferenceConstants.USR_SHOWPATCHGREMINDER,
+			showRemindersOnPatientSelectionEventBtn.getSelection());
 		Hub.userCfg.flush();
 		return super.performOk();
 	}

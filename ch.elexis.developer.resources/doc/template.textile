@@ -1,0 +1,11 @@
+<link rel="stylesheet" type="text/css" href="elexis.css" />
+
+!images/elexis48.png! <span class="logo">The Elexis Project</span>
+<hr />
+
+h1=. Your Title here
+
+p=(small). (c) 2012 by (your name here)
+
+
+<!-- please use this template for documentation of Elexis -->

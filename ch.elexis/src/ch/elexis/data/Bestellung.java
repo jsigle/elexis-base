@@ -14,6 +14,8 @@
 package ch.elexis.data;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import ch.elexis.util.Log;
@@ -209,5 +211,45 @@ public class Bestellung extends PersistentObject {
 			if (item.art != null)
 				item.art.setExt(Bestellung.ISORDERED, "true");
 		}
+	}
+	
+	public static Bestellung lookupLastWithArticle(Artikel artikel){
+		Query<Bestellung> qbe = new Query<Bestellung>(Bestellung.class);
+		List<Bestellung> bestellungen = qbe.execute();
+		Collections.sort(bestellungen, new BestellungDateComparator());
+		for (Bestellung bestellung : bestellungen) {
+			List<Item> items = bestellung.asList();
+			for (Item item : items) {
+				if (item.art.getId().equals(artikel.getId()))
+					return bestellung;
+			}
+		}
+		return null;
+	}
+	
+	public static class BestellungDateComparator implements Comparator<Bestellung> {
+		private TimeTool t1 = new TimeTool();
+		private TimeTool t2 = new TimeTool();
+
+		@Override
+		public int compare(Bestellung b1, Bestellung b2){
+			setTimeTool((Bestellung) b1, t1);
+			setTimeTool((Bestellung) b2, t2);
+			if (t1.after(t2))
+				return -1;
+			if (t2.after(t1))
+				return 1;
+			return 0;
+		}
+		
+		private void setTimeTool(Bestellung bestellung, TimeTool timeTool){
+			try {
+				String[] i = bestellung.getId().split(":"); //$NON-NLS-1$
+				timeTool.set(i[1]);
+			} catch (Exception e) {
+				timeTool.set("1.1.1970");
+			}
+		}
+
 	}
 }

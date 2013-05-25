@@ -596,17 +596,15 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 	}
 	
 	/**
-	 * Eine Verrechenbar zu dieser Konsultation zufügen
+	 * Eine verrechenbare Leistung zu dieser Konsultation zufügen
 	 * 
 	 * @return ein Verifier-Resultat.
 	 */
 	public Result<IVerrechenbar> addLeistung(IVerrechenbar l){
 		if (isEditable(false)) {
-			System.out.println("js TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-			System.out.println("js TODO: ch.elexis.data.Konsultation.java: Weitere Leistungestypen ausser Medikamente_BAG und arzttarif_ch=Tarmed,");
-			System.out.println("js TODO: ch.elexis.data.Konsultation.java: beim/nach dem Hinzufügen auf <>0.00 prüfen, entweder verteilt in den Optifiern,");
-			System.out.println("js TODO: oder an dieser Stelle zentral, dann ggf. auch die schon existierenden Prüfungen durch eine zentrale hier mitersetzen.");
-			System.out.println("js TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			// TODO: ch.elexis.data.Konsultation.java: Weitere Leistungestypen ausser Medikamente_BAG und arzttarif_ch=Tarmed,
+			// TODO: ch.elexis.data.Konsultation.java: beim/nach dem Hinzufügen auf <>0.00 prüfen, entweder verteilt in den Optifiern,
+			// TODO: oder an dieser Stelle zentral, dann ggf. auch die schon existierenden Prüfungen durch eine zentrale hier mitersetzen.
 			Result<IVerrechenbar> result = l.getOptifier().add(l, this);
 			if (result.isOK()) {
 				// Statistik nachführen

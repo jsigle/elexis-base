@@ -12,7 +12,6 @@
 
 package ch.elexis.data;
 
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -21,11 +20,13 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.dialogs.MessageDialog;
 
 import ch.elexis.Hub;
+import ch.elexis.StringConstants;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.preferences.Leistungscodes;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.IRnOutputter;
+import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
@@ -615,7 +616,13 @@ public class Fall extends PersistentObject {
 	@SuppressWarnings("unchecked")
 	public String getInfoString(final String name){
 		Map extinfo = getMap(FLD_EXTINFO);
-		return checkNull((String) extinfo.get(name));
+		if (name == null || extinfo.get(name) == null)
+			return StringConstants.EMPTY;
+		if (extinfo.get(name) instanceof String)
+			return checkNull((String) extinfo.get(name));
+		log.log("Invalid object in Fall.getInfoString(" + name + "), not castable to String: "
+			+ extinfo.get(name), Log.WARNINGS);
+		return "";
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -707,7 +714,7 @@ public class Fall extends PersistentObject {
 					Hub.globalCfg.set(
 						Leistungscodes.CFG_KEY + "/IV/standardausgabe", CONST_TARMED_DRUCKER); //$NON-NLS-1$
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY + "/IV/bedingungen", //$NON-NLS-1$
-						"Kostenträger:K;AHV-Nummer:T;Fallnummer:T"); //$NON-NLS-1$
+						"Kostenträger:K;Fallnummer:T"); //$NON-NLS-1$
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY + "/IV/gesetz", //$NON-NLS-1$
 						"IVG"); //$NON-NLS-1$
 					

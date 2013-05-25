@@ -15,6 +15,7 @@ package ch.elexis.agenda.data;
 import java.io.ByteArrayInputStream;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 
 import ch.elexis.Desk;
@@ -44,6 +45,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 	public static final String FLD_BEREICH = "BeiWem"; //$NON-NLS-1$
 	public static final String FLD_TERMINTYP = "Typ"; //$NON-NLS-1$
 	public static final String FLD_PATIENT = "Wer"; //$NON-NLS-1$
+	public static final String FLD_EXTENSION = "Extension"; //$NON-NLS-1$
 	public static final String FLD_TERMINSTATUS = "Status"; //$NON-NLS-1$
 	public static final String FLD_CREATOR = "ErstelltVon"; //$NON-NLS-1$
 	public static final String FLD_GRUND = "Grund"; //$NON-NLS-1$
@@ -52,8 +54,9 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 	public static final String FLD_TAG = "Tag"; //$NON-NLS-1$
 	public static final String FLD_LASTEDIT = "lastedit"; //$NON-NLS-1$
 	public static final String FLD_STATUSHIST = "StatusHistory"; //$NON-NLS-1$
+	public static final String FLD_LINKGROUP = "linkgroup";
 	public static final String TABLENAME = "AGNTERMINE";
-	public static final String VERSION = "1.2.5"; //$NON-NLS-1$
+	public static final String VERSION = "1.2.6"; //$NON-NLS-1$
 	public static String[] TerminTypes;
 	public static String[] TerminStatus;
 	public static String[] TerminBereiche;
@@ -62,32 +65,45 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 	// static final String DEFTYPES="Frei,Reserviert,Normal,Extra,Besuch";
 	// static final String
 	// DEFSTATUS="-   ,geplant,eingetroffen,fertig,verpasst,abgesagt";
-	public static final String createDB = "CREATE TABLE AGNTERMINE(" //$NON-NLS-1$
-		+ "ID              VARCHAR(127) primary key," //$NON-NLS-1$
-		+ "lastupdate BIGINT," //$NON-NLS-1$
-		+ // we need that size to be able to import ics files
-		"PatID			VARCHAR(80)," + "Bereich		VARCHAR(25)," + "Tag             CHAR(8)," //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		+ "Beginn          CHAR(4)," + "Dauer           CHAR(4)," + "Grund           TEXT," //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		+ "TerminTyp       VARCHAR(50)," + "TerminStatus    VARCHAR(50)," //$NON-NLS-1$ //$NON-NLS-2$
-		+ "ErstelltVon     VARCHAR(25)," + "Angelegt        VARCHAR(10)," //$NON-NLS-1$ //$NON-NLS-2$
-		+ "lastedit	     VARCHAR(10)," + "PalmID          INTEGER default 0," //$NON-NLS-1$ //$NON-NLS-2$
-		+ "flags           VARCHAR(10)," + "deleted         CHAR(2) default '0'," //$NON-NLS-1$ //$NON-NLS-2$
-		+ "Extension       TEXT," + "linkgroup	    VARCHAR(20)" + ");" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		+ "CREATE INDEX it on AGNTERMINE (Tag,Beginn,Bereich);" //$NON-NLS-1$
-		+ "CREATE INDEX pattern on AGNTERMINE (PatID);" //$NON-NLS-1$
-		+ "CREATE INDEX agnbereich on AGNTERMINE (Bereich);" //$NON-NLS-1$
-		+ "INSERT INTO AGNTERMINE (ID) VALUES ('1');"; //$NON-NLS-1$
+	//@formatter:off
+	public static final String createDB = "CREATE TABLE AGNTERMINE(" 
+		+ "ID              	VARCHAR(127) primary key,"
+		+ "lastupdate 		BIGINT," 
+		+ "PatID			VARCHAR(80),"  // we need that size to be able to import ics files
+		+ "Bereich			VARCHAR(25)," 
+		+ "Tag             	CHAR(8)," 
+		+ "Beginn          	CHAR(4),"
+		+ "Dauer           	CHAR(4),"
+		+ "Grund           	TEXT," 
+		+ "StatusHistory   	TEXT,"
+		+ "TerminTyp       	VARCHAR(50)," 
+		+ "TerminStatus    	VARCHAR(50)," 
+		+ "ErstelltVon     	VARCHAR(25)," 
+		+ "Angelegt        	VARCHAR(10),"
+		+ "lastedit	    	VARCHAR(10)," 
+		+ "PalmID        	INTEGER default 0," 
+		+ "flags           	VARCHAR(10)," 
+		+ "deleted         	CHAR(2) default '0',"
+		+ FLD_EXTENSION  +"	TEXT," 
+		+ FLD_LINKGROUP	 +" VARCHAR(50)" + ");" 
+		+ "CREATE INDEX it on AGNTERMINE (Tag,Beginn,Bereich);" 
+		+ "CREATE INDEX pattern on AGNTERMINE (PatID);"
+		+ "CREATE INDEX agnbereich on AGNTERMINE (Bereich);" 
+		+ "INSERT INTO AGNTERMINE (ID, PatId) VALUES (1, '" + VERSION + "');"; 
+	//@formatter:on
 	
 	private static final String upd122 = "ALTER TABLE AGNTERMINE MODIFY TerminTyp VARCHAR(50);" //$NON-NLS-1$
 		+ "ALTER TABLE " + TABLENAME + "+ MODIFY TerminStatus VARCHAR(50);"; //$NON-NLS-1$
 	
 	private static final String upd124 = "ALTER TABLE AGNTERMINE ADD lastupdate BIGINT;"; //$NON-NLS-1$
 	private static final String upd125 = "ALTER TABLE AGNTERMINE ADD StatusHistory TEXT;"; //$NON-NLS-1$
+	private static final String upd126 = "ALTER TABLE AGNTERMINE MODIFY linkgroup VARCHAR(50)"; //$NON-NLS-1$
+	
 	static {
 		addMapping("AGNTERMINE", "BeiWem=Bereich", FLD_PATIENT + "=PatID", FLD_TAG, FLD_BEGINN, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			FLD_DAUER, FLD_GRUND, "Typ=TerminTyp", FLD_TERMINSTATUS + "=TerminStatus", FLD_CREATOR, //$NON-NLS-1$ //$NON-NLS-2$
-			"ErstelltWann=Angelegt", FLD_LASTEDIT, "PalmID", "flags", FLD_DELETED, "Extension", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			"linkgroup", FLD_STATUSHIST); //$NON-NLS-1$
+			"ErstelltWann=Angelegt", FLD_LASTEDIT, "PalmID", "flags", FLD_DELETED, FLD_EXTENSION, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			FLD_LINKGROUP, FLD_STATUSHIST); //$NON-NLS-1$
 		TimeTool.setDefaultResolution(60000);
 		TerminTypes = Hub.globalCfg.getStringArray(PreferenceConstants.AG_TERMINTYPEN);
 		TerminStatus = Hub.globalCfg.getStringArray(PreferenceConstants.AG_TERMINSTATUS);
@@ -105,11 +121,11 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 				"-", Messages.Termin_plannedAppointment //$NON-NLS-1$
 				};
 		}
-		Termin Version = load("1"); //$NON-NLS-1$
-		if (Version == null) {
+		Termin version = load("1"); //$NON-NLS-1$
+		if (version == null) {
 			init();
 		} else {
-			VersionInfo vi = new VersionInfo(Version.get(FLD_PATIENT));
+			VersionInfo vi = new VersionInfo(version.get(FLD_PATIENT));
 			if (vi.isOlder(VERSION)) {
 				if (vi.isOlder("1.1.0")) { //$NON-NLS-1$
 					if (j.DBFlavor.equalsIgnoreCase("postgresql")) { //$NON-NLS-1$
@@ -136,7 +152,10 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 				if (vi.isOlder("1.2.5")) { //$NON-NLS-1$
 					createOrModifyTable(upd125);
 				}
-				Version.set(FLD_PATIENT, VERSION);
+				if (vi.isOlder("1.2.6")) {
+					createOrModifyTable(upd126);
+				}
+				version.set(FLD_PATIENT, VERSION);
 			}
 		}
 	}
@@ -280,6 +299,13 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 		return ret;
 	}
 	
+	public boolean isRecurringDate(){
+		Termin t = load(get(FLD_LINKGROUP));
+		if (t != null && t.exists())
+			return true;
+		return false;
+	}
+	
 	/** Den Standard-Termintyp holen */
 	public static String typStandard(){
 		return TerminTypes[STANDARD];
@@ -305,25 +331,29 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 		return TerminStatus[1];
 	}
 	
-	/*
-	 * public boolean isNew(){ return true; }
+	/**
+	 * if the linked list is 0 only the original entry is returned; if we have linked elements, all
+	 * linked elements are removed and the original {@link Termin} is "unlinked" but left
+	 * 
+	 * @param orig
+	 * @return
 	 */
 	public static List<Termin> getLinked(final Termin orig){
 		if (orig.getFlag(SW_LINKED) == false) {
 			return null;
 		}
-		if (StringTool.isNothing(orig.get("linkgroup"))) {
+		if (StringTool.isNothing(orig.get(FLD_LINKGROUP))) {
 			return null;
 		}
 		
 		Query<Termin> qbe = new Query<Termin>(Termin.class);
-		qbe.add("linkgroup", "=", orig.get("linkgroup"));
+		qbe.add(FLD_LINKGROUP, Query.EQUALS, orig.get(FLD_LINKGROUP));
 		List<Termin> ret = qbe.execute();
 		if (ret.size() == 0) {
 			ret.add(orig);
 		} else if (ret.size() == 1) {
 			orig.clrFlag(SW_LINKED);
-			orig.set("linkgroup", null);
+			orig.set(FLD_LINKGROUP, null);
 			// TODO orig.flush();
 		}
 		return ret;
@@ -394,32 +424,33 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 		return false;
 	}
 	
-	@Override
-	public boolean delete(){
+	public boolean delete(boolean askForConfirmation){
+		boolean confirmed = !askForConfirmation;
 		if (checkLock()) {
 			return false;
 		}
 		List<Termin> linked = null;
-		String linkgroup = get("linkgroup"); //$NON-NLS-1$
-		if (getFlag(SW_LINKED) && (!StringTool.isNothing(linkgroup))) {
+		String linkgroup = get(FLD_LINKGROUP); //$NON-NLS-1$
+		boolean linkedDate = (getFlag(SW_LINKED) && (!StringTool.isNothing(linkgroup)));
+		
+		if (linkedDate && askForConfirmation) {
 			MessageDialog msd =
 				new MessageDialog(Desk.getTopShell(), Messages.Termin_deleteSeries, null,
 					Messages.Termin_thisAppIsPartOfSerie, MessageDialog.QUESTION, new String[] {
 						Messages.Termin_yes, Messages.Termin_no
 					}, 1);
-			if (msd.open() == 0) {
-				linked = getLinked(this);
-				for (Termin ae : (List<Termin>) linked) {
-					ae.set(new String[] {
-						FLD_LASTEDIT, FLD_DELETED
-					}, new String[] {
-						createTimeStamp(), StringConstants.ONE
-					});
-				}
-			}
-			
+			confirmed = (msd.open() == Dialog.OK);
 		}
-		
+		if (confirmed && linkedDate) {
+			linked = getLinked(this);
+			for (Termin ae : (List<Termin>) linked) {
+				ae.set(new String[] {
+					FLD_LASTEDIT, FLD_DELETED
+				}, new String[] {
+					createTimeStamp(), StringConstants.ONE
+				});
+			}
+		}
 		String deleted = get(FLD_DELETED);
 		if (deleted.equals(StringConstants.ONE)) {
 			deleted = StringConstants.ZERO;
@@ -430,6 +461,42 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 			FLD_DELETED, FLD_LASTEDIT
 		}, deleted, createTimeStamp());
 		return true;
+	}
+	
+	@Override
+	public boolean delete(){
+		return delete(true);
+// List<Termin> linked = null;
+//		String linkgroup = get(FLD_LINKGROUP); //$NON-NLS-1$
+// if (getFlag(SW_LINKED) && (!StringTool.isNothing(linkgroup))) {
+// MessageDialog msd =
+// new MessageDialog(Desk.getTopShell(), Messages.Termin_deleteSeries, null,
+// Messages.Termin_thisAppIsPartOfSerie, MessageDialog.QUESTION, new String[] {
+// Messages.Termin_yes, Messages.Termin_no
+// }, 1);
+// if (msd.open() == Dialog.OK) {
+// linked = getLinked(this);
+// for (Termin ae : (List<Termin>) linked) {
+// ae.set(new String[] {
+// FLD_LASTEDIT, FLD_DELETED
+// }, new String[] {
+// createTimeStamp(), StringConstants.ONE
+// });
+// }
+// }
+//
+// }
+//
+// String deleted = get(FLD_DELETED);
+// if (deleted.equals(StringConstants.ONE)) {
+// deleted = StringConstants.ZERO;
+// } else {
+// deleted = StringConstants.ONE;
+// }
+// set(new String[] {
+// FLD_DELETED, FLD_LASTEDIT
+// }, deleted, createTimeStamp());
+// return true;
 	}
 	
 	public void setType(final String Type){
@@ -946,6 +1013,11 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 		
 		public void setDurationInMinutes(final int min){
 			length = min;
+		}
+		
+		@Override
+		public boolean isRecurringDate(){
+			return false;
 		}
 	}
 	

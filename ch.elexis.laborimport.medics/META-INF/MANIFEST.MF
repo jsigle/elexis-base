@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Elexis Laborimport Medics
 Bundle-SymbolicName: ch.elexis.laborimport.medics;singleton:=true
-Bundle-Version: 2.1.6
+Bundle-Version: 2.1.7.20130307
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,

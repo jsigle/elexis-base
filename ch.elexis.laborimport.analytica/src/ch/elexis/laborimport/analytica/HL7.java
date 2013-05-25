@@ -81,7 +81,9 @@ public class HL7 extends ch.elexis.importers.HL7 {
 				}
 			} else if (started && hl7Rows[i].startsWith("NTE")) { //$NON-NLS-1$
 				String[] nte = hl7Rows[i].split(getSeparator());
-				ret.append(nte[3]).append("\n"); //$NON-NLS-1$
+				if (nte.length > 2) {
+					ret.append(nte[3]).append("\n"); //$NON-NLS-1$
+				}
 			}
 			i++;
 		}

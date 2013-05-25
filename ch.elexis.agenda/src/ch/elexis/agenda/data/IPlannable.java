@@ -38,4 +38,6 @@ public interface IPlannable {
 	
 	public void setDurationInMinutes(int min);
 	
+	public boolean isRecurringDate();
+	
 }

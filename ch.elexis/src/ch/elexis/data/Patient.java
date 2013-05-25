@@ -16,8 +16,6 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.swt.widgets.Text;
-
 import ch.elexis.Hub;
 import ch.elexis.StringConstants;
 import ch.elexis.actions.ElexisEventDispatcher;
@@ -25,10 +23,10 @@ import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
+import ch.rgw.tools.JdbcLink.Stm;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
-import ch.rgw.tools.JdbcLink.Stm;
 import ch.rgw.tools.TimeTool.TimeFormatException;
 
 /**
@@ -67,6 +65,7 @@ public class Patient extends Person {
 	public static final String FLD_PERS_ANAMNESE = "PersAnamnese";
 	public static final String FLD_SYS_ANAMNESE = "SysAnamnese";
 	public static final String FLD_FAM_ANAMNESE = "FamilienAnamnese";
+	public static final String FLD_EXTINFO_STAMMARZT = "Stammarzt";
 	
 	public static final String[] DEFAULT_SORT = {
 		FLD_NAME, FLD_FIRSTNAME, FLD_DOB
@@ -644,5 +643,24 @@ public class Patient extends Person {
 	
 	public void setRisk(String risk){
 		set(FLD_RISKS, risk);
+	}
+	
+	public void setStammarzt(Kontakt stammarzt){
+		if (stammarzt == null)
+			return;
+		// we override the name to force PersistentObject#get(String) to revert
+		// to the method getStammarzt to fetch the entry
+		setInfoElement(FLD_EXTINFO_STAMMARZT + "_", stammarzt.getId());
+	}
+	
+	/**
+	 * @return Stammarzt for the patient if defined, else <code>null</code>
+	 */
+	public Kontakt getStammarzt(){
+		// we override the name to force PersistentObject#get(String) to revert
+		// to the method getStammarzt to fetch the entry
+		// unfortunately lots of PersistentObject: field is not mapped Stammarzt will be thrown ..
+		return (getInfoElement(FLD_EXTINFO_STAMMARZT + "_") != null) ? Kontakt
+			.load((String) getInfoElement(FLD_EXTINFO_STAMMARZT + "_")) : null;
 	}
 }

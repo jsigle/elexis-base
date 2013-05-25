@@ -43,6 +43,7 @@ public class Activator extends AbstractUIPlugin {
 	
 	public static Log log = Log.get("Agenda"); //$NON-NLS-1$
 	public static final String IMG_HOME = "ch.elexis.agenda.home"; //$NON-NLS-1$
+	public static final String IMG_RECURRING_DATE = "ch.elexis.agenda.series"; //$NON-NLS-1$
 	private String actResource;
 	private TimeTool actDate;
 	
@@ -63,6 +64,8 @@ public class Activator extends AbstractUIPlugin {
 		AgendaActions.makeActions();
 		// log.log("activated", Log.DEBUGMSG);
 		Desk.getImageRegistry().put(IMG_HOME, getImageDescriptor("icons/calendar_view_day.png")); //$NON-NLS-1$
+		Desk.getImageRegistry().put(IMG_RECURRING_DATE,
+			getImageDescriptor("icons/arrow-repeat.png")); //$NON-NLS-1$
 	}
 	
 	/**

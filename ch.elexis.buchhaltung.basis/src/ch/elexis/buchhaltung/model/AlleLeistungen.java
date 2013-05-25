@@ -62,6 +62,7 @@ public class AlleLeistungen extends AbstractTimeSeries {
 		if (hasUserId) { //$NON-NLS-1$
 			ret.add(Messages.AlleLeistungen_User);
 		}
+		ret.add(Messages.AlleLeistungen_Doctor);
 		ret.add(Messages.AlleLeistungen_TreatmentDate);
 		ret.add(Messages.AlleLeistungen_PatientName);
 		ret.add(Messages.AlleLeistungen_PatientFirstname);
@@ -132,6 +133,8 @@ public class AlleLeistungen extends AbstractTimeSeries {
 						else
 							row[index++] = ""; //$NON-NLS-1$
 					}
+					row[index++] =
+						(patient.getStammarzt() != null) ? patient.getStammarzt().getLabel() : ""; //$NON-NLS-1$
 					row[index++] = new DateTool(cons.getDatum());
 					row[index++] = patient.getName();
 					row[index++] = patient.getVorname();
@@ -144,7 +147,8 @@ public class AlleLeistungen extends AbstractTimeSeries {
 					
 					if (verrechenbar != null) {
 						try {
-							row[index++] = verrechenbar.getCode();
+							row[index++] =
+								verrechenbar.getCode() == null ? "?" : verrechenbar.getCode(); //$NON-NLS-1$
 							if (verrechenbar instanceof TarmedLeistung)
 								row[index++] =
 									Double.toString(((double) ((TarmedLeistung) verrechenbar)

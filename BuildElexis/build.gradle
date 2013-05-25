@@ -1,0 +1,7 @@
+def basedir="/Users/gerry"
+ant.importBuild("build.xml")
+
+task hello {
+	dependsOn(linux)
+	println("hello "+basedir);
+}

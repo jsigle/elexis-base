@@ -422,7 +422,12 @@ public class RnPrintView2 extends ViewPart {
 			sb.append(getValue(s, "code")).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
 			sb.append(getValue(s, "ref_code")).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
 			sb.append(getValue(s, "number")).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
-			sb.append(getValue(s, "side")).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
+			if (getValue(s, "body_location").startsWith("l")) //$NON-NLS-1$ //$NON-NLS-2$
+				sb.append("L\t");
+			else if (getValue(s, "body_location").startsWith("r")) //$NON-NLS-1$ //$NON-NLS-2$
+				sb.append("R\t");
+			else
+				sb.append(" \t");
 			sb.append(getValue(s, "quantity")).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
 			String val = s.getAttributeValue("unit.mt"); //$NON-NLS-1$
 			if (StringTool.isNothing(val)) {

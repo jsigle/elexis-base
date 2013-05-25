@@ -747,10 +747,11 @@ public class EnhancedTextField extends Composite implements IRichTextDisplay {
 		gr.setEnd(pt.y);
 		return gr;
 	}
-	
+
 	@Override
-	public void insertRange(SSDRange range){
+	public void insertRange(SSDRange range) {
 		// TODO Auto-generated method stub
 		
 	}
+	
 }

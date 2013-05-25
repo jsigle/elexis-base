@@ -1,0 +1,171 @@
+\contentsline {part}{\numberline {I}Introduction}{11}{part.1}
+\contentsline {chapter}{\numberline {1}Conditions pour l'utilisation}{13}{chapter.1}
+\contentsline {section}{\numberline {1.1}Clause de non-r\IeC {\'e}sponsabilit\IeC {\'e}}{13}{section.1.1}
+\contentsline {section}{\numberline {1.2}Licence}{13}{section.1.2}
+\contentsline {chapter}{\numberline {2}Description et instruction rapide}{15}{chapter.2}
+\contentsline {section}{\numberline {2.1}Installation standard}{17}{section.2.1}
+\contentsline {subsection}{\numberline {2.1.1}Windows 2000/XP/Vista}{17}{subsection.2.1.1}
+\contentsline {subsection}{\numberline {2.1.2}Linux}{17}{subsection.2.1.2}
+\contentsline {subsection}{\numberline {2.1.3}Apple Macintosh OS-X}{18}{subsection.2.1.3}
+\contentsline {subsection}{\numberline {2.1.4}base de donn\IeC {\'e}es version d\IeC {\'e}mo}{18}{subsection.2.1.4}
+\contentsline {part}{\numberline {II}Visite guid\IeC {\'e}e}{19}{part.2}
+\contentsline {chapter}{\numberline {3}Saisir une nouvelle patiente}{21}{chapter.3}
+\contentsline {section}{\numberline {3.1}Saisir donn\IeC {\'e}es des patients}{22}{section.3.1}
+\contentsline {section}{\numberline {3.2}Saisir donn\IeC {\'e}es du cas}{23}{section.3.2}
+\contentsline {section}{\numberline {3.3}G\IeC {\'e}rer le dossier m\IeC {\'e}dical}{24}{section.3.3}
+\contentsline {chapter}{\numberline {4}Am\IeC {\'e}nager l'interface utilisateur}{27}{chapter.4}
+\contentsline {section}{\numberline {4.1}Principe de fonctionnement}{28}{section.4.1}
+\contentsline {subsection}{\numberline {4.1.1}Bureau / Perspective}{28}{subsection.4.1.1}
+\contentsline {subsubsection}{Perspectives et views}{29}{section*.2}
+\contentsline {subsubsection}{Affichage / views}{29}{section*.3}
+\contentsline {subsubsection}{Am\IeC {\'e}nager views et perspectives}{30}{section*.4}
+\contentsline {subsection}{\numberline {4.1.2}Am\IeC {\'e}nager et sauvegarder des perspectives}{31}{subsection.4.1.2}
+\contentsline {part}{\numberline {III}R\IeC {\'e}f\IeC {\'e}rence syst\IeC {\'e}matique}{35}{part.3}
+\contentsline {chapter}{\numberline {5}Concepts}{37}{chapter.5}
+\contentsline {section}{\numberline {5.1}Contacts}{38}{section.5.1}
+\contentsline {section}{\numberline {5.2}Utilisateurs et Mandants}{38}{section.5.2}
+\contentsline {section}{\numberline {5.3}Consultations, cas, garants et r\IeC {\'e}pondant des co\IeC {\^u}ts}{39}{section.5.3}
+\contentsline {section}{\numberline {5.4}Sticker}{39}{section.5.4}
+\contentsline {section}{\numberline {5.5}D\IeC {\'e}compte des prestations}{43}{section.5.5}
+\contentsline {subsection}{\numberline {5.5.1}Blocs de prestations et prestations propres}{44}{subsection.5.5.1}
+\contentsline {section}{\numberline {5.6}Articles et stocks}{45}{section.5.6}
+\contentsline {section}{\numberline {5.7}Importation des donn\IeC {\'e}es externes}{45}{section.5.7}
+\contentsline {section}{\numberline {5.8}Plusieurs instances simultan\IeC {\'e}ment}{48}{section.5.8}
+\contentsline {section}{\numberline {5.9}Plugins}{48}{section.5.9}
+\contentsline {chapter}{\numberline {6}Menu et barre d'outils}{49}{chapter.6}
+\contentsline {section}{\numberline {6.1}Menu}{50}{section.6.1}
+\contentsline {section}{\numberline {6.2}Barre d'outils}{51}{section.6.2}
+\contentsline {chapter}{\numberline {7}'Views' du syst\IeC {\`e}me central}{53}{chapter.7}
+\contentsline {section}{\numberline {7.1}Introduction}{54}{section.7.1}
+\contentsline {subsection}{\numberline {7.1.1}Ouverture et fermeture d'une 'View'}{54}{subsection.7.1.1}
+\contentsline {subsection}{\numberline {7.1.2}Ouverture et sauvegarde d'une perspective}{54}{subsection.7.1.2}
+\contentsline {section}{\numberline {7.2}'Views' des donn\IeC {\'e}es de base}{57}{section.7.2}
+\contentsline {subsection}{\numberline {7.2.1}patients}{57}{subsection.7.2.1}
+\contentsline {subsubsection}{Marquage / Stickers}{58}{section*.5}
+\contentsline {subsubsection}{Barre d'outils}{58}{section*.6}
+\contentsline {subsubsection}{Menu contextuel}{59}{section*.7}
+\contentsline {subsection}{\numberline {7.2.2}Patients - d\IeC {\'e}tail}{59}{subsection.7.2.2}
+\contentsline {subsection}{\numberline {7.2.3}Contacts}{61}{subsection.7.2.3}
+\contentsline {subsection}{\numberline {7.2.4}Contacts - d\IeC {\'e}tail}{61}{subsection.7.2.4}
+\contentsline {subsection}{\numberline {7.2.5}Artikel}{64}{subsection.7.2.5}
+\contentsline {subsection}{\numberline {7.2.6}Listing des articles}{64}{subsection.7.2.6}
+\contentsline {subsection}{\numberline {7.2.7}Stocks et commandes}{65}{subsection.7.2.7}
+\contentsline {section}{\numberline {7.3}'Views' en rapport avec les consultations}{68}{section.7.3}
+\contentsline {subsection}{\numberline {7.3.1}Cas}{68}{subsection.7.3.1}
+\contentsline {subsection}{\numberline {7.3.2}Cas et consultations}{69}{subsection.7.3.2}
+\contentsline {subsection}{\numberline {7.3.3}Historique des Consultations}{70}{subsection.7.3.3}
+\contentsline {subsection}{\numberline {7.3.4}Consultation}{71}{subsection.7.3.4}
+\contentsline {subsection}{\numberline {7.3.5}Certificat d'incapacit\IeC {\'e} de travail}{71}{subsection.7.3.5}
+\contentsline {subsection}{\numberline {7.3.6}Ordonnances}{72}{subsection.7.3.6}
+\contentsline {subsection}{\numberline {7.3.7}D\IeC {\'e}tails du cas}{73}{subsection.7.3.7}
+\contentsline {subsection}{\numberline {7.3.8}Diagnostics}{75}{subsection.7.3.8}
+\contentsline {section}{\numberline {7.4}'View' - R\IeC {\'e}sultats de laboratoire}{76}{section.7.4}
+\contentsline {subsection}{\numberline {7.4.1}Introduction manuelle}{76}{subsection.7.4.1}
+\contentsline {subsection}{\numberline {7.4.2}Introduction automatis\IeC {\'e}e}{77}{subsection.7.4.2}
+\contentsline {subsection}{\numberline {7.4.3}Impression d'une feuille de labo}{77}{subsection.7.4.3}
+\contentsline {section}{\numberline {7.5}Laboratoire Nouveau}{77}{section.7.5}
+\contentsline {section}{\numberline {7.6}'Views' en relation avec la facturation}{79}{section.7.6}
+\contentsline {subsection}{\numberline {7.6.1}Consultations selon date}{79}{subsection.7.6.1}
+\contentsline {subsection}{\numberline {7.6.2}Consultations \IeC {\`a} facturer}{80}{subsection.7.6.2}
+\contentsline {subsubsection}{Facturation automatique}{80}{section*.8}
+\contentsline {subsection}{\numberline {7.6.3}Factures}{84}{subsection.7.6.3}
+\contentsline {subsubsection}{'View-menu' de la liste des factures}{86}{section*.9}
+\contentsline {subsubsection}{Changer une facture}{87}{section*.10}
+\contentsline {subsubsection}{Facturation}{87}{section*.11}
+\contentsline {subsection}{\numberline {7.6.4}Compte du patient}{88}{subsection.7.6.4}
+\contentsline {subsection}{\numberline {7.6.5}Liste des comptes des patients}{88}{subsection.7.6.5}
+\contentsline {subsection}{\numberline {7.6.6}Prestations}{88}{subsection.7.6.6}
+\contentsline {section}{\numberline {7.7}'Views' divers}{89}{section.7.7}
+\contentsline {subsection}{\numberline {7.7.1}Affichage des donn\IeC {\'e}es}{89}{subsection.7.7.1}
+\contentsline {subsection}{\numberline {7.7.2}M\IeC {\'e}dication fixe}{90}{subsection.7.7.2}
+\contentsline {subsection}{\numberline {7.7.3}Historique de la m\IeC {\'e}dication}{90}{subsection.7.7.3}
+\contentsline {subsection}{\numberline {7.7.4}Compendium online}{91}{subsection.7.7.4}
+\contentsline {subsection}{\numberline {7.7.5}Open Drug Database}{91}{subsection.7.7.5}
+\contentsline {subsection}{\numberline {7.7.6}Affaires pendantes}{91}{subsection.7.7.6}
+\contentsline {chapter}{\numberline {8}Plugins}{93}{chapter.8}
+\contentsline {section}{\numberline {8.1}Pourquoi des Plugins ?}{94}{section.8.1}
+\contentsline {subsection}{\numberline {8.1.1}Installer un Plugin}{94}{subsection.8.1.1}
+\contentsline {subsection}{\numberline {8.1.2}D\IeC {\'e}sinstaller un Plugin}{94}{subsection.8.1.2}
+\contentsline {subsection}{\numberline {8.1.3}Liste des Plugins}{94}{subsection.8.1.3}
+\contentsline {section}{\numberline {8.2}Agenda de Elexis}{96}{section.8.2}
+\contentsline {subsection}{\numberline {8.2.1}Configuration}{96}{subsection.8.2.1}
+\contentsline {subsection}{\numberline {8.2.2}Utilisation de l'agenda}{100}{subsection.8.2.2}
+\contentsline {subsubsection}{Plusieurs agendas en m\IeC {\^e}me temps}{103}{section*.12}
+\contentsline {subsubsection}{Fen\IeC {\^e}tre agrandie}{104}{section*.13}
+\contentsline {subsubsection}{Imprimer des cartes de rendez-vous}{105}{section*.14}
+\contentsline {section}{\numberline {8.3}R\IeC {\'e}sultats dans Elexis}{106}{section.8.3}
+\contentsline {subsection}{\numberline {8.3.1}Configuration}{106}{subsection.8.3.1}
+\contentsline {subsection}{\numberline {8.3.2}Application}{108}{subsection.8.3.2}
+\contentsline {subsection}{\numberline {8.3.3}Variables dans un texte}{109}{subsection.8.3.3}
+\contentsline {section}{\numberline {8.4}Elexis et les Tarifs pour les m\IeC {\'e}decins en Suisse}{110}{section.8.4}
+\contentsline {subsection}{\numberline {8.4.1}R\IeC {\'e}glages}{110}{subsection.8.4.1}
+\contentsline {subsubsection}{R\IeC {\'e}glages de l'imprimante}{113}{section*.15}
+\contentsline {subsection}{\numberline {8.4.2}Les Factures}{113}{subsection.8.4.2}
+\contentsline {subsection}{\numberline {8.4.3}'Views' de ce Plugin}{114}{subsection.8.4.3}
+\contentsline {subsubsection}{ESR}{114}{section*.16}
+\contentsline {chapter}{\numberline {9}Traitement de texte}{117}{chapter.9}
+\contentsline {section}{\numberline {9.1}Introduction}{118}{section.9.1}
+\contentsline {section}{\numberline {9.2}Mod\IeC {\`e}les}{121}{section.9.2}
+\contentsline {subsection}{\numberline {9.2.1}Mod\IeC {\`e}les pour tout le syst\IeC {\`e}me}{121}{subsection.9.2.1}
+\contentsline {subsection}{\numberline {9.2.2}Mod\IeC {\`e}les de l'utilisateur individuels}{122}{subsection.9.2.2}
+\contentsline {section}{\numberline {9.3}Variables pour type de donn\IeC {\'e}es}{123}{section.9.3}
+\contentsline {section}{\numberline {9.4}Libell\IeC {\'e} selon sexe}{125}{section.9.4}
+\contentsline {section}{\numberline {9.5}Donn\IeC {\'e}es de provenance des Plugins externes}{125}{section.9.5}
+\contentsline {chapter}{\numberline {10}Fonctionnement multi-client}{127}{chapter.10}
+\contentsline {section}{\numberline {10.1}Introduction}{128}{section.10.1}
+\contentsline {section}{\numberline {10.2}R\IeC {\^o}les (anciennement groupes) et droits}{128}{section.10.2}
+\contentsline {section}{\numberline {10.3}D\IeC {\'e}finition du profil des utilisateurs}{130}{section.10.3}
+\contentsline {subsection}{\numberline {10.3.1}R\IeC {\'e}glages individuelles du programme}{130}{subsection.10.3.1}
+\contentsline {subsection}{\numberline {10.3.2}Mise en page individuelle des perspectives}{130}{subsection.10.3.2}
+\contentsline {part}{\numberline {IV}Annexes}{133}{part.4}
+\contentsline {chapter}{\numberline {A}Configuration du syst\IeC {\`e}me requise}{135}{appendix.A}
+\contentsline {section}{\numberline {A.1}Pr\IeC {\'e}requis minimale au hardware}{136}{section.A.1}
+\contentsline {section}{\numberline {A.2}Syst\IeC {\`e}mes d'exploitation support\IeC {\'e}s}{136}{section.A.2}
+\contentsline {chapter}{\numberline {B}Transformer la version d'\IeC {\'e}valuation en version compl\IeC {\`e}te}{137}{appendix.B}
+\contentsline {section}{\numberline {B.1}Ce dont vous avez besoin}{138}{section.B.1}
+\contentsline {section}{\numberline {B.2}Installation du moteur de base de donn\IeC {\'e}es}{139}{section.B.2}
+\contentsline {section}{\numberline {B.3}Effacer la base de donn\IeC {\'e}e de la version d'\IeC {\'e}valuation}{141}{section.B.3}
+\contentsline {section}{\numberline {B.4}Cr\IeC {\'e}er un lien avec la base de donn\IeC {\'e}es}{141}{section.B.4}
+\contentsline {section}{\numberline {B.5}Lier avec Open-Office}{144}{section.B.5}
+\contentsline {section}{\numberline {B.6}Entrer les donn\IeC {\'e}es de base}{144}{section.B.6}
+\contentsline {subsection}{\numberline {B.6.1}Tarmed}{144}{subsection.B.6.1}
+\contentsline {subsection}{\numberline {B.6.2}CIM-10 (ICD-10)}{144}{subsection.B.6.2}
+\contentsline {subsection}{\numberline {B.6.3}M\IeC {\'e}dicaments et Medicals}{144}{subsection.B.6.3}
+\contentsline {subsection}{\numberline {B.6.4}Liste des analyses}{145}{subsection.B.6.4}
+\contentsline {subsection}{\numberline {B.6.5}LiMA}{145}{subsection.B.6.5}
+\contentsline {section}{\numberline {B.7}Configuration de base}{145}{section.B.7}
+\contentsline {subsection}{\numberline {B.7.1}Installer les mandants et les utilisateurs}{146}{subsection.B.7.1}
+\contentsline {subsection}{\numberline {B.7.2}Introduire les param\IeC {\`e}tres du laboratoire}{147}{subsection.B.7.2}
+\contentsline {subsection}{\numberline {B.7.3}Configurer le programme de texte}{148}{subsection.B.7.3}
+\contentsline {subsubsection}{Cr\IeC {\'e}er un mod\IeC {\`e}le}{149}{section*.17}
+\contentsline {subsection}{\numberline {B.7.4}Installer le module de facturation}{150}{subsection.B.7.4}
+\contentsline {chapter}{\numberline {C}R\IeC {\'e}glages}{151}{appendix.C}
+\contentsline {section}{\numberline {C.1}Syst\IeC {\`e}mes de facturation}{152}{section.C.1}
+\contentsline {section}{\numberline {C.2}G\IeC {\'e}n\IeC {\'e}ral}{153}{section.C.2}
+\contentsline {subsection}{\numberline {C.2.1}R\IeC {\'e}glages pour le log}{153}{subsection.C.2.1}
+\contentsline {section}{\numberline {C.3}Utilisateur}{154}{section.C.3}
+\contentsline {subsection}{\numberline {C.3.1}Utilisateur - Aper\IeC {\c c}u}{155}{subsection.C.3.1}
+\contentsline {subsection}{\numberline {C.3.2}Utilisateur - Police de caract\IeC {\`e}res}{155}{subsection.C.3.2}
+\contentsline {section}{\numberline {C.4}Echange des donn\IeC {\'e}es}{155}{section.C.4}
+\contentsline {section}{\numberline {C.5}Base de donn\IeC {\'e}es}{155}{section.C.5}
+\contentsline {section}{\numberline {C.6}R\IeC {\'e}glage de l'imprimante}{156}{section.C.6}
+\contentsline {section}{\numberline {C.7}E-Mail}{156}{section.C.7}
+\contentsline {section}{\numberline {C.8}R\IeC {\^o}les (Groupes) et droits}{156}{section.C.8}
+\contentsline {section}{\numberline {C.9}Valeurs de laboratoire}{156}{section.C.9}
+\contentsline {subsection}{\numberline {C.9.1}Valeurs de laboratoire calcul\IeC {\'e}es (Type Formule)}{158}{subsection.C.9.1}
+\contentsline {section}{\numberline {C.10}Codes de prestations}{160}{section.C.10}
+\contentsline {section}{\numberline {C.11}Traitement de texte}{160}{section.C.11}
+\contentsline {chapter}{\numberline {D}Sujets \IeC {\'e}largis}{161}{appendix.D}
+\contentsline {section}{\numberline {D.1}Scripting}{162}{section.D.1}
+\contentsline {chapter}{\numberline {E}R\IeC {\'e}flexions concernant la s\IeC {\'e}curit\IeC {\'e} des donn\IeC {\'e}es}{163}{appendix.E}
+\contentsline {section}{\numberline {E.1}Comment \IeC {\'e}viter la perte des donn\IeC {\'e}es ?}{164}{section.E.1}
+\contentsline {section}{\numberline {E.2}Comment \IeC {\'e}viter la falsification des donn\IeC {\'e}es ?}{165}{section.E.2}
+\contentsline {section}{\numberline {E.3}Comment \IeC {\'e}viter l'acc\IeC {\`e}s non autoris\IeC {\'e} \IeC {\`a} la base de donn\IeC {\'e}es ?}{165}{section.E.3}
+\contentsline {subsection}{\numberline {E.3.1}Attaque contre des ports ouverts}{166}{subsection.E.3.1}
+\contentsline {subsection}{\numberline {E.3.2}Attaque par exploitation des failles de s\IeC {\'e}curit\IeC {\'e}}{167}{subsection.E.3.2}
+\contentsline {subsection}{\numberline {E.3.3}Attaque par interception du trafic du r\IeC {\'e}seau}{168}{subsection.E.3.3}
+\contentsline {subsection}{\numberline {E.3.4}Attaques en profitant de la na\IeC {\"\i }vet\IeC {\'e} de l'utilisateur}{169}{subsection.E.3.4}
+\contentsline {section}{\numberline {E.4}Et qu'est-ce que tout \IeC {\c c}a a avoir avec Elexis?}{169}{section.E.4}
+\contentsline {section}{\numberline {E.5}Last but not least: Attaque par acc\IeC {\`e}s direct sur le disque dur}{170}{section.E.5}
+\contentsline {subsection}{\numberline {E.5.1}Mat\IeC {\'e}riel pour le Backup}{171}{subsection.E.5.1}
+\contentsline {chapter}{\numberline {F}Index}{173}{appendix.F}

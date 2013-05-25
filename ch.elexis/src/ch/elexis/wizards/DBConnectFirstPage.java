@@ -15,10 +15,6 @@ package ch.elexis.wizards;
 
 import java.util.Hashtable;
 
-import org.eclipse.core.runtime.preferences.ConfigurationScope;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -37,8 +33,6 @@ import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.preferences.PreferenceConstants;
-import ch.elexis.preferences.SettingsPreferenceStore;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
 
@@ -75,15 +69,14 @@ public class DBConnectFirstPage extends WizardPage {
 		FormText alt = tk.createFormText(body, false);
 		StringBuilder old = new StringBuilder();
 		old.append("<form>Aktuelle Verbindung:<br/>"); //$NON-NLS-1$
-		ConfigurationScope pref = new ConfigurationScope();
-		IEclipsePreferences node = pref.getNode("connection");
-		String cnt = node.get(Hub.getCfgVariant(), null);
 		String driver = "";
-		String connectString = "";
 		String user = "";
 		String typ = "";
+		String connectString = "";
+		Hashtable<Object, Object> hConn = null;
+		String cnt = Hub.localCfg.get(PersistentObject.CFG_FOLDED_CONNECTION, null);
 		if (cnt != null) {
-			Hashtable<Object, Object> hConn = PersistentObject.fold(StringTool.dePrintable(cnt));
+			hConn = PersistentObject.fold(StringTool.dePrintable(cnt));
 			if (hConn != null) {
 				driver = PersistentObject.checkNull(hConn.get(PersistentObject.CFG_DRIVER));
 				connectString =

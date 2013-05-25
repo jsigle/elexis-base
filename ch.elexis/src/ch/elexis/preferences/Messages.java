@@ -476,6 +476,8 @@ public class Messages extends NLS {
 	
 	public static String ReminderPrefences_SetColors;
 	
+	public static String ReminderPrefences_ShowPatientSelectionRedminders;
+	
 	public static String ScannerPref_Barcodelength;
 	
 	public static String ScannerPref_clear;
@@ -641,15 +643,15 @@ public class Messages extends NLS {
 	public static String Zugriff_AccessRights;
 	
 	public static String UserCasePreferences_InfoLabelForSortingBillingSystems;
-
+	
 	public static String UserCasePreferences_MoveItemDownInList;
-
+	
 	public static String UserCasePreferences_MoveItemToAlphabeticallySortedList;
-
+	
 	public static String UserCasePreferences_MoveItemToManualSortedList;
-
+	
 	public static String UserCasePreferences_MoveItemUpInList;
-
+	
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

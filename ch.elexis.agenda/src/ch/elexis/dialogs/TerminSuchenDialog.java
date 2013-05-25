@@ -16,10 +16,10 @@ import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import ch.elexis.agenda.Messages;
-import ch.elexis.agenda.data.IPlannable;
 
 import ch.elexis.Desk;
+import ch.elexis.agenda.Messages;
+import ch.elexis.agenda.data.IPlannable;
 
 public class TerminSuchenDialog extends TitleAreaDialog {
 	IPlannable actPlannable;
@@ -31,7 +31,6 @@ public class TerminSuchenDialog extends TitleAreaDialog {
 	
 	@Override
 	protected Control createDialogArea(Composite parent){
-		// TODO Auto-generated method stub
 		return super.createDialogArea(parent);
 	}
 	

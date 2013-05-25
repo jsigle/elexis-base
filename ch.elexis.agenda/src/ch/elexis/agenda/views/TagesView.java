@@ -40,6 +40,7 @@ import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
+import ch.elexis.agenda.series.SerienTermin;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.dialogs.DateSelectorDialog;
 import ch.elexis.util.SWTHelper;
@@ -185,6 +186,8 @@ public class TagesView extends BaseAgendaView {
 		public Image getColumnImage(Object element, int columnIndex){
 			if (element instanceof IPlannable) {
 				IPlannable p = (IPlannable) element;
+				if (p.isRecurringDate())
+					return Desk.getImage(Activator.IMG_RECURRING_DATE);
 				return Plannables.getTypImage(p);
 			}
 			return null;
@@ -193,6 +196,9 @@ public class TagesView extends BaseAgendaView {
 		public String getColumnText(Object element, int columnIndex){
 			if (element instanceof IPlannable) {
 				IPlannable p = (IPlannable) element;
+				if (p.isRecurringDate())
+					p = new SerienTermin(p).getRootTermin();
+				
 				StringBuilder sb = new StringBuilder();
 				sb.append(Plannables.getStartTimeAsString(p)).append("-") //$NON-NLS-1$
 					.append(Plannables.getEndTimeAsString(p)).append(" ").append(p.getTitle()); //$NON-NLS-1$
@@ -227,7 +233,11 @@ public class TagesView extends BaseAgendaView {
 	}
 	
 	@Override
-	public void setTermin(Termin t){
+	public void setTermin(Termin tf){
+		Termin t = tf;
+		if (tf.isRecurringDate())
+			t = new SerienTermin(tf).getRootTermin();
+		
 		StringBuilder sb = new StringBuilder(200);
 		TimeSpan ts = t.getTimeSpan();
 		sb.append(ts.from.toString(TimeTool.TIME_SMALL))

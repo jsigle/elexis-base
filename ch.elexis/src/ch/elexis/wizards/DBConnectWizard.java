@@ -12,32 +12,14 @@
 
 package ch.elexis.wizards;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.util.Hashtable;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.preferences.ConfigurationScope;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.IPreferencesService;
-import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import ch.elexis.Hub;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.preferences.PreferenceConstants;
-import ch.elexis.preferences.SettingsPreferenceStore;
 import ch.elexis.status.ElexisStatus;
-import ch.elexis.util.SWTHelper;
-import ch.rgw.io.CfgSettings;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.JdbcLinkException;
@@ -91,7 +73,6 @@ public class DBConnectWizard extends Wizard {
 			StatusManager.getManager().handle(status, StatusManager.BLOCK);
 			return false;
 		}
-		// IPreferencesService service=Platform.getPreferencesService();
 		Hashtable<String, String> h = new Hashtable<String, String>();
 		h.put(PersistentObject.CFG_DRIVER, j.getDriverName());
 		h.put(PersistentObject.CFG_CONNECTSTRING, j.getConnectString());
@@ -100,23 +81,12 @@ public class DBConnectWizard extends Wizard {
 		h.put(PersistentObject.CFG_TYPE, first.dbTypes.getItem(ti));
 		try {
 			String conn = StringTool.enPrintable(PersistentObject.flatten(h));
-			ConfigurationScope pref = new ConfigurationScope();
-			IEclipsePreferences node = pref.getNode("connection");
-			node.put(Hub.getCfgVariant(), conn);
-			node.flush();
+			Hub.localCfg.set(PersistentObject.CFG_FOLDED_CONNECTION, conn);
+			Hub.localCfg.flush();
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 		}
 		
-		/*
-		 * IPreferenceStore localstore = new SettingsPreferenceStore(Hub.localCfg);
-		 * localstore.setValue(PreferenceConstants.DB_CLASS,j.getDriverName());
-		 * localstore.setValue(PreferenceConstants.DB_CONNECT,j.getConnectString());
-		 * localstore.setValue(PreferenceConstants.DB_USERNAME,user);
-		 * localstore.setValue(PreferenceConstants.DB_PWD,pwd);
-		 * localstore.setValue(PreferenceConstants.DB_TYP,first.dbTypes.getItem(ti));
-		 * Hub.localCfg.flush();
-		 */
 		return PersistentObject.connect(j);
 	}
 }

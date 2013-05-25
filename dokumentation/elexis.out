@@ -1,0 +1,133 @@
+\BOOKMARK [-1][-]{part.1}{Einf\374hrung}{}% 1
+\BOOKMARK [0][-]{chapter.1}{Nutzungsbedingungen}{part.1}% 2
+\BOOKMARK [1][-]{section.1.1}{Haftungsausschluss}{chapter.1}% 3
+\BOOKMARK [1][-]{section.1.2}{Lizenz}{chapter.1}% 4
+\BOOKMARK [0][-]{chapter.2}{Kurzbeschreibung und Schnelleinstieg}{part.1}% 5
+\BOOKMARK [-1][-]{part.2}{Gef\374hrte Tour}{}% 6
+\BOOKMARK [0][-]{chapter.3}{Eine neue Patientin erfassen}{part.2}% 7
+\BOOKMARK [1][-]{section.3.1}{Patientendaten erfassen}{chapter.3}% 8
+\BOOKMARK [1][-]{section.3.2}{Falldaten erfassen}{chapter.3}% 9
+\BOOKMARK [1][-]{section.3.3}{Krankengeschichte f\374hren}{chapter.3}% 10
+\BOOKMARK [0][-]{chapter.4}{Benutzeroberfl\344che einrichten}{part.2}% 11
+\BOOKMARK [1][-]{section.4.1}{Funktionsprinzip}{chapter.4}% 12
+\BOOKMARK [2][-]{subsection.4.1.1}{Schreibtisch / Perspektive}{section.4.1}% 13
+\BOOKMARK [2][-]{subsection.4.1.2}{Perspektiven einrichten und speichern}{section.4.1}% 14
+\BOOKMARK [-1][-]{part.3}{Systematische Referenz}{}% 15
+\BOOKMARK [0][-]{chapter.5}{Konzepte}{part.3}% 16
+\BOOKMARK [1][-]{section.5.1}{Kontakte}{chapter.5}% 17
+\BOOKMARK [1][-]{section.5.2}{Anwender und Mandanten}{chapter.5}% 18
+\BOOKMARK [1][-]{section.5.3}{Konsultationen, F\344lle, Garanten und Kostentr\344ger}{chapter.5}% 19
+\BOOKMARK [1][-]{section.5.4}{Sticker}{chapter.5}% 20
+\BOOKMARK [1][-]{section.5.5}{Leistungsabrechnung}{chapter.5}% 21
+\BOOKMARK [2][-]{subsection.5.5.1}{Leistungsbl\366cke und Eigenleistungen}{section.5.5}% 22
+\BOOKMARK [1][-]{section.5.6}{Artikel und Lager}{chapter.5}% 23
+\BOOKMARK [1][-]{section.5.7}{Import von externen Daten}{chapter.5}% 24
+\BOOKMARK [1][-]{section.5.8}{Mehrere Instanzen gleichzeitig}{chapter.5}% 25
+\BOOKMARK [1][-]{section.5.9}{Plugins}{chapter.5}% 26
+\BOOKMARK [0][-]{chapter.6}{Men\374 und Toolbar}{part.3}% 27
+\BOOKMARK [1][-]{section.6.1}{Men\374}{chapter.6}% 28
+\BOOKMARK [1][-]{section.6.2}{Toolbar}{chapter.6}% 29
+\BOOKMARK [0][-]{chapter.7}{Views des Kernsystems}{part.3}% 30
+\BOOKMARK [1][-]{section.7.1}{Einleitung}{chapter.7}% 31
+\BOOKMARK [2][-]{subsection.7.1.1}{\326ffnen und Schliessen einer View}{section.7.1}% 32
+\BOOKMARK [2][-]{subsection.7.1.2}{\326ffnen und Speichern einer Perspektive}{section.7.1}% 33
+\BOOKMARK [1][-]{section.7.2}{Stammdaten-Views}{chapter.7}% 34
+\BOOKMARK [2][-]{subsection.7.2.1}{Patienten}{section.7.2}% 35
+\BOOKMARK [2][-]{subsection.7.2.2}{Patient-Detail}{section.7.2}% 36
+\BOOKMARK [2][-]{subsection.7.2.3}{Kontakte}{section.7.2}% 37
+\BOOKMARK [2][-]{subsection.7.2.4}{Kontakt-Detail}{section.7.2}% 38
+\BOOKMARK [2][-]{subsection.7.2.5}{Artikel}{section.7.2}% 39
+\BOOKMARK [2][-]{subsection.7.2.6}{Artikelliste}{section.7.2}% 40
+\BOOKMARK [2][-]{subsection.7.2.7}{Lager und Bestellung}{section.7.2}% 41
+\BOOKMARK [1][-]{section.7.3}{Konsultationsbezogene Views}{chapter.7}% 42
+\BOOKMARK [2][-]{subsection.7.3.1}{F\344lle}{section.7.3}% 43
+\BOOKMARK [2][-]{subsection.7.3.2}{F\344lle und Kons}{section.7.3}% 44
+\BOOKMARK [2][-]{subsection.7.3.3}{Konsultationen}{section.7.3}% 45
+\BOOKMARK [2][-]{subsection.7.3.4}{Konsultation}{section.7.3}% 46
+\BOOKMARK [2][-]{subsection.7.3.5}{AUF}{section.7.3}% 47
+\BOOKMARK [2][-]{subsection.7.3.6}{Rezepte}{section.7.3}% 48
+\BOOKMARK [2][-]{subsection.7.3.7}{Falldetail}{section.7.3}% 49
+\BOOKMARK [2][-]{subsection.7.3.8}{Diagnosen}{section.7.3}% 50
+\BOOKMARK [1][-]{section.7.4}{Laboranzeige-View}{chapter.7}% 51
+\BOOKMARK [2][-]{subsection.7.4.1}{Manuelle Eingabe}{section.7.4}% 52
+\BOOKMARK [2][-]{subsection.7.4.2}{Automatisches Einlesen}{section.7.4}% 53
+\BOOKMARK [2][-]{subsection.7.4.3}{Laborblatt drucken}{section.7.4}% 54
+\BOOKMARK [1][-]{section.7.5}{Labor Neu}{chapter.7}% 55
+\BOOKMARK [1][-]{section.7.6}{Abrechnungsbezogene Views}{chapter.7}% 56
+\BOOKMARK [2][-]{subsection.7.6.1}{Konsultationen nach Datum}{section.7.6}% 57
+\BOOKMARK [2][-]{subsection.7.6.2}{Konsultationen zum Verrechnen}{section.7.6}% 58
+\BOOKMARK [2][-]{subsection.7.6.3}{Rechnungen}{section.7.6}% 59
+\BOOKMARK [2][-]{subsection.7.6.4}{Konto}{section.7.6}% 60
+\BOOKMARK [2][-]{subsection.7.6.5}{Konto-Liste}{section.7.6}% 61
+\BOOKMARK [2][-]{subsection.7.6.6}{Leistungen}{section.7.6}% 62
+\BOOKMARK [1][-]{section.7.7}{Diverse Views}{chapter.7}% 63
+\BOOKMARK [2][-]{subsection.7.7.1}{Datenanzeige}{section.7.7}% 64
+\BOOKMARK [2][-]{subsection.7.7.2}{Fixmedikation}{section.7.7}% 65
+\BOOKMARK [2][-]{subsection.7.7.3}{Medikamenten-Verlauf}{section.7.7}% 66
+\BOOKMARK [2][-]{subsection.7.7.4}{Kompendium online}{section.7.7}% 67
+\BOOKMARK [2][-]{subsection.7.7.5}{Open Drug Database}{section.7.7}% 68
+\BOOKMARK [2][-]{subsection.7.7.6}{Pendenzen}{section.7.7}% 69
+\BOOKMARK [0][-]{chapter.8}{Plugins}{part.3}% 70
+\BOOKMARK [1][-]{section.8.1}{Warum Plugins?}{chapter.8}% 71
+\BOOKMARK [2][-]{subsection.8.1.1}{Ein Plugin installieren}{section.8.1}% 72
+\BOOKMARK [2][-]{subsection.8.1.2}{Ein Plugin deinstallieren}{section.8.1}% 73
+\BOOKMARK [2][-]{subsection.8.1.3}{Liste der Plugins}{section.8.1}% 74
+\BOOKMARK [1][-]{section.8.2}{Elexis-Agenda}{chapter.8}% 75
+\BOOKMARK [2][-]{subsection.8.2.1}{Konfiguration}{section.8.2}% 76
+\BOOKMARK [2][-]{subsection.8.2.2}{Bedienung der Agenda}{section.8.2}% 77
+\BOOKMARK [1][-]{section.8.3}{Elexis-Befunde}{chapter.8}% 78
+\BOOKMARK [2][-]{subsection.8.3.1}{Konfiguration}{section.8.3}% 79
+\BOOKMARK [2][-]{subsection.8.3.2}{Anwendung}{section.8.3}% 80
+\BOOKMARK [2][-]{subsection.8.3.3}{Text-Platzhalter}{section.8.3}% 81
+\BOOKMARK [1][-]{section.8.4}{Elexis-Arzttarife-Schweiz}{chapter.8}% 82
+\BOOKMARK [2][-]{subsection.8.4.1}{Einstellungen}{section.8.4}% 83
+\BOOKMARK [2][-]{subsection.8.4.2}{Die Rechnung}{section.8.4}% 84
+\BOOKMARK [2][-]{subsection.8.4.3}{Views dieses Plugins}{section.8.4}% 85
+\BOOKMARK [0][-]{chapter.9}{Das Textsystem}{part.3}% 86
+\BOOKMARK [1][-]{section.9.1}{Einleitung}{chapter.9}% 87
+\BOOKMARK [1][-]{section.9.2}{Vorlagen}{chapter.9}% 88
+\BOOKMARK [2][-]{subsection.9.2.1}{Systemvorlagen}{section.9.2}% 89
+\BOOKMARK [2][-]{subsection.9.2.2}{Benutzervorlagen}{section.9.2}% 90
+\BOOKMARK [1][-]{section.9.3}{Platzhalter f\374r Datentypen}{chapter.9}% 91
+\BOOKMARK [1][-]{section.9.4}{Geschlechtsspezifische Formulierungen}{chapter.9}% 92
+\BOOKMARK [1][-]{section.9.5}{Daten aus externen Plugins}{chapter.9}% 93
+\BOOKMARK [0][-]{chapter.10}{Mehrmandantenbetrieb}{part.3}% 94
+\BOOKMARK [1][-]{section.10.1}{Einf\374hrung}{chapter.10}% 95
+\BOOKMARK [1][-]{section.10.2}{Gruppen/Rollen und Rechte}{chapter.10}% 96
+\BOOKMARK [1][-]{section.10.3}{Definierbare Anwendereinstellungen}{chapter.10}% 97
+\BOOKMARK [2][-]{subsection.10.3.1}{Individuelle Programmeinstellungen}{section.10.3}% 98
+\BOOKMARK [2][-]{subsection.10.3.2}{Definierbare Perspektivenlayouts}{section.10.3}% 99
+\BOOKMARK [-1][-]{part.4}{Anh\344nge}{}% 100
+\BOOKMARK [0][-]{appendix.A}{Systemvoraussetzungen}{part.4}% 101
+\BOOKMARK [1][-]{section.A.1}{Mindestanforderungen an die Hardware}{appendix.A}% 102
+\BOOKMARK [1][-]{section.A.2}{Unterst\374tzte Betriebssysteme}{appendix.A}% 103
+\BOOKMARK [0][-]{appendix.B}{Einstellungen}{part.4}% 104
+\BOOKMARK [1][-]{section.B.1}{Abrechnungssysteme}{appendix.B}% 105
+\BOOKMARK [1][-]{section.B.2}{Allgemein}{appendix.B}% 106
+\BOOKMARK [2][-]{subsection.B.2.1}{Einstellungen zum Log}{section.B.2}% 107
+\BOOKMARK [1][-]{section.B.3}{Anwender}{appendix.B}% 108
+\BOOKMARK [2][-]{subsection.B.3.1}{Anwender - Ansicht}{section.B.3}% 109
+\BOOKMARK [2][-]{subsection.B.3.2}{Anwender - Schriftarten}{section.B.3}% 110
+\BOOKMARK [1][-]{section.B.4}{Datenaustausch}{appendix.B}% 111
+\BOOKMARK [1][-]{section.B.5}{Datenbank}{appendix.B}% 112
+\BOOKMARK [1][-]{section.B.6}{Druckereinstellungen}{appendix.B}% 113
+\BOOKMARK [1][-]{section.B.7}{E-Mail}{appendix.B}% 114
+\BOOKMARK [1][-]{section.B.8}{Gruppen und Rechte}{appendix.B}% 115
+\BOOKMARK [1][-]{section.B.9}{Laborwerte}{appendix.B}% 116
+\BOOKMARK [2][-]{subsection.B.9.1}{Berechnete Laborwerte \(Typ Formel\)}{section.B.9}% 117
+\BOOKMARK [1][-]{section.B.10}{Leistungscodes}{appendix.B}% 118
+\BOOKMARK [1][-]{section.B.11}{Textverarbeitung}{appendix.B}% 119
+\BOOKMARK [0][-]{appendix.C}{Weiterf\374hrende Themen}{part.4}% 120
+\BOOKMARK [1][-]{section.C.1}{Scripting}{appendix.C}% 121
+\BOOKMARK [0][-]{appendix.D}{\334berlegungen zur Datensicherheit}{part.4}% 122
+\BOOKMARK [1][-]{section.D.1}{Sicherheit vor Datenverlust}{appendix.D}% 123
+\BOOKMARK [1][-]{section.D.2}{Sicherheit vor Datenverf\344lschungen}{appendix.D}% 124
+\BOOKMARK [1][-]{section.D.3}{Sicherheit vor unbefugtem Zugriff auf die Datenbank}{appendix.D}% 125
+\BOOKMARK [2][-]{subsection.D.3.1}{Angriff auf offene Ports}{section.D.3}% 126
+\BOOKMARK [2][-]{subsection.D.3.2}{Angriff durch Ausnutzen von Sicherheitsl\374cken}{section.D.3}% 127
+\BOOKMARK [2][-]{subsection.D.3.3}{Angriffe durch Abh\366ren des Netzwerkverkehrs}{section.D.3}% 128
+\BOOKMARK [2][-]{subsection.D.3.4}{Angriffe durch Ausnutzen der Naivit\344t des Anwenders}{section.D.3}% 129
+\BOOKMARK [1][-]{section.D.4}{Was hat dies alles mit Elexis zu tun?}{appendix.D}% 130
+\BOOKMARK [1][-]{section.D.5}{Last but not least: Angriff durch direkten Zugriff die Festplatte}{appendix.D}% 131
+\BOOKMARK [2][-]{subsection.D.5.1}{Backup-Medien}{section.D.5}% 132
+\BOOKMARK [0][-]{appendix.E}{Index}{part.4}% 133

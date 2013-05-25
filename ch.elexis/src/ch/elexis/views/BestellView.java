@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    Joerg M. Sigle (js, jsigle) - bug fixes
  *    
  *******************************************************************************/
 
@@ -45,7 +46,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.dialogs.ListDialog;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
@@ -58,15 +58,14 @@ import ch.elexis.data.Bestellung;
 import ch.elexis.data.Bestellung.Item;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.data.Query;
 import ch.elexis.dialogs.OrderImportDialog;
+import ch.elexis.dialogs.SelectBestellungDialog;
 import ch.elexis.exchange.IDataSender;
 import ch.elexis.exchange.XChangeException;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
-import ch.elexis.util.viewers.DefaultLabelProvider;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 
@@ -79,7 +78,7 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 	Bestellung actBestellung;
 	ViewMenus viewmenus;
 	private IAction removeAction, wizardAction, countAction, loadAction, saveAction, printAction,
-			sendAction;
+			sendAction, newAction;
 	private IAction exportClipboardAction, checkInAction;
 	
 	@Override
@@ -164,8 +163,10 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 		});
 		makeActions();
 		viewmenus = new ViewMenus(getViewSite());
-		viewmenus.createToolbar(wizardAction, saveAction, loadAction, printAction, sendAction);
-		viewmenus.createMenu(wizardAction, saveAction, loadAction, printAction, sendAction,
+		viewmenus.createToolbar(newAction, wizardAction, saveAction, loadAction, printAction,
+			sendAction);
+		viewmenus.createMenu(newAction, wizardAction, saveAction, loadAction, printAction,
+			sendAction,
 			exportClipboardAction);
 		viewmenus.createViewerContextMenu(tv, new IAction[] {
 			removeAction, countAction
@@ -323,6 +324,25 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 					}
 				}
 			};
+		newAction = new Action(Messages.getString("BestellView.CreateNewOrder")) { //$NON-NLS-1$
+				@Override
+				public void run(){
+					if (actBestellung != null) {
+						actBestellung.save();
+					}
+					InputDialog dlg =
+						new InputDialog(getViewSite().getShell(),
+							Messages.getString("BestellView.CreateNewOrder"), //$NON-NLS-1$
+							Messages.getString("BestellView.EnterOrderTitle"), //$NON-NLS-1$
+							Messages.getString("BestellView.Automatic"), null); //$NON-NLS-1$
+					if (dlg.open() == Dialog.OK) {
+						setBestellung(new Bestellung(dlg.getValue(), Hub.actUser));
+					} else {
+						return;
+					}
+					tv.refresh();
+				}
+			};
 		printAction = new Action(Messages.getString("BestellView.PrintOrder")) { //$NON-NLS-1$
 				@Override
 				public void run(){
@@ -408,22 +428,26 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 				@Override
 				public void run(){
 					
-					ListDialog dlg = new ListDialog(getViewSite().getShell());
-					dlg.setContentProvider(new BestellContentProvider());
-					dlg.setLabelProvider(new DefaultLabelProvider());
+					SelectBestellungDialog dlg =
+						new SelectBestellungDialog(getViewSite().getShell());
 					dlg.setMessage(Messages.getString("BestellView.SelectOrder")); //$NON-NLS-1$
 					dlg.setTitle(Messages.getString("BestellView.ReadOrder")); //$NON-NLS-1$
-					dlg.setInput(this);
+
 					if (dlg.open() == Dialog.OK) {
-						Bestellung res = (Bestellung) dlg.getResult()[0];
-						setBestellung(res);
+						// js: Only a non-empty result should be used any further.
+						if (dlg.getResult().length > 0) {
+							Bestellung res = (Bestellung) dlg.getResult()[0];
+							setBestellung(res);
+						}
 					}
 				}
 			};
 		printAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
 		printAction.setToolTipText(Messages.getString("BestellView.PrintOrder")); //$NON-NLS-1$
 		
-		saveAction.setImageDescriptor(Hub.getImageDescriptor("rsc/save.gif"));
+		newAction.setImageDescriptor(Hub.getImageDescriptor("rsc/plaf/modern/icons/new.png")); //$NON-NLS-1$
+		newAction.setToolTipText(Messages.getString("BestellView.CreateNewOrder")); //$NON-NLS-1$
+		saveAction.setImageDescriptor(Hub.getImageDescriptor("rsc/save.gif")); //$NON-NLS-1$
 		saveAction.setToolTipText(Messages.getString("BestellView.saveOrder")); //$NON-NLS-1$
 		sendAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NETWORK));
 		sendAction.setToolTipText(Messages.getString("BestellView.transmitOrder")); //$NON-NLS-1$
@@ -502,20 +526,6 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 				}
 				
 			};
-	}
-	
-	class BestellContentProvider implements IStructuredContentProvider {
-		
-		public Object[] getElements(final Object inputElement){
-			Query<Bestellung> qbe = new Query<Bestellung>(Bestellung.class);
-			return qbe.execute().toArray();
-			
-		}
-		
-		public void dispose(){}
-		
-		public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput){}
-		
 	}
 	
 	/*

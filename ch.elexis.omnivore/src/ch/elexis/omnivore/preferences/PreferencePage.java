@@ -24,6 +24,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.Hub;
 import ch.elexis.omnivore.preferences.Messages;
@@ -31,23 +33,24 @@ import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.preferences.SettingsPreferenceStore;
 import ch.elexis.util.SWTHelper;
 
-//FIXME: 20130325js: Layout needs a thorough redesign. See: http://www.eclipse.org/articles/article.php?file=Article-Understanding-Layouts/index.html -- 20130411js: done to some extent.
-//FIXME: 20130325js: We want a layout that will use all the available space, auto re-size input fields etc., have nested elements, and still NOT result in "dialog has invalid data" error messages.
-//FIXME: 20130411js: Maybe we must add PREFERENCE_BRANCH to some editor element add etc. commands, to ensure the parameters are store.
+//FIXME: Layout needs a thorough redesign. See: http://www.eclipse.org/articles/article.php?file=Article-Understanding-Layouts/index.html -- 20130411js: done to some extent.
+//FIXME: We want a layout that will use all the available space, auto re-size input fields etc., have nested elements, and still NOT result in "dialog has invalid data" error messages.
+//FIXME: Maybe we must add PREFERENCE_BRANCH to some editor element add etc. commands, to ensure the parameters are store.
 
 public class PreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+	private static Logger log = LoggerFactory.getLogger("ch.elexis.omnivore.PreferencePage"); //$NON-NLS-1$
 	public static final String PREFERENCE_BRANCH = "plugins/omnivore_js/"; //$NON-NLS-1$
 	public static final String PREFERENCE_SRC_PATTERN = "src_pattern"; //$NON-NLS-1$
 	public static final String PREFERENCE_DEST_DIR = "dest_dir"; //$NON-NLS-1$
 
-	//20130325js: The following setting is used in ch.elexis.omnivore.data/DocHandle.java.
+	//The following setting is used in ch.elexis.omnivore.data/DocHandle.java.
 	//Linux and MacOS may be able to handle longer filenames, but we observed that Windows 7 64-bit will not import files with names longer than 80 chars.
 	//So I make this setting configurable. Including a safe default and limits that a user cannot exceed.
 	public static final Integer Omnivore_jsMax_Filename_Length_Min=12;	
 	public static final Integer Omnivore_jsMax_Filename_Length_Default=80;
 	public static final Integer Omnivore_jsMax_Filename_Length_Max=255;
 	public static final String PREF_MAX_FILENAME_LENGTH= PREFERENCE_BRANCH+"max_filename_length";
-	//20130325js: For automatic archiving of incoming files:
+	//For automatic archiving of incoming files:
 	//Here is a comfortable way to specify how many rules shall be available:
 	//The individual Strings in the following arrays may be left empty - they will be automatically filled.
 	//But the smaller number of entries for Src and Dest determines
@@ -60,7 +63,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	public static final int nPREF_SRC_PATTERN=PREF_SRC_PATTERN.length;
 	public static final int nPREF_DEST_DIR=PREF_DEST_DIR.length;
 	
-	//20130411js: Make the temporary filename configurable
+	//Make the temporary filename configurable
 	//which is generated to extract the document from the database for viewing.
 	//Thereby, simplify tasks like adding a document to an e-mail.
 	//For most elements noted below, we can set the maximum number of digits
@@ -169,7 +172,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 				
 		//---
 			
-		//20130325js: For automatic archiving of incoming files:
+		//For automatic archiving of incoming files:
 		//add field groups for display or editing of rule sets.
 		//First, we define a new group (that will visually appear as an outlined box) and give it a header like setText("Regel i");
 		//Then, within this group, we add one StringFieldEditor for the search pattern to be matched, and a DirectoryFieldEditor for the auto archiving target to be used.
@@ -195,8 +198,8 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 			for (int i=0;i<nAutoArchiveRules;i++) {
 
 				//Just to check whether the loop is actually used, even if nothing appears in the preference dialog:
-				System.out.println(PREF_SRC_PATTERN[i]+" : "+Messages.Omnivore_jsPREF_SRC_PATTERN);
-				System.out.println(PREF_DEST_DIR[i]+" : "+Messages.Omnivore_jsPREF_DEST_DIR);
+				log.debug(PREF_SRC_PATTERN[i]+" : "+Messages.Omnivore_jsPREF_SRC_PATTERN);
+				log.debug(PREF_DEST_DIR[i]+" : "+Messages.Omnivore_jsPREF_DEST_DIR);
 
 				//Simplified version: All auto Archive rules are directly located in the AutoArchiveRules group.
 				//addField(new StringFieldEditor(PREF_SRC_PATTERN[i], Messages.Omnivore_jsPREF_SRC_PATTERN, gAutoArchiveRules));
@@ -227,7 +230,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
   			
 			//---
   		
-  			//20130411js: Make the temporary filename configurable
+  			//Make the temporary filename configurable
   			//which is generated to extract the document from the database for viewing.
   			//Thereby, simplify tasks like adding a document to an e-mail.
   			//For most elements noted below, we can set the maximum number of digits
@@ -243,7 +246,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 
 			//And the following code, that might be the first step to produce column headings for a matrix, is not used:
 			//for (String CotfLabel : PREFERENCE_cotf_parameters) {
-			//	System.out.println(CotfLabel);
+			//	log.debug(CotfLabel);
 			//}
 
 			Integer nCotfRules=PREFERENCE_cotf_elements.length;
@@ -280,21 +283,9 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 				gCotfRuleGridLayoutData.horizontalAlignment=GridData.FILL;
 				gCotfRule.setLayoutData(gCotfRuleGridLayoutData);
 				
-				//System.out.println("Messages.Omnivore_jsPREF_cotf_"+PREFERENCE_cotf_elements[i]);
-				
-				//gCotfRule.setText(PREFERENCE_cotf_elements[i]);	//The brackets are needed, or the string representations of i and 1 will both be added...
-				
-				//addField(new StringFieldEditor(PREFERENCE_BRANCH+PREFERENCE_COTF+PREFERENCE_cotf_elements[i]+"_"+PREFERENCE_cotf_parameters[0],PREFERENCE_cotf_parameters[0],gCotfRule));
-				//addField(new StringFieldEditor(PREFERENCE_BRANCH+PREFERENCE_COTF+PREFERENCE_cotf_elements[i]+"_"+PREFERENCE_cotf_parameters[1],PREFERENCE_cotf_parameters[1],gCotfRule));
-				//addField(new StringFieldEditor(PREFERENCE_BRANCH+PREFERENCE_COTF+PREFERENCE_cotf_elements[i]+"_"+PREFERENCE_cotf_parameters[2],PREFERENCE_cotf_parameters[2],gCotfRule));
-				
 				//Das hier geht leider nicht so einfach:
 				//gCotfRule.setText(getObject("Messages.Omnivore_jsPREF_cotf_"+PREFERENCE_cotf_elements[i]));
 				gCotfRule.setText(PREFERENCE_cotf_elements_messages[i]);	
-				
-			    //addField(new StringFieldEditor(PREFERENCE_BRANCH+PREFERENCE_COTF+PREFERENCE_cotf_elements[i]+"_"+PREFERENCE_cotf_parameters[0],Messages.Omnivore_jsPREF_cotf_fill_leading_char,gCotfRule));
-				//addField(new StringFieldEditor(PREFERENCE_BRANCH+PREFERENCE_COTF+PREFERENCE_cotf_elements[i]+"_"+PREFERENCE_cotf_parameters[1],Messages.Omnivore_jsPREF_cotf_num_digits,gCotfRule));
-				//addField(new StringFieldEditor(PREFERENCE_BRANCH+PREFERENCE_COTF+PREFERENCE_cotf_elements[i]+"_"+PREFERENCE_cotf_parameters[2],Messages.Omnivore_jsPREF_cotf_add_trail_char,gCotfRule));
 				
 				if (PREFERENCE_cotf_elements[i].contains("constant")) {
 					addField(new StringFieldEditor("","",10,gCotfRule));
@@ -306,27 +297,16 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 					addField(new StringFieldEditor(PREFERENCE_BRANCH+PREFERENCE_COTF+PREFERENCE_cotf_elements[i]+"_"+PREFERENCE_cotf_parameters[1],PREFERENCE_cotf_parameters_messages[1],10,gCotfRule));
 					addField(new StringFieldEditor(PREFERENCE_BRANCH+PREFERENCE_COTF+PREFERENCE_cotf_elements[i]+"_"+PREFERENCE_cotf_parameters[2],PREFERENCE_cotf_parameters_messages[2],10,gCotfRule));
 				}
-			}
-			
-			/*
-			public static final Integer nOmnivore_jsPREF_cotf_element_digits_min=0;
-  			public static final Integer nOmnivore_jsPREF_cotf_element_digits_max=255;
-  			public static final String PREFERENCE_cotf_elements={"PID", "given_name", "family_name", "date_of_birth", "document_title", "constant", "dguid", "random"};
-  			public static final String PREFERENCE_cotf_parameters={"fill_lead_char", "num_digits", "add_trail_char"};
-  			 */
-
-			
-			//Doesn't help here.
-			//adjustGridLayout();
+			}			
 	}
 	
 	@Override
 	public void init(IWorkbench workbench){
-		//20130325js: For automatic archiving of incoming files:
+		//For automatic archiving of incoming files:
 		//construct the keys to the elexis preference store from a fixed header plus rule number:
 		for (Integer i=0;i<getOmnivore_jsnRulesForAutoArchiving();i++) {
-			PREF_SRC_PATTERN[i]=PREFERENCE_BRANCH + PREFERENCE_SRC_PATTERN + i.toString().trim(); //$NON-NLS-1$	//20130325js: If this source pattern is found in the filename...
-			PREF_DEST_DIR[i]= PREFERENCE_BRANCH + PREFERENCE_DEST_DIR + i.toString().trim(); //$NON-NLS-1$					//20130325js: the incoming file will be archived here after having been read
+			PREF_SRC_PATTERN[i]=PREFERENCE_BRANCH + PREFERENCE_SRC_PATTERN + i.toString().trim(); //$NON-NLS-1$	//If this source pattern is found in the filename...
+			PREF_DEST_DIR[i]= PREFERENCE_BRANCH + PREFERENCE_DEST_DIR + i.toString().trim(); //$NON-NLS-1$					//the incoming file will be archived here after having been read
 		}
 		
 	}
@@ -359,29 +339,29 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	  
 	  public static String getOmnivore_jsTemp_Filename_Element(IPreferenceStore preferenceStore,String element_key,String element_data) {
 		    
-		  System.out.println("Omnivore_js:PreferencePage: getOmnivore_jsTemp_Filename_Element: element_key=<"+element_key+">");
+		  log.debug("getOmnivore_jsTemp_Filename_Element: element_key=<"+element_key+">");
 		  
 		  StringBuffer element_data_processed=new StringBuffer();
 		  Integer nCotfRules=PREFERENCE_cotf_elements.length;
 		   for (int i=0;i<nCotfRules;i++) {
 				
-			   System.out.println("Omnivore_js:PreferencePage: getOmnivore_jsTemp_Filename_Element: PREFERENCE_cotf_elements["+i+"]=<"+PREFERENCE_cotf_elements[i]+">");
+			   log.debug("getOmnivore_jsTemp_Filename_Element: PREFERENCE_cotf_elements["+i+"]=<"+PREFERENCE_cotf_elements[i]+">");
 
 			   if (PREFERENCE_cotf_elements[i].equals(element_key))	 {
 				
-				   System.out.println("Omnivore_js:PreferencePage: getOmnivore_jsTemp_Filename_Element: Match!");
+				   log.debug("getOmnivore_jsTemp_Filename_Element: Match!");
 				   
 				   if (element_key.contains("constant")) {
 					   String constant=preferenceStore.getString(PREFERENCE_BRANCH+PREFERENCE_COTF+PREFERENCE_cotf_elements[i]+"_"+PREFERENCE_cotf_parameters[1]).trim();
 
-					   System.out.println("Omnivore_js:PreferencePage: getOmnivore_jsTemp_Filename_Element: returning constant=<"+constant+">");
+					   log.debug("getOmnivore_jsTemp_Filename_Element: returning constant=<"+constant+">");
 
 					   return constant;
 				   }
 				   else {
 						//Shall we return ANY digits at all for this element, and later on: shall we cut down or extend the processed string to some defined number of digits?
 						String snum_digits=preferenceStore.getString(PREFERENCE_BRANCH+PREFERENCE_COTF+PREFERENCE_cotf_elements[i]+"_"+PREFERENCE_cotf_parameters[1]).trim();
-						System.out.println("Omnivore_js:PreferencePage: getOmnivore_jsTemp_Filename_Element: snum_digits=<"+snum_digits+">");
+						log.debug("getOmnivore_jsTemp_Filename_Element: snum_digits=<"+snum_digits+">");
 
 						//If the num_digits for this element is empty, then return an empty result - the element is disabled.
 						if (snum_digits.isEmpty()) {
@@ -405,11 +385,11 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 						if (num_digits>nOmnivore_jsPREF_cotf_element_digits_max) {
 							num_digits=nOmnivore_jsPREF_cotf_element_digits_max;
 						}
-						System.out.println("Omnivore_js:PreferencePage: getOmnivore_jsTemp_Filename_Element: num_digits=<"+num_digits+">");
+						log.debug("getOmnivore_jsTemp_Filename_Element: num_digits=<"+num_digits+">");
 						
 						//Start with the passed element_data string
 						String element_data_incoming=element_data.trim();
-						System.out.println("Omnivore_js:PreferencePage: getOmnivore_jsTemp_Filename_Element: element_data_incoming=<"+element_data_incoming+">");
+						log.debug("getOmnivore_jsTemp_Filename_Element: element_data_incoming=<"+element_data_incoming+">");
 						
 						//Remove all characters that shall not appear in the generated filename
 						//Ich verwende kein replaceAll, weil dessen Implementation diverse erforderliche Escapes offenbar nicht erlaubt.
@@ -427,7 +407,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 						}												
 						String element_data_processed5=(element_data_clean.toString().trim());
 						
-						System.out.println("Omnivore_js:PreferencePage: getOmnivore_jsTemp_Filename_Element: element_data_processed5=<"+element_data_processed5+">");
+						log.debug("getOmnivore_jsTemp_Filename_Element: element_data_processed5=<"+element_data_processed5+">");
 						
 						//filter out some special unwanted strings from the title that may have entered while importing and partially renaming files
 						String element_data_processed4=element_data_processed5.replaceAll("_noa[0-9]+\056[a-zA-Z0-9]{0,3}","");					//remove filename remainders like _noa635253160443574060.doc 
@@ -435,49 +415,49 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 						String element_data_processed2=element_data_processed3.replaceAll("_omni_[0-9]+_vore\056[a-zA-Z0-9]{0,3}","");	//remove filename remainders like _omni_635253160443574060_vore.pdf
 						String element_data_processed1=element_data_processed2.replaceAll("omni_[0-9]+_vore\056[a-zA-Z0-9]{0,3}","");		//remove filename remainders like omni_635253160443574060_vore.pdf
 						 
-						System.out.println("Omnivore_js:PreferencePage: getOmnivore_jsTemp_Filename_Element: element_data_processed1=<"+element_data_processed1+">");
+						log.debug("getOmnivore_jsTemp_Filename_Element: element_data_processed1=<"+element_data_processed1+">");
 						
 						//Limit the length of the result if it exceeds the specified or predefined max number of digits
 						if (element_data_processed1.length()>num_digits) {
 							element_data_processed1=element_data_processed1.substring(0,num_digits);
 						}
 						
-						System.out.println("Omnivore_js:PreferencePage: getOmnivore_jsTemp_Filename_Element: num_digits=<"+num_digits+">");
+						log.debug("getOmnivore_jsTemp_Filename_Element: num_digits=<"+num_digits+">");
 						
 						//If a leading fill character is given, and the length of the result is below the specified max_number of digits, then fill it up.
 						//Note: We could also check whether the num_digits has been given. Instead, I use the default max num of digits if not.
 						String lead_fill_char=preferenceStore.getString(PREFERENCE_BRANCH+PREFERENCE_COTF+PREFERENCE_cotf_elements[i]+"_"+PREFERENCE_cotf_parameters[0]).trim();
 						
-						System.out.println("Omnivore_js:PreferencePage: getOmnivore_jsTemp_Filename_Element: lead_fill_char=<"+lead_fill_char+">");
+						log.debug("getOmnivore_jsTemp_Filename_Element: lead_fill_char=<"+lead_fill_char+">");
 						
 						if ((lead_fill_char != null) && (lead_fill_char.length()>0) && (element_data_processed1.length()<num_digits)) {
 							lead_fill_char=lead_fill_char.substring(0,1);
 							
-							System.out.println("Omnivore_js:PreferencePage: getOmnivore_jsTemp_Filename_Element: lead_fill_char=<"+lead_fill_char+">");
-							System.out.println("Omnivore_js:PreferencePage: getOmnivore_jsTemp_Filename_Element: num_digits=<"+num_digits+">");
-							System.out.println("Omnivore_js:PreferencePage: getOmnivore_jsTemp_Filename_Element: element_data_processed1.length()=<"+element_data_processed1.length()+">");
-							System.out.println("Omnivore_js:PreferencePage: getOmnivore_jsTemp_Filename_Element: element_data_processed1=<"+element_data_processed1+">");
+							log.debug("getOmnivore_jsTemp_Filename_Element: lead_fill_char=<"+lead_fill_char+">");
+							log.debug("getOmnivore_jsTemp_Filename_Element: num_digits=<"+num_digits+">");
+							log.debug("getOmnivore_jsTemp_Filename_Element: element_data_processed1.length()=<"+element_data_processed1.length()+">");
+							log.debug("getOmnivore_jsTemp_Filename_Element: element_data_processed1=<"+element_data_processed1+">");
 							
 							for (int n=element_data_processed1.length();n<=num_digits;n++) {
 								element_data_processed.append(lead_fill_char);
-								System.out.println("Omnivore_js:PreferencePage: getOmnivore_jsTemp_Filename_Element: n, element_data_processed="+n+", <"+element_data_processed+">");
+								log.debug("getOmnivore_jsTemp_Filename_Element: n, element_data_processed="+n+", <"+element_data_processed+">");
 							}				
 						}
 						element_data_processed.append(element_data_processed1);
 						
-						System.out.println("Omnivore_js:PreferencePage: getOmnivore_jsTemp_Filename_Element: element_data_processed=<"+element_data_processed+">");
+						log.debug("getOmnivore_jsTemp_Filename_Element: element_data_processed=<"+element_data_processed+">");
 						
 						
 						//If an add trailing character is given, add one (typically, this would be a space or an underscore)
 						String add_trail_char=preferenceStore.getString(PREFERENCE_BRANCH+PREFERENCE_COTF+PREFERENCE_cotf_elements[i]+"_"+PREFERENCE_cotf_parameters[2]).trim();
 
-						System.out.println("Omnivore_js:PreferencePage: getOmnivore_jsTemp_Filename_Element: add_trail_char=<"+add_trail_char+">");
+						log.debug("getOmnivore_jsTemp_Filename_Element: add_trail_char=<"+add_trail_char+">");
 						
 						if ((add_trail_char != null) && (add_trail_char.length()>0)) {
 							add_trail_char=add_trail_char.substring(0,1);
-							System.out.println("Omnivore_js:PreferencePage: getOmnivore_jsTemp_Filename_Element: add_trail_char=<"+add_trail_char+">");
+							log.debug("getOmnivore_jsTemp_Filename_Element: add_trail_char=<"+add_trail_char+">");
 							element_data_processed.append(add_trail_char);			
-							System.out.println("Omnivore_js:PreferencePage: getOmnivore_jsTemp_Filename_Element: element_data_processed=<"+element_data_processed+">");
+							log.debug("getOmnivore_jsTemp_Filename_Element: element_data_processed=<"+element_data_processed+">");
 						} 			
 					}
 				   
@@ -525,7 +505,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	   */
 	
 	  public static Integer getOmnivore_jsnRulesForAutoArchiving() {
-			//20130325js: For automatic archiving of incoming files:
+			//For automatic archiving of incoming files:
 			//The smaller number of entries available for Src and Dest determines
 			//how many rule editing field pairs are provided on the actual preferences page, and processed later on.
 			//Now: Determine the number of slots for rule defining src and target strings,

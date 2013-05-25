@@ -24,23 +24,18 @@ import ch.rgw.tools.Result;
 
 public class BAGOptifier implements IOptifier {
 	
-											 
-	public static final int ISZERO = 9;		//201303130140js: Eine Rechnung mit einer Position zu 0.00 wird von der Aerztekasse zurueckgewiesen.
-											//201303130140js: also see: ch.elexis.arzttarife_schweiz.TarmedOptifier.java, ch.elexis.medikamente_bag.BAGOptifier.java
+	public static final int ISZERO = 9;		
 	
 	public Result<Object> optify(final Konsultation kons){
-		System.out.println("js BAGOptifier optify(1) begin");
-
 		return new Result<Object>(kons);
 	}
 	
 	public Result<IVerrechenbar> add(final IVerrechenbar code, final Konsultation kons){
-		System.out.println("js BAGOptifier add(2) begin");
-
 		if (code instanceof BAGMedi) {
 			
-			//201303130140js: Eine Rechnung mit einer Position zu 0.00 wird von der Aerztekasse zurueckgewiesen.
-			//                Deshalb zumindest eine Warnung ausgeben.
+			// Eine Rechnung mit einer Position zu 0.00 wird von der Aerztekasse zurueckgewiesen.
+			// Deshalb zumindest eine Warnung ausgeben.
+			// also see: ch.elexis.arzttarife_schweiz.TarmedOptifier.java, ch.elexis.medikamente_bag.BAGOptifier.java
 			if (((BAGMedi) code).getVKPreis().isZero()) {
 				return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, ISZERO,
 						((BAGMedi) code).getCode() + " " + 
@@ -68,8 +63,6 @@ public class BAGOptifier implements IOptifier {
 	}
 	
 	public Result<Verrechnet> remove(final Verrechnet v, final Konsultation kons){
-		System.out.println("js BAGOptifier remove(2) begin");
-
 		List<Verrechnet> old = kons.getLeistungen();
 		old.remove(v);
 		v.delete();

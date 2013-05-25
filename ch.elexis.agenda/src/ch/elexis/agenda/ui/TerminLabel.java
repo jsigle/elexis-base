@@ -16,6 +16,7 @@
 package ch.elexis.agenda.ui;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
@@ -43,6 +44,8 @@ import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
+import ch.elexis.agenda.series.SerienTermin;
+import ch.elexis.agenda.series.ui.SerienTerminDialog;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.dialogs.TerminDialog;
@@ -59,6 +62,12 @@ public class TerminLabel extends Composite {
 	IAgendaLayout ial;
 	Activator agenda = Activator.getDefault();
 	private IAction terminKuerzenAction, terminVerlaengernAction, terminAendernAction;
+	private GC lblGc;
+	
+	/**
+	 * Static map holding all fonts used by all TerminLabel instances.
+	 */
+	private static HashMap<Integer, Font> fontMap = new HashMap<Integer, Font>();
 	
 	public TerminLabel(IAgendaLayout al){
 		super(al.getComposite(), SWT.BORDER);
@@ -69,7 +78,7 @@ public class TerminLabel extends Composite {
 		gl.marginWidth = 1;
 		setLayout(gl);
 		lbl = new Label(this, SWT.WRAP);
-		GC lblGc = new GC(lbl);
+		lblGc = new GC(lbl);
 		lblFontData = lbl.getFont().getFontData()[0];
 		originalFontHeightPoint = lblFontData.getHeight();
 		originalFontHeightPixel = lblGc.getFontMetrics().getHeight();
@@ -80,10 +89,13 @@ public class TerminLabel extends Composite {
 		lbl.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDoubleClick(MouseEvent e){
-				System.out.println("doubleClick");
 				agenda.setActDate(t.getDay());
 				agenda.setActResource(t.getBereich());
-				new TerminDialog(t).open();
+				if (t.isRecurringDate()) {
+					new SerienTerminDialog(Desk.getTopShell(), new SerienTermin(t)).open();
+				} else {
+					new TerminDialog(t).open();
+				}
 				refresh();
 			}
 			
@@ -107,8 +119,10 @@ public class TerminLabel extends Composite {
 		
 	}
 	
-	public void set(Termin t, int col){
-		this.t = t;
+	public void set(Termin tf, int col){
+		t = tf;
+		if (tf.isRecurringDate())
+			t = new SerienTermin(tf).getRootTermin();
 		this.column = col;
 	}
 	
@@ -219,9 +233,10 @@ public class TerminLabel extends Composite {
 			// non-nice constant 1 :( you got a better solution?
 		}
 		lblFontData.setHeight(newHeight);
-		lbl.setFont(new Font(Desk.getDisplay(), lblFontData));
+		lbl.setFont(getLabelFont(lblFontData));
 		
 		setBounds(lx, ly, lw, lh);
+		
 		GridData gd = (GridData) state.getLayoutData();
 		gd.minimumWidth = 10;
 		gd.widthHint = 10;
@@ -234,6 +249,15 @@ public class TerminLabel extends Composite {
 		layout();
 	}
 	
+	private Font getLabelFont(FontData fontData){
+		Font font = fontMap.get(fontData.getHeight());
+		if (font == null) {
+			font = new Font(Desk.getDisplay(), fontData);
+			fontMap.put(fontData.getHeight(), font);
+		}
+		return font;
+	}
+
 	class TerminLabelMenu {
 		TerminLabelMenu(){
 			MenuManager contextMenuManager = new MenuManager();

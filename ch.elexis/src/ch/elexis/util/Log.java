@@ -11,9 +11,8 @@
  *******************************************************************************/
 package ch.elexis.util;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
@@ -21,17 +20,15 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
 import ch.elexis.Desk;
-import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 
 /**
  * Standardisiertes Log. Ein Programm kann das Log mit Log.get(präfix) anfordern und fortan Ausgaben
- * ins Log mittels Log(Text,level) machen. Die Ausgabe erfolgt einstellbar nach stdout oder in eine
- * Datei. Ob eine bestimmte Ausgabe ins Log gelangt, hängt vom LogLevel und dem Text-Level ab. Wenn
- * der Level einer Meldung gleich oder niedriger ist, als der aktuell eingestellte LogLevel, wird
- * die Ausgabe gemacht, andernfalls wird sie verworfen. Ausserdem kann festgelegt werden, ab welchem
- * level eine Nachricht zu einer direkten Benachrichtigung des Anwenders mittels MessageBox führt
- * (setAlert und setAlertLevel
+ * ins Log mittels Log(Text,level) machen. Ob eine bestimmte Ausgabe ins Log gelangt, hängt vom
+ * LogLevel und dem Text-Level ab. Wenn der Level einer Meldung gleich oder niedriger ist, als der
+ * aktuell eingestellte LogLevel, wird die Ausgabe gemacht, andernfalls wird sie verworfen.
+ * Ausserdem kann festgelegt werden, ab welchem level eine Nachricht zu einer direkten
+ * Benachrichtigung des Anwenders mittels MessageBox führt (setAlert und setAlertLevel
  * 
  * @author G. Weirich
  */
@@ -43,11 +40,13 @@ public class Log {
 	public static final int FATALS = 1;
 	/** Nichtfatale Fehler, Programm kann weiterlaufen */
 	public static final int ERRORS = 2;
-	/** Warnung, Programm l�uft normal weiter, es k�nnten aber Probleme auftreten */
+	/**
+	 * Warnung, Programm läuft normal weiter, es könnten aber Probleme auftreten
+	 */
 	public static final int WARNINGS = 3;
 	/** Reine Informationen, kein Einfluss aufs Programm */
 	public static final int INFOS = 4;
-	/** F�r Debugzwecke gedachte Meldungen */
+	/** Für Debugzwecke gedachte Meldungen */
 	public static final int DEBUGMSG = 5;
 	/** Immer auszugebende Meldungen, die aber keinem Fehler entsprechen */
 	public static final int TRACE = 6;
@@ -58,7 +57,8 @@ public class Log {
 		"OK", "FATAL", "ERROR", "WARNING", "INFO", "DEBUG", "TRACE"
 	};
 	
-	private static PrintStream out;
+	private static Logger out = null;
+	
 	String prefix;
 	private static int LogLevel;
 	private static int alertLevel;
@@ -66,57 +66,14 @@ public class Log {
 	private static Shell doAlert;
 	
 	static {
-		out = System.out;
 		LogLevel = 2;
 		doAlert = null;
 		alertLevel = Log.FATALS;
 	}
 	
 	/**
-	 * Ausgabeziel einstellen. Ist immer global f�r alle Klassen des aktuellen Pogramms.
-	 * 
-	 * @param name
-	 *            null oder "" oder none: Ausgabe nach stdout, andernfalls ein Dateiname, der die
-	 *            Ausgabedatei definiert.
-	 * @param maxSize
-	 *            maximale Grösse (unbeschränkt, falls <= 0)
-	 */
-	static public void setOutput(String name, int maxSize){
-		if ((name == null) || (name.equals("")) || (name.equals("none"))) //$NON-NLS-1$ //$NON-NLS-2$
-		{
-			out = System.out;
-		} else {
-			try {
-				File f = new File(name);
-				if (f.exists()) {
-					if (maxSize > 0) {
-						if (f.length() > maxSize) {
-							f.createNewFile();
-						}
-					}
-				} else {
-					f.createNewFile();
-				}
-				out = new PrintStream(new FileOutputStream(f, true));
-			} catch (Exception ex) {
-				ExHandler.handle(ex);
-			}
-		}
-	}
-	
-	/**
-	 * LogLevel einstellen
-	 * 
-	 * @param l
-	 *            der gew�nschte Level. Ist immer global f�r alle Klassen des aktuellen Programms.
-	 */
-	static public void setLevel(int l){
-		LogLevel = l;
-	}
-	
-	/**
 	 * AlertLevel einstellen. wenn der Level einer Nachricht unter diesem Level liegt, wird eine
-	 * Alertbox zur Nazeige der Nachricht ge�ffnet (Anstatt nur zu loggen). Dies geht nur, wenn mit
+	 * Alertbox zur Nazeige der Nachricht geöffnet (Anstatt nur zu loggen). Dies geht nur, wenn mit
 	 * setAlert auch eine parent-Shell gesetzt worden ist.
 	 */
 	static public void setAlertLevel(int l){
@@ -124,11 +81,11 @@ public class Log {
 	}
 	
 	/**
-	 * Alert inetellen oder l�schen. Wenn cmp nicht null ist, wird bei jeder
+	 * Alert inetellen oder löschen. Wenn cmp nicht null ist, wird bei jeder
 	 * Fehlermeldung>Log.Errors eine Alertbox mit der Fehlermeldung ausgegeben.
 	 * 
 	 * @param cmp
-	 *            die Paent-Komponente f�r die Alertbox
+	 *            die Paent-Komponente für die Alertbox
 	 */
 	static public void setAlert(Shell cmp){
 		doAlert = cmp;
@@ -154,10 +111,12 @@ public class Log {
 	 *            der level
 	 */
 	public void log(String message, int level){
+		if (out == null)
+			out = LoggerFactory.getLogger(Log.class);
 		synchronized (out) {
 			if (level <= LogLevel) {
 				TimeTool t = new TimeTool();
-				out.print(t.toString(TimeTool.FULL_GER));
+				out.info(t.toString(TimeTool.FULL_GER));
 				String type = "";
 				if (level > SYNCMARK) {
 					type = Levels[level];
@@ -168,8 +127,7 @@ public class Log {
 				lastError =
 					new StringBuilder().append(" |").append(type).append("| - ").append(prefix)
 						.append(": ").append(message).toString();
-				out.println(lastError); //$NON-NLS-1$
-				out.flush();
+				out.info(lastError); //$NON-NLS-1$
 				if (level <= alertLevel && PlatformUI.isWorkbenchRunning()) {
 					if (level != SYNCMARK) {
 						if (doAlert == null) {
@@ -210,7 +168,7 @@ public class Log {
 			}
 		}
 		log(message, level);
-		t.printStackTrace(out);
+		t.printStackTrace();
 	}
 	
 	/**
@@ -230,7 +188,7 @@ public class Log {
 		mark.append("--TRACE: "); //$NON-NLS-1$
 		mark.append(new TimeTool().toString(TimeTool.FULL_GER));
 		mark.append(": ").append(msg); //$NON-NLS-1$
-		out.println(mark.toString());
+		out.trace(mark.toString());
 	}
 	
 	public boolean isDebug(){
@@ -249,7 +207,10 @@ public class Log {
 		return ERRORS <= LogLevel;
 	}
 	
-	private Log(){ /* leer */}
+	private Log(){
+		if (out == null)
+			out = LoggerFactory.getLogger(Log.class);
+	}
 	
 	private Log(String p){
 		prefix = p;

@@ -1,0 +1,39 @@
+<link rel="stylesheet" type="text/css" href="elexis.css" />
+
+!images/elexis48.png! The Elexis Project
+<hr />
+
+h1=. Prepare and configure a working environment in eclipse for Elexis
+
+p=(small). (c) 2013 by G. Weirich
+
+h2. Prerequisites and Sources
+
+# Download and install Mercurial binaries
+# Download Eclipse _Juno_ and unpack it into an appropriate directory
+# on first launch create a directory for the workspace, e.g. 'elexis-classic-2.1.x'
+# Within Eclipse, find Settings-&gt;General-&gt;Workspace and set the text file encoding to 'UTF-8'
+# Go to help-&gt;eclipse Marketplace and install &quot;MercurialEclipse&quot; from there. Restart Eclipse after that
+# Right-click in the package explorer and select &quot;import&quot;, then &quot;Mercurial-&gt;clone existing repository&quot;
+# clone elexis-base and update to branch 2.1.7. I recommend to import only the following projects for now: ch.elexis, ch.elexis.core, ch.elexis.developer.resources, ch.elexis.h2.connector, ch.rgw.utility, LogBackend, org.ekkescorner.logging.osgi
+# Select Project-&gt;clean-&gt;clean all projects from the eclipse menu
+# Everything should be okay, except the ekkescorner plugin.
+# Again, right-click in the package explorer and clone the repository &quot;elexis-addons&quot;
+# import only ch.ngiger.elexis.opensource from that repository
+# Open ch.ngiger.elexis.opensource and double-click desktop.dev.target. The file will open, and a lengthy operation&quot;Resolving Target Definition&quot; will begin (watch the right-hand lower corner of your eclipse window for progress informations)
+# Click &quot;set as target platform&quot; in the upper right hand corner of the desktop.dev.target window. Again, this will take some time, and, if your firewall is active, you must allow eclipse.app to accept incoming connections.
+
+Now, The Workspace should compile without errors
+
+h2. Creating a minimal run configuration
+
+# Go to 'Run->Run Configurations'. Create a new "Eclipse Application".
+# Select "Run a Product" and select ch.elexis.ElexisProduct from the drop-down-list
+# Go to the page 'Plug-ins' and chose "Launch with: plug-ins selected below only"
+# click 'deselect all', then select "workspace" and hit "Add required plugins"
+# now, select &quot;Run&quot; and your first home-made Elexis should start.
+
+h2. extending the workspace
+
+After successful launch, you can import more Plugins as needed from the repositories by using "import->mercurial->"Projects from local mercurial Repository".
+
