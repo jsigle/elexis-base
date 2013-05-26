@@ -21,9 +21,7 @@ import java.util.Map;
 
 import ch.elexis.StringConstants;
 import ch.elexis.util.MFUList;
-import ch.elexis.views.Messages;
 import ch.rgw.tools.StringTool;
-import ch.rgw.tools.TimeTool;
 
 /**
  * Ein Kontakt ist der kleinste gemeinsame Nenner anller Arten von Menschen und Institutionen und
@@ -38,7 +36,7 @@ import ch.rgw.tools.TimeTool;
  * 
  */
 public class Kontakt extends PersistentObject {
-	// If you add new fields, please be sure to update KontakteView.java tidySelectedAddressesAction (and, most probably, other places)
+	// 201303041746js: If you add new fields, please be sure to update KontakteView.java tidySelectedAddressesAction (and, most probably, other places)
 	// public static final String FLD_KUERZEL = "Kuerzel";
 	public static final String FLD_E_MAIL = "E-Mail";
 	public static final String FLD_WEBSITE = "Website";
@@ -227,17 +225,20 @@ public class Kontakt extends PersistentObject {
 	}
 	
 	/**
+	 * 20120130js:
 	 * Synthesize the address lines to output from the entries in Kontakt k.
 	 * added to implement the output format desired for the copyAddressToClipboard()
-	 * buttons.
+	 * buttons added to version 2.1.6.js as of 2012-01-28ff, and moved to Kontakt.java now.
  	 *
- 	 * @param multiline or single line output
- 	 * @param including_phone controls whether the phone numbers shall be
+	 * We might synthesize our own "Anschrift" for each Kontakt,
+	 * completely according to our own requirements,
+	 * OR use any of the methods defined for Kontakt like:
+	 * getLabel...(), getPostAnschrift, createStandardAnschrift, List<BezugsKontakt>... -
+	 * 
+	 * The Declaration of Kontakt with field definitions is available in Kontakt.java, please look
+	 * therein for additional details, please. Click-Right -> Declaration on Kontakt in Eclipse works.
+	 * You can also look above to see the fields that printList would use. 
 	 *
-	 * @return string containing the needed information
-	 */
-	
-	/* 
 	 * getPostAnschrift() does NOT use the System.getProperty("line.separator");
 	 * which I use bwlow after the Fax number (and also in the calling code, before a possibly
 	 * succeeding addresses.
@@ -252,9 +253,15 @@ public class Kontakt extends PersistentObject {
 	 * openoffice 2.0.3:	"new line" after each line within an address;
 	 * 						"new paragraph" after the Fax number and before a succeeding address.
 	 * 
+	 * I could replace it via "line.separator", but as the above findings show, this is not urgently required.
+	 * And actually, it may eben be useful to have two separators (and even the "correct" behaviour, in openoffice, at least...). 
 	 */ 
 	public String getPostAnschriftPhoneFaxEmail(boolean multiline,boolean including_phone){		
 	
+		//N.B. from Javadoc:
+		//Strings are immutable once they have been created.
+		//Use StringBuffer if you want to modify its contents later on.
+		
 		StringBuffer thisAddress = new StringBuffer();
 	
 		//getPostAnschrift() already returns a line separator after the address;
@@ -283,6 +290,17 @@ public class Kontakt extends PersistentObject {
 		//	selectedAddressesText.append(k.FLD_E_MAIL+System.getProperty("line.separator"));
 		//}
 		//
+		//BECAUSE OF THAT:
+		//
+		//System.out.print("jsdebug: k.FLD_FAX: "+k.FLD_FAX+"\n");						//returns: Fax
+		//System.out.print("jsdebug: k.FLD_E_MAIL: "+k.FLD_E_MAIL+"\n");				//returns: E-mail
+		//System.out.print("jsdebug: k.get(\"FLD_FAX\"): "+k.get("FLD_FAX")+"\n");		//returns: errror
+		//System.out.print("jsdebug: k.get(\"FLD_E_MAIL\"): "+k.get("FLD_E_MAIL")+"\n");//returns: error
+		//System.out.print("jsdebug: k.get(\"FLD_FAX\"): "+k.get("Fax")+"\n");			//returns: the contents of the field "Fax" (given current field labels)
+		//System.out.print("jsdebug: k.get(\"FLD_E_MAIL\"): "+k.get("E-Mail")+"\n");	//returns: the contents of the field "E-mail" (given current field labels)
+		//System.out.print("jsdebug: k.get(\"FLD_FAX\"): "+k.get(k.FLD_FAX)+"\n");		//returns: the contents of the field with the label stored in k.FLD_FAX
+		//System.out.print("jsdebug: k.get(\"FLD_E_MAIL\"): "+k.get(k.FLD_E_MAIL)+"\n");//returns: the contents of the field with the label stored in k.FLD_E_MAIL
+
 		if (including_phone) {
 			String thisAddressFLD_PHONE1 = (String) get(FLD_PHONE1);
 			if (!StringTool.isNothing(thisAddressFLD_PHONE1)) {
@@ -313,6 +331,8 @@ public class Kontakt extends PersistentObject {
 		}							
 
 		String an = thisAddress.toString();
+		//This code adopted from getPostanschrift() above to maintain compatible usage,
+		//but might be changed to usage of System.getProperty("line.separator") instead if necessary:
 		an = an.replaceAll("[\\r\\n]\\n", StringTool.lf); //$NON-NLS-1$
 		return multiline == true ? an : an.replaceAll("\\n", StringTool.space); //$NON-NLS-1$
 	}
@@ -625,158 +645,4 @@ public class Kontakt extends PersistentObject {
 	public boolean istOrganisation(){
 		return checkNull(get(FLD_IS_ORGANIZATION)).equals(StringConstants.ONE);
 	}
-	
-	public String getClipboard(boolean firstNameFirst, boolean appendRemarkAndName3) {
-		StringBuffer selectedInfosText = new StringBuffer();
-		
-		//The following code is adopted from Kontakt.createStdAnschrift for a different purpose/layout:
-		//ggf. hier zu Person.getPersonalia() eine abgewandelte Fassung hinzufügen und von hier aus aufrufen.
-		
-		if (this.istPerson()) {
-			Person p = Person.load(this.getId());
-
-			String salutation;
-			// TODO default salutation might be configurable (or a "Sex missing!" Info might appear) js 
-			if (p.getGeschlecht().equals(Person.MALE)) {							
-				salutation = Messages.getString("KontakteView.SalutationM"); //$NON-NLS-1$
-			} else  //We do not use any default salutation for unknown sex to avoid errors!
-			if (p.getGeschlecht().equals(Person.FEMALE)) {							
-				salutation = Messages.getString("KontakteView.SalutationF"); //$NON-NLS-1$
-			} else { salutation = ""; //$NON-NLS-1$
-			}
-			
-			if (!StringTool.isNothing(salutation)) {	//salutation should currently never be empty, but paranoia...
-				selectedInfosText.append(salutation);
-				selectedInfosText.append(StringTool.space);
-			}
-				
-			String titel = p.get(Person.TITLE); //$NON-NLS-1$
-			if (!StringTool.isNothing(titel)) {
-				selectedInfosText.append(titel).append(StringTool.space);
-			}
-			
-			// A comma between Family Name and Given Name would be generally helpful to reliably tell them apart:
-			//SelectedContactInfosText.append(this.getName()+","+StringTool.space+this.getVorname());
-			// But Jürg Hamacher prefers this in his letters without a comma in between:
-			//SelectedContactInfosText.append(p.getName()+StringTool.space+p.getVorname());
-			//Whereas I use the above variant for PatientenListeView.java;
-			//I put the Vorname first in KontakteView. And I only use a spacer, if the first field is not empty!
-			//SelectedContactInfosText.append(p.getVorname()+StringTool.space+p.getName());
-			if (firstNameFirst)
-			{
-				if (!StringTool.isNothing(p.getVorname())) {
-					selectedInfosText.append(p.getVorname()+StringTool.space);
-				}
-			}
-			if (!StringTool.isNothing(p.getName())) {
-				selectedInfosText.append(p.getName());
-			}
-			if (!firstNameFirst)
-			{
-				if (!StringTool.isNothing(p.getVorname())) {
-					selectedInfosText.append(p.getVorname()+StringTool.space);
-				}
-			}
-			
-			//Also, in KontakteView, I copy the content of fields "Bemerkung" and "Zusatz" as well.
-			//"Zusatz" is mapped to "Bezeichnung3" in Person.java.
-			if (appendRemarkAndName3) {
-				String thisPersonFLD_REMARK = p.get(Kontakt.FLD_REMARK); //$NON-NLS-1$
-				if (!StringTool.isNothing(thisPersonFLD_REMARK)) {
-					selectedInfosText.append(",").append(StringTool.space).append(thisPersonFLD_REMARK);
-				}
-				String thisPersonFLD_NAME3 = p.get(Kontakt.FLD_NAME3); //$NON-NLS-1$
-				if (!StringTool.isNothing(thisPersonFLD_NAME3)) {
-					selectedInfosText.append(",").append(StringTool.space).append(thisPersonFLD_NAME3);
-				}						
-			}
-			
-			String thisPatientBIRTHDATE = (String) p.get(Person.BIRTHDATE);
-			if (!StringTool.isNothing(thisPatientBIRTHDATE)) {
-			// This would add the term "geb." (born on the) before the date of birth:
-			//	SelectedContactInfosText.append(","+StringTool.space+"geb."+StringTool.space+new TimeTool(thisPatientBIRTHDATE).toString(TimeTool.DATE_GER));
-			// But Jürg Hamacher prefers the patient information in his letters without that term:
-			selectedInfosText.append(","+StringTool.space+new TimeTool(thisPatientBIRTHDATE).toString(TimeTool.DATE_GER));
-			}
-		} else {	//if (this.istPerson())... else...
-			String thisAddressFLD_NAME1 = (String) this.get(Kontakt.FLD_NAME1);
-			String thisAddressFLD_NAME2 = (String) this.get(Kontakt.FLD_NAME2);
-			String thisAddressFLD_NAME3 = (String) this.get(Kontakt.FLD_NAME3);
-			if (!StringTool.isNothing(thisAddressFLD_NAME1)) {
-				selectedInfosText.append(thisAddressFLD_NAME1);
-				if (!StringTool.isNothing(thisAddressFLD_NAME2+thisAddressFLD_NAME3)) {
-					selectedInfosText.append(StringTool.space);
-				}
-			}
-			if (!StringTool.isNothing(thisAddressFLD_NAME2)) {
-				selectedInfosText.append(thisAddressFLD_NAME2);
-			}
-			if (!StringTool.isNothing(thisAddressFLD_NAME3)) {
-				selectedInfosText.append(thisAddressFLD_NAME3);
-			}
-			if (!StringTool.isNothing(thisAddressFLD_NAME3)) {
-				selectedInfosText.append(StringTool.space);
-			}
-		}
-
-		String thisAddressFLD_STREET = (String) this.get(Kontakt.FLD_STREET);
-		if (!StringTool.isNothing(thisAddressFLD_STREET)) {
-			selectedInfosText.append(","+StringTool.space+thisAddressFLD_STREET);
-		}
-
-		String thisAddressFLD_COUNTRY = (String) this.get(Kontakt.FLD_COUNTRY);
-		if (!StringTool.isNothing(thisAddressFLD_COUNTRY)) {
-			selectedInfosText.append(","+StringTool.space+thisAddressFLD_COUNTRY+"-");
-		}
-			
-		String thisAddressFLD_ZIP = (String) this.get(Kontakt.FLD_ZIP);
-		if (!StringTool.isNothing(thisAddressFLD_ZIP)) {
-				if (StringTool.isNothing(thisAddressFLD_COUNTRY)) {
-						selectedInfosText.append(","+StringTool.space);
-					};
-			selectedInfosText.append(thisAddressFLD_ZIP);
-		};
-						
-		String thisAddressFLD_PLACE = (String) this.get(Kontakt.FLD_PLACE);
-		if (!StringTool.isNothing(thisAddressFLD_PLACE)) {
-			if (StringTool.isNothing(thisAddressFLD_COUNTRY) && StringTool.isNothing(thisAddressFLD_ZIP)) {
-				selectedInfosText.append(",");
-			};
-			selectedInfosText.append(StringTool.space+thisAddressFLD_PLACE);
-		}
-
-		String thisAddressFLD_PHONE1 = (String) this.get(Kontakt.FLD_PHONE1);
-		if (!StringTool.isNothing(thisAddressFLD_PHONE1)) {
-				selectedInfosText.append(","+StringTool.space+StringTool.space+thisAddressFLD_PHONE1);
-		}
-			
-		String thisAddressFLD_PHONE2 = (String) this.get(Kontakt.FLD_PHONE2);
-		if (!StringTool.isNothing(thisAddressFLD_PHONE2)) {
-			selectedInfosText.append(","+StringTool.space+StringTool.space+thisAddressFLD_PHONE2);
-		}
-			
-		String thisAddressFLD_MOBILEPHONE = (String) this.get(Kontakt.FLD_MOBILEPHONE);
-		if (!StringTool.isNothing(thisAddressFLD_MOBILEPHONE)) {
-			//With a colon after the label:
-			//SelectedContactInfosText.append(","+StringTool.space+this.FLD_MOBILEPHONE+":"+StringTool.space+thisAddressFLD_MOBILEPHONE);
-			//Without a colon after the label:
-			selectedInfosText.append(","+StringTool.space+Kontakt.FLD_MOBILEPHONE+StringTool.space+thisAddressFLD_MOBILEPHONE);
-		}
-			
-		String thisAddressFLD_FAX = (String) this.get(Kontakt.FLD_FAX);
-		if (!StringTool.isNothing(thisAddressFLD_FAX)) {
-			//With a colon after the label:
-			//SelectedContactInfosText.append(","+StringTool.space+this.FLD_FAX+":"+StringTool.space+thisAddressFLD_FAX);
-			//Without a colon after the label:
-			selectedInfosText.append(","+StringTool.space+Kontakt.FLD_FAX+StringTool.space+thisAddressFLD_FAX);
-		}
-			
-		String thisAddressFLD_E_MAIL = (String) this.get(Kontakt.FLD_E_MAIL);
-		if (!StringTool.isNothing(thisAddressFLD_E_MAIL)) {
-			selectedInfosText.append(","+StringTool.space+thisAddressFLD_E_MAIL);
-		}							
-
-		return selectedInfosText.toString();
-	}
-	
 }

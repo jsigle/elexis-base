@@ -13,7 +13,7 @@
 
 package ch.elexis.TarmedRechnung;
 
-//WARNING: A lot of code from this file also exists in ch.elexis.data.Rechnung.java.
+//201303130626js: WARNING: A lot of code from this file also exists in ch.elexis.data.Rechnung.java.
 //But over there, maybe it is in a less advanced state, regarding modularization and internationalization.
 //But that file over there appears to be actually used. 
 
@@ -61,7 +61,7 @@ public class Validator {
 			res.add(Result.SEVERITY.ERROR, 4, Messages.Validator_NoCase, rn, true);
 		}
 
-		//Lets check whether a consultation contains a non-Zero sum
+		//201303130500js: Lets check whether a consultation contains a non-Zero sum
 		//of recorded Verrechnungen. This will interrupt creation of a bill for a case
 		//that has at least one consultation where the sum of all verrechnungen is 0.00 -
 		//or, where no Verrechnung has been recorded yet.

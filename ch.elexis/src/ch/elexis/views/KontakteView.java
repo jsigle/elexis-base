@@ -301,14 +301,16 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 
 		/*
 		 * TODO: Refactor this procedure into different class(es)
-		 *   TODO: Should each field be capable of cleaning its content ? (Jörg Sigle & Niklaus Giger)
-		 *   TODO: We must find a way to handle different languages + research actual content of database columns
-		 *   TODO: Configuratability following preferences of diffferent users
+		 * TODO: Should each field be capable of cleaning its content ? (Jörg Sigle & Niklaus Giger)
+		 * TODO: We must find a way to handle different languages + research actual content of database columns
+		 * TODO: Configuratability following preferences of diffferent users
+		 * TODO: Maybe separate cleaning rules (into file) from cleaning code (in here, or in separate .java file(s))
 		 *   
 		 * @remark please note if at least one field of a contact is changed, all fields of the contact will be appended
 		 *         to the clipboard. The result can be pasted into a spreadshead, and a macro exists to highlight then changed fields
 		 *         This allows checking whether your algorithm is good or not 
 		 * 
+		 * 201303041746js:
 		 * Clean selected address(es):
 		 * For all selected addresses do:
 		 * If FLD_IS_PATIENT==true, then set FLD_IS_PERSON=true (otherwise, invalid xml invoices may be produced, addressed to institutions instead of persons)
