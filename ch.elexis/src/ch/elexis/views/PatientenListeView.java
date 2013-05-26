@@ -564,6 +564,38 @@ public class PatientenListeView extends ViewPart implements IActivationListener,
 						 * (However, I may disable the toolbar icon / menu entry for this action in that case later on.) 
 					 	 */				 	 
 						
+						//201305260049js
+						//For Patientenblatt2.java, PatientenListeView.java, KontakteView.java
+						//This function was primarily introduced because the above algorithm
+						//returns a double space in the phone number area. Maybe that from a field containing a space,
+						//or truly generated in the code above.
+						
+						//Right now I have no time, and the postprocessing has the advantage of correcting unwanted
+						//content inside the fields as well. So I only add this today.
+						
+						// TO DO Please look up the reason for the extra space above.
+						// TO DO Please make sure that multibyte Unicode characters are correctly handled below.
+						// TO DO Add similar postprocessing to copySelectedAdressesToClipboard of all three .java files
+						// TO DO Move the processing into a separate method/function, when the copy... methods are refactored.
+							
+						//Postprocess selectedPatInfosText:
+						//Remove any leading or trailing spaces;
+						//Replace any " ," by ",";
+						//Replace any " ." by ".";
+						//Replace any multiple spaces by single spaces.
+						int n=0;
+						while (n<selectedPatInfosText.length()) {
+							if (   selectedPatInfosText.codePointAt(n)==StringTool.space.codePointAt(0)
+								&& ( n==selectedPatInfosText.length()
+									|| selectedPatInfosText.codePointAt(n+1)==(",").codePointAt(0)
+									|| selectedPatInfosText.codePointAt(n+1)==(".").codePointAt(0)
+									|| selectedPatInfosText.codePointAt(n+1)==StringTool.space.codePointAt(0) )
+								){ 
+								selectedPatInfosText.deleteCharAt(n);
+								} else { 
+								n=n+1;}
+						};				
+
 					    //System.out.print("jsdebug: selectedPatInfosText: \n"+selectedPatInfosText+"\n");
 						
 						//Adopted from BestellView.exportClipboardAction:
