@@ -334,9 +334,9 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener, IAc
 	private void setPatient(Patient pat){
 		//20130525js: Re-Added a System.out.println() that has been removed by tomashu
 		//in mercurial changeset changeset 5857:25931b0b9c80; however with security checks.
-		System.out.println("js KonsDetailView.setPatient() begin);
+		System.out.println("js KonsDetailView.setPatient() begin");
 		if (pat == null) {
-			System.out.println("js KonsDetailView.setPatient(): WARNING: pat == null!); //we do not return here today, I'm just adding monitoring code
+			System.out.println("js KonsDetailView.setPatient(): WARNING: pat == null!"); //we do not return here today, I'm just adding monitoring code
 		} else {
 			System.out.println("js KonsDetailView.setPatient(): pat.getLabel() == "+pat.getLabel()); //we do not return here today, I'm just adding monitoring code
 		}
