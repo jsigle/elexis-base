@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005-2010, G. Weirich and Elexis
+ * Copyright (c) 2005-2010, G. Weirich and Elexis; Portions (c) 2013 Joerg Sigle
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    G. Weirich - initial implementation
+ *    J. Sigle   - added NichtNurFaelleFuerKeineRechnung
  *    M. Descher - added loadByPatientID
+ *    G. Weirich - initial implementation
  * 
  *******************************************************************************/
 package ch.elexis.data;
@@ -166,6 +167,40 @@ public class Patient extends Person {
 		return ret;
 	}
 	
+	/**
+	 * 20130530js:
+	 * 
+	 * Findet sich in der Liste aller Fälle des Patienten
+	 * mindestens ein Fall der NICHT zu einem Abrechnungssystem gehört,
+	 * welches "...keine Rechnung" im Namen hat,
+	 * und der weiterhin eine noch nicht abgerechnete, nicht gelöschte Behandlung enthält?
+	 * 
+	 * Sorry, aber diese Information braucht es, wenn ich Fälle "Lindenhof - keine Rechnung" oder "keine Rechnung"
+	 * aus in KonsZumVerrechnenView.java unter "Alle offenen Behandlungen" nicht mehr anzeigen will.
+	 * Leider kann ich diese Kriterien nicht direkt in der dort zugrundeliegenden SQL Abfrage einbauen,
+	 * weil sie vermutlich in extinfo longblob liegen.  
+	 * 
+	 * @return boolean
+	 */
+	public Boolean hatFaelleZumAbrechnen(){
+		//System.out.println("js Patient.java: hatFaelleZumAbrechnen: begin");
+		Boolean result = false; 
+		//20130530js: Ich verwende nicht das obige getFaelle(),
+		//da ich das Ergebnis von getList() nur bis zum ersten Fall durchsuchen will,
+		//der ein result = true liefert, und das Ergebnis auch nicht aufbewahren will.
+		List<String> cas = getList("Faelle", true);
+		for (String id : cas) {
+			Fall fall = Fall.load(id);
+			if ( fall.hatBehandlungenZumAbrechnen() ) {				
+					result = true;
+					break;			// 20130530js: Ein gefundener Fall dieser Art reicht.
+			}
+		}
+		
+		//System.out.println("js Patient.java: hatFaelleZumAbrechnen: end, returning "+result);
+		return result;
+	}
+
 	/**
 	 * Fixmedikation dieses Patienten einlesen
 	 * 

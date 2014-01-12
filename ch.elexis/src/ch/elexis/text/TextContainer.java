@@ -234,7 +234,10 @@ public class TextContainer {
 	 */
 	public Brief createFromTemplate(final Konsultation kons, final Brief template,
 		final String typ, Kontakt adressat, final String subject){
+System.out.println("\njs ch.elexis.text/TextContainer.java Brief createFromTemplate(final Konsultation kons, final Brief template, final String typ, Kontakt adressat, final String subject): begin");
+
 		if (adressat == null) {
+System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): adressat == null; about to show dialog");
 			KontaktSelektor ksel =
 				new KontaktSelektor(shell, Kontakt.class,
 					Messages.TextContainer_SelectDestinationHeader,
@@ -244,16 +247,27 @@ public class TextContainer {
 			}
 			adressat = (Kontakt) ksel.getSelection();
 		}
+		
+		
+if (adressat == null)	{ System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): WARNING: Still: adressat == null");}
+else					{ System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): adressat == "+adressat.toString());};
+//20130601js: Please note: Selbst wenn hier adressat == null ist - was passiert, wenn im Dialog KEINE Adresse ausgewählt,
+//aber trotzdem ok gedrückt wurde, dann ist nacher in saveBrief() trotzdem brief.getAdressat() == ch.elexis.data.Kontakt@0. 
+		
 		// Konsultation kons=getBehandlung();
 		if (template == null) {
+System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): template == null; about to create new from empty document...");
 			if (plugin.createEmptyDocument()) {
 				Brief brief =
 					new Brief(subject == null ? Messages.TextContainer_EmptyDocument : subject,
 						null, Hub.actUser, adressat, kons, typ);
+System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): about to add brief to current consultation...");
 				addBriefToKons(brief, kons);
+System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): aboout to return brief...");
 				return brief;
 			}
 		} else {
+System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): template != null; about to loadFromByteArray and modify content...");
 			if (plugin.loadFromByteArray(template.loadBinary(), true) == true) {
 				final Brief ret =
 					new Brief(subject == null ? template.getBetreff() : subject, null, Hub.actUser,
@@ -296,11 +310,15 @@ public class TextContainer {
 							in.replaceAll(MATCH_SQUARE_BRACKET, StringTool.leer));
 					}
 				});
+System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): about to saveBrief(ret, typ)");
 				saveBrief(ret, typ);
+System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): about to add brief to current consultation...");
 				addBriefToKons(ret, kons);
+System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): aboout to return brief...");
 				return ret;
 			}
 		}
+System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): end - aboout to return null");
 		return null;
 	}
 	
@@ -829,14 +847,14 @@ public class TextContainer {
 		} else {
 				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): brief == "+brief.toString());
 				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): brief.getBetreff() == "+brief.getBetreff());
-				//20130425js: Das hier lieber nicht machen: Das öffnet interaktiv das Dialogfenster zur Adressauswahl; unpassend als Debug-Output.
-				//System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): brief.getAdressat() == "+brief.getAdressat());
+				//20130501js: brief.getadressat() kann hier völlig problemlos verwendet werden. Das ist *kein* interaktiver Dialog.
+				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): brief.getAdressat() == "+brief.getAdressat());
 		}
 		
-		if ((brief == null) || (brief.getAdressat() == null)) {
-		
+		//20130501js: brief.getadressat() kann hier völlig problemlos verwendet werden. Das ist *kein* interaktiver Dialog.
+		if ((brief == null) || (brief.getAdressat() == null)) {		
 			//TODO: 20130425js added this: Nur Hinweis auf möglichen Bedienfehler im Log (Keine Konsultation beim Erstellen eines Briefes)
-			if ( Konsultation.getAktuelleKons() == null )
+			if ( Konsultation.getAktuelleKons() == null ) {
 				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW");
 				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): WARNING: Konsultation.getAktuelleKonsultation == null"); 
 				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): WARNING: Soll hier (oder etwas früher!!) vielleicht ein Abbruch der Brief-Erstellung in den Code?"); 
@@ -845,6 +863,24 @@ public class TextContainer {
 				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): Konsultation.getAktuelleKons()=="+Konsultation.getAktuelleKons()+": "+Konsultation.getAktuelleKons().getDatum());
 			}
 		
+			//20130601js: Ist das vielleicht heutzutage Quatsch?
+			//Normalerweise sollte der Adressat in create... vor dem Aufruf von saveBrief() erfragt worden sein.
+			//Andernfalls hilft es - für einen via dort erzeugten Brief - jetzt auch nicht mehr viel,
+			//da die Daten schon in die Vorlage gemerget wurden.
+			//Und schliesslich: im aktuellen Elexis gibt es auch Briefe, bei denen kein Adressat erfragt werden soll. 
+
+			//Soeben getestet: Selbst wenn in Brief createFromTemplate() nach dem Dialog für die Adressauswahl
+			//noch adressat == null ist - was passiert, wenn im Dialog KEINE Adresse ausgewählt,
+			//aber trotzdem ok gedrückt wurde, dann ist nacher in saveBrief() trotzdem brief.getAdressat() == ch.elexis.data.Kontakt@0. 
+			//Für diesen Fall wird die nachfolgend codierte Gelegenheit zur Auswahl einer Adresse per Dialog also NICHT realisiert.
+			//Das ist auch durchaus so erwünscht - ich bin wirklich nicht sicher, wozu der Code hier noch dient.
+			//Aber aufgrund dieser Unsicherheit mache ich ihn nicht weg, sondern schreibe nur ein TODO dazu:
+			
+			// TODO: 20130601js: Prüfen, ob der nachfolgende Code zur Adressauswahl NACHDEM in createFromTemplate()
+			// eigentlich die Adressdaten schon eingemischt wurden, überhaupt noch irgendeinen Sinn macht.
+			// Und woher der Eintrag überhaupt kommt. Weitere Infos dazu über diesem ToDo-Eintrag.
+			
+			//Hier wird der Adressat interaktiv erfragt, falls er == null ist.
 			KontaktSelektor ksl =
 				new KontaktSelektor(shell, Kontakt.class,
 					Messages.TextContainer_SelectAdresseeHeader,
@@ -854,13 +890,16 @@ public class TextContainer {
 				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): about to brief = new Brief(...)");
 				brief = new Brief(Messages.TextContainer_Letter, null, Hub.actUser,
 						(Kontakt) ksl.getSelection(), Konsultation.getAktuelleKons(), typ);
-		}
+			}
+		} //(brief==null) || (brief.getAdresat() == null)
+		
 		
 		if (brief == null) { 
 				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): WARNING: STILL: brief == null"); 
 			} else {
 					System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): brief == "+brief.toString());
 					System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): brief.getBetreff() == "+brief.getBetreff());
+					//20130501js: brief.getadressat() kann hier völlig problemlos verwendet werden. Das ist *kein* interaktiver Dialog.
 					System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): brief.getAdressat() == "+brief.getAdressat());
 			}
 

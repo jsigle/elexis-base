@@ -507,6 +507,49 @@ public class Fall extends PersistentObject {
 		return ret;
 	}
 	
+	/**
+	 * 20130530js:
+	 * Prüfen, ob dieser Fall zugeordnete Behandlungen hat,
+	 * welche nicht gelöscht, aber auch noch nicht abgerechnet sind.
+	 * 
+	 * Ausdrücklich auch Ergebnisse mit kons.isValid() == false zulassen,
+	 * (also ohne Mandant oder ohne Fall, wiewohl ich beim Schreiben der Methode vom Fall her komme),
+	 * und solche, wo noch keine Leistungen eingetragen sind -
+	 * ich suche ja gerade erst mal offenen Konsultationen zum Verrechnen,
+	 * bei denen ggf. noch Arbeit notwendig ist. 
+	 *
+	 * @return Boolean
+	 */
+	public Boolean hatBehandlungenZumAbrechnen() {
+		//System.out.println("js Fall.java: hatBehandlungenZumAbrechnen: begin");
+		Boolean result = false;
+
+		String s = this.getAbrechnungsSystem().toLowerCase().trim();
+		//System.out.println("js Fall.java: hatBehandlungenZumAbrechnen: fall.getAbrechnungsSystem()()()="+s);
+		
+		if ( ! ( s.contains("keine Rechnung") || s.contains("keine praxisrechnung") )  )  {
+			//20130530js: Ich verwende nicht das obige getBehandlungen(),
+			//da ich das Ergebnis von getList() nur bis zur ersten Behandlung durchsuchen will,
+			//die ein result = true liefert, und das Ergebnis auch nicht aufbewahren will.
+			List<String> list = this.getList(FLD_BEHANDLUNGEN, false);
+			for (String id : list) {
+				Konsultation kons = Konsultation.load(id);
+				//20130530js:
+				//Oh Mann. Im folgenden Vergleich hatte ich != null statt == null.
+				//Das hat mich nun etwa 4 Stunden mit Fehlersuche unterhalten...
+				//Und mit allerlei Versuchen, die Filterfunktionalität anders zu implementieren,
+				//als ich das ursprünglich - bis auf diesen Typo - korrekt und funktional gemacht hatte...
+				if ( (kons.exists()) && (kons.getRechnung() == null) ) {
+					result = true;
+					break;			// 20130530js: Eine gefundene Behandlung dieser Art reicht.
+					}
+			}
+		}
+
+		//System.out.println("js Fall.java: hatBehandlungenZumAbrechnen: end, returning "+result);
+		return result;		
+	}
+	
 	public Konsultation getLetzteBehandlung(){
 		List<String> list = getList(FLD_BEHANDLUNGEN, true);
 		if (list.size() > 0) {

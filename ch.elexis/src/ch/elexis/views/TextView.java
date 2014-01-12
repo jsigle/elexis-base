@@ -402,6 +402,7 @@ public class TextView extends ViewPart implements IActivationListener {
 			System.out.println("js ch.elexis.views/TextView.java createDocument(3): WARNING: returning false\n");
 			return false;
 		}
+
 		actBrief = txt.createFromTemplate(Konsultation.getAktuelleKons(), template, Brief.UNKNOWN, adressat, subject);
 		setName();
 		if (actBrief == null) {

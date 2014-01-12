@@ -1,11 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2005-2010, G. Weirich and Elexis
+ * Copyright (c) 2005-2010, G. Weirich and Elexis; Portions (c) 2013, Joerg Sigle
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
+ *    J. Sigle   - added filtering to suppress Patients/Faelle/Behandlungen with Abrechnungssystem like "keine Rechnung", "keine PraxisRechnung"
  *    G. Weirich - initial implementation
  *    
  *  $Id: KonsZumVerrechnenView.java 6229 2010-03-18 14:03:16Z michael_imhof $
@@ -17,6 +18,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
@@ -83,6 +85,8 @@ import ch.elexis.views.FallDetailView;
 import ch.elexis.views.KonsDetailView;
 import ch.elexis.views.PatientDetailView2;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.IFilter;		//20130530js
+import ch.rgw.tools.RegexpFilter;	//20130530js
 import ch.rgw.tools.JdbcLink.Stm;
 import ch.rgw.tools.LazyTree;
 import ch.rgw.tools.LazyTree.LazyTreeListener;
@@ -112,6 +116,8 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 	TreeViewer tvSel;
 	LazyTreeListener ltl;
 	ViewMenus menu;
+	
+	
 	private IAction billAction, printAction, clearAction, wizardAction, refreshAction,
 			detailAction;
 	private IAction removeAction;
@@ -119,13 +125,34 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 	private IAction expandSelAllAction;
 	private IAction selectByDateAction;
 	KonsZumVerrechnenView self;
-	
+
+	//20130530js
+	////IFilter filter;
+
 	public KonsZumVerrechnenView(){
+		////System.out.println("js KonsZumVerrechnenView constructor: about to instantiate: cv, ltl, tSelection, tAll");
+		
 		cv = new CommonViewer();
 		ltl = new RLazyTreeListener();
 		tSelection = new Tree<PersistentObject>(null, null);
+		
 		tAll = new LazyTree<PersistentObject>(null, null, ltl);
-		self = this;
+		////tAll = new LazyTree<PersistentObject>(null, null, (IFilter) filter, ltl);
+		
+		self = this;				
+		
+		//20130530js
+		////System.out.println("js KonsZumVerrechnenView constructor: about to: js filter = new hatZumAbrechnen()");
+		//filter = new HatZumAbrechnen();
+		//Filter erst mal ausschalten - denn der wird für den Versuch des Ausblendens von Patienten/Fällen
+		//die nur Inhalte im Abrechnungssystem keine-Rechnung etc. haben, ohnehin durch tree.java getChildren()
+		//überstimmt, welches sowohl für filter.select=true als auch für hasChildren() Objekte zurückliefert.
+		//Deshalb habe ich stattdessen hier in Kons...java oben bei hasChildren() eine Modifikation gemacht,
+		//die diese Filterfunktion übernimmt. - filter könnte dann die Einträge pauschal nach Eintragstext filtern oder ähnlich.
+		////filter = null;
+		////System.out.println("js KonsZumVerrechnenView constructor: about to: tAll.setfilter(filter); tSelection.setfilter(filter)");
+		////tAll.setFilter(filter);
+		////tSelection.setFilter(filter);		
 	}
 	
 	@Override
@@ -161,11 +188,16 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 				// String[]{"Datum","Name","Vorname","Geb. Dat"}),
 				new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
 					SimpleWidgetProvider.TYPE_TREE, SWT.MULTI | SWT.V_SCROLL, cv));
+		
+		//20130530js Doc attempt:
+		//Die linke Hälfte der View "Konsultationen zum Verrechnen" aufbauen:
+		//Hier wird der LazyTree tAll angezeigt.
 		SashForm sash = new SashForm(parent, SWT.NULL);
 		left = tk.createForm(sash);
 		Composite cLeft = left.getBody();
 		left.setText(Messages.getString("KonsZumVerrechnenView.allOpenCons")); //$NON-NLS-1$
 		cLeft.setLayout(new GridLayout());
+//System.out.println("js KonsZumVerrechnenView createPartControl LEFT: cv.cretae(...tAll)...");				
 		cv.create(vc, cLeft, SWT.NONE, tAll);
 		cv.getViewerWidget().setComparator(new KonsZumVerrechnenViewViewerComparator());
 		
@@ -200,6 +232,10 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 			}
 		});
 		
+		
+		//20130530js Doc attempt:
+		//Die rechte Hälfte der View "Konsultationen zum Verrechnen" aufbauen.
+		//Hier wird später im TreeViewer tvSel der Tree tSelection angezeigt.
 		right = tk.createForm(sash);
 		Composite cRight = right.getBody();
 		right.setText(Messages.getString("KonsZumVerrechnenView.selected")); //$NON-NLS-1$
@@ -212,6 +248,7 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 			@SuppressWarnings("unchecked")
 			@Override
 			public String getText(final Object element){
+//System.out.println("js KonsZumVerrechnenView createPartControl: RIGHT: tvSel.setLabelProvider.getText(): about to return ((Tree).element).contents.getlabel");				
 				return ((PersistentObject) ((Tree) element).contents).getLabel();
 			}
 			
@@ -310,14 +347,37 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 		
 	}
 	
+	
 	class RLazyTreeListener implements LazyTreeListener {
 		final LazyTreeListener self = this;
-		
+						
 		@SuppressWarnings("unchecked")
+		// TO DO: An jemanden der es weiss: Bitte mal in deutsch oder englisch dokumentieren, was diese Funktion machen soll. Ich kann das nur vermuten. js 
+		/**
+		 * 20130530js - Ein Dokumentationsversuch zur Orientierung:
+		 * 
+		 * Beim Anzeigen der View "Konsultationen zum Verrechnen" werden erst einmal
+		 * per SQL-Abfrage alle Patienten gesucht, für die FAELLE eingetragen sind,
+		 * für die nicht gelöschte BEHANDLUNGEN eingetragen sind, deren RECHNUNGSID null ist.
+		 * Diese werden als eine Serie von geschlossenen (Sub)Trees angezeigt.
+		 * 
+		 * Erst wenn man später einen (Sub)Tree "Patient" per Mausklick öffnet, werden zu dem jeweiligen Patienten auch die Fälle gesucht
+		 * per eigener SQL-Abfrage, und wiederum jeder davon als geschlossener (Sub)Tree unterhalb des Patienten gezeigt.
+		 * Erst wenn man noch später einen (Sub)Tree "Fall" per Mausklick öffnet, werden zu dem jeweiligen Fall auch die Behandlungen (=Konsultationen) gesucht
+		 * per eigener SQL-Abfrage, und wiederum jede davon als geschlossener (Sub)Tree unterhalb des Falls gezeigt.
+		 * 
+		 * Die Tabelle FAELLE enthält zwar Felder wie GESETZ etc., da finde ich aber immer nur NULL drin.
+		 * Vermutlich werden viele Informationen tatsächlich in extinfo longblob gespeichert. :-(
+		 */
 		public boolean fetchChildren(final LazyTree l){
+			//System.out.println("js KonsZumVerrechnen.java: RLazyTreeListener.fetchChildren() begin");
+			// TODO: Die Methode wird laut log beim Anzeigen der View etwa 4x aufgerufen, und die ersten zwei mal gibt's sofort eine rote Exception. Schöner wäre Aufruf nur wenn nötig, und wenn alle Voraussetzungen erfüllt sind. 
+			//System.out.println("js TO DO: KonsZumVerrechnenView.fetchChildren() Wird vermutlich unnötig und unschön oft aufgerufen.");
+
 			PersistentObject cont = (PersistentObject) l.contents;
 			final Stm stm = PersistentObject.getConnection().getStatement();
 			if (cont == null) {
+	//System.out.println("js: KonsZumVerrechnen.java: cont == null...");
 				IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
 				try {
 					progressService.runInUI(PlatformUI.getWorkbench().getProgressService(),
@@ -327,13 +387,25 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 									Messages.getString("KonsZumVerrechnenView.findCons"), 100); //$NON-NLS-1$
 								monitor.subTask(Messages
 									.getString("KonsZumVerrechnenView.databaseRequest")); //$NON-NLS-1$
+
+	// TODO: WARNUNG: KonsZumVerrechnen.java: fetchChildren() Müsste/Könnte hier auch noch and FAELLE.deleted='0' rein?
+	//System.out.println("js TODO WARNUNG: KonsZumVerrechnen.java: fetchChildren() Müsste/Könnte hier auch noch and FAELLE.deleted='0' rein?");
+								
 								String sql =
 									"SELECT distinct PATIENTID FROM FAELLE " + //$NON-NLS-1$
 										"JOIN BEHANDLUNGEN ON BEHANDLUNGEN.FALLID=FAELLE.ID WHERE BEHANDLUNGEN.deleted='0' AND BEHANDLUNGEN.RECHNUNGSID is null "; //$NON-NLS-1$
 								if (Hub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL) == false) {
 									sql += "AND BEHANDLUNGEN.MANDANTID=" //$NON-NLS-1$
-										+ Hub.actMandant.getWrappedId();
+										+ Hub.actMandant.getWrappedId();								
 								}
+								
+	// TODO: Fälle mit dem Typ "Lindenhof - keine Rechnung" und "keine Rechnung" nicht zurückliefern.
+	// Das könnte man über  if ... sq+= "AND Gesetz like "%keine Rechnung%" lösen, wenn das Feld "Gesetz" hier nicht dauernd NULL wäre.
+	// Möglicherweise stehen die relevanten Informationen in ExtInfo drin, und das wiederum ist ein longblob. :-(
+	//System.out.println("js TODO: Fälle mit dem Typ \"Lindenhof - keine Rechnung\" und \"keine Rechnung\" nicht zurückliefern.");
+						
+	System.out.println("js: KonsZumVerrechnen.java: fetchChildren() FAELLE.PATIENTID mit Behandlungen ohne RechnungsID, ggf. für einen bestimmten Mandanten: sql=\n"+sql);
+						
 								ResultSet rs = stm.query(sql);
 								monitor.worked(10);
 								monitor.subTask(Messages.getString("KonsZumVerrechnenView.readIn")); //$NON-NLS-1$
@@ -341,8 +413,44 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 									while ((rs != null) && rs.next()) {
 										String s = rs.getString(1);
 										Patient p = Patient.load(s);
-										if (p.exists() && (tSelection.find(p, false) == null)) {
+	//System.out.println("js: KonsZumVerrechnen.java: fetchChildren() PATIENTID: s="+s+", "+p.getName()+" "+p.getVorname());
+										//201305301445js: Dokumentationsversuch:
+										//wenn es der Patient mit der via SQL gefundenen PATIENTID als Objekt ladbar ist (i.e.: existiert, nicht geloescht),
+										//dieses Objekt jedoch noch nicht in tSelection (!!!) drin ist,
+										//dann es in einen (!!!) Tree aufnehmen.
+										
+										//ICH BIN VÖLLIG UNSICHER, warum hier mit tSelection() verglichen wird,
+										//und wie der Zieltree übergeben wird. Vermutlich ist das nämlich tAll,
+										//vielleicht aber auch nicht.
+										//Wenn ich den tSelection.find() Test auskommentiere,
+										//bekomme ich kein anderes Ergebnis, jedenfalls so lange in der rechten Spalte noch kein Auswahltree angelegt ist.
+		
+										//Ah, wenn ich einen Patienten von links nach rechts ziehe,
+										//d.h. von tAll nach tSelection, dann soll er in tAll wohl NICHT mehr erscheinen.
+										//Das ist vermutlich alles - dasselbe dann auch für Faelle und Behandlungen weiter unten.
+		
+		
+										
+										//Ich ergänze nun mal code, der Patienten dann nicht mehr anzeigt, wenn alle Fälle dieser Patienten
+										//nur zu Abrechnungssystemen gehören, die den String "...keine Rechnung" enthalten.
+
+										// TO DO: Da das Abrechnungssystem leider nicht in der SQL-Tabelle gespeichert ist, sondern offenbar im blob,
+										//muss ich dafür erst eine Java-Funktion schreiben.
+										// Viel eleganter wäre es, wenn das DBMS solche Dinge erledigen dürfte.
+			
+										// TO DO: Nachdem oben ja distinct in der SQL Abfrage steht, wäre der tSelection.find() Test nur dann nötig,
+										// wenn die Selection nicht jedesmal gelöscht würde.
+		
+										//20130530js: Nur Patienten anzeigen, wenn auch hatFaelleZumAbrechnen(); dafür reichen 
+										//Fälle nicht, deren Abrechnungssystemen.toLower.contains("keine rechnung"|"keine praxisrechnung").
+										if (p.exists() 
+											&& p.hatFaelleZumAbrechnen()  
+											&& (tSelection.find(p, false) == null) )  {
+	//System.out.println("js: KonsZumVerrechnen.java: fetchChildren() About to new LazyTree(l, p, (IFilter) filter, self)...");
+	//System.out.println("js: KonsZumVerrechnen.java: fetchChildren() where (filter == null) is "+(filter==null));
+											
 											new LazyTree(l, p, self);
+											////new LazyTree(l, p, (IFilter) filter, self);
 										}
 										monitor.worked(1);
 									}
@@ -354,39 +462,76 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 						}, null);
 				} catch (Throwable ex) {
 					ExHandler.handle(ex);
-				}
+				} //if cont == null
 				
 			} else {
+		//System.out.println("js: KonsZumVerrechnen.java: cont != null...");
+
 				ResultSet rs = null;
 				String sql;
 				try {
 					if (cont instanceof Patient) {
+		//System.out.println("js: KonsZumVerrechnen.java: cont instanceof Patient...");
+
 						sql =
 							"SELECT distinct FAELLE.ID FROM FAELLE join BEHANDLUNGEN ON BEHANDLUNGEN.FALLID=FAELLE.ID " + //$NON-NLS-1$
 								"WHERE BEHANDLUNGEN.RECHNUNGSID is null AND BEHANDLUNGEN.DELETED='0' AND FAELLE.PATIENTID=" //$NON-NLS-1$
 								+ cont.getWrappedId(); //$NON-NLS-1$
 						if (Hub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL) == false) {
 							sql += " AND BEHANDLUNGEN.MANDANTID=" + Hub.actMandant.getWrappedId(); //$NON-NLS-1$
+
+	// TODO/DONE: Fälle mit dem Typ "Lindenhof - keine Rechnung" und "keine Rechnung" nicht zurückliefern.
+	// Das könnte man über  if ... sq+= "AND Gesetz like "%keine Rechnung%" lösen, wenn das Feld "Gesetz" hier nicht dauernd NULL wäre.
+	// Möglicherweise stehen die relevanten Informationen in ExtInfo drin, und das wiederum ist ein longblob. :-(
+	//System.out.println("js TODO: Fälle mit dem Typ \"Lindenhof - keine Rechnung\" und \"keine Rechnung\" nicht zurückliefern.");
+
 						}
+
+	System.out.println("js: KonsZumVerrechnen.java: fetchChildren() FAELLE.ID zu einer PatientID mit Behandlungen ohne RechnungsID: sql=\n"+sql);
+
 						rs = stm.query(sql);
 						while ((rs != null) && rs.next()) {
 							String s = rs.getString(1);
 							Fall f = Fall.load(s);
-							if (f.exists() && (tSelection.find(f, true) == null)) {
+	//System.out.println("js: KonsZumVerrechnen.java: fetchChildren() FAELLE.ID: s="+s+", FAELLE.PATIENTID...="+f.getPatient().getName()+" "+f.getPatient().getVorname());
+	
+						//20130530js: Nur Fälle anzeigen, wenn auch hatBehandlungenZumAbrechnen(); dafür reichen 
+						//Fälle nicht, deren Abrechnungssystemen.toLower.contains("keine rechnung"|"keine praxisrechnung").
+	
+						//TO DO: Auch hier wiederum: WARUM die Suche in tSelection? Warum nicht in tAll? Oder in einem übergebenen Baum?
+							if (f.exists()
+								// && f.getPatient().exists()
+								// && f.getPatient().hatFaelleZumAbrechnen() //vielleicht redundant, bei false wäre das nächste wohl auch false
+								&& f.hatBehandlungenZumAbrechnen()
+								&& (tSelection.find(f, true) == null)) {
+	//System.out.println("js: KonsZumVerrechnen.java: fetchChildren() About to new LazyTree(l, f, (IFilter) filter, this)...");
+	//System.out.println("js: KonsZumVerrechnen.java: fetchChildren() where (filter == null) is "+(filter==null));
+	
 								new LazyTree(l, f, this);
+								////new LazyTree(l, f, (IFilter) filter, this);
 							}
 						}
 					} else if (cont instanceof Fall) {
+	//System.out.println("js: KonsZumVerrechnen.java: cont instanceof Fall...");
+
 						sql =
 							"SELECT ID FROM BEHANDLUNGEN WHERE RECHNUNGSID is null AND deleted='0' AND FALLID=" + cont.getWrappedId(); //$NON-NLS-1$
 						if (Hub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL) == false) {
 							sql += " AND MANDANTID=" + Hub.actMandant.getWrappedId(); //$NON-NLS-1$
 						}
+
+	System.out.println("js: KonsZumVerrechnen.java: fetchChildren() BEHANDLUNGEN.ID mit FALLID=cont.getWrappedId(), ggf. für einen Mandanten: sql=\n"+sql);
 						rs = stm.query(sql);
 						while ((rs != null) && rs.next()) {
 							String s = rs.getString(1);
+	//System.out.println("js: KonsZumVerrechnen.java: fetchChildren() BEHANDLUNGEN.ID: s="+s);
 							Konsultation b = Konsultation.load(s);
-							if (b.exists() && (tSelection.find(b, true) == null)) {
+
+							//TO DO: Auch hier wiederum: WARUM die Suche in tSelection? Warum nicht in tAll? Oder in einem übergebenen Baum?
+							if (b.exists()
+								&& (tSelection.find(b, true) == null)) {
+	
+	//System.out.println("js: KonsZumVerrechnen.java: fetchChildren() About to new LazyTree(l, b, this)...");
 								new LazyTree(l, b, this);
 							}
 						}
@@ -400,22 +545,63 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 					PersistentObject.getConnection().releaseStatement(stm);
 				}
 			}
+			
+	//System.out.println("js KonsZumVerrechnen.java: fetchChildren(): Nach Durchlauf die Filter nochmals nachträglich setzen mit l.setFilter(filter)...");
+	//		l.setFilter(filter);
+			
+	//System.out.println("js KonsZumVerrechnen.java: fetchChildren() end - about to return false");
 			return false;
 		}
 		
 		@SuppressWarnings("unchecked")
+		// TO DO: An jemanden der es weiss: Bitte mal in deutsch oder englisch dokumentieren, was diese Funktion machen soll. Ich kann das nur vermuten. js 
 		public boolean hasChildren(final LazyTree l){
+			//System.out.println("js hasChildren(l) begin");
+
 			Object po = l.contents;
+			
+			//js: Standard wäre: Für Patienten und Fälle zurückgeben, dass diese Children haben. Für Behandlungen: Nicht.
+			//js: Als nächsten Versuch zur Implementation eines Filters geb ich jetzt für erstere mal zurück,
+			//js: ob sie Fälle/Behandlungen zum Verrechnen haben. 
+		
+			/**
+			 * 20130530js:
+			 * I should rather avoid too many calls to the hat...() functions, because they cause some large overhead.
+			 * After having discovered the typo in Fall.hatBehandlungenZumAbrechnen(), responsible for my initial implementation
+			 * having ended in unexpected results, the original implementation works again. I think it should be rather efficient,
+			 * given the lack of ability to use a direct SQL query because the SQL db fields are not properly used.
+			 * So I will NOT keep the same filtering around here active for now.
+			////Maybe we could still need/use it when adding another level of text filtering; so I add a comment with four //// to make this visible.   
+			if (po instanceof Patient) {
+				//System.out.println("js hasChildren(l): l instanceof Patient: ...="+((Patient) po).getName()+" "+((Patient) po).getVorname());
+				return ((Patient) po).hatFaelleZumAbrechnen();
+			} 
+			else if (po instanceof Fall) {
+					//System.out.println("js hasChildren(l): l instanceof Fall: ...="+((Fall) po).getAbrechnungsSystem());
+					return ((Fall) po).hatBehandlungenZumAbrechnen();
+			}
+			else
+			*/
+			
 			if (po instanceof Konsultation) {
+				//System.out.println("js hasChildren(l): l instanceof Konsultation: ...verrechnet?="+(((Konsultation) po).getRechnung() == null));
+				//System.out.println("js hasChildren(l) end - returning true");
 				return false;
 			}
+			//System.out.println("js hasChildren(l) end - returning true");
 			return true;
 		}
 		
 	}
 	
+	// TO DO: An jemanden der es weiss: Bitte mal in deutsch oder englisch dokumentieren, was diese Funktion machen soll. Ich kann das nur vermuten. js 
 	public void selectKonsultation(final Konsultation k){
+		//System.out.println("js KonsZumVerrechnenView.java selectKonsultation() begin");
+		//System.out.println("js TO DO: KonsZumVerrechnenView.java selectKonsultation() Jegliche Dokumentation der Methode fehlt.");
+
 		selectBehandlung(k, tAll, tSelection);
+
+		//System.out.println("js KonsZumVerrechnenView.java selectKonsultation() end - hier steht kein return drin");
 	}
 	
 	/**
@@ -423,7 +609,11 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 	 * anlegen.
 	 */
 	@SuppressWarnings("unchecked")
+	// TO DO: An jemanden der es weiss: Bitte mal in deutsch oder englisch dokumentieren, was diese Funktion machen soll. Ich kann das nur vermuten. js 
 	private Tree selectPatient(final Patient pat, final Tree tSource, final Tree tDest){
+		//System.out.println("js KonsZumVerrechnenView.java selectPatient() begin");
+		//System.out.println("js TO DO: KonsZumVerrechnenView.java selectPatient() Jegliche Dokumentation der Methode fehlt.");
+
 		Tree pSource = tSource.find(pat, false);
 		Tree pDest = tDest.find(pat, false);
 		if (pDest == null) {
@@ -441,11 +631,17 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 			}
 		}
 		cv.getViewerWidget().refresh(tSource);
+
+		//System.out.println("js KonsZumVerrechnenView.java selectPatient() end - about to return tFall");
 		return pDest;
 	}
 	
 	@SuppressWarnings("unchecked")
+	// TO DO: An jemanden der es weiss: Bitte mal in deutsch oder englisch dokumentieren, was diese Funktion machen soll. Ich kann das nur vermuten. js 
 	private Tree selectFall(final Fall f, final Tree tSource, final Tree tDest){
+	//System.out.println("js KonsZumVerrechnenView.java selectFall() begin");
+	//System.out.println("js TO DO: KonsZumVerrechnenView.java selectFall() Jegliche Dokumentation der Methode fehlt.");
+	
 		Patient pat = f.getPatient();
 		Tree tPat = tDest.find(pat, false);
 		if (tPat == null) {
@@ -462,11 +658,17 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 			}
 			cv.getViewerWidget().refresh(tOld);
 		}
+
+		//System.out.println("js KonsZumVerrechnenView.java selectFall() end - about to return tFall");
 		return tFall;
 	}
 	
 	@SuppressWarnings("unchecked")
+	// TO DO: An jemanden der es weiss: Bitte mal in deutsch oder englisch dokumentieren, was diese Funktion machen soll. Ich kann das nur vermuten. js 
 	private Tree selectBehandlung(final Konsultation bh, final Tree tSource, final Tree tDest){
+		//System.out.println("js KonsZumVerrechnenView.java selectBehandlung() begin");
+		//System.out.println("js TO DO: KonsZumVerrechnenView.selectBehandlung() Jegliche Dokumentation der Methode fehlt.");
+
 		Fall f = bh.getFall();
 		Patient pat = f.getPatient();
 		Tree tPat = tDest.find(pat, false);
@@ -501,6 +703,8 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 				cv.getViewerWidget().refresh(tSource);
 			}
 		}
+
+		//System.out.println("js KonsZumVerrechnenView.java selectBehandlung() end - about to return tFall");
 		return tBeh;
 	}
 	
@@ -564,9 +768,14 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 				
 				@Override
 				public void run(){
+System.out.println("js KonsZumVerrechnenView ... refreshAction begin");					
+System.out.println("js KonsZumVerrechnenView ... refreshAction about to tAll.clear...");					
 					tAll.clear();
+System.out.println("js KonsZumVerrechnenView ... refreshAction about to cv.notify(CommonViewer.Message.update)...");					
 					cv.notify(CommonViewer.Message.update);
+System.out.println("js KonsZumVerrechnenView ... refreshAction about to tvSel.refresh(true)...");					
 					tvSel.refresh(true);
+System.out.println("js KonsZumVerrechnenView ... refreshAction end");					
 				}
 			};
 		wizardAction = new Action(Messages.getString("KonsZumVerrechnenView.autoAction")) { //$NON-NLS-1$

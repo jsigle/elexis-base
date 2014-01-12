@@ -1,11 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2007, G. Weirich and Elexis; Portions Copyright (c) 2013 Joerg Sigle
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
+ *    J. Sigle - Added trim() after editing meta information
  *    G. Weirich - initial implementation
  *    
  *******************************************************************************/
@@ -66,8 +67,14 @@ public class FileImportDialog extends TitleAreaDialog {
 	
 	@Override
 	protected void okPressed(){
-		keywords = tKeywords.getText();
-		title = tTitle.getText();
+		//20130530js - adding trim() here twice. This may make my previous improvement to DocHandle.java assimilate()
+		//unnecessary, where I wrote fid.title.trim() and fid.keyword.trim(); and including the trim() here, has the
+		//advantage that it not only works on original importing a file, but also when editing the meta info later on.
+		//To test this functionality, enter additional leading or trailing spaces in the title or keywords fields,
+		//either during initial file import, or during later editing of the meta information.
+		//They should be automatically removed before the information is recorded; the document list remains clearer. 
+		keywords = tKeywords.getText().trim();
+		title = tTitle.getText().trim();
 		if (dh != null) {
 			dh.set("Titel", title); //$NON-NLS-1$
 			dh.set("Keywords", keywords); //$NON-NLS-1$

@@ -1,11 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006-2010, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis; Portions Copyright (c) 2013 Joerg Sigle
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
+ *    J. Sigle - Added drag support, so stored documents can be dragged into an e-mail program
  *    G. Weirich - initial implementation
  * 
  *******************************************************************************/
@@ -32,6 +33,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.FileTransfer;
@@ -62,6 +65,8 @@ import ch.elexis.data.Query;
 import ch.elexis.omnivore.data.DocHandle;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
+//201305280110js: Add drag support, so stored documents can be dragged into an e-mail program.
+//201305280110js: Add drag support, so stored documents can be dragged into an e-mail program.
 
 /**
  * A class do receive documents by drag&drop. Documents are imported into the database and linked to
@@ -239,9 +244,11 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 		hookContextMenu();
 		hookDoubleClickAction();
 		contributeToActionBars();
+		
 		Transfer[] transferTypes = new Transfer[] {
 			FileTransfer.getInstance()
 		};
+		
 		viewer.addDropSupport(DND.DROP_COPY, transferTypes, new DropTargetAdapter() {
 			
 			@Override
@@ -260,6 +267,56 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 			}
 			
 		});
+		
+		//201305280110js: Add drag support, so stored documents can be dragged into an e-mail program.
+		viewer.addDragSupport(DND.DROP_COPY, transferTypes, new DragSourceListener() {
+			@Override 
+			public void dragStart(DragSourceEvent event){
+				event.doit = true;
+				event.detail = DND.DROP_MOVE;
+				System.out.println("js OmnivoreView.java: viewer.addDragSupport(): dragStart");
+			}
+
+			@Override
+			public void dragSetData(DragSourceEvent event){
+				
+				ISelection selection = viewer.getSelection();
+				Object obj = ((IStructuredSelection) selection).getFirstElement();
+
+				if (obj != null) {
+					DocHandle dh = (DocHandle) obj;
+					System.out.println("js OmnivoreView.java: viewer.dragSetData(): dh.getGUID()="+dh.getGUID());
+					System.out.println("js OmnivoreView.java: viewer.dragSetData(): dh.getTitle()="+dh.getTitle());
+					System.out.println("js OmnivoreView.java: viewer.dragSetData(): dh.getKeywords()="+dh.getKeywords());
+					// Dragging out a file means that we should supply as event.data
+					// an array of filenames. As of version 1.4.6, Omnivore supports selection of a single file only,
+					// so we need an array of size 1.
+					// TODO: Support selection of multiple files,
+					// for both dragging them out via giveAway(), and for opening via execute().
+					// selection has no element .length, but we can probably use:
+					// IStructuredSelection s = (IStructuredSelection) selection;
+					// Before that, however, Omnivore should first allow selection of multiple lines.
+					// String[] sourceFilenames = new String[s.size()];
+					// or even: selsize = ((IStructuredSelection) selection).size(); etc.
+					String[] sourceFilenames = new String[1];
+					sourceFilenames[0] = (String) dh.giveAway();
+					event.data = sourceFilenames;
+				}
+				
+			}
+			
+			@Override
+			public void dragFinished(DragSourceEvent event){
+				System.out.println("js OmnivoreView.java: viewer.addDragSupport(): dragFinished");
+				//if (event.detail == 1) {
+				//	cdaMessage.setAssignedToOmnivore();
+				//}
+			}
+		
+		});
+		
+		
+		
 		GlobalEventDispatcher.getInstance().addActivationListener(this, this);
 		eeli_pat.catchElexisEvent(ElexisEvent.createPatientEvent());
 		viewer.setInput(getViewSite());

@@ -1,11 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2006-2011, G. Weirich and Elexis
+ * Copyright (c) 2006-2011, G. Weirich and Elexis; Portions Copyright (c) 2013 Joerg Sigle
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
+ *    J. Sigle - Added generation of meaningful temp filenames, simplifying document export e.g. into e-mail
+ *    J. Sigle - Added configurable rule-based automatic archiving of imported files into multiple target directories    
+ *    J. Sigle - Added trim() to meta information fields after import of files
+ *    J. Sigle - Added more reasonable workflow and informative warning if configurable max filename length exceeded upon import
  *    G. Weirich - initial implementation
  *******************************************************************************/
 
@@ -149,20 +153,27 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 		return bais;
 	}
 	
-	public void execute(){
+	//201305280110js: Add drag support, so stored documents can be dragged into an e-mail program.
+	//Therefore, separated the pre Omnivore_js-1.4.6 method execute() into multiple methods. 
+	public String obtainExt() {
+		String ext = ""; //$NON-NLS-1$
+		String typname = get("Mimetype"); //$NON-NLS-1$
+		int r = typname.lastIndexOf('.');
+		if (r == -1) {
+			typname = get("Titel"); //$NON-NLS-1$
+			r = typname.lastIndexOf('.');
+		}
+		
+		if (r != -1) {
+			ext = typname.substring(r + 1);
+		}
+		return ext;
+	}
+
+	//201305280110js: Add drag support, so stored documents can be dragged into an e-mail program.
+	//Therefore, separated the pre Omnivore_js-1.4.6 method execute() into multiple methods. 
+	public File makeTempFile(String ext){
 		try {
-			String ext = ""; //$NON-NLS-1$
-			String typname = get("Mimetype"); //$NON-NLS-1$
-			int r = typname.lastIndexOf('.');
-			if (r == -1) {
-				typname = get("Titel"); //$NON-NLS-1$
-				r = typname.lastIndexOf('.');
-			}
-			
-			if (r != -1) {
-				ext = typname.substring(r + 1);
-			}
-			
   			//20130411js: Make the temporary filename configurable
 			StringBuffer configured_temp_filename=new StringBuffer();
 			System.out.println("Omnivore_js:DocHandle: configured_temp_filename="+configured_temp_filename.toString());
@@ -227,32 +238,104 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 				temp = File.createTempFile("omni_", "_vore." + ext); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
+		return temp;	
+		} catch (Exception ex) {
+			ExHandler.handle(ex);
+			SWTHelper.showError(Messages.DocHandle_execError, ex.getMessage());
+			return null;
+		}
+	}
+	
+	//201305280110js: Add drag support, so stored documents can be dragged into an e-mail program.
+	//Therefore, separated the pre Omnivore_js-1.4.6 method execute() into multiple methods. 
+	public boolean writeDocToTempFile(File temp) {
+		if (temp == null) {return false;}
+		
+		try {
 			temp.deleteOnExit();
+			
 			byte[] b = getBinary("Doc"); //$NON-NLS-1$
 			if (b == null) {
 				SWTHelper.showError(Messages.DocHandle_readErrorCaption,
-					Messages.DocHandle_readErrorMessage);
-				return;
+						Messages.DocHandle_readErrorMessage);
+				return false;
 			}
+			
 			FileOutputStream fos = new FileOutputStream(temp);
 			fos.write(b);
 			fos.close();
-			Program proggie = Program.findProgram(ext);
-			if (proggie != null) {
-				proggie.execute(temp.getAbsolutePath());
-			} else {
-				if (Program.launch(temp.getAbsolutePath()) == false) {
-					Runtime.getRuntime().exec(temp.getAbsolutePath());
-				}
-				
-			}
 			
+			return true;
+		} catch (Exception ex) {
+			ExHandler.handle(ex);
+			SWTHelper.showError(Messages.DocHandle_execError, ex.getMessage());
+		}
+		
+		return false;
+	}
+	
+	//201305280110js: Add drag support, so stored documents can be dragged into an e-mail program.
+	//Therefore, separated the pre Omnivore_js-1.4.6 method execute() into multiple methods. 
+
+	//This method tries to write selected content into a file, and launch a suitable program to display it.
+	//The temporary filename is constructed to be meaningfull, according to configured settings.
+	//The temporary file should exist until the program is closed. But its filename might be re-used,
+	//also depending upon settings for temporary filename generation.
+	public void execute(){
+		try {
+			String ext = obtainExt();
+			File temp = makeTempFile(ext);
+			if (writeDocToTempFile(temp)) {	
+				Program proggie = Program.findProgram(ext);
+				if (proggie != null) {
+					proggie.execute(temp.getAbsolutePath());
+				} else {
+					if (Program.launch(temp.getAbsolutePath()) == false) {
+						Runtime.getRuntime().exec(temp.getAbsolutePath());
+					}
+				}
+			} else {
+				SWTHelper.showError(Messages.DocHandle_readErrorCaption,
+						Messages.DocHandle_readErrorMessage);				
+			}
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 			SWTHelper.showError(Messages.DocHandle_execError, ex.getMessage());
 		}
 	}
-	
+
+	//201305280110js: Add drag support, so stored documents can be dragged into an e-mail program.
+	//Therefore, separated the pre Omnivore_js-1.4.6 method execute() into multiple methods...
+	//...and finally adding the method giveAway(), which needs the same preparations as execute()
+
+	//Omnivore_js version 1.4.6:
+	//This method tries to write selected content into a file, and returns the name of that file.
+	//Which in turn can be given away e.g. via drag&drop to an E-mail program etc.
+	//The temporary filename is constructed to be meaningfull, according to configured settings.
+	//The temporary file should exist until the program is closed. But its filename might be re-used,
+	//also depending upon settings for temporary filename generation.
+	public String giveAway(){
+		try {
+			String ext = obtainExt();
+			File temp = makeTempFile(ext);
+			if (writeDocToTempFile(temp)) {
+				
+				System.out.println("js DocHandle.java: Ready to giveAway the file: "+temp.getAbsolutePath());
+				System.out.println("js DocHandle.java: WARNING: temp.deleteOnExit() has been set above,");
+				System.out.println("js DocHandle.java: so the temp file will/may be deleted when the virtual machine exits.");
+				return temp.getAbsolutePath();
+				}
+			else {
+				SWTHelper.showError(Messages.DocHandle_readErrorCaption,
+					Messages.DocHandle_readErrorMessage);				
+			}
+		} catch (Exception ex) {
+			ExHandler.handle(ex);
+			SWTHelper.showError(Messages.DocHandle_execError, ex.getMessage());
+		}
+		return null;
+	}
+
 	@Override
 	protected String getTableName(){
 		return TABLENAME;
@@ -293,7 +376,11 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 			SWTHelper.showError(Messages.DocHandle_importErrorCaption,
 				MessageFormat.format(Messages.DocHandle_importErrorMessage, maxOmnivoreFilenameLength));	//20130325js: The error message is also dynamically generated.
 			return;
-		}		
+		}
+		
+		// TO DO: 20130530js Dieselbe Verbesserung noch ergänzen für das Feld der Stichworte; auch da scheint es eine Längenbegrenzung zu geben,
+		// auch da wird nach zu langer Eingabe der Inhalt einfach verworfen, Benutzer muss das ganze dann erneut tippen.
+		System.out.println("js TO DO: Bitte in Omnivore DocHandle.java assimilate Warnung wegen Eingabelaenge bei Stichworten ergaenzen; konfigurierbar.");
 		
 		FileImportDialog fid = new FileImportDialog(file.getName());
 		if (fid.open() == Dialog.OK) {
@@ -307,7 +394,12 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument {
 				bis.close();
 				baos.close();
 
-				//FIXME: The original file name should be preserved in a separate field when the file content is imported into the database.			
+				//FIXME: The original file name should be preserved in a separate field when the file content is imported into the database.
+				//20130530js: Please note:
+				//At Juerg Hamacher, we typically leave "title" unchanged and add content info into the "keywords" field only.
+				//At Stefan Henzi, however, the filename ist changed before importing to a mini version of what we write to keywords, and keywords left empty.
+				//My generator for meaningful temp filenames can be configured to include constant and patient ID fields
+				//as well as the title or keywords section, or both, and other fields. So it's not crucially important to keep original filenames any more. 
 				new DocHandle(baos.toByteArray(), act, fid.title.trim(), file.getName(), fid.keywords.trim());	//20130325js: Added trim() to title and keywords, to avoid unnecessary extra lines in the omnivore content listing.
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
