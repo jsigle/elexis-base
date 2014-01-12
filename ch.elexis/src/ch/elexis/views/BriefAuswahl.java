@@ -711,13 +711,18 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 								Brief brief = (Brief) o[0];
 								System.out.println("stress test pass: "+stressTestPasses+" - o !!= null; (Brief) o[0.getLabel()]=<"+brief.getLabel().toString()+">");
 								System.out.println("stress test pass: "+stressTestPasses+" - try {} section o != null; about to tv.openDocument(brief)....");
+								
+								//20131026js: Der Name wird nicht in das Dokumenten-Editor-Tab übernommen.
+								//Ursache gerade unbekannt - nach dem letzten geladenen Dokument erscheint er dann.
+								//Auch ein Setzen im Stresstest nach jedem Laden via tv.setName(); reicht nicht, um das früher zu aktualisieren.
+								//Vielleicht wird - Grund ebenfalls unbekannt - tv...actBrief <- pat nicht rechtzeitig aktualisiert, welches setName() auswertet.  
 								if (tv.openDocument(brief) == false) {
 									System.out.println("stress test pass: "+stressTestPasses+" - try {} section tv.openDocument(brief) returned false. Setting continueStressTest=false.");
 									continueStressTest=false;
 									SWTHelper.alert(Messages.getString("BriefAuswahlErrorHeading"), //$NON-NLS-1$
 										Messages.getString("BriefAuswahlCouldNotLoadText")); //$NON-NLS-1$
 								}
-								else {
+								else {									
 									System.out.println("stress test pass: "+stressTestPasses+" - try {} section tv.openDocument(brief) worked; document should have been loaded.");
 								}
 							} else {
@@ -744,7 +749,15 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 
 					try {
 						System.out.println("stress test pass: "+stressTestPasses+" - about to Thread.sleep()...(Otherwise the Briefe view content would not be visibly updated.)");
-						Thread.sleep(1000);
+						//20131026js: In Elexis 20131026js nach Korrekturen und der Einführung des hideView() vor dem nächsten Laden
+						//reicht (auf think3; i7) auch Thread.sleep(100) um ein vollständiges sichtbares Update des Editor-Inhalts nach jedem Laden zu erreichen.
+						//Ein Thread.sleep(10) ist aber zu wenig; da erscheinen dann nur noch die OO Bedienelemente zuverlässig. 
+						//Nicht nur wie vorher, nach etwa den ersten 2..4 Stresstest-Zyklen.
+						//Nur der Titel des Tabs (via tv.setName() ) wird nicht aktualisiert, mögliche Gründe weiter oben genannte.
+						//Thread.sleep(10);
+						//Thread.sleep(100);
+						Thread.sleep(500);
+						//Thread.sleep(1000);
 					} catch (Throwable throwable) {
 						//handle the interrupt that will happen after the sleep 
 						System.out.println("stress test pass: "+stressTestPasses+" - caught throwable; most probably the Thread.sleep() wakeup interrupt signal.");
@@ -808,6 +821,10 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 										System.out.println("stress test pass: "+stressTestPasses+" - o !!= null; (Brief) brief[0.getLabel()]=<"+brief.getLabel().toString()+">");
 										System.out.println("stress test pass: "+stressTestPasses+" - try {} section o != null; about to tv.openDocument(brief)....");
 																	
+										//20131026js: Der Name wird nicht in das Dokumenten-Editor-Tab übernommen.
+										//Ursache gerade unbekannt - nach dem letzten geladenen Dokument erscheint er dann.
+										//Auch ein Setzen im Stresstest nach jedem Laden via tv.setName(); reicht nicht, um das früher zu aktualisieren.
+										//Vielleicht wird - Grund ebenfalls unbekannt - tv...actBrief <- pat nicht rechtzeitig aktualisiert, welches setName() auswertet.  
 										if (tv.openDocument(brief) == false) {
 											System.out.println("stress test pass: "+stressTestPasses+" - try {} section tv.openDocument(brief) returned false. Setting continueStressTest=false.");
 											SWTHelper.alert(Messages.getString("BriefAuswahlErrorHeading"), //$NON-NLS-1$
@@ -846,7 +863,7 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 											*/
 	
 											//tv.dispose();
-											
+
 											System.out.println("stress test pass: "+stressTestPasses+" - try {} section tv.openDocument(brief) worked; document should have been loaded.");
 											}
 									} catch (PartInitException e) {
@@ -868,8 +885,19 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 									try {
 										System.out.println("stress test pass: "+stressTestPasses+" - about to Thread.sleep()...(Otherwise the Briefe view content would not be visibly updated.)");
 										//Nichts von den folgenden hilft tatsächlich gut gegen das mangelnde Updaten im LibreOffice Frame nach dem ca. 4. Dokument:
-										//Thread.sleep(10000);
+										//20131026js:
+										//Doch, in meiner verbesserten Elexis/NOAText_jsl Version ab 20131026js hilft es dann. Dort erfolgt ein Update der Anzeige nach jedem Laden,
+										//allerdings auch (soweit keine anderen OO benutzenden Dokumente offen sind) auch ein Schliessen/Neuverbinden von OO nach jedem Dokument.
+										//Und DA macht es dann einen Unterschied: Ohne Thread sleep sieht man nur, dass das Tab+Inhalt neu gezeichnet wird,
+										//insbesondere erscheinend die OO Bedienelemente innerhalb des textContainer Bereichs;
+										//mit etwas Thread.sleep() reicht es dann auch noch, um den Inhalt des Dokuments darzustellen.
+										//Stabil durchlaufen UND OO nach dem Schliessen des letzten Dokuments entladen tut's mit oder ohne Thread.sleep(),
+										//allerdings seit Einführung der korrekten createMe() removeMe() noas.isEmpty Trackings mit disconnect bei 0 offenen Docs
+										//in der Fassung 20131026js nur mit einem Elexis gleichzeitig.
+										//Thread.sleep(100);
+										Thread.sleep(500);
 										//Thread.sleep(1000);
+										//Thread.sleep(10000);
 										//Thread.yield();
 									} catch (Throwable throwable) {
 										//handle the interrupt that will happen after the sleep 
