@@ -59,6 +59,8 @@ import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.MimeTool;
 
+import ch.elexis.util.StatusMonitor;
+
 public class TextView extends ViewPart implements IActivationListener {
 	public final static String ID = "ch.elexis.TextView"; //$NON-NLS-1$
 	TextContainer txt;
@@ -192,10 +194,7 @@ public class TextView extends ViewPart implements IActivationListener {
 		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO");			
 		
 		//201306161401js
-		System.out.println("js ch.elexis.views/TextView.java dispose(): About to interrupt the statusMonitorThread...");			
-		statusMonitorThread.interrupt();
-		System.out.println("js ch.elexis.views/TextView.java dispose(): About to statusMonitorThread = null");			
-		statusMonitorThread = null;
+		ch.elexis.util.StatusMonitor.removeMonitorEntry("TextView");
 
 		
 		//20130425js: Nach Einfügen der folgenden Zeile wird er NOText closeListener mit queryClosing() und notifyClosing() tatsächlich aufgerufen,
@@ -251,13 +250,7 @@ public class TextView extends ViewPart implements IActivationListener {
 			System.out.println("js ch.elexis.views/TextView.java openDocument(): actBrief == ("+actBrief.getBetreff().toString()+")...");
 			
 			//201306161205js: Now also create a status monitor thread:
-			if (statusMonitorThread == null) {
-				System.out.println("js ch.elexis.views/TextView.java openDocument(Brief doc): about to start new statusMonitorThread()...\n");
-				statusMonitorThread = new Thread(new StatusMonitor());
-				statusMonitorThread.start();
-			} else {
-				System.out.println("js ch.elexis.views/TextView.java openDocument(Brief doc): WARNING: statusMonitorThread is already != null. This should NOT be the case now. Will not start new status monitor thread.");				
-			}
+			ch.elexis.util.StatusMonitor.addMonitorEntry("TextView");
 
 			System.out.println("js ch.elexis.views/TextView.java openDocument(Brief doc) successful. Returning true; actBrief == ("+actBrief.getBetreff().toString()+")...");
 			return true;
@@ -478,13 +471,7 @@ public class TextView extends ViewPart implements IActivationListener {
 		}
 		
 		//201306161205js: Now also create a status monitor thread:
-		if (statusMonitorThread == null) {
-			System.out.println("js ch.elexis.views/TextView.java createDocument(2): about to start new statusMonitorThread()...\n");
-			statusMonitorThread = new Thread(new StatusMonitor()); 
-			statusMonitorThread.start();
-		} else {
-			System.out.println("js ch.elexis.views/TextView.java createDocument(2): WARNING: statusMonitorThread is already != null. This should NOT be the case now. Will not start new status monitor thread.");				
-		}
+		ch.elexis.util.StatusMonitor.addMonitorEntry("TextView");
 		
 		System.out.println("js ch.elexis.views/TextView.java createDocument(2): returning true\n");
 		return true;
@@ -521,13 +508,7 @@ public class TextView extends ViewPart implements IActivationListener {
 		}
 		
 		//201306161205js: Now also create a status monitor thread:
-		if (statusMonitorThread == null) {
-			System.out.println("js ch.elexis.views/TextView.java createDocument(3): about to start new statusMonitorThread()...\n");
-			statusMonitorThread = new Thread(new StatusMonitor()); 
-			statusMonitorThread.start();
-		} else {
-			System.out.println("js ch.elexis.views/TextView.java createDocument(3): WARNING: statusMonitorThread is already != null. This should NOT be the case now. Will not start new status monitor thread.");				
-		}
+		ch.elexis.util.StatusMonitor.addMonitorEntry("TextView");
 
 		System.out.println("js ch.elexis.views/TextView.java createDocument(3): returning true\n");
 		return true;
@@ -774,7 +755,28 @@ public class TextView extends ViewPart implements IActivationListener {
 		showToolbarAction.setToolTipText(Messages.getString("TextView.showToolbar")); //$NON-NLS-1$
 		showToolbarAction.setChecked(true);
 	}
+
+	//201306170655js: changing SaveHandler below to public, would not suffice to make its save() easily accessible from my new StatusMonitor.java
+	//So I added this method to TextView.
+	public void save(){
+		System.out.println("\njs ch.elexis.views/TextView.java save(): begin");
+
+		log.log(Messages.getString("TextView.save"), Log.DEBUGMSG); //$NON-NLS-1$
+		
+		if (actBrief != null) {
+			System.out.println("js ch.elexis.views/TextView.java save(): actBrief == "+actBrief.toString()+": "+actBrief.getBetreff());
+			System.out.println("js ch.elexis.views/TextView.java save(): about to save actBrief to DB...");
+			//TODO: Why wouldn't we return the result here, but in SaveAs? js
+			actBrief.save(txt.getPlugin().storeToByteArray(), txt.getPlugin().getMimeType());
+		} else {
+			System.out.println("js ch.elexis.views/TextView.java save(): actBrief == null, doing nothing.");
+		}
+
+		System.out.println("js ch.elexis.views/TextView.java save(): end\n");
+	}
 	
+	//201306170655js: changing this to public, would not suffice to make its save() easily accessible from my new StatusMonitor.java
+	//So I added the method above to TextView.
 	class SaveHandler implements ITextPlugin.ICallback {
 		
 		public void save(){
@@ -824,155 +826,6 @@ public class TextView extends ViewPart implements IActivationListener {
 		}
 		
 	}
-	
-	/*
-	 * 201306171151js
-	 * A status monitoring method that I want to call regularly.
-	 * It shall:
-	 * (a) check whether the TextView view has focus, but is not enabled, and should thus be enabled.
-	 * This needs to be done from outside, as merely accessing the needed structures below wb on a sufficiently
-	 * low level will cause the ModicifacionListener already added to NOAText to stall the NOAText plugin.
-	 * (b) Regularly call the storeToByteArray() method - which can access the doc.isModified(), and which I have
-	 * modified to skip the actual storing when isModified() is false.
-	 * It would be better if this storing was triggered a short time after the last keystroke,
-	 * rather than in a regular interval. But at the moment, I can't see how isModified() could get the information
-	 * up here, or how we could look down for that in another way (apart from solutions requiring major construction
-	 * work, which I may attempt later on).   
-	 */
-	//I assume that ONE instance of TextView handles ONE document at time,
-	//so it may contain ONE statusMonitorThread monitoring exactly this document.
-	//Sadly, I need to define statusMonitorThread on this level - furhter down, like in NOAText or in TextContainer will probably NOT do.
-	//Because the storeToByteArray() is called from here, and its result forwarded to Brief.save() from here... -
-	//no module further down the road can see both the source and target of that operation,
-	//so none can trigger an automatic save action.
-	//TODO: This also means that I need to copy that functionality - if I want to have it there -
-	//in (probably) RezepteBlatt.java, ... and others from ch.elexis.views.
-	//For now: in TextView.java, RezepteBlatt.java
-	private Thread statusMonitorThread = null;
-	private int statusMonitorCounter = 0;
-	private int statusMonitorCallSaveAt = 60;
-	public static boolean statusMonitorIsModified = false;
-	public static long statusMonitorLastIsModifiedChange = 0;
-	public static long statusMonitorLastDocumentModifyListenerReactOnUnspecifiedEvent = 0;
-	//It would be nice to monitor user input - and save preferrably, 
-	//when a pause of e.g. 10 secs after the last input has occured,
-	//or - if no pause of that size has occured - e.g. after a maximum delay of 5 min after the first unsaved input.
-	//So that users can usually type without interruption/delay by automatic saving,
-	//and still the maximum amount of unsaved work/time is limited.
-	//That would effectively move a regularly timed auto save action closer to the last user input, when the user pauses. 
-	//This optimal? behaviour is, however,
-	//at least approached to a usable state by calling save after a fixed time and only really performing a save if isModified(). 
-	//TODO: Warum heisst der TextContainer in RezeptBlatt.java text; und in TextView.java textContainer???
-	public class StatusMonitor implements Runnable {
-		
-		public void run() {
-	    	System.out.println("js ch.elexis.views/TextView.java statusMonitor() begin");
-	    	//Initialize the timestamps for last observed changes to "now" 
-	    	statusMonitorLastDocumentModifyListenerReactOnUnspecifiedEvent = System.currentTimeMillis();
-	    	statusMonitorLastIsModifiedChange = statusMonitorLastDocumentModifyListenerReactOnUnspecifiedEvent; 
-	    	
-	    	
-			while (true) {
-				System.out.println("js ch.elexis.views/TextView.java statusMonitor() - Thread: " + Thread.currentThread().getName() + " - about to do TextView status checking work...");
-				System.out.println("js ch.elexis.views/TextView.java statusMonitor() - Thread: " + Thread.currentThread().getName() + " - actBrief: " + actBrief.getBetreff());
-				try {					
-					
-					/*
-					 * This would cause: Invalid thread access: - We can only update UI stuff in the UI Thread... Oh No!
-					 * Dasselbe auch schon für nur: textContainer.setEnabled(true);
-					System.out.println("js ch.lexis.views/RezeptBlatt.java statusMonitor() - Thread: " + Thread.currentThread().getName() + " - textContainer.isFocusControl(): " + textContainer.isFocusControl());
-					System.out.println("js ch.elexis.views/RezeptBlatt.java statusMonitor() - Thread: " + Thread.currentThread().getName() + " - textContainer.isEnabled():      " + textContainer.isEnabled());
-					if ((textContainer.isFocusControl() ) && (!textContainer.isEnabled())) {
-						System.out.println("js ch.lexis.views/RezeptBlatt.java statusMonitor() - Thread: " + Thread.currentThread().getName() + " - about to textContainer.setEnabled(true)...");
-						textContainer.setEnabled(true);
-					}
-					 */
-					
-					//To run the above code in the Display thread (and asynchronously),
-					//so it does NOT cause the Invalid thread access,
-					//we need to encapsulate it like this:
-					Display.getDefault().asyncExec(new Runnable() {
-					    public void run() {				    	
-					    	/*
-					    	 * Strangely, I see: isEnabled = true; isFocusContrl = false, when kbd action goes to the Office win but it appears inactive.
-					    	 * 
-					    	 * textContainer.isEnabled(): 		Wird false, wenn das Fenster minimized ist; ansonsten immer true, 
-					    	 *									selbst wenn die View nicht den aktiven Rahmen hat, oder ich eine andere View aktiviere = anklicke.
-					    	 *
-					    	 * textContainer.isFocusControl():	Sehe ich die ganze Zeit als false, auch wenn kbd action in den Office Window Inhalt geht.
-					    	 *
-					    	 */
-					    	System.out.println("js ch.elexis.views/RezeptBlatt.java statusMonitor() - Thread: " + Thread.currentThread().getName() + " - textContainer.isFocusControl(): " + textContainer.isFocusControl());
-							System.out.println("js ch.elexis.views/RezeptBlatt.java statusMonitor() - Thread: " + Thread.currentThread().getName() + " - textContainer.isEnabled():      " + textContainer.isEnabled());
-								
-							//DAS BITTE NUR, WENN isModified() akut unten gesetzt wurde!
-							//Sonst kann man Elexis ausserhalb des TextPluginWindows nur noch sehr schlecht steuern. 
-							if (false) {
-								//YEP. DAS macht die View aktiv, incl. hervorgehobenem Rahmen, und Focus, in dem der Text drinnen steckt.
-								//Im Moment leider noch alle Zeit, also auch dann, wenn gerade NICHT isModified() durch neue Eingaben immer wieder gesetzt würde.
-								//TextView.ID liefert: ch.elexis.TextView
-								TextView tv = null;
-								try {
-								    System.out.println("js ch.elexis.views/RezeptBlatt.java statusMonitor() - Thread: " + Thread.currentThread().getName() + " - about to tv.showView(TextView.ID) with TextView.ID == " + TextView.ID);
-									tv = (TextView) getSite().getPage().showView(TextView.ID /*,StringTool.unique("textView"),IWorkbenchPage.VIEW_ACTIVATE*/);
-								} catch (PartInitException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
-							}
-							
-							//Ein textcontainer.setEnabled(true) dürfte vermutlich die Briefe-View "wiederherstellen", wenn sie minimiert war.
-							//textContainer.setEnabled(true);
-							
-					    	//Ein textContainer.setFocus() alleine scheint immer wieder den Keyboard Focus auf das Briefe-View zu setzen,
-							//nachdem ich ihn woanders hingesetzt habe. Jedoch auch das, ohne dass der Rahmen der View sichtbar "aktiv" wird!
-							//textContainer.setFocus(); 
-					    }
-					});
-					
-					
-					//save at regular intervals
-					long timeSinceLastIsModifiedChange = System.currentTimeMillis() - statusMonitorLastIsModifiedChange;
-					long timeSinceLastDocumentModifyListenerReactOnUnspecifiedEvent = System.currentTimeMillis() - statusMonitorLastDocumentModifyListenerReactOnUnspecifiedEvent;
-					System.out.println("js ch.elexis.views/RezeptBlatt.java statusMonitor() - Thread: " + Thread.currentThread().getName() 
-					         + " - \nstatusMonitorisModified / statusMonitorLastIsModifiedChange / statusMonitorLastDocumentModifyListenerReactOnUnspecifiedEvent : "
-							 + statusMonitorIsModified 
-							 + " / " + statusMonitorLastIsModifiedChange + " (" + timeSinceLastIsModifiedChange/1000 + " secs ago)" 
-					         + " / " + statusMonitorLastDocumentModifyListenerReactOnUnspecifiedEvent + " (" + timeSinceLastDocumentModifyListenerReactOnUnspecifiedEvent/1000 + " secs ago)");					
-
-					statusMonitorCounter = statusMonitorCounter + 1;
-					System.out.println("js ch.elexis.views/RezeptBlatt.java statusMonitor() - Thread: " + Thread.currentThread().getName() 
-							         + " - statusMonitorCounter / statusMonitorCallSaveAt: " + statusMonitorCounter + " / " + statusMonitorCallSaveAt);
-					if (statusMonitorCounter >= statusMonitorCallSaveAt)
-					{
-						//Wieso geht hier save() nicht, im Gegensatz zu RezeptBlatt.java? Siehe die unterschiedliche Einbettung in Klassen etc.
-						//save();
-						actBrief.save(txt.getPlugin().storeToByteArray(), txt.getPlugin().getMimeType());
-						statusMonitorCounter = 0;
-					}
-					Thread.sleep(1000);
-				} catch (InterruptedException irEx) {
-					//if the thread is interrupted, then return from it
-					return;
-				}
-
-				
-				/*
-				// bean.getDocument().print(pprops);
-				xPrintable.print(pprops);
-				long timeout = System.currentTimeMillis();
-				while ((myXPrintJobListener.getStatus() == null)
-					|| (myXPrintJobListener.getStatus() == PrintableState.JOB_STARTED)) {
-					Thread.sleep(100);
-					long to = System.currentTimeMillis();
-					if ((to - timeout) > 10000) {
-						break;
-					}
-				*/	    
-			}
-		}
-	}
-
 	
 	/*
 	 * TODO: js: Bitte mal hier dringend eine Dokumentation ergänzen. Versuch mit Notizen und Vermutungen folgt:

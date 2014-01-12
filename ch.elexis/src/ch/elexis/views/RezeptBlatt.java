@@ -31,7 +31,7 @@ import ch.elexis.data.Rezept;
 import ch.elexis.exchange.IOutputter;
 import ch.elexis.text.ITextPlugin.ICallback;
 import ch.elexis.text.TextContainer;
-import ch.elexis.views.TextView.StatusMonitor;
+import ch.elexis.util.StatusMonitor;
 import ch.rgw.tools.StringTool;
 
 public class RezeptBlatt extends ViewPart implements ICallback, IActivationListener, IOutputter {
