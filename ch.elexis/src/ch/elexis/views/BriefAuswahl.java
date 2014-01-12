@@ -21,6 +21,7 @@ package ch.elexis.views;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
@@ -41,10 +42,12 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPropertyListener;	//201306150113js - ensure edits in text documents are noted by Elexis and ultimately store
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.Form;
@@ -157,8 +160,16 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 	//even though soffice.bin and soffice.exe can be (and have probably already been) unloaded from memory
 	//after the preceeding doc has been closed. 
 	
-	//Import org.eclipse.ui.IWorkbenchPage and ...PlatformUI and ...IViewPart only for this: 
+	//Import org.eclipse.ui.IWorkbenchPage and ...PlatformUI and ...IViewPart only for this:
+	System.out.println("\n");
 	System.out.println("js ch.elexis.views/BriefAuswahl.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): begin");
+
+	/* 20131122js:
+	 * This would only close a window with TextView.ID in the currently active perspective,
+	 * but if a window with the same ID would be open (even if it were empty) in another perspective,
+	 * that would cause the attempt to close the window to fail when about the 2nd document would be opened of that document type.
+	 * So I will try instead to locate and close *all* matching ViewParts in all Perspektives.
+	 * See below.
 	IWorkbenchPage wbp = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 	IViewPart wbpTextViewViewPart = wbp.findView(TextView.ID); 
 	if (wbpTextViewViewPart != null) {
@@ -169,8 +180,87 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 		//No preexisting populated viewPart (="View Briefe" in Elexis manual terminology) needed closing. Do nothing.
 		System.out.println("js ch.elexis.views/BriefAuswahl.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): NO matching wbpTextViewViewPart found - Nothing to do.");
 	} //if wbpTextViewView != null ; oder if tv!=null
+	*/
+	
+	//20131122js: Let me try instead to close ALL Windows in ALL Perspectives with TextView.ID
+	//Bisher findet das ganze aber immer nur 1 workbenchWindow mit 1 workbenchPage mit 1 viewPart.
+	//Also keine Änderung im Effekt gegenüber dem obigen Vorgehen.
+	//Und wie bekomme ich Zugang zum Inhalt unsichtbarer perspectives? Wie ist die Objekthierarchie aufgebaut?
+	//Siehe: http://www.eclipse.org/articles/using-perspectives/PerspectiveArticle.html
+	//Daraus unter anderem:
+	//The user calls it a "perspective". At the implementation level it is an IWorkbenchPage.
+	//(js: Not even that. But rather the visible representation of an instantiation of an IWorkbenchPage, I guess.)
+	//(js: Und warum dann sowas wie: workbenchPage.getPerspective()??? Wie schon gesagt: Das Maximum an Intransparenz und Obscurity.)
+	//(js: Und warum liefert dann workbenchWindow.getPages() (siehe unten) immer nur eine Page???)
+	//Oh Klasse:
+	//https://bugs.eclipse.org/bugs/show_bug.cgi?id=102268
+	//------------------------------------------------------
+	//Question:
+	//------------------------------------------------------
+	//i can find a view from an active perspective by using:
+	//...(about the same stuff that I tried to use, js)...
+	//i can't find a view opened in an inactive perspective.
+	//Is there anyway to do this?
+	//------------------------------------------------------
+	//Answer:
+	//------------------------------------------------------
+	//Since Eclipse 2.1, there is only (at most) one page per window, and the page may
+	//contain multiple perspectives.  There is currently no way of querying the
+	//contents of inactive perspectives.  Can you provide more details of your
+	//scenario and why it requires this?
+	//------------------------------------------------------
+	//Other Comment:
+	//------------------------------------------------------
+	//I want close particular views (multiple) in all perspective after closing database connection.
+	//It looks impossible in legacy eclipse.I can remember all views, but can't hide view in inactive perspective.
+	//------------------------------------------------------
+	//Also points to: (Where they wanted to do in 2004 what I want to do now in 2013, for quite the same reason:
+	//                 close/remove plugin related stuff in inactive perspectives; and it says there is a "close view" related bug.)
+	//https://bugs.eclipse.org/bugs/show_bug.cgi?id=57841
+	
+	System.out.println("js ch.elexis.views/BriefAuswahl.java: about to find and close ALL ViewParts with TextView.ID");
+
+	IWorkbenchWindow[] workbenchWindows = PlatformUI.getWorkbench().getWorkbenchWindows();
+	//PlatformUI.getWorkbench().getWorkingSetManager().???	
+	
+	System.out.println("js ch.elexis.views/BriefAuswahl.java: workbenchWindows.length = "+workbenchWindows.length);
+	
+	if (workbenchWindows != null) { 
+		for (IWorkbenchWindow workbenchWindow : workbenchWindows ) {
+			System.out.println("js ch.elexis.views/BriefAuswahl.java: about to process workbenchWindow: "+workbenchWindow.toString());
+
+			IWorkbenchPage activeWorkbenchPage = workbenchWindow.getActivePage();
+			if (activeWorkbenchPage == null)	{System.out.println("js ch.elexis.views/BriefAuswahl.java: Info: activeWorkbenchPage = null"); }
+			else								{System.out.println("js ch.elexis.views/BriefAuswahl.java: Info: activeWorkbenchPage = "+activeWorkbenchPage.toString()); }						
+				
+			IWorkbenchPage[] workbenchPages = workbenchWindow.getPages();
+			System.out.println("js ch.elexis.views/BriefAuswahl.java: workbenchPages.length = "+workbenchPages.length);
+			
+			if (workbenchPages != null) {
+				for (IWorkbenchPage workbenchPage : workbenchPages) {
+					System.out.println("js ch.elexis.views/BriefAuswahl.java: about to process workbenchPage: "+workbenchPage.toString());
+					
+					IPerspectiveDescriptor perspective = workbenchPage.getPerspective();
+					String perspectiveLabel = perspective.getLabel(); 
+					System.out.println("js ch.elexis.views/BriefAuswahl.java: workbenchPage.getperspective().getLabel() is: "+perspectiveLabel);
+					
+					IAdaptable input = workbenchPage.getInput();
+					System.out.println("js ch.elexis.views/BriefAuswahl.java: workbenchPage.getInput() is: "+input.toString());
+					
+					IViewPart workbenchPageViewPart = workbenchPage.findView(TextView.ID);
+					if (workbenchPageViewPart != null) {
+						System.out.println("js ch.elexis.views/BriefAuswahl.java: about to close ViewPart: "+workbenchPageViewPart.toString());
+						workbenchPage.hideView(workbenchPageViewPart);
+					}				
+				}
+			}
+		}
+	}
+	
+	
 	
 	System.out.println("js ch.elexis.views/BriefAuswahl.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): end");
+	System.out.println("\n");
 	}
 	
 	@Override

@@ -108,13 +108,20 @@ public class WeisseSeitenSearchForm extends Composite {
 		getShell().setCursor(waitCursor);
 		
 		try {
+			System.out.print("jsdebug: WeisseSeitenSearchForm.java readKontakte(): about to DirectoriesHelper.readContent()...\n");
 			String content = DirectoriesHelper.readContent(name, geo);
+			System.out.print("jsdebug: WeisseSeitenSearchForm.java readKontakte(): about to new DirectoriesContentParser()...\n");
 			DirectoriesContentParser parser = new DirectoriesContentParser(content);
+			System.out.print("jsdebug: WeisseSeitenSearchForm.java readKontakte(): about to parser.extractKontakte()...\n");
 			kontakte = parser.extractKontakte();
+			System.out.print("jsdebug: WeisseSeitenSearchForm.java readKontakte(): about to parser.getSearchInfo()...\n");
 			searchInfoText = parser.getSearchInfo();
+			if (searchInfoText == null) System.out.print("jsdebug: WeisseSeitenSearchForm.java readKontakte(): WARNING: getSearchInfo() returned: searchInfoText == null\n");
+			else						System.out.print("jsdebug: WeisseSeitenSearchForm.java readKontakte(): getSearchInfo() returned: searchInfoText == "+searchInfoText+"\n");
 		} catch (IOException e) {
 			ExHandler.handle(e);
 		} finally {
+			System.out.print("jsdebug: WeisseSeitenSearchForm.java readKontakte(): about to getShell().setCursor(backupCursor)...\n");
 			getShell().setCursor(backupCursor);
 		}
 	}
@@ -123,11 +130,14 @@ public class WeisseSeitenSearchForm extends Composite {
 	 * Aktion wenn Such-Button klicked oder Default-Action (Return).
 	 */
 	private void searchAction(String name, String geo){
+		System.out.print("jsdebug: WeisseSeitenSearchForm.java searchAction(): about to readKontakte(name, geo)...\n");
 		readKontakte(name, geo);
+		System.out.print("jsdebug: WeisseSeitenSearchForm.java searchAction(): about to resultChanged()...\n");
 		resultChanged();
 	}
 	
 	private void resultChanged(){
+		System.out.print("jsdebug: WeisseSeitenSearchForm.java resultChanged(): about to for (listener : listeners.getListeners())..\n");
 		for (Object listener : listeners.getListeners()) {
 			if (listener != null) {
 				((Listener) listener).handleEvent(null);
