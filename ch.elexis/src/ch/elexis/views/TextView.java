@@ -1,11 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2006-2010, G. Weirich and Elexis
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2006-2010, G. Weirich and Elexis; Portions (c) 2013 Joerg Sigle www.jsigle.com
+ * All rights reserved.
  *
  * Contributors:
+ *    J. Sigle   - addes StatusMonitor, reliable activation on typing, reliable saving, automatic saving depending on passed time since last save and last isModified() 
  *    G. Weirich - initial implementation
  *    
  *******************************************************************************/
@@ -59,7 +57,7 @@ import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.MimeTool;
 
-import ch.elexis.util.StatusMonitor;
+import ch.elexis.util.IStatusMonitorCallback;	//201306170935js - ensure edits in text documents are noted by Elexis and ultimately stored
 
 public class TextView extends ViewPart implements IActivationListener {
 	public final static String ID = "ch.elexis.TextView"; //$NON-NLS-1$
@@ -196,6 +194,21 @@ public class TextView extends ViewPart implements IActivationListener {
 		//201306161401js
 		ch.elexis.util.StatusMonitor.removeMonitorEntry("TextView");
 
+		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: Bitte auskommentierte Zeilen in TextView.dispose() löschen.");
+		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
+		//Das hier war nur ein Versuch, mal die Aufrufbarkeit von ...showView() zu testen.
+		//Nicht mehr nützlich, nicht produktiv, nur overhead.
+		//try {
+		//	getSite().getPage().showView(TextView.ID);
+		//} catch (PartInitException e) {
+		//	// TODO Auto-generated catch block
+		//	e.printStackTrace();
+		//} 
+		
 		
 		//20130425js: Nach Einfügen der folgenden Zeile wird er NOText closeListener mit queryClosing() und notifyClosing() tatsächlich aufgerufen,
 		//in der Folge wird dann auch OO beendet, wenn das Letzte NOAText Fenster geschlossen wurde.
@@ -210,19 +223,16 @@ public class TextView extends ViewPart implements IActivationListener {
 		//Elexis starten - muster max - brief doppelklicken (implizit wird AOO geladen) - BriefInhalt erscheint im Briefe Fenster -
 		//	Elexis direkt schliessen - soffice.bin und soffice.exe werden entladen - Elexis beendet sich problemlos.
 		//
-		txt.getPlugin().dispose();
+
+		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		System.out.println("js ch.elexis.views/TextView.java dispose(): ToDo: SOLLTE hier ein plugin().dispose() rein - siehe Kommentare - oder würde das im Betrieb nur unerwünscht Exceptions werfen (gerade gesehen)?");
+		System.out.println("js ch.elexis.views/TextViewr.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		//System.out.println("js ch.elexis.views/TextView.java dispose(): about to txt.getPlugin().dispose()");
+		//txt.getPlugin().dispose();
 		
 		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: Bitte in TextView.java, RezeptBlatt.java, AU, etc. das alles noch spiegeln: StatusMonitor, dispose handler, etc.!!!");
-		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 				
@@ -250,7 +260,7 @@ public class TextView extends ViewPart implements IActivationListener {
 			System.out.println("js ch.elexis.views/TextView.java openDocument(): actBrief == ("+actBrief.getBetreff().toString()+")...");
 			
 			//201306161205js: Now also create a status monitor thread:
-			ch.elexis.util.StatusMonitor.addMonitorEntry("TextView");
+			ch.elexis.util.StatusMonitor.addMonitorEntry("TextView", new SaveHandler(), new ShowViewHandler());
 
 			System.out.println("js ch.elexis.views/TextView.java openDocument(Brief doc) successful. Returning true; actBrief == ("+actBrief.getBetreff().toString()+")...");
 			return true;
@@ -471,7 +481,7 @@ public class TextView extends ViewPart implements IActivationListener {
 		}
 		
 		//201306161205js: Now also create a status monitor thread:
-		ch.elexis.util.StatusMonitor.addMonitorEntry("TextView");
+		ch.elexis.util.StatusMonitor.addMonitorEntry("TextView", new SaveHandler(), new ShowViewHandler());
 		
 		System.out.println("js ch.elexis.views/TextView.java createDocument(2): returning true\n");
 		return true;
@@ -501,14 +511,14 @@ public class TextView extends ViewPart implements IActivationListener {
 		}
 
 		actBrief = txt.createFromTemplate(Konsultation.getAktuelleKons(), template, Brief.UNKNOWN, adressat, subject);
-		setName();
 		if (actBrief == null) {
 			System.out.println("js ch.elexis.views/TextView.java createDocument(3): WARNING: returning false\n");
 			return false;
 		}
+		setName();
 		
 		//201306161205js: Now also create a status monitor thread:
-		ch.elexis.util.StatusMonitor.addMonitorEntry("TextView");
+		ch.elexis.util.StatusMonitor.addMonitorEntry("TextView", new SaveHandler(), new ShowViewHandler());
 
 		System.out.println("js ch.elexis.views/TextView.java createDocument(3): returning true\n");
 		return true;
@@ -756,27 +766,64 @@ public class TextView extends ViewPart implements IActivationListener {
 		showToolbarAction.setChecked(true);
 	}
 
-	//201306170655js: changing SaveHandler below to public, would not suffice to make its save() easily accessible from my new StatusMonitor.java
-	//So I added this method to TextView.
-	public void save(){
-		System.out.println("\njs ch.elexis.views/TextView.java save(): begin");
-
-		log.log(Messages.getString("TextView.save"), Log.DEBUGMSG); //$NON-NLS-1$
+	//201306170655js: I implement this additional callback method to give StatusMonitor a possibility to trigger a ShowView from TextView.java
+	//Required, as getView() is not easily accessible from StatusMonitor (and not in a number of more complicated ways I tried either),
+	//and moreover, we can keep the TextView.ID etc. up here, and do similar but yet specific things for all other corresponding text processing windows -
+	//just letting each of them specify whatever they want to have called from StatusMonitor.java
+	class ShowViewHandler implements IStatusMonitorCallback {
 		
-		if (actBrief != null) {
-			System.out.println("js ch.elexis.views/TextView.java save(): actBrief == "+actBrief.toString()+": "+actBrief.getBetreff());
-			System.out.println("js ch.elexis.views/TextView.java save(): about to save actBrief to DB...");
-			//TODO: Why wouldn't we return the result here, but in SaveAs? js
-			actBrief.save(txt.getPlugin().storeToByteArray(), txt.getPlugin().getMimeType());
-		} else {
-			System.out.println("js ch.elexis.views/TextView.java save(): actBrief == null, doing nothing.");
+		@Override
+		public void showView() {
+			//Any Eclipse RCP Display related code must be run in the Display thread,
+			//because otherwise it would cause an Invalid thread access Exception.
+			//We can run it sync or async, here I chose the async:
+			Display.getDefault().asyncExec(new Runnable() {
+			    public void run() {				    	
+			    	/*
+			    	 * Strangely, I see: isEnabled = true; isFocusContrl = false, when kbd action goes to the Office win but it appears inactive.
+			    	 * 
+			    	 * textContainer.isEnabled(): 		Wird false, wenn das Fenster minimized ist; ansonsten immer true, 
+			    	 *									selbst wenn die View nicht den aktiven Rahmen hat, oder ich eine andere View aktiviere = anklicke.
+			    	 *
+			    	 * textContainer.isFocusControl():	Sehe ich die ganze Zeit als false, auch wenn kbd action in den Office Window Inhalt geht.
+			    	 *
+			    	 */
+			    	//System.out.println("js ch.elexis.views/RezeptBlatt.java statusMonitor() - Thread: " + Thread.currentThread().getName() + " - textContainer.isFocusControl(): " + textContainer.isFocusControl());
+					//System.out.println("js ch.elexis.views/RezeptBlatt.java statusMonitor() - Thread: " + Thread.currentThread().getName() + " - textContainer.isEnabled():      " + textContainer.isEnabled());
+						
+					//DAS BITTE NUR, WENN isModified() akut unten gesetzt wurde!
+					//Sonst kann man Elexis ausserhalb des TextPluginWindows nur noch sehr schlecht steuern.
+			
+					System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");								
+					System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - PLEASE IMPLEMENT Activation of the correct office window!");								
+					System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - ToDo: TextView.java");								
+					System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - ToDo: RezeptBlatt.java et al.");								
+					System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");								
+			    	
+					//YEP. DAS macht die View aktiv, incl. hervorgehobenem Rahmen, und Focus, in dem der Text drinnen steckt.
+					//Im Moment leider noch alle Zeit, also auch dann, wenn gerade NICHT isModified() durch neue Eingaben immer wieder gesetzt würde.
+					//TextView.ID liefert: ch.elexis.TextView
+					TextView tv = null;
+					try {
+						System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - Thread: " + Thread.currentThread().getName() + " - about to tv.showView(TextView.ID) with TextView.ID == " + TextView.ID);
+						tv = (TextView) getViewSite().getPage().showView(TextView.ID /*,StringTool.unique("textView"),IWorkbenchPage.VIEW_ACTIVATE*/);
+					} catch (PartInitException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					//Ein textcontainer.setEnabled(true) dürfte vermutlich die Briefe-View "wiederherstellen", wenn sie minimiert war.
+					//textContainer.setEnabled(true);
+					
+			    	//Ein textContainer.setFocus() alleine scheint immer wieder den Keyboard Focus auf das Briefe-View zu setzen,
+					//nachdem ich ihn woanders hingesetzt habe. Jedoch auch das, ohne dass der Rahmen der View sichtbar "aktiv" wird!
+					//textContainer.setFocus(); 
+			    }
+			});
 		}
-
-		System.out.println("js ch.elexis.views/TextView.java save(): end\n");
 	}
-	
-	//201306170655js: changing this to public, would not suffice to make its save() easily accessible from my new StatusMonitor.java
-	//So I added the method above to TextView.
+
+	//201306170655js: This pre-existing SaveHandler can also be used with/from my new ch.elexis.util.StatusMonitoring class.
 	class SaveHandler implements ITextPlugin.ICallback {
 		
 		public void save(){
@@ -885,7 +932,7 @@ public class TextView extends ViewPart implements IActivationListener {
 			//System.out.println("js ch.elexis.views/TextView.java TODO: actBrief.getBetreff() == " + actBrief.getBetreff());
 			//System.out.println("js ch.elexis.views/TextView.java TODO: actBrief.getLabel() == " + actBrief.getLabel());
 			System.out.println("js ch.elexis.views/TextView.java TODO: txt.getPlugin().toString() == " + txt.getPlugin().toString());				
-			System.out.println("js ch.elexis.views/TextView.java TODO: Hmmm. For now, I'm adding that test to NoaText_jsl: NOAText.java storeToByteArray()...");
+			System.out.println("js ch.elexis.views/TextView.java TODO: Hmmm. OK, I'm adding that test to NoaText_jsl: NOAText.java storeToByteArray()...");
 			System.out.println("js ch.elexis.views/TextView.java TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 			System.out.println("js ch.elexis.views/TextView.java TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 			System.out.println("js ch.elexis.views/TextView.java TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");

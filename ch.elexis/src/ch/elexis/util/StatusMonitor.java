@@ -3,9 +3,10 @@ package ch.elexis.util;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PartInitException;
 
+import ch.elexis.text.ITextPlugin.ICallback;
 import ch.elexis.views.TextView;
 import ch.rgw.tools.StringTool;
-
+import ch.elexis.util.IStatusMonitorCallback;
 
 //It would be nice to monitor user input - and save preferrably, 
 //when a pause of e.g. 10 secs after the last input has occured,
@@ -45,11 +46,13 @@ public class StatusMonitor implements Runnable {
 	public static Thread statusMonitorThread = null;
 	
 	static class MonitoredDocument {
-		public boolean		isValid = false;
-		public String		docURL = null;
-		public boolean		docIsModified = false;
-		public long 		timestampOfLastChangeOfIsModified = 0;
-		public long 		timestampOfLastDocumentModifyListenerReactOnUnspecifiedEvent = 0;
+		public boolean					isValid = false;
+		public String					docURL = null;
+		public ICallback				docSaveHandler = null;
+		public IStatusMonitorCallback	docShowViewHandler = null;
+		public boolean					docIsModified = false;
+		public long 					timestampOfLastChangeOfIsModified = 0;
+		public long 					timestampOfLastDocumentModifyListenerReactOnUnspecifiedEvent = 0;
 		
 		public MonitoredDocument() {
 		}
@@ -69,7 +72,7 @@ public class StatusMonitor implements Runnable {
 	 * 
 	 * @ return: Currently none. Later on, might return some status information - at least three outcomes could happen. 
 	 */
-	public static void addMonitorEntry(String newURL) {
+	public static void addMonitorEntry(String newURL,  ICallback newSaveHandler, IStatusMonitorCallback newShowViewHandler) {
     	System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() begin");
     	System.out.println("js com.jsigle.noa/StatusMonitor.java supplied newURL == " + newURL);
     	
@@ -105,13 +108,17 @@ public class StatusMonitor implements Runnable {
 		for (MonitoredDocument entry : monitoredDocuments) {
 			if (!entry.isValid) {
 				System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() About to add the new entry in slot x of the monitoring list...");
+				
 				entry.docURL=new String(newURL);
-				System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() newURL == " + newURL);
-				System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() entry.docURL == " + entry.docURL);
+				entry.docSaveHandler=newSaveHandler;
+				entry.docShowViewHandler=newShowViewHandler;
 				entry.timestampOfLastDocumentModifyListenerReactOnUnspecifiedEvent = System.currentTimeMillis();
 				entry.timestampOfLastChangeOfIsModified = entry.timestampOfLastDocumentModifyListenerReactOnUnspecifiedEvent;
 				entry.docIsModified = false;
 				entry.isValid = true;
+				
+				System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() newURL == " + newURL);
+				System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() entry.docURL == " + entry.docURL);
 				
 				//If the statusMonitorThread is not yet running, then start it!
 				if (statusMonitorThread == null) {
@@ -162,6 +169,10 @@ public class StatusMonitor implements Runnable {
 		System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() WARNING: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");		
 		System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() WARNING: No monitoring slot was available any more. -> return");		   
 		System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() WARNING: ToDo: Please increase the number of slots in StatusMonitor.java!");		
+		System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() WARNING: Note: Disabling the win seems to be caught reliably.");		
+		System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() WARNING: So we could add another status variable re-set by the TextView.activation(false)/(true) methods, to avoid multiple unnecessary calls to this routine here.");		
+		System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() WARNING: It is visible after all; the cursor will briefly change from Textcursor to Generic Mouse Pointer.");		
+		System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() WARNING: Or is there any method to ask for the currently highlighted view?");		
 		System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() WARNING: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");		
 	}
 
@@ -194,7 +205,9 @@ public class StatusMonitor implements Runnable {
 					if (entry.docURL.equals(newURL)) { 
 						System.out.println("js com.jsigle.noa/StatusMonitor.java removeMonitorEntry(): removing entry");
 						entry.isValid = false;
-						entry.docURL = null;
+						entry.docURL = null; 
+						entry.docSaveHandler = null;		//The static array will stay in existence, so nulling content		
+						entry.docShowViewHandler = null;	//might allow objects containing callbacks to be disposed of.
 						numValidEntries = numValidEntries - 1; 
 					}
 			}
@@ -281,69 +294,22 @@ public class StatusMonitor implements Runnable {
 						+ entry.docIsModified 
 						+ " / " + entry.timestampOfLastChangeOfIsModified + " (" + timeSinceLastIsModifiedChange/1000 + " secs ago)" 
 					    + " / " + entry.timestampOfLastDocumentModifyListenerReactOnUnspecifiedEvent + " (" + timeSinceLastDocumentModifyListenerReactOnUnspecifiedEvent/1000 + " secs ago)");					
-		
-					//--------------------------------------------------------------------------------
-					//If the document has just been modified, then activate the respective view
-					//--------------------------------------------------------------------------------
-					
-					
+							
 					try {					
 						
-						/*
-						 * This would cause: Invalid thread access: - We can only update UI stuff in the UI Thread... Oh No!
-						 * Dasselbe auch schon für nur: textContainer.setEnabled(true);
-						System.out.println("js ch.lexis.views/RezeptBlatt.java statusMonitor() - Thread: " + Thread.currentThread().getName() + " - textContainer.isFocusControl(): " + textContainer.isFocusControl());
-						System.out.println("js ch.elexis.views/RezeptBlatt.java statusMonitor() - Thread: " + Thread.currentThread().getName() + " - textContainer.isEnabled():      " + textContainer.isEnabled());
-						if ((textContainer.isFocusControl() ) && (!textContainer.isEnabled())) {
-							System.out.println("js ch.lexis.views/RezeptBlatt.java statusMonitor() - Thread: " + Thread.currentThread().getName() + " - about to textContainer.setEnabled(true)...");
-							textContainer.setEnabled(true);
-						}
-						 */
-
+						//--------------------------------------------------------------------------------
+						//If the document has just been modified, then activate the respective view.
+						//As de-activation a text-plugin-served Window traditionally triggers saving in Elexis,
+						//but activation of text-plugin-served Windows does not work if a user clicks directly into the text,
+						//this helps to ensure that user edited content is finally saved. E.g. when they load another document
+						//before the new regular time-intervall/isModified-based saving routine would kick in.
+						//--------------------------------------------------------------------------------
 						
-						//To run the above code in the Display thread (and asynchronously),
-						//so it does NOT cause the Invalid thread access,
-						//we need to encapsulate it like this:
-						Display.getDefault().asyncExec(new Runnable() {
-						    public void run() {				    	
-						    	/*
-						    	 * Strangely, I see: isEnabled = true; isFocusContrl = false, when kbd action goes to the Office win but it appears inactive.
-						    	 * 
-						    	 * textContainer.isEnabled(): 		Wird false, wenn das Fenster minimized ist; ansonsten immer true, 
-						    	 *									selbst wenn die View nicht den aktiven Rahmen hat, oder ich eine andere View aktiviere = anklicke.
-						    	 *
-						    	 * textContainer.isFocusControl():	Sehe ich die ganze Zeit als false, auch wenn kbd action in den Office Window Inhalt geht.
-						    	 *
-						    	 */
-						    	//System.out.println("js ch.elexis.views/RezeptBlatt.java statusMonitor() - Thread: " + Thread.currentThread().getName() + " - textContainer.isFocusControl(): " + textContainer.isFocusControl());
-								//System.out.println("js ch.elexis.views/RezeptBlatt.java statusMonitor() - Thread: " + Thread.currentThread().getName() + " - textContainer.isEnabled():      " + textContainer.isEnabled());
-									
-								//DAS BITTE NUR, WENN isModified() akut unten gesetzt wurde!
-								//Sonst kann man Elexis ausserhalb des TextPluginWindows nur noch sehr schlecht steuern.
-						
-						    	
-								if (false) {
-									//YEP. DAS macht die View aktiv, incl. hervorgehobenem Rahmen, und Focus, in dem der Text drinnen steckt.
-									//Im Moment leider noch alle Zeit, also auch dann, wenn gerade NICHT isModified() durch neue Eingaben immer wieder gesetzt würde.
-									//TextView.ID liefert: ch.elexis.TextView
-									TextView tv = null;
-									//try {
-										System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - Thread: " + Thread.currentThread().getName() + " - about to tv.showView(TextView.ID) with TextView.ID == " + TextView.ID);
-									//	tv = (TextView) getSite().getPage().showView(TextView.ID /*,StringTool.unique("textView"),IWorkbenchPage.VIEW_ACTIVATE*/);
-									//} catch (PartInitException e) {
-									//	// TODO Auto-generated catch block
-									//	e.printStackTrace();
-									//}
-								}
-								
-								//Ein textcontainer.setEnabled(true) dürfte vermutlich die Briefe-View "wiederherstellen", wenn sie minimiert war.
-								//textContainer.setEnabled(true);
-								
-						    	//Ein textContainer.setFocus() alleine scheint immer wieder den Keyboard Focus auf das Briefe-View zu setzen,
-								//nachdem ich ihn woanders hingesetzt habe. Jedoch auch das, ohne dass der Rahmen der View sichtbar "aktiv" wird!
-								//textContainer.setFocus(); 
-						    }
-						});
+						if (entry.docIsModified && (timeSinceLastDocumentModifyListenerReactOnUnspecifiedEvent < 1000) ) {
+							if (entry.docURL.equals("TextView")) {
+								entry.docShowViewHandler.showView();
+							}
+						} // if entry.isModified, <2 secs ago 
 						
 						//--------------------------------------
 						//Ensure the monitored document is saved,
@@ -369,16 +335,12 @@ public class StatusMonitor implements Runnable {
 								System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");								
 								System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - WE SHOULD TRY TO SAVE THIS DOCUMENT NOW!");								
 								System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - PLEASE IMPLEMENT THIS!");								
+								System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - Done: TextView.java");								
+								System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - ToDo: RezeptBlatt.java et al.");								
 								System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");								
 
 								if (entry.docURL.equals("TextView")) {
-									//This would not work, with the pre-existing SaveHandler in TextView.java,
-									//even after making that class public:
-									//ch.elexis.views.TextView.SaveHandler sh = new ch.elexis.views.TextView.SaveHandler();
-									//so I added another save() to TextView, so I can use that:
-									
-									TextView tv = new TextView();
-									tv.save();									
+									entry.docSaveHandler.save();
 								}
 								
 								//Wieso geht hier save() nicht, im Gegensatz zu RezeptBlatt.java? Siehe die unterschiedliche Einbettung in Klassen etc.

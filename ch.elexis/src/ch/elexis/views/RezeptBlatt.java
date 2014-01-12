@@ -1,11 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2006-2010, G. Weirich and Elexis
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2006-2010, G. Weirich and Elexis; Portions (c) 2013 Joerg Sigle www.jsigle.com
+ * All rights reserved.
  *
  * Contributors:
+ *    J. Sigle   - addes StatusMonitor, reliable activation on typing, reliable saving, automatic saving depending on passed time since last save and last isModified() 
  *    G. Weirich - initial implementation
  * 
  *******************************************************************************/
@@ -16,6 +14,8 @@ import java.util.List;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Desk;
@@ -30,11 +30,15 @@ import ch.elexis.data.Prescription;
 import ch.elexis.data.Rezept;
 import ch.elexis.exchange.IOutputter;
 import ch.elexis.text.ITextPlugin.ICallback;
+import ch.elexis.text.ITextPlugin;
 import ch.elexis.text.TextContainer;
-import ch.elexis.util.StatusMonitor;
 import ch.rgw.tools.StringTool;
 
-public class RezeptBlatt extends ViewPart implements ICallback, IActivationListener, IOutputter {
+import ch.elexis.util.Log;
+
+import ch.elexis.util.IStatusMonitorCallback;	//201306170935js - ensure edits in text documents are noted by Elexis and ultimately stored
+
+public class RezeptBlatt extends ViewPart implements ICallback, IActivationListener, IOutputter, IStatusMonitorCallback {
 	public final static String ID = "ch.elexis.RezeptBlatt"; //$NON-NLS-1$
 	TextContainer text;
 	Brief actBrief;
@@ -45,17 +49,15 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 	
 	@Override
 	public void dispose(){
-		//201306161401js
-		System.out.println("js ch.elexis.views/TextView.java dispose(): About to interrupt the statusMonitorThread...");			
-		statusMonitorThread.interrupt();
-		System.out.println("js ch.elexis.views/TextView.java dispose(): About to statusMonitorThread = null");			
-		statusMonitorThread = null;
-		
-		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: Bitte Prüfen: ist das gespeichert mit save() oder ähnlich, vor dem dispose?");
-		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: Bitte in TextView.java, RezeptBlatt.java, AU, etc. das alles noch spiegeln: StatusMonitor, dispose handler, etc.!!!");
-		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		System.out.println("\njs ch.elexis.views/RezeptBlatt.java dispose(): begin");
 
+		System.out.println("js ch.elexis.views/RezeptBlatt.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		System.out.println("js ch.elexis.views/RezeptBlatt.java dispose(): TODO: Bitte Prüfen: ist das gespeichert mit save() oder ähnlich, vor dem dispose?");
+		System.out.println("js ch.elexis.views/RezeptBlatt.java dispose(): TODO: Bitte Prüfen: Siehe info re added closeListener in TextView.java und below");
+		System.out.println("js ch.elexis.views/RezeptBlatt.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
+		//201306161401js
+		ch.elexis.util.StatusMonitor.removeMonitorEntry("TextView");
 		
 		//20130425js: Nach Einfügen der folgenden Zeile wird er NOText closeListener mit queryClosing() und notifyClosing() tatsächlich aufgerufen,
 		//in der Folge wird dann auch OO beendet, wenn das Letzte NOAText Fenster geschlossen wurde.
@@ -70,9 +72,19 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 		//Elexis starten - muster max - brief doppelklicken (implizit wird AOO geladen) - BriefInhalt erscheint im Briefe Fenster -
 		//	Elexis direkt schliessen - soffice.bin und soffice.exe werden entladen - Elexis beendet sich problemlos.
 		//
-		text.getPlugin().dispose();		
 		
+		System.out.println("js ch.elexis.views/RezeptBlatt.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		System.out.println("js ch.elexis.views/RezeptBlatt.java dispose(): ToDo: SOLLTE hier ein plugin().dispose() rein - siehe Kommentare - oder würde das im Betrieb nur unerwünscht Exceptions werfen (gerade gesehen)?");
+		System.out.println("js ch.elexis.views/RezeptBlatt.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		//System.out.println("js ch.elexis.views/RezeptBlatt.java dispose(): about to txt.getPlugin().dispose()");
+		//text.getPlugin().dispose();		
+		
+		System.out.println("js ch.elexis.views/RezeptBlatt.java dispose(): about to GlobalEventDispatcher.removeActivationListener()...");
 		GlobalEventDispatcher.removeActivationListener(this, this);
+
+		System.out.println("js ch.elexis.views/RezeptBlatt.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		System.out.println("js ch.elexis.views/RezeptBlatt.java dispose(): about super.dispose()... - warum hier im Ggs. zu TextView NICHT actBrief = null?");
+		System.out.println("js ch.elexis.views/RezeptBlatt.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		super.dispose();
 	}
 	
@@ -83,18 +95,59 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 	 *            the Brief for the Rezept to be shown
 	 */
 	public void loadRezeptFromDatabase(Rezept rp, Brief brief){
+		System.out.println("\njs ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(Rezept rp, Brief brief): begin");
+		
+		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): about Wird hier auch ein Meaningful name verwendet?");
+		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): about Warum ist loadRezeptFromDatabase() so kurz, aeber TextView openDocument() viel länger?");
+		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
 		actBrief = brief;
 		text.open(brief);
 		rp.setBrief(actBrief);
-	
+		
+		//What element could we record to tell NOAText which entry to update on addDocumentModifyListener() / isModified() events?
+		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): actBrief.getId() == " + actBrief.getId());
+		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): actBrief.getLabel() == " + actBrief.getLabel());
+		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): actBrief.getTyp() == " + actBrief.getTyp());
+		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): actBrief.getLastUpdate() == " + actBrief.getLastUpdate());
+		
+		//ch.elexis.data.Rezept@ce0114d8
+		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): actBrief.getXid() == " + actBrief.getXid());
+
+		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): rp.toString() == " + rp.toString());
+		
+		//K5587ca8cc4c9a8f06146
+		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): rp.getId() == " + rp.getId());
+		
+		//02.05.2013 jh
+		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): rp.getLabel() == " + rp.getLabel());
+
+		//ch.elexis.text.TextContainer@7acabf
+		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): text.toString() == " + text.toString());
+		
+		//8047295
+		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): text.hashCode() == " + text.hashCode());
+		
+		//class ch.elexis.text.TextContainer
+		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): text.getClass().toString() == " + text.getClass().toString());
+
 		//201306161205js: Now also create a status monitor thread:
-		if (statusMonitorThread == null) {
-			System.out.println("js ch.elexis.views/TextView.java openDocument(Brief doc): about to start new statusMonitorThread()...\n");
-			statusMonitorThread = new Thread(new StatusMonitor()); 
-			statusMonitorThread.start();
-		} else {
-			System.out.println("js ch.elexis.views/TextView.java openDocument(Brief doc): WARNING: statusMonitorThread is already != null. This should NOT be the case now. Will not start new status monitor thread.");				
-		}
+		//In TextView.java, SaveHandler was a separate class implementing ICallback with its save() and saveAs() methods.
+		//Also, I added ShowViewHandler as another separate class implementing IStatusMonitorCallback with its showView method.
+		//There, we used:
+		//ch.elexis.util.StatusMonitor.addMonitorEntry("RezeptBlatt", new SaveHandler(), new ShowViewHandler());
+		//In RezeptBlatt.java, RezeptBlatt directly implements ICallback, and I added that it also directly implements IStatusMonitorCallback.
+		//Especially, because supplying ShowViewHandler() to RezeptBlatt...addMonitoring would activate the TextView window (Briefe),
+		//but not the RezetpBlatt window (Rezept). No, sorry - that was more probably because the NOAText based isModified() event handler set
+		//the isModified() flag always for the TextView related statusMonitor entry, and not for the RezeptBlatt related entry.
+		
+		//So RezeptBlatt() has to replace both SaveHandler() and ShowViewHandler().
+		//And as we do not want a *new* RezeptBlatt to be called, but the existing one instead, we might just as well supply (..., this, this).
+		//ToDo: Please homogenize, if possible. Quite possibly, Textview might be changed to become similar to RezeptBlatt etc.
+		ch.elexis.util.StatusMonitor.addMonitorEntry("RezeptBlatt", this, this);
+
+		System.out.println("\njs ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(Rezept rp, Brief brief): end");
 	}
 	
 	@Override
@@ -111,10 +164,23 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 	}
 	
 	public boolean createList(Rezept rp, String template, String replace){
+		System.out.println("\njs ch.elexis.views/RezeptBlatt.java createList(Rezept rp, String template, String replace): begin");
+
 		actBrief =
 			text.createFromTemplateName(Konsultation.getAktuelleKons(), template, Brief.RP,
 				(Patient) ElexisEventDispatcher.getSelected(Patient.class),
 				template + " " + rp.getDate());
+		
+		//201306230924js: Added this similar to what I found in Textview.
+		if (actBrief == null) {
+			System.out.println("js ch.elexis.views/RezeptBlatt.java createDocument(3): WARNING: returning false\n");
+			return false;
+		}
+
+		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): Schauen, wie das mit TextView.createDocument korrespondiert. Dort: setName(); hier unten: setBrief(),->setLetterID oder ähnlich...?");
+		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): Wird ein nützlicher Fenstertitel gesetzt?");
+		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");		
 		
 		List<Prescription> lines = rp.getLines();
 		String[][] fields = new String[lines.size()][];
@@ -138,14 +204,12 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 		rp.setBrief(actBrief);
 
 		//201306161205js: Now also create a status monitor thread:
-		if (statusMonitorThread == null) {
-			System.out.println("js ch.elexis.views/RezeptBlatt.java createList(): about to start new statusMonitorThread()...\n");
-			statusMonitorThread = new Thread(new StatusMonitor()); 
-			statusMonitorThread.start();
-		} else {
-			System.out.println("js ch.elexis.views/RezeptBlatt.java createList(): WARNING: statusMonitorThread is already != null. This should NOT be the case now. Will not start new status monitor thread.");				
-		}
-
+		//In TextView.java, SaveHandler was a separate class implementing ICallback with its save() and saveAs() methods.
+		//There, we used:
+		//ch.elexis.util.StatusMonitor.addMonitorEntry("RezeptBlatt", new SaveHandler(), new ShowViewHandler());
+		//In RezeptBlatt.java, RezeptBlatt directly implements ICallback. So RezeptBlatt() has to replace SaveHandler().
+		//ToDo: Please homogenize, if possible. Quite possibly, Textview might be changed to become similar to RezeptBlatt etc.
+		ch.elexis.util.StatusMonitor.addMonitorEntry("RezeptBlatt", this, this);
 		
 		if (text.getPlugin().insertTable(replace, 0, fields, wt)) {
 			if (text.getPlugin().isDirectOutput()) {
@@ -182,10 +246,97 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 			Messages.getString("RezeptBlatt.TemplateNameList"), Messages.getString("RezeptBlatt.6")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
+	//201306170655js: I implement this additional callback method to give StatusMonitor a possibility to trigger a ShowView from TextView.java
+	//Required, as getView() is not easily accessible from StatusMonitor (and not in a number of more complicated ways I tried either),
+	//and moreover, we can keep the TextView.ID etc. up here, and do similar but yet specific things for all other corresponding text processing windows -
+	//just letting each of them specify whatever they want to have called from StatusMonitor.java
+	//class ShowViewHandler implements IStatusMonitorCallback {
+
+	//In TextView.java, SaveHandler was a separate class implementing ICallback with its save() and saveAs() methods.
+	//Also, I added ShowViewHandler as another separate class implementing IStatusMonitorCallback with its showView method.
+	//There, we used:
+	//ch.elexis.util.StatusMonitor.addMonitorEntry("RezeptBlatt", new SaveHandler(), new ShowViewHandler());
+	//In RezeptBlatt.java, RezeptBlatt directly implements ICallback, and I added that it also directly implements IStatusMonitorCallback.
+	//Especially, because supplying ShowViewHandler() to RezeptBlatt...addMonitoring would activate the TextView window (Briefe),
+	//but not the RezetpBlatt window (Rezept). No, sorry - that was more probably because the NOAText based isModified() event handler set
+	//the isModified() flag always for the TextView related statusMonitor entry, and not for the RezeptBlatt related entry.
+	
+	//So RezeptBlatt() has to replace both SaveHandler() and ShowViewHandler().
+	//And as we do not want a *new* RezeptBlatt to be called, but the existing one instead, we might just as well supply (..., this, this).
+	//ToDo: Please homogenize, if possible. Quite possibly, Textview might be changed to become similar to RezeptBlatt etc.
+
+	@Override
+	public void showView() {
+		//Any Eclipse RCP Display related code must be run in the Display thread,
+		//because otherwise it would cause an Invalid thread access Exception.
+		//We can run it sync or async, here I chose the async:
+		Display.getDefault().asyncExec(new Runnable() {
+		    public void run() {				    	
+		    	/*
+		    	 * Strangely, I see: isEnabled = true; isFocusContrl = false, when kbd action goes to the Office win but it appears inactive.
+		    	 * 
+		    	 * textContainer.isEnabled(): 		Wird false, wenn das Fenster minimized ist; ansonsten immer true, 
+		    	 *									selbst wenn die View nicht den aktiven Rahmen hat, oder ich eine andere View aktiviere = anklicke.
+		    	 *
+		    	 * textContainer.isFocusControl():	Sehe ich die ganze Zeit als false, auch wenn kbd action in den Office Window Inhalt geht.
+		    	 *
+		    	 */
+		    	//System.out.println("js ch.elexis.views/RezeptBlatt.java statusMonitor() - Thread: " + Thread.currentThread().getName() + " - textContainer.isFocusControl(): " + textContainer.isFocusControl());
+				//System.out.println("js ch.elexis.views/RezeptBlatt.java statusMonitor() - Thread: " + Thread.currentThread().getName() + " - textContainer.isEnabled():      " + textContainer.isEnabled());
+					
+				//DAS BITTE NUR, WENN isModified() akut unten gesetzt wurde!
+				//Sonst kann man Elexis ausserhalb des TextPluginWindows nur noch sehr schlecht steuern.
+		
+				System.out.println("js com.jsigle.noa/RezeptBlatt.java - run() - !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");								
+				System.out.println("js com.jsigle.noa/RezeptBlatt.java - run() - PLEASE IMPLEMENT Activation of the correct office window!");								
+				System.out.println("js com.jsigle.noa/RezeptBlatt.java - run() - ToDo: TextView.java");								
+				System.out.println("js com.jsigle.noa/RezeptBlatt.java - run() - ToDo: RezeptBlatt.java et al.");								
+				System.out.println("js com.jsigle.noa/RezeptBlatt.java - run() - !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");								
+		    	
+				//YEP. DAS macht die View aktiv, incl. hervorgehobenem Rahmen, und Focus, in dem der Text drinnen steckt.
+				//Im Moment leider noch alle Zeit, also auch dann, wenn gerade NICHT isModified() durch neue Eingaben immer wieder gesetzt würde.
+				//TextView.ID liefert: ch.elexis.TextView
+				TextView tv = null;
+				try {
+					System.out.println("js com.jsigle.noa/RezeptBlatt.java - run() - Thread: " + Thread.currentThread().getName() + " - about to tv.showView(RezeptBlatt.ID) with TextView.ID == " + TextView.ID);
+					tv = (TextView) getViewSite().getPage().showView(RezeptBlatt.ID /*,StringTool.unique("textView"),IWorkbenchPage.VIEW_ACTIVATE*/);
+				} catch (PartInitException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				//Ein textcontainer.setEnabled(true) dürfte vermutlich die Briefe-View "wiederherstellen", wenn sie minimiert war.
+				//textContainer.setEnabled(true);
+				
+		    	//Ein textContainer.setFocus() alleine scheint immer wieder den Keyboard Focus auf das Briefe-View zu setzen,
+				//nachdem ich ihn woanders hingesetzt habe. Jedoch auch das, ohne dass der Rahmen der View sichtbar "aktiv" wird!
+				//textContainer.setFocus(); 
+		    }
+		});
+	}
+	//}
+
+	//In TextView.java, there was:
+	//201306170655js: This pre-existing SaveHandler can also be used with/from my new ch.elexis.util.StatusMonitoring class.
+	//class SaveHandler implements ITextPlugin.ICallback {
+	//Here, RezeptBlatt is a handler implements ITextPlugin.ICallback, that must implement save() and saveAs(), so we're on a different level.
+	//Also note that TextView.txt -> RezeptBlatt.text
+	//ToDo: Homogenize levels and variable names.
+	
+		//log.log(Messages.getString("RezeptBlatt.save"), Log.DEBUGMSG); //$NON-NLS-1$
+	
 	public void save(){
 		if (actBrief != null) {
-			actBrief.save(text.getPlugin().storeToByteArray(), text.getPlugin().getMimeType());
+			System.out.println("js ch.elexis.views/RezeptBlatt.java SaveHandler.save(): actBrief == "+actBrief.toString()+": "+actBrief.getBetreff());
+			System.out.println("js ch.elexis.views/RezeptBlatt.java SaveHandler.save(): about to save actBrief to DB...");
+			System.out.println("js ch.elexis.views/RezeptBlatt.java SaveHandler.save(): ToDo: Homogenize abstraction/class/method levels and variable/method names between TextView.java and RezeptBlatt.java etc.");
+			//TODO: Why wouldn't we return the result here, but in SaveAs? js
+            actBrief.save(text.getPlugin().storeToByteArray(), text.getPlugin().getMimeType());
+        } else {
+			System.out.println("js ch.elexis.views/RezeptBlatt.java SaveHandler.save(): actBrief == null, doing nothing.");
 		}
+
+		System.out.println("js ch.elexis.views/RezeptBlatt.java SaveHandler.save(): end\n");
 	}
 	
 	public boolean saveAs(){
@@ -193,90 +344,6 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 		return false;
 	}
 	
-	/*
-	 * 201306171151js
-	 * A status monitoring method that I want to call regularly.
-	 * It shall:
-	 * (a) check whether the TextView view has focus, but is not enabled, and should thus be enabled.
-	 * This needs to be done from outside, as merely accessing the needed structures below wb on a sufficiently
-	 * low level will cause the ModicifacionListener already added to NOAText to stall the NOAText plugin.
-	 * (b) Regularly call the storeToByteArray() method - which can access the doc.isModified(), and which I have
-	 * modified to skip the actual storing when isModified() is false.
-	 * It would be better if this storing was triggered a short time after the last keystroke,
-	 * rather than in a regular interval. But at the moment, I can't see how isModified() could get the information
-	 * up here, or how we could look down for that in another way (apart from solutions requiring major construction
-	 * work, which I may attempt later on).   
-	 */
-	//I assume that ONE instance of TextView handles ONE document at time,
-	//so it may contain ONE statusMonitorThread monitoring exactly this document.
-	//Sadly, I need to define statusMonitorThread on this level - furhter down, like in NOAText or in TextContainer will probably NOT do.
-	//Because the storeToByteArray() is called from here, and its result forwarded to Brief.save() from here... -
-	//no module further down the road can see both the source and target of that operation,
-	//so none can trigger an automatic save action.
-	//TODO: This also means that I need to copy that functionality - if I want to have it there -
-	//in (probably) RezepteBlatt.java, ... and others from ch.elexis.views.
-	//For now: in TextView.java, RezepteBlatt.java
-	private Thread statusMonitorThread = null;
-	private int statusMonitorCounter  = 0;
-	private int statusMonitorCallSaveAt = 60; 
-	//It would be nice to monitor user input - and save preferrably, 
-	//when a pause of e.g. 10 secs after the last input has occured,
-	//or - if no pause of that size has occured - e.g. after a maximum delay of 5 min after the first unsaved input.
-	//So that users can usually type without interruption/delay by automatic saving,
-	//and still the maximum amount of unsaved work/time is limited.
-	//That would effectively move a regularly timed auto save action closer to the last user input, when the user pauses. 
-	//This optimal? behaviour is, however,
-	//at least approached to a usable state by calling save after a fixed time and only really performing a save if isModified().
-	//TODO: Warum heisst der TextContainer in RezeptBlatt.java text; und in TextView.java textContainer???
-	public class StatusMonitor implements Runnable {
-		
-		public void run() {
-	    	System.out.println("js ch.elexis.views/RezeptBlatt.java statusMonitor() begin");
-			while (true) {
-				System.out.println("js ch.elexis.views/RezeptBlatt.java statusMonitor() - Thread: " + Thread.currentThread().getName() + " - about to do RezeptBlatt status checking work...");
-				System.out.println("js ch.elexis.views/RezeptBlatt.java statusMonitor() - Thread: " + Thread.currentThread().getName() + " - actBrief: " + actBrief.getBetreff());
-				try {
-					//At regular intervals, check that: if textContainer has keyboard focus, it also is enabled
-					
-					/*
-					 * System.out.println("js ch.lexis.views/RezeptBlatt.java statusMonitor() - Thread: " + Thread.currentThread().getName() + " - text.isFocusControl(): " + rp.isFocusControl());
-					System.out.println("js ch.elexis.views/RezeptBlatt.java statusMonitor() - Thread: " + Thread.currentThread().getName() + " - text.isEnabled():      " + rp.isEnabled());
-					if ((text.isFocusControl() ) && (!text.isEnabled())) {
-						System.out.println("js ch.lexis.views/RezeptBlatt.java statusMonitor() - Thread: " + Thread.currentThread().getName() + " - about to text.setEnabled(true)...");
-						text.setEnabled(true);
-					}
-					 */
-
-					//save at regular intervals
-					statusMonitorCounter = statusMonitorCounter  + 1;
-					System.out.println("js ch.elexis.views/RezeptBlatt.java statusMonitor() - Thread: " + Thread.currentThread().getName() + " - statusMonitorCounter: " + statusMonitorCounter);
-					if (statusMonitorCounter >= statusMonitorCallSaveAt)
-					{
-						save();
-						statusMonitorCounter  = 0;
-					}
-					Thread.sleep(1000);
-				} catch (InterruptedException irEx) {
-					//if the thread is interrupted, then return from it
-					return;
-				}
-
-				
-				/*
-				// bean.getDocument().print(pprops);
-				xPrintable.print(pprops);
-				long timeout = System.currentTimeMillis();
-				while ((myXPrintJobListener.getStatus() == null)
-					|| (myXPrintJobListener.getStatus() == PrintableState.JOB_STARTED)) {
-					Thread.sleep(100);
-					long to = System.currentTimeMillis();
-					if ((to - timeout) > 10000) {
-						break;
-					}
-				*/	    
-			}
-		}
-	}
 
 	/*
 	 * 201306161348js: Attempt to add missing doc:
@@ -289,12 +356,14 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 	public void activation(boolean mode){
 		System.out.println("\njs ch.elexis.views/RezeptBlatt.java activation(mode="+mode+"): begin");
 		if (mode == false) {
-			System.out.println("js ch.elexis.views/RezeptBlatt.java activation(false) requested: save()...");
+			System.out.println("js ch.elexis.views/RezeptBlatt.java activation(false) about to (simply) save()...");
+			System.out.println("js ch.elexis.views/RezeptBlatt.java ToDo: TextView directly calls actBrief.save() here; like save() there and above. Please review and homogenize.");
 			save();
 		} else {
-			System.out.println("js ch.elexis.views/TextView.java activation(true) requested: loadSystTemplateAction.setEnabled(); saveTemplateAction.setEnabled()");
+			System.out.println("js ch.elexis.views/RezeptBlatt.java activation(true) requested.");
 		}
 		
+		System.out.println("\njs ch.elexis.views/RezeptBlatt.java activation(): end\n");
 	}
 	
 	public void visible(boolean mode){
