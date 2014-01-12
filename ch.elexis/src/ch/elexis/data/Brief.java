@@ -77,6 +77,7 @@ public class Brief extends PersistentObject {
 	/** Einen neuen Briefeintrag erstellen */
 	public Brief(String Betreff, TimeTool Datum, Kontakt Absender, Kontakt dest, Konsultation bh,
 		String typ){
+		System.out.println("js: Brief.java: Brief(): begin - (Einen neuen Briefeintrag erstellen)");
 		getConnection().setAutoCommit(false);
 		try {
 			super.create(null);
@@ -108,6 +109,7 @@ public class Brief extends PersistentObject {
 		} finally {
 			getConnection().setAutoCommit(true);
 		}
+		System.out.println("js: Brief.java: Brief(): end - (Einen neuen Briefeintrag erstellen)");
 	}
 	
 	public void setPatient(Person k){
@@ -128,45 +130,58 @@ public class Brief extends PersistentObject {
 	
 	/** Speichern als Text */
 	public boolean save(String cnt){
+		System.out.println("js: Brief.java: save(String cnt): begin");
 		contents c = contents.load(getId());
 		c.save(cnt);
 		set(FLD_DATE_MODIFIED, new TimeTool().toString(TimeTool.DATE_COMPACT));
+		System.out.println("js: Brief.java: save(String cnt): about to return true");
 		return true;
 	}
 	
 	/** Speichern in Binärformat */
 	public boolean save(byte[] in, String mimetype){
+		System.out.println("js: Brief.java: save(byte[] in, String mimetype): begin");
 		if (in != null) {
+			System.out.println("js: Brief.java: save(byte[] in, String mimetype): in != null -> about to perform saving...");
 			// if(mimetype.equalsIgnoreCase(MIMETYPE_OO2)){
 			contents c = contents.load(getId());
 			c.save(in);
 			set(FLD_DATE_MODIFIED, new TimeTool().toString(TimeTool.DATE_COMPACT));
 			set(FLD_MIME_TYPE, mimetype);
+			System.out.println("js: Brief.java: save(byte[] in, String mimetype): returning true");
 			return true;
 			// }
 			// return false;
 		}
+		System.out.println("js: Brief.java: save(byte[] in, String mimetype): in == null -> nop; returning false");
 		return false;
 	}
 	
 	/** Binärformat laden */
 	public byte[] loadBinary(){
+		System.out.println("js: Brief.java: loadBinary(): begin - about to contents c = contents.load(getID())");
 		contents c = contents.load(getId());
+		System.out.println("js: Brief.java: loadBinary(): about to return c.getBinary()");
 		return c.getBinary();
 	}
 	
 	/** Textformat laden */
 	public String read(){
+		System.out.println("js: Brief.java: loadBinary(): begin - about to contents c = contents.load(getID())");
 		contents c = contents.load(getId());
+		System.out.println("js: Brief.java: loadBinary(): about to return c.read()");
 		return c.read();
 	}
 	
 	/** Mime-Typ des Inhalts holen */
 	public String getMimeType(){
+		System.out.println("js: Brief.java: getMimeType(): begin - about to gm = get(FLD_MIME_TYPE)...");
 		String gm = get(FLD_MIME_TYPE);
 		if (StringTool.isNothing(gm)) {
+			System.out.println("js: Brief.java: getMimeType(): StringTool.isNothing(gm) -> returning MIMETYPE_002");
 			return MIMETYPE_OO2;
 		}
+		System.out.println("js: Brief.java: getMimeType(): returning gm == " + gm.toString());
 		return gm;
 	}
 	
@@ -178,14 +193,17 @@ public class Brief extends PersistentObject {
 	}
 	
 	public boolean delete(){
+		System.out.println("js: Brief.java: delete(): begin");
 		getConnection().exec("UPDATE HEAP SET deleted='1' WHERE ID=" + getWrappedId());
 		String konsID = get(FLD_KONSULTATION_ID);
 		if (!StringTool.isNothing(konsID) && (!konsID.equals("SYS"))) {
 			Konsultation kons = Konsultation.load(konsID);
 			if ((kons != null) && (kons.isEditable(false))) {
+				System.out.println("js: Brief.java: delete(): about to kons.removeXRef(...)...");
 				kons.removeXRef(XrefExtension.providerID, getId());
 			}
 		}
+		System.out.println("js: Brief.java: delete(): about to return super.delete()");
 		return super.delete();
 	}
 	
@@ -193,20 +211,25 @@ public class Brief extends PersistentObject {
 		return new OutputLog(this, outputter);
 	}
 	
-	/** Einen Brief unwiederruflich löschen */
+	/** Einen Brief unwiderruflich löschen */
 	public boolean remove(){
+		System.out.println("js: Brief.java: remove(): begin (Einen Brief unwiderruflich löschen)");
 		getConnection().setAutoCommit(false);
 		try {
+			System.out.println("js: Brief.java: remove(): try SQL DELETE FROM HEAP,BRIEFE WHERE ID=" + getWrappedId() +"...");
 			getConnection().exec("DELETE FROM HEAP WHERE ID=" + getWrappedId());
 			getConnection().exec("DELETE FROM BRIEFE WHERE ID=" + getWrappedId());
 			getConnection().commit();
 		} catch (Throwable ex) {
+			System.out.println("js: Brief.java: remove(): WARNING: Caught Exception!");
 			ExHandler.handle(ex);
 			getConnection().rollback();
+			System.out.println("js: Brief.java: remove(): returning false");
 			return false;
 		} finally {
 			getConnection().setAutoCommit(true);
 		}
+		System.out.println("js: Brief.java: remove(): returning true");
 		return true;
 	}
 	

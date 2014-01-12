@@ -117,7 +117,9 @@ public class TextContainer {
 	 * Fehlermeldung ausgibt)
 	 */
 	public TextContainer(){
+		System.out.println("js ch.elexis.views/TextContainer.java TextContainer(): begin");
 		if (plugin == null) {
+			System.out.println("js ch.elexis.views/TextContainer.java TextContainer(): Looking for the Textplugin defined in the settings...");
 			String ExtensionToUse = Hub.localCfg.get(PreferenceConstants.P_TEXTMODUL, null);
 			IExtensionRegistry exr = Platform.getExtensionRegistry();
 			IExtensionPoint exp = exr.getExtensionPoint(EXTENSION_POINT_TEXT);
@@ -129,8 +131,10 @@ public class TextContainer {
 						if ((ExtensionToUse == null) || el.getAttribute("name").equals( //$NON-NLS-1$
 							ExtensionToUse)) {
 							try {
+								System.out.println("js ch.elexis.views/TextContainer.java TextContainer(): trying to use the Textplugin found...");
 								plugin = (ITextPlugin) el.createExecutableExtension("Klasse"); //$NON-NLS-1$
 							} catch (/* Core */Exception e) {
+								System.out.println("js ch.elexis.views/TextContainer.java TextContainer(): WARNING: Caught Exception!");
 								ExHandler.handle(e);
 							}
 						}
@@ -138,35 +142,45 @@ public class TextContainer {
 					}
 				}
 			}
+		} else {
+			System.out.println("js ch.elexis.views/TextContainer.java TextContainer(): plugin != null; so a Textplugin is already installed.");
 		}
 		if (plugin == null) {
+			System.out.println("js ch.elexis.views/TextContainer.java TextContainer(): Using the default Textplugin (a dummy, only showing an error message).");
 			plugin = new DefaultTextPlugin();
 		}
+		System.out.println("js ch.elexis.views/TextContainer.java TextContainer(): begin");
 	}
 	
 	public TextContainer(final IViewSite s){
 		this();
+		System.out.println("js ch.elexis.views/TextContainer.java TextContainer(final IViewSite s): after this(); about to shell = s.getShell(); end");
 		shell = s.getShell();
 	}
 	
 	public TextContainer(final Shell s){
 		this();
+		System.out.println("js ch.elexis.views/TextContainer.java TextContainer(final Shell s): after this(); about to shell = s; end");
 		shell = s;
 	}
 	
 	public void setFocus(){
+		System.out.println("js ch.elexis.views/TextContainer.java setFocus(): begin; about to plugin.setFocus(); end");
 		plugin.setFocus();
 	}
 	
 	public ITextPlugin getPlugin(){
+		System.out.println("js ch.elexis.views/TextContainer.java getPlugin(): begin; about to return plugin");
 		return plugin;
 	}
 	
 	public void dispose(){
+		System.out.println("js ch.elexis.views/TextContainer.java dispose(): begin; about to plugin.dispose()");
 		plugin.dispose();
 	}
 	
 	private Brief loadTemplate(String name){
+		System.out.println("js ch.elexis.views/TextContainer.java loadTemplate(): begin");
 		Query<Brief> qbe = new Query<Brief>(Brief.class);
 		qbe.add(Brief.FLD_TYPE, Query.EQUALS, Brief.TEMPLATE);
 		qbe.and();
@@ -178,9 +192,11 @@ public class TextContainer {
 		qbe.endGroup();
 		List<Brief> list = qbe.execute();
 		if ((list == null) || (list.size() == 0)) {
+			System.out.println("js ch.elexis.views/TextContainer.java loadTemplate(): about to early return null");
 			return null;
 		}
 		Brief template = list.get(0);
+		System.out.println("js ch.elexis.views/TextContainer.java loadTemplate(): about to return template");
 		return template;
 	}
 	
@@ -203,17 +219,22 @@ public class TextContainer {
 	
 	public Brief createFromTemplateName(final Konsultation kons, final String templatenameRaw,
 		final String typ, final Kontakt adressat, final String subject){
+		System.out.println("js ch.elexis.views/TextContainer.java createFromTemplateName(): about to return template");
+
 		String suffix = Hub.localCfg.get(TextTemplatePreferences.SUFFIX_STATION, "");
 		Brief template = loadTemplate(templatenameRaw + suffix);
 		if (template == null && suffix.length() > 0) {
+			System.out.println("js ch.elexis.views/TextContainer.java createFromTemplateName(): template == null -> about to loadTemplate()");
 			template = loadTemplate(templatenameRaw);
 		}
 		if (template == null) {
 			SWTHelper.showError(TEMPLATE_NOT_FOUND_HEADER, TEMPLATE_NOT_FOUND_BODY
 				+ templatenameRaw);
+			System.out.println("js ch.elexis.views/TextContainer.java createFromTemplateName(): template == null -> about to return null");
 			return null;
 		}
 		
+		System.out.println("js ch.elexis.views/TextContainer.java createFromTemplateName(): about to return createFromTemplate(kons, template, typ, adressat, subject)");
 		return createFromTemplate(kons, template, typ, adressat, subject);
 	}
 	
@@ -243,6 +264,7 @@ System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate():
 					Messages.TextContainer_SelectDestinationHeader,
 					Messages.TextContainer_SelectDestinationBody, Kontakt.DEFAULT_SORT);
 			if (ksel.open() != Dialog.OK) {
+System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): about to early return null");
 				return null;
 			}
 			adressat = (Kontakt) ksel.getSelection();
@@ -814,21 +836,34 @@ System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate():
 	}
 	
 	private String convertSpecialCharacters(final String in){
-		// \ddd how to replace octal values?
+		System.out.println("js ch.elexis.views/TextContainer.java convertSpecialCharacters(): begin");
+			// \ddd how to replace octal values?
 		String result = in;
 		result = result.replaceAll("\\\\n", "\n");
 		result = result.replaceAll("\\\\t", "\t");
 		result = result.replaceAll("\\\\b", "\b");
 		result = result.replaceAll("\\\\r", "\r");
 		result = result.replaceAll("\\\\f", "\f");
+		System.out.println("js ch.elexis.views/TextContainer.java convertSpecialCharacters(): end, about to return result");
 		return result;
 	}
 	
 	private void addBriefToKons(final Brief brief, final Konsultation kons){
+		System.out.println("js ch.elexis.views/TextContainer.java addBriefToKons(): begin");
+		//ToDo: Maybe handle kons == null better, i.e. by checking whether we should use an existing kons - why hasn't it been used in the first line?
+		
+		System.out.println("js ch.elexis.views/TextContainer.java addBriefToKons(): TODO: ==========================================");
+		System.out.println("js ch.elexis.views/TextContainer.java addBriefToKons(): TODO: Maybe handle the case kons == null better.");
+		System.out.println("js ch.elexis.views/TextContainer.java addBriefToKons(): TODO: ==========================================");
+		
 		if (kons != null) {
+			System.out.println("js ch.elexis.views/TextContainer.java addBriefToKons(): kons != null -> about to kons.addXRef()...");
 			String label = "\n[ " + brief.getLabel() + " ]"; //$NON-NLS-1$ //$NON-NLS-2$
 			kons.addXRef(XrefExtension.providerID, brief.getId(), -1, label);
+		} else {
+			System.out.println("js ch.elexis.views/TextContainer.java addBriefToKons(): WARNING: kons == null -> cannot add brief to kons");
 		}
+		System.out.println("js ch.elexis.views/TextContainer.java addBriefToKons(): end");
 	}
 	
 	/**
@@ -921,6 +956,7 @@ System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate():
 			byte[] contents = plugin.storeToByteArray();
 			if (contents == null) {
 				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): WARNING: contents == null - still proceding to brief.save(contents,...)...");
+				System.out.println("js ch.elexis.views/TextContainer.java saveBrief(): WARNING: Please note: brief.save(contents == null) should nop");
 				log.log(Messages.TextContainer_NullSaveHeader, Log.ERRORS);
 			}
 			
@@ -938,6 +974,7 @@ System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate():
 	 * 
 	 */
 	public void saveTemplate(String name){
+		System.out.println("js ch.elexis.views/TextContainer.java saveTemplate(): begin");
 		SaveTemplateDialog std = new SaveTemplateDialog(shell, name);
 		// InputDialog dlg=new
 		// InputDialog(getViewSite().getShell(),"Vorlage speichern","Geben Sie bitte einen Namen für die Vorlage ein","",null);
@@ -958,6 +995,7 @@ System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate():
 			DocumentSelectDialog.setDontAskForAddresseeForThisTemplate(brief,
 				std.dontShowAddresseeSelection);
 		}
+		System.out.println("js ch.elexis.views/TextContainer.java saveTemplate(): end");
 	}
 	
 	/** Einen Brief einlesen */
@@ -998,28 +1036,36 @@ System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate():
 		
 		protected SaveTemplateDialog(final Shell parentShell, String templateName){
 			super(parentShell);
+			System.out.println("js ch.elexis.views/TextContainer.java SaveTemplateDialog.SaveTemplateDialog(): begin post super(parentShell), about to tmpl.name = templateName");
 			tmplName = templateName;
+			System.out.println("js ch.elexis.views/TextContainer.java SaveTemplateDialog.SaveTemplateDialog(): end");
 		}
 		
 		@Override
 		public void create(){
 			super.create();
+			System.out.println("js ch.elexis.views/TextContainer.java SaveTemplateDialog.create(): begin post super.create()");
 			setTitle(Messages.TextContainer_SaveTemplateHeader);
 			setMessage(Messages.TextContainer_SaveTemplateBody);
 			getShell().setText(Messages.TextContainer_Template);
+			System.out.println("js ch.elexis.views/TextContainer.java SaveTemplateDialog.create(): end");
 		}
 		
 		@Override
 		protected Control createDialogArea(final Composite parent){
+			System.out.println("js ch.elexis.views/TextContainer.java SaveTemplateDialog.createDialogArea(): begin");
 			Composite ret = new Composite(parent, SWT.NONE);
 			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			ret.setLayout(new GridLayout());
 			new Label(ret, SWT.NONE).setText(Messages.TextContainer_TemplateName);
 			name = new Text(ret, SWT.BORDER);
 			name.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+
+			System.out.println("js ch.elexis.views/TextContainer.java SaveTemplateDialog.createDialogArea(): about to name.addModifyListener()");
 			name.addModifyListener(new ModifyListener() {
 				@Override
 				public void modifyText(ModifyEvent e){
+					System.out.println("js ch.elexis.views/TextContainer.java SaveTemplateDialog.modifyText(): begin");
 					// checkbox for sys template
 					boolean isSysTemplate = isSystemTemplate(name.getText());
 					btSysTemplate.setSelection(isSysTemplate);
@@ -1041,6 +1087,7 @@ System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate():
 						}
 					}
 					cMands.setText(lMandator);
+					System.out.println("js ch.elexis.views/TextContainer.java SaveTemplateDialog.modifyText(): end");
 				}
 			});
 			new Label(ret, SWT.NONE).setText(Messages.TextContainer_Mandator);
@@ -1082,16 +1129,19 @@ System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate():
 				name.setText(tmplName);
 			name.setSelection(32000); // caret at end of text field instead of start
 			
+			System.out.println("js ch.elexis.views/TextContainer.java SaveTemplateDialog.createDialogArea(): end, about to return ret...");
 			return ret;
 		}
 		
 		@Override
 		protected void okPressed(){
+			System.out.println("js ch.elexis.views/TextContainer.java SaveTemplateDialog.okPressed(): begin");
 			title = name.getText();
 			if (title.length() == 0) {
 				MessageDialog.openError(getShell(),
 					Messages.TextContainer_TemplateTitleEmptyCaption,
 					Messages.TextContainer_TemplateTitleEmptyBody);
+				System.out.println("js ch.elexis.views/TextContainer.java SaveTemplateDialog.okPressed(): title.length() == 0; returning early.");
 				return;
 			}
 			
@@ -1124,12 +1174,15 @@ System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate():
 					Brief old = l.get(0);
 					old.delete();
 				} else {
+					System.out.println("js ch.elexis.views/TextContainer.java SaveTemplateDialog.okPressed(): l.size() <= 0; returning early.");
 					return;
 				}
 			}
 			// save value into boolean for access from the outside world
 			dontShowAddresseeSelection = checkBoxDontShowAddresseeSelection.getSelection();
+			System.out.println("js ch.elexis.views/TextContainer.java SaveTemplateDialog.okPressed(): about to super.okPressed()...");
 			super.okPressed();
+			System.out.println("js ch.elexis.views/TextContainer.java SaveTemplateDialog.okPressed(): end");
 		}
 		
 		/**
@@ -1141,12 +1194,16 @@ System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate():
 		 * @author marlovitsh
 		 */
 		Brief getBriefForTemplateName(String templateName){
+			System.out.println("js ch.elexis.views/TextContainer.java getBriefForTemplateName(): begin");
 			Query<Brief> qry = new Query<Brief>(Brief.class);
 			qry.add(Brief.FLD_SUBJECT, Query.EQUALS, templateName, true);
 			qry.add(Brief.FLD_TYPE, Query.EQUALS, Brief.TEMPLATE, true);
 			List<Brief> result = qry.execute();
-			if (result.size() > 0)
+			if (result.size() > 0) {
+				System.out.println("js ch.elexis.views/TextContainer.java getBriefForTemplateName(): returning result");
 				return result.get(0);
+			}
+			System.out.println("js ch.elexis.views/TextContainer.java getBriefForTemplateName(): returning null");
 			return null;
 		}
 		
@@ -1159,22 +1216,28 @@ System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate():
 		 * @author marlovitsh
 		 */
 		boolean isSystemTemplate(String templateName){
+			System.out.println("js ch.elexis.views/TextContainer.java isSystemTemplate(): begin");
 			Query<Brief> qry = new Query<Brief>(Brief.class);
 			qry.add(Brief.FLD_SUBJECT, Query.EQUALS, templateName, true);
 			qry.add(Brief.FLD_TYPE, Query.EQUALS, Brief.TEMPLATE, true);
 			qry.add(Brief.FLD_KONSULTATION_ID, Query.EQUALS, "SYS", true); //$NON-NLS-1$
 			List<Brief> result = qry.execute();
-			if (result.size() > 0)
+			if (result.size() > 0) {
+				System.out.println("js ch.elexis.views/TextContainer.java isSystemTemplate(): returning true");
 				return true;
+			}
+			System.out.println("js ch.elexis.views/TextContainer.java isSystemTemplate(): returning false");
 			return false;
 		}
 	}
 	
 	public boolean replace(final String pattern, final ReplaceCallback cb){
+		System.out.println("js ch.elexis.views/TextContainer.java replace(): begin - about to return plugin.findOrReplace(pattern, cb)");
 		return plugin.findOrReplace(pattern, cb);
 	}
 	
 	public boolean replace(final String pattern, final String repl){
+		System.out.println("js ch.elexis.views/TextContainer.java replace(): begin - about to return plugin.findOrReplace(...)");
 		return plugin.findOrReplace(pattern, new ReplaceCallback() {
 			public String replace(final String in){
 				return repl;
@@ -1188,6 +1251,7 @@ System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate():
 			+ Messages.TextContainer_NoPlugin4 + Messages.TextContainer_NoPLugin5;
 		
 		public Composite createContainer(final Composite parent, final ITextPlugin.ICallback h){
+			System.out.println("js ch.elexis.views/TextContainer.java DefaultTextPlugin createContainer(): begin");
 			parent.setLayout(new FillLayout());
 			// Composite ret=new Composite(parent,SWT.BORDER);
 			Form form = Desk.getToolkit().createForm(parent);
@@ -1195,6 +1259,7 @@ System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate():
 			form.getBody().setLayout(new FillLayout());
 			FormText ft = Desk.getToolkit().createFormText(form.getBody(), false);
 			ft.setText(expl, true, false);
+			System.out.println("js ch.elexis.views/TextContainer.java DefaultTextPlugin createContainer(): about to end, returning form.getBody()");
 			return form.getBody();
 		}
 		
