@@ -223,11 +223,12 @@ public class AUFZeugnis extends ViewPart implements ICallback, IActivationListen
 	
 	
 	public void save(){
-		System.out.println("js ch.elexis.views/AUFZeugnis.java SaveHandler.save(): actBrief == "+actBrief.toString()+": "+actBrief.getBetreff());
-		System.out.println("js ch.elexis.views/AUFZeugnis.java SaveHandler.save(): about to save actBrief to DB...");
 		System.out.println("js ch.elexis.views/AUFZeugnis.java SaveHandler.save(): ToDo: Homogenize abstraction/class/method levels and variable/method names between TextView.java and RezeptBlatt.java, AUFZeugnis, BestellBlatt etc.");
 		//TODO: Why wouldn't we return the result here, but in SaveAs? js
 		if (actBrief != null) {
+			//20131007js ONLY debug output caused java null pointer exception in 20130627 version. Moved here from a few lines above. 
+			System.out.println("js ch.elexis.views/AUFZeugnis.java SaveHandler.save(): actBrief == "+actBrief.toString()+": "+actBrief.getBetreff());
+			System.out.println("js ch.elexis.views/AUFZeugnis.java SaveHandler.save(): about to save actBrief to DB...");
 			actBrief.save(text.getPlugin().storeToByteArray(), text.getPlugin().getMimeType());
 		} else {
 			System.out.println("js ch.elexis.views/AUFZeugnis.java SaveHandler.save(): actBrief == null, doing nothing.");

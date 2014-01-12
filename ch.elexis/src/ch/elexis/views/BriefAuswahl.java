@@ -355,6 +355,7 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 						return;
 					}
 					
+					System.out.println("js ch.elexis.views/BriefAuswahl.java: makeActions() briefNeuAction run() about to getSelected(Fall.class)...");
 					Fall selectedFall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
 					if (selectedFall == null) {
 						SelectFallDialog sfd = new SelectFallDialog(Desk.getTopShell());
@@ -372,6 +373,7 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 						}
 					}
 					
+					System.out.println("js ch.elexis.views/BriefAuswahl.java: makeActions() briefNeuAction run() about to getSelected(Konsultation.class)...");
 					Konsultation selectedKonsultation =
 						(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
 					if (selectedKonsultation == null) {

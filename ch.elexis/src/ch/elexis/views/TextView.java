@@ -185,11 +185,20 @@ public class TextView extends ViewPart implements IActivationListener {
 		//(but possibly when that lost focus?), NOR would the frame have been take from the noas list of NOAText instances,
 		//and remained on that forever, so the OpenOffice/LibreOffice server use would never have been deactivated. 
 		
-		System.out.println("\n\njs ch.elexis.views/TextView.java dispose(): TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO");
+		System.out.println("\njs ch.elexis.views/TextView.java dispose(): TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO");
 		System.out.println("js ch.elexis.views/TextView.java dispose(): When you close a document frame, NOAText closeListener() should probably run. DO YOU OBSERVE THIS?");
 		System.out.println("js ch.elexis.views/TextView.java dispose(): And NOAText closeListener should call removeMe(), thereby saving the last instance of the document,");
 		System.out.println("js ch.elexis.views/TextView.java dispose(): and housekeeping like noas.remove() and deactivateOfficeIfNoasIsEmpty()...");
-		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO");			
+		System.out.println("js ch.elexis.views/TextView.java dispose(): ----------------------------------------------------------------------------");			
+		System.out.println("js ch.elexis.views/TextView.java dispose(): 20131010js: NO, it's not THAT easy. At the moment, when I just show view Briefe,");			
+		System.out.println("js ch.elexis.views/TextView.java dispose(): NOAText is started, an empty view appears (only panel, grey = empty background, ");			
+		System.out.println("js ch.elexis.views/TextView.java dispose(): mabye due commented out 'new Frame();'), officeFrame=null, doc never even accessed.");
+		System.out.println("js ch.elexis.views/TextView.java dispose(): It's title would read: Kein Brief ausgewählt.");					
+		System.out.println("js ch.elexis.views/TextView.java dispose(): Simply closing that completely empty view would already bring us *here*.");			
+		System.out.println("js ch.elexis.views/TextView.java dispose(): So trying to doc.texthandler.save or to doc.close etc. needs not be done in *any* case.");			
+		System.out.println("js ch.elexis.views/TextView.java dispose(): And closeListener() would NOT be triggered then. I guess, this is tied to doc,");
+		System.out.println("js ch.elexis.views/TextView.java dispose(): only when doc is prefilled from empty.doc, or loaded from DB or from file.");
+		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO\n");			
 		
 		//201306161401js
 		ch.elexis.util.StatusMonitor.removeMonitorEntry(actBrief);
@@ -225,21 +234,82 @@ public class TextView extends ViewPart implements IActivationListener {
 		//
 
 		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		System.out.println("js ch.elexis.views/TextView.java dispose(): ToDo: SOLLTE hier ein plugin().dispose() rein - siehe Kommentare - oder würde das im Betrieb nur unerwünscht Exceptions werfen (gerade gesehen)?");
-		System.out.println("js ch.elexis.views/TextViewr.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		//System.out.println("js ch.elexis.views/TextView.java dispose(): about to txt.getPlugin().dispose()");
-		//txt.getPlugin().dispose();
-		
-		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: Bitte in TextView.java, RezeptBlatt.java, AU, etc. das alles noch spiegeln: StatusMonitor, dispose handler, etc.!!!");
 		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 				
+		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		System.out.println("js ch.elexis.views/TextView.java dispose(): ToDo: SOLLTE hier ein plugin().dispose() rein - siehe Kommentare - oder würde das im Betrieb nur unerwünscht Exceptions werfen (gerade gesehen)?");
+		System.out.println("js ch.elexis.views/TextView.java dispose(): ToDo: 20131010js: Vielleicht/Vermutlich wird das vom super.dispose() ein wenig weiter unten erledigt.");
+		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		
+		System.out.println("");
+		System.out.println("js ch.elexis.views/TextView.java dispose(): if ... not null: about to txt.getPlugin().dispose()");
+		System.out.println("js ch.elexis.views/TextView.java dispose():                  so that (e.g.) NOAText.removeMe() should be called...");
+		
+		if (actBrief == null)			System.out.println("js ch.elexis.views/TextView.java dispose(): WARNING: actBrief == null");
+		else							System.out.println("js ch.elexis.views/TextView.java dispose(): actBrief="+actBrief.toString());
+		
+		//20131010js: Added call to txt.getPlugin().dispose(), to keep track of open (or rather: closed) documents,
+		//and enable NOAText to close unused connections and shut down unused office instances.
+		//Because NOAText....removeMe() will NOT be called from within there, at least
+		//I haven't observed anything in some logged test cases that would get that called at all.
+		//(Particularly, not the NOAText.closeListener, even after doc.addCloseListener(),
+		// nor the NOAText.NOAText.dispose() method, nor anything else.)
+		// WITZIGERWEISE: OFFENBAR WIRD NOATEXT.CloseListener doch aufgerufen, zumindest,
+		// wenn ein doc da war und ich hier das txt().getPlugin().dispose() aufrufe! Nehm ich das raus - dann wieder nicht.
+		
+		if (txt == null)				
+			{
+			System.out.println("js ch.elexis.views/TextView.java dispose(): WARNING: txt == null");
+			System.out.println("js ch.elexis.views/TextView.java dispose(): WARNING: So we will NOT dispose txt.getPlugin()...");
+			}
+		else {
+			System.out.println("js ch.elexis.views/TextView.java dispose(): txt="+txt.toString());
+			if (txt.getPlugin() == null)	
+				{
+				System.out.println("js ch.elexis.views/TextView.java dispose(): WARNING: txt.getPlugin() == null");
+				System.out.println("js ch.elexis.views/TextView.java dispose(): WARNING: So we will NOT dispose txt.getPlugin()...");
+				}
+			else {
+				System.out.println("js ch.elexis.views/TextView.java dispose(): txt.getPlugin()="+txt.getPlugin().toString());
+				
+				if (txt.getPlugin().getBriefServicedByThis()==null)
+					{
+					System.out.println("js ch.elexis.views/TextView.java dispose(): WARNING: txt.getPlugin().getBriefServicedByThis() == null");
+					System.out.println("js ch.elexis.views/TextView.java dispose(): WARNING: We will try to call txt.getPlugin().dispose() anyway,");
+					System.out.println("js ch.elexis.views/TextView.java dispose(): WARNING: but it may not have any effect (and be not necessary either).");
+					//In this case, actBrief == null (should be the same as txt.getPlugin().getBriefServicedByThis(),
+					//and if not for debugging: We could just have written: if (actBrief != null) txt.getPlugin().dispose();
+					//If actBrief == null; then there's probably no document currently serviced by this TextView window,
+					//and noas.add has not been issued, and noas.remove is not needed/usefull,
+					//and no Office instance has been started, nor any connection to it been initiated,
+					//neither do we need to close that connection, nor to stop any running Office instance after not being used any more. 
+					}
+				else
+					System.out.println("js ch.elexis.views/TextView.java dispose(): txt.getPlugin().getBriefServicedByThis()="+txt.getPlugin().getBriefServicedByThis().toString());
+
+				//20131010js: Cave: txt.getPlugin() is normally == actBrief.
+				//If == null, the following call would throw a NullPointerException.
+				//That can happen simply when we open a view "Briefe" with no document(+frame) in it.
+				//In that case, calling dispose() would not be too useful: we would not have had noas.add,
+				//nor would we have started OpenOffice, or connected to it,
+				//we would not need to caus any noas.remove,
+				//nor would we have any Office instance or connection to clean up,
+				//if our actBrief should just have been the last user of these. 
+				txt.getPlugin().dispose();   //liefert das eine Instanz des Plugins, die sich genau um actBrief kümmert? Eher ja.
+			}
+		}
+		
+		System.out.println("");
+
 		System.out.println("js ch.elexis.views/TextView.java dispose(): about to GlobalEventDispatcher.removeActivationListener()...");
 		GlobalEventDispatcher.removeActivationListener(this, this);
 		System.out.println("js ch.elexis.views/TextView.java dispose(): about to actBrief = null; super.dispose()...");
 		actBrief = null;
+		
+		//20131010js: super zeigt nach org.eclipse.ui.part.ViewPart.java/class. Also wohl NICHT nach NOAText!
 		super.dispose();
 
 		System.out.println("js ch.elexis.views/TextView.java dispose(): end\n");
@@ -956,9 +1026,10 @@ public class TextView extends ViewPart implements IActivationListener {
 	 */
 	public void activation(boolean mode){
 		System.out.println("\njs ch.elexis.views/TextView.java activation(mode="+mode+"): begin");
-		System.out.println("js ch.elexis.views/TextView.java TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		System.out.println("js ch.elexis.views/TextView.java TODO: What in the world would this method be intended to do? Are comments sooo expensive?");
-		System.out.println("js ch.elexis.views/TextView.java TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		//System.out.println("js ch.elexis.views/TextView.java TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		//System.out.println("js ch.elexis.views/TextView.java TODO: What in the world would this method be intended to do? Are comments sooo expensive?");
+		//System.out.println("js ch.elexis.views/TextView.java TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		System.out.println("js ch.elexis.views/TextView.java activation(): About to losely check whether we need to save (on losing activation), and update View Menu entries state...");
 		
 		if (mode == false) {
 			System.out.println("js ch.elexis.views/TextView.java activation(false) requested: if actBrief != null then actBrief.save()");

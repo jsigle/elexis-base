@@ -171,7 +171,9 @@ public class TextContainer {
 	}
 	
 	public ITextPlugin getPlugin(){
-		System.out.println("js ch.elexis.views/TextContainer.java getPlugin(): begin; about to return plugin == " + plugin.toString());
+		System.out.print("js ch.elexis.views/TextContainer.java getPlugin(): begin; ");
+		if (plugin == null)		System.out.println("WARNING: about to return plugin == null");
+		else					System.out.println("about to return plugin == " + plugin.toString());
 		return plugin;
 	}
 	
@@ -1022,13 +1024,16 @@ public class TextContainer {
 		System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: REMOVE THIS OUTPUT, Debugging/Testing only: ");
 		System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: plugin() = " + plugin.toString());
-		System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: plugin().getClass().toString() = " + plugin.getClass().toString());
-		System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: plugin().getClass().getName() = " + plugin.getClass().getName());
-		System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: ");
-		System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: getPlugin() = " + getPlugin().toString());
-		System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: getPlugin().getClass().toString() = " + getPlugin().getClass().toString());
-		System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: getPlugin().getClass().getName() = " + getPlugin().getClass().getName());
+		if (plugin == null)		System.out.println("js ch.elexis.views/TextContainer.java open(): WARNING: plugin() == null ");
+		else	{
+				System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: plugin() = " + plugin.toString());
+				System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: plugin().getClass().toString() = " + plugin.getClass().toString());
+				System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: plugin().getClass().getName() = " + plugin.getClass().getName());
+				System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: ");
+				System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: getPlugin() = " + getPlugin().toString());
+				System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: getPlugin().getClass().toString() = " + getPlugin().getClass().toString());
+				System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: getPlugin().getClass().getName() = " + getPlugin().getClass().getName());
+				}
 		System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		
 		System.out.println("js ch.elexis.views/TextContainer.java open(): about to return plugin.loadFromByteArray(arr, false) and end...");
