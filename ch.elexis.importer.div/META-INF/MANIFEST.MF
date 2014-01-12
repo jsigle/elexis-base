@@ -84,4 +84,6 @@ Require-Bundle: ch.elexis;bundle-version="2.1.0",
  ch.rgw.utility;bundle-version="2.0.1",
  org.apache.commons.lang;bundle-version="2.3.0",
  ch.elexis.core;bundle-version="0.0.2"
-Import-Package: org.apache.commons.logging
+Import-Package: org.apache.commons.lang,
+ org.apache.commons.lang.builder,
+ org.apache.commons.logging

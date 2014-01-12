@@ -96,16 +96,16 @@
       <product
             application="ch.elexis.ElexisApp"
             description="%elexis.banner"
-            name="Elexis OpenSource">
+            name="Elexis Core">
          <property
                name="appName"
-               value="Elexis OpenSource"/>
+               value="Elexis Core"/>
          <property
                name="preferenceCustomization"
-               value="elexisprefs.ini"/>
+               value="plugin_customization.ini"/>
          <property
                name="aboutText"
-               value="%aboutText">
+               value="Elexis - die Praxis.&#x0A;&#x0A;(c) 2005-2013 by G. Weirich and Elexis&#x0A;http://www.elexis.ch&#x0A;&#x0A;Portions (c) 2010-2013 Jörg M. Sigle&#x0A;http://www.jsigle.com/prog/elexis&#x0A;&#x0A;Informationen und Referenzinstallation:&#x0A;Gerry Weirich&#x0A;Rietstrasse 30&#x0A;8201 Schaffhausen">
          </property>
          <property
                name="startupProgressRect"
@@ -114,6 +114,10 @@
          <property
                name="windowImages"
                value="rsc/elexis2_16.gif,rsc/elexis32_2.gif,rsc/elexis48.gif">
+         </property>
+         <property
+               name="aboutImage"
+               value="rsc/elexis48.gif">
          </property>
       </product>
    </extension>
