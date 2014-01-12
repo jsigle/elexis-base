@@ -1,10 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2007-2011, G. Weirich and Elexis
+ * Copyright (c) 2007-2011, G. Weirich and Elexis; Portions (c) 2013 Joerg Sigle www.jsigle.com
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
+ *    J. Sigle   - added method stubs for briefServicedByThis required by elexis 2.1.7.dev-qualifier-js-2013060625 for StatusMonitor
+
  *    bogdan314 - initial implementation
  * Sponsor: 
  *    G. Weirich

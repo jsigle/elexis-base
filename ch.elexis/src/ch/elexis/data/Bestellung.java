@@ -45,6 +45,9 @@ public class Bestellung extends PersistentObject {
 		+ ",'1');";
 	
 	public static void initialize(){
+		System.out.println("js Bestellung.java: initialize: begin");
+		System.out.println("js Bestellung.java: initialize: about to move content from HEAP2 to "+TABLENAME+" towards 2.1.7.rc0 table format...");
+
 		createOrModifyTable(create);
 		
 		// Starting with 2.1.7.rc0 orders are excavated from the HEAP2 table into an own table,
@@ -57,25 +60,34 @@ public class Bestellung extends PersistentObject {
 				Bestellung b = new Bestellung();
 				if (b.create(nb2.getId())) {
 					b.set(FLD_ITEMS, nb2.getString());
+					System.out.println("js Bestellung.java: initialize: Moved order " + nb2.getId() + " from HEAP2 to " + TABLENAME);
 					logger.log("Moved order " + nb2.getId() + " from HEAP2 to " + TABLENAME,
 						Log.INFOS);
 					nb2.delete();
 				} else {
+					System.out.println("js Bestellung.java: initialize: Error creating " + nb2.getId() + " in table " + TABLENAME);
 					logger.log("Error creating " + nb2.getId() + " in table " + TABLENAME,
 						Log.INFOS);
 				}
 			}
 		}
+
+		System.out.println("js Bestellung.java: initialize: end");
 	}
 	
 	static {
+		System.out.println("js Bestellung.java: static: begin");
+		System.out.println("js Bestellung.java: static: about to addMapping(TABLENAME, \"Liste=S:C:Contents\"...");
+
 		addMapping(TABLENAME, "Liste=S:C:Contents"); //$NON-NLS-1$
 		
 			// Starting with 2.1.7.rc0 orders are excavated from the HEAP2 table, here
 			// we check whether the table is existing (new method), else we need to call
 			// the merge code
+		System.out.println("js Bestellung.java: static: about to if (!PersistentObject.tableExists("+TABLENAME+")) initialize();" );
 		if (!PersistentObject.tableExists(TABLENAME))
 			initialize();
+		System.out.println("js Bestellung.java: static: end");
 	}
 	
 	public Bestellung(String name, Anwender an){

@@ -1,14 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2006-2011, G. Weirich and Elexis
+ * Copyright (c) 2006-2011, G. Weirich and Elexis; Portions (c) 2013 Joerg Sigle www.jsigle.com
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    G. Weirich - initial implementation
- *    A. Kaufmann - better support for IDataAccess
- *    H. Marlovits - introduced SQL Fields
+ *    J. Sigle   	- added monitoring output, method stubs for briefServicedByThis for StatusMonitor, etc.  
+ *    H. Marlovits	- introduced SQL Fields
+ *    A. Kaufmann	- better support for IDataAccess
+ *    G. Weirich	- initial implementation
  * 
  *******************************************************************************/
 

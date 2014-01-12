@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * Copyright (c) 2013 Joerg Sigle www.jsigle.com
+ * All rights reserved.
+ *
+ * Contributors:
+ *    J. Sigle   - initial implementation
+ * 
+ *******************************************************************************/
+
 package ch.elexis.util;
 
 import org.eclipse.swt.widgets.Display;
@@ -60,11 +69,34 @@ public class StatusMonitor implements Runnable {
 	}
 	
 	//We might rather implement this as a linked list, but I don't want to try that now.
-	//And 10 documents at the same time should suffice.
+	//
+	//At any given time, one slot may be typically used per document *type*
+	//that is concurrently displayed in one and only one view concurrently available for that document type.
+	//
+	//To my knowledge, all of the respective modules like TextView, RezeptBlatt, AUFZeugnis etc. provide only one view each,
+	//so that most often, only 1 - 3 slots will be used; I'm unsure whether 10 concurrently used slots can even be reached.
+	//I leave a few extra slots as security margin and future use. 
+	//
+	//When the first text document is about to be displayed/edited,
+	//the external office program is connected to (office).
+	//
+	//Each specialized document handler class (TextView, RezeptBlatt, AUFZeugnis...) 
+	//provides its own view (panel/frame?),
+	//for which a new instance of (e.g.) noatext_jsl is instantiated when the user shows the view,
+	//or when the first document (actBrief) is created or loaded therein,
+	//
+	//Each document handler class (TextView, RezeptBlatt, AUFZeugnis...) contains
+	//an object text or txt, that includes txt.plugin or text.plugin, which is implemented
+	//by an instance of the actually used one (NOAText$x)
+	//
+	//
+	//This is true for textplugins that display text documents in frames; I am unsure how other implementations may behave.
+	//
 	//As long as we handle only a few documents, we need not keep track of how many are stored
-	//nor need we ensure that all used slots are kept at the beginning of the array.
+	//nor need we ensure that all used slots are kept at the beginning of the array etc.
 	
-	public static MonitoredDocument[] monitoredDocuments = new MonitoredDocument[10];
+	private static int maxNumMonitorableDocumentViews = 20;
+	public static MonitoredDocument[] monitoredDocuments = new MonitoredDocument[maxNumMonitorableDocumentViews];
 	//TODO: Simply supplying a (suitable) Constructor for the class StatusMonitor will NOT ensure
 	//that entries for MonitoredDocument[] are allocated before use. Although "the runtime system should call static constructors in time...",
 	//apparently it doesn't. So, for now, I supply a specifically named initialization method, a flag, and call it before the array is used.

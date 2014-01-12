@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2006-2010, G. Weirich and Elexis; Portions (c) 2013 Joerg Sigle www.jsigle.com
- * All rights reserved.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    J. Sigle   - addes StatusMonitor, reliable activation on typing, reliable saving, automatic saving depending on passed time since last save and last isModified() 
+ *    J. Sigle   - added StatusMonitor, reliable activation on typing, reliable saving, automatic saving depending on passed time since last save and last isModified() 
  *    G. Weirich - initial implementation
  * 
  *******************************************************************************/
@@ -43,8 +46,7 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 	TextContainer text;
 	Brief actBrief;
 	
-	public RezeptBlatt(){
-		
+	public RezeptBlatt(){		
 	}
 	
 	@Override
@@ -123,7 +125,7 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 		//In TextView.java, SaveHandler was a separate class implementing ICallback with its save() and saveAs() methods.
 		//Also, I added ShowViewHandler as another separate class implementing IStatusMonitorCallback with its showView method.
 		//There, we used:
-		//ch.elexis.util.StatusMonitor.addMonitorEntry("RezeptBlatt", new SaveHandler(), new ShowViewHandler());
+		//ch.elexis.util.StatusMonitor.addMonitorEntry(..., new SaveHandler(), new ShowViewHandler());
 		//In RezeptBlatt.java, RezeptBlatt directly implements ICallback, and I added that it also directly implements IStatusMonitorCallback.
 		//Especially, because supplying ShowViewHandler() to RezeptBlatt...addMonitoring would activate the TextView window (Briefe),
 		//but not the RezetpBlatt window (Rezept). No, sorry - that was more probably because the NOAText based isModified() event handler set
@@ -203,15 +205,6 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 			return false;
 		}
 
-		//201306161205js: Now also add a statusMonitor entry:
-		text.getPlugin().setBriefServicedByThis(actBrief);
-		ch.elexis.util.StatusMonitor.addMonitorEntry(actBrief, this, this);		
-
-		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): Schauen, wie das mit TextView.createDocument korrespondiert. Dort: setName(); hier unten: setBrief(),->setLetterID oder ähnlich...?");
-		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): Wird ein nützlicher Fenstertitel gesetzt?");
-		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");		
-		
 		List<Prescription> lines = rp.getLines();
 		String[][] fields = new String[lines.size()][];
 		int[] wt = new int[] {
@@ -231,17 +224,33 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 			
 		}
 		
+		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): Schauen, wie das mit TextView.createDocument korrespondiert. Dort: setName(); hier unten: setBrief(),->setLetterID oder ähnlich...?");
+		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): Wird ein nützlicher Fenstertitel gesetzt?");
+		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");		
+		
 		rp.setBrief(actBrief);
+
+		//201306161205js: Now also add a statusMonitor entry:
+		text.getPlugin().setBriefServicedByThis(actBrief);
+		ch.elexis.util.StatusMonitor.addMonitorEntry(actBrief, this, this);		
 
 		if (text.getPlugin().insertTable(replace, 0, fields, wt)) {
 			if (text.getPlugin().isDirectOutput()) {
+				System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): text.getPlugin().isDirectOutput == true -> about to print(...); hideView(...)");		
 				text.getPlugin().print(null, null, true);
 				getSite().getPage().hideView(this);
 			}
+			
+			System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): about to text.save(actBrief, Brief.RP...");		
 			text.saveBrief(actBrief, Brief.RP);
+			System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): about to return true");		
 			return true;
 		}
+		
+		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): about to text.save(actBrief, Brief.RP...");		
 		text.saveBrief(actBrief, Brief.RP);
+		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): about to return false");		
 		return false;
 	}
 	
@@ -277,7 +286,7 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 	//In TextView.java, SaveHandler was a separate class implementing ICallback with its save() and saveAs() methods.
 	//Also, I added ShowViewHandler as another separate class implementing IStatusMonitorCallback with its showView method.
 	//There, we used:
-	//ch.elexis.util.StatusMonitor.addMonitorEntry("RezeptBlatt", new SaveHandler(), new ShowViewHandler());
+	//ch.elexis.util.StatusMonitor.addMonitorEntry(..., new SaveHandler(), new ShowViewHandler());
 	//In RezeptBlatt.java, RezeptBlatt directly implements ICallback, and I added that it also directly implements IStatusMonitorCallback.
 	//Especially, because supplying ShowViewHandler() to RezeptBlatt...addMonitoring would activate the TextView window (Briefe),
 	//but not the RezetpBlatt window (Rezept). No, sorry - that was more probably because the NOAText based isModified() event handler set
@@ -311,8 +320,9 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 		
 				System.out.println("js com.jsigle.noa/RezeptBlatt.java - run() - !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");								
 				System.out.println("js com.jsigle.noa/RezeptBlatt.java - run() - PLEASE IMPLEMENT Activation of the correct office window!");								
-				System.out.println("js com.jsigle.noa/RezeptBlatt.java - run() - ToDo: TextView.java");								
-				System.out.println("js com.jsigle.noa/RezeptBlatt.java - run() - ToDo: RezeptBlatt.java et al.");								
+				System.out.println("js com.jsigle.noa/RezeptBlatt.java - run() - Done: TextView.java");								
+				System.out.println("js com.jsigle.noa/RezeptBlatt.java - run() - Done: RezeptBlatt.java, AUFZeugnis, BestellBlatt.java, ");								
+				System.out.println("js com.jsigle.noa/RezeptBlatt.java - run() - ToDo: ... ");								
 				System.out.println("js com.jsigle.noa/RezeptBlatt.java - run() - !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");								
 		    	
 				//YEP. DAS macht die View aktiv, incl. hervorgehobenem Rahmen, und Focus, in dem der Text drinnen steckt.
@@ -345,13 +355,13 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 	//Also note that TextView.txt -> RezeptBlatt.text
 	//ToDo: Homogenize levels and variable names.
 	
-		//log.log(Messages.getString("RezeptBlatt.save"), Log.DEBUGMSG); //$NON-NLS-1$
+	//log.log(Messages.getString("RezeptBlatt.save"), Log.DEBUGMSG); //$NON-NLS-1$
 	
 	public void save(){
 		if (actBrief != null) {
 			System.out.println("js ch.elexis.views/RezeptBlatt.java SaveHandler.save(): actBrief == "+actBrief.toString()+": "+actBrief.getBetreff());
 			System.out.println("js ch.elexis.views/RezeptBlatt.java SaveHandler.save(): about to save actBrief to DB...");
-			System.out.println("js ch.elexis.views/RezeptBlatt.java SaveHandler.save(): ToDo: Homogenize abstraction/class/method levels and variable/method names between TextView.java and RezeptBlatt.java etc.");
+			System.out.println("js ch.elexis.views/RezeptBlatt.java SaveHandler.save(): ToDo: Homogenize abstraction/class/method levels and variable/method names between TextView.java and RezeptBlatt.java, AUFZeugnis, BestellBlatt etc.");
 			//TODO: Why wouldn't we return the result here, but in SaveAs? js
             actBrief.save(text.getPlugin().storeToByteArray(), text.getPlugin().getMimeType());
         } else {
@@ -363,6 +373,10 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 	
 	public boolean saveAs(){
 		// TODO Automatisch erstellter Methoden-Stub
+		System.out.println("js ch.elexis.views/RezeptBlatt.java SaveHandler.saveAs(): TODO / TO REVIEW: **********************************************************************************");
+		System.out.println("js ch.elexis.views/RezeptBlatt.java SaveHandler.saveAs(): TODO / TO REVIEW: Why would we return true false in RezeptBlatt, BestellBlatt,, and true in AUFZeugnis.java???");
+		System.out.println("js ch.elexis.views/RezeptBlatt.java SaveHandler.saveAs(): TODO / TO REVIEW: **********************************************************************************");
+		
 		return false;
 	}
 	

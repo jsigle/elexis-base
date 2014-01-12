@@ -3,7 +3,7 @@
  * All rights reserved.
  *
  * Contributors:
- *    J. Sigle   - addes StatusMonitor, reliable activation on typing, reliable saving, automatic saving depending on passed time since last save and last isModified() 
+ *    J. Sigle   - added StatusMonitor, reliable activation on typing, reliable saving, automatic saving depending on passed time since last save and last isModified() 
  *    G. Weirich - initial implementation
  *    
  *******************************************************************************/
@@ -836,8 +836,9 @@ public class TextView extends ViewPart implements IActivationListener {
 			
 					System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");								
 					System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - PLEASE IMPLEMENT Activation of the correct office window!");								
-					System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - ToDo: TextView.java");								
-					System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - ToDo: RezeptBlatt.java et al.");								
+					System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - Done: TextView.java");								
+					System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - Done: RezeptBlatt.java, AUFZeugnis, BestellBlatt.java, ");								
+					System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - ToDo: ... ");								
 					System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");								
 			    	
 					//YEP. DAS macht die View aktiv, incl. hervorgehobenem Rahmen, und Focus, in dem der Text drinnen steckt.
