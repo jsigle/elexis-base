@@ -72,6 +72,7 @@ import ch.elexis.util.IKonsExtension;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
+import ch.rgw.tools.StringTool;		//201306050617js: Das Alter des Patienten auch in der überschrift der Konsultation anzeigen
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionedResource;
 import ch.rgw.tools.VersionedResource.ResourceItem;
@@ -350,7 +351,8 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener, IAc
 		}
 		actPat = pat;
 		if (pat != null) {
-			form.setText(pat.getPersonalia());
+			//201306050617js: Das Alter des Patienten auch in der überschrift der Konsultation anzeigen
+			form.setText(pat.getPersonalia()+StringTool.space+"("+pat.getAlter()+")");
 			List<ISticker> etis = pat.getStickers();
 			if (etis != null && etis.size() > 0) {
 				// Point size = form.getHead().getSize();

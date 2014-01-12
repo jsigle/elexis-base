@@ -362,7 +362,8 @@ public class Hub extends AbstractUIPlugin {
 		} else {
 			String nr = pat.getPatCode();
 			String alter = pat.getAlter();
-			sb.append("  / ").append(pat.getLabel()).append("(").append(alter).append(") - ") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			//201306050609js: added space before "(Alter)" 
+			sb.append("  / ").append(pat.getLabel()).append(" (").append(alter).append(") - ") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				.append("[").append(nr).append("]"); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			if (Reminder.findForPatient(pat, Hub.actUser).size() != 0) {

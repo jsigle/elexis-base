@@ -189,9 +189,10 @@ public class Person extends Kontakt {
 		};
 		String[] vals = new String[fields.length];
 		get(fields, vals);
-		if (!StringTool.isNothing(vals[4])) {
-			ret.append(vals[4]).append(StringTool.space);
-		}
+		//201306050536js ad hoc - Titel nach hinten verschieben
+		//if (!StringTool.isNothing(vals[4])) {
+		//	ret.append(vals[4]).append(StringTool.space);
+		//}
 		ret.append(vals[0]);
 		if (!StringTool.isNothing(vals[1])) {
 			ret.append(StringTool.space).append(vals[1]);
@@ -199,10 +200,14 @@ public class Person extends Kontakt {
 		if (StringTool.isNothing(vals[3])) {
 			ret.append(StringTool.space);
 		} else {
-			ret.append("(").append(vals[3]).append("), "); //$NON-NLS-1$ //$NON-NLS-2$
+			ret.append(StringTool.space+"(").append(vals[3]).append("),"+StringTool.space);
 		}
 		if (!StringTool.isNothing(vals[2])) {
 			ret.append(new TimeTool(vals[2]).toString(TimeTool.DATE_GER));
+		}
+		//201306050536js ad hoc - Titel nach hinten verschieben		
+		if (!StringTool.isNothing(vals[4])) {
+			ret.append(","+StringTool.space).append(vals[4]);
 		}
 		return ret.toString();
 	}
