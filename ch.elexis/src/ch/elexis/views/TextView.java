@@ -10,6 +10,8 @@
 
 package ch.elexis.views;
 
+import java.awt.Event;
+import java.awt.Frame;
 import java.awt.Panel;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -23,14 +25,19 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.WindowEvent;
 import org.eclipse.swt.events.KeyEvent;		//201306150113js - ensure edits in text documents are noted by Elexis and ultimately stored
 import org.eclipse.swt.events.KeyListener;	//201306150113js - ensure edits in text documents are noted by Elexis and ultimately stored
 import org.eclipse.swt.events.MouseEvent;	//201306150113js - ensure edits in text documents are noted by Elexis and ultimately stored
 import org.eclipse.swt.events.MouseListener;//201306150113js - ensure edits in text documents are noted by Elexis and ultimately stored
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 
@@ -56,6 +63,11 @@ import ch.elexis.util.ViewMenus;
 import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.MimeTool;
+import ch.rgw.tools.StringTool;
+
+
+//The statement collides with another import statement (nämlich: java.awt.Event). Juhu.
+//import org.eclipse.swt.widgets.Event;		//20131026js - trying to close the Briefe Window programmatically exactly like a user would with close [x]
 
 import ch.elexis.util.IStatusMonitorCallback;	//201306170935js - ensure edits in text documents are noted by Elexis and ultimately stored
 
@@ -201,7 +213,8 @@ public class TextView extends ViewPart implements IActivationListener {
 		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO\n");			
 		
 		//201306161401js
-		ch.elexis.util.StatusMonitor.removeMonitorEntry(actBrief);
+		//20131026js: Das konnte == null sein zumindest im Rahmen der Versuche beobachtet, das TextView Fenster zu schliessen. -> Exception.
+		if (actBrief != null) ch.elexis.util.StatusMonitor.removeMonitorEntry(actBrief);
 
 		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
@@ -235,12 +248,14 @@ public class TextView extends ViewPart implements IActivationListener {
 
 		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: Bitte in TextView.java, RezeptBlatt.java, AU, etc. das alles noch spiegeln: StatusMonitor, dispose handler, etc.!!!");
+		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: Bitte in TextView.java, RezeptBlatt.java, AU, etc. das alles ");
+		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO:          noch spiegeln: StatusMonitor, dispose handler, etc.!!!");
 		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 				
 		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		System.out.println("js ch.elexis.views/TextView.java dispose(): ToDo: SOLLTE hier ein plugin().dispose() rein - siehe Kommentare - oder würde das im Betrieb nur unerwünscht Exceptions werfen (gerade gesehen)?");
+		System.out.println("js ch.elexis.views/TextView.java dispose(): ToDo: SOLLTE hier ein plugin().dispose() rein - siehe Kommentare - ");
+		System.out.println("js ch.elexis.views/TextView.java dispose(): ToDo: oder würde das im Betrieb nur unerwünscht Exceptions werfen (gerade gesehen)?");
 		System.out.println("js ch.elexis.views/TextView.java dispose(): ToDo: 20131010js: Vielleicht/Vermutlich wird das vom super.dispose() ein wenig weiter unten erledigt.");
 		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		
@@ -290,15 +305,45 @@ public class TextView extends ViewPart implements IActivationListener {
 				else
 					System.out.println("js ch.elexis.views/TextView.java dispose(): txt.getPlugin().getBriefServicedByThis()="+txt.getPlugin().getBriefServicedByThis().toString());
 
-				//20131010js: Cave: txt.getPlugin() is normally == actBrief.
+				//20131010js: Cave: txt.getPlugin() is normally somewhat related to actBrief.
+				
 				//If == null, the following call would throw a NullPointerException.
 				//That can happen simply when we open a view "Briefe" with no document(+frame) in it.
 				//In that case, calling dispose() would not be too useful: we would not have had noas.add,
 				//nor would we have started OpenOffice, or connected to it,
 				//we would not need to caus any noas.remove,
 				//nor would we have any Office instance or connection to clean up,
-				//if our actBrief should just have been the last user of these. 
-				txt.getPlugin().dispose();   //liefert das eine Instanz des Plugins, die sich genau um actBrief kümmert? Eher ja.
+				//if our actBrief should just have been the last user of these.
+				
+				//20131011js: Either of these two is probably needed, otherwise the NOAText.java: NOAText.removeMe()
+				//would never have been triggered. Consequently, no noas.remove; no noas.isempty; no disconnection (+termination)
+				//of OpenOffice processes when no client to be served any more (i.e. all docs closed, or elexis closed).
+				//This one refers to TextContainer.dispose();  (in TextContainer.java) 
+				//txt.dispose();
+				//This one refers to NOAText.dispose();  (in NOAText.java)
+				
+				System.out.println("js ch.elexis.views/TextView.java dispose(): !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!.");
+				System.out.println("js ch.elexis.views/TextView.java dispose(): MAYBE txt.getPlugin().dispose() SHOULD BE ADDED AGAIN.");
+				System.out.println("js ch.elexis.views/TextView.java dispose(): !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!.");
+			
+				//TextView oldView = (TextView) getSite().getPage().findView(TextView.ID);
+				//oldView.textContainer.isReparentable(); //.redraw() etc. gibts hier auch...
+				//oldView.txt. ...
+				//oldView.textContainer.dispose();
+				
+				//Normally, TextContainer should call NOAText.dispose() as found
+				//by the eclipse Klick-R References function on the NOAText.dispose() declaration.
+				
+				//txt.getPlugin().dispose();   //liefert das eine Instanz des Plugins, die sich genau um actBrief kümmert? Eher ja.
+				txt.getPlugin().dispose();
+				
+				//This - alone - does NOT suffice:
+				//txt.getPlugin().clear();
+				
+				//20131011js: See TextView.java and com.jsigle.noatext_jsl/ag.ion.bion.officelayer.util/...widgets/OfficePanel.java loadDocument()
+				//for why I now try to close the officeFrame as well.
+				//ANYWAY, THIS DOES NOT DO THE DESIRED JOB: - I try to add something suitable in NOAText disconnect().
+				//textContainer.dispose();
 			}
 		}
 		
@@ -315,27 +360,354 @@ public class TextView extends ViewPart implements IActivationListener {
 		System.out.println("js ch.elexis.views/TextView.java dispose(): end\n");
 	}
 	
-	public boolean openDocument(Brief doc){
-		//20130421js: Added more monitoring code to see what's happening...
-		System.out.println("\njs ch.elexis.views/TextView.java openDocument(Brief doc): begin");
-		System.out.println("js ch.elexis.views/TextView.java openDocument(Brief doc): about to txt.open("+doc.getBetreff().toString()+")");
-	
+	/*********************************************
+	 * Performs administrative steps needed to close a given document before a new one is loaded possibly into the same variable:
+	 * Deregistering the document with the statusMonitor, checking if it needs to be saved, disposing of content.
+	 * NO SORRY. THE LATTER ONES ARE NOT DONE HERE, MAYBE THEY CANNOT BE DONE (FROM HERE), MAYBE THEY ARE ALREADY DONE ELSEWHERE. js
+	 * I'M STILL RESEARCHING INTO WHAT MUST/CAN BE DONE TO OVERCOME A PROBLEM INTRODUCED BY CORRECTION OF NOAText createMe() removeMe() dispose() usage. 
+	 * This method is called internally from openDocument() and createDocument().
+	 * 20131011js: Added for Elexis 2.1.7-20131011js private interim version based upon release candidate 2.1.7.rc4
+	 * @param 		none
+	 * @return		either null if txt()==null, or txt.getPlugin()==null, or txt.getPlugin().getBriefServicedByThis()==null;
+	 * 				or the previous txt.getPlugin().getBriefServicedByThis()
+	 *********************************************/
+	public Brief unserviceCurrentlyServicedDocument(){
+		System.out.println("\njs ch.elexis.views/TextView.java unserviceCurrentlyServicedDocument: begin\n");
+		
 		//201306250439js: Den ggf. vorhandenen Eintrag für ein Dokument in TextView, das gleich ersetzt wird, aus der StatusMonitoring Liste entfernen,
 		//und - falls das nachfolgende Laden schief geht - auch aus der zugehörigen Instanz von NOAText.briefServicedByThis entfernen.
 		//Falls noch gar kein Dokument geladen/verzeichnet war, sollte auch null richtig gehandelt werden.
 		//Normalerweise sollte das Entladen ja mit dispose() erfolgen - tut es aber nicht, weil dispose() beim Doppelklick auf ein anderes Dokument anscheinend nicht aufgerufen wird.
 		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: ********************************************************************************");
-		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: Normalerweise sollte das Entladen ja mit dispose() erfolgen - tut es aber nicht, weil dispose() beim Doppelklick auf ein anderes Dokument anscheinend nicht aufgerufen wird. Vielleicht müsste ich es auch an clean() o.ä. in NOAText ankoppeln...?");
+		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: Normalerweise sollte das Entladen ja mit dispose() erfolgen - tut es aber nicht,");
+		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: weil dispose() beim Doppelklick auf ein anderes Dokument anscheinend nicht aufgerufen wird.");
+		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: Vielleicht müsste ich es auch an clean() o.ä. in NOAText ankoppeln...?");
+		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: unserviceCurrentlyServicedDocument() in TextView() jetzt zentralisiert; Aufruf von txt.dispose() eingefügt.");
+		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: BITTE AUCH SICHERSTELLEN, dass zuvor falls nötig gespeichert wird. Könnte aber sein, dass das anderweitig erledigt ist.");
 		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: Review auch weitere Auftretens von addMonitor...() - sicherstellen, dass vor denen auch erst bestehende Einträge gelöscht werden.");
 		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: ********************************************************************************");
+		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: !!! Reflect changes to TextView.java in other files like Bestellung, Rezept, AUF... !!!");
+		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: ********************************************************************************");
+
+		if (txt == null) {
+			System.out.println("\njs ch.elexis.views/TextView.java unserviceCurrentlyServicedDocument: INFO: txt == null; about to return early.\n");
+			return null;
+		}
+		if (txt.getPlugin() == null) {
+			System.out.println("\njs ch.elexis.views/TextView.java unserviceCurrentlyServicedDocument: INFO: txt.getPlugin() == null; about to return early.\n");
+			return null;
+		}
 		Brief vorigerBrief = txt.getPlugin().getBriefServicedByThis();
-		txt.getPlugin().setBriefServicedByThis(null);
+		
+		//Calling .dispose() here only adds to malfunction. The only place where it is beneficial is in .dispose()
+		
+		//20131011js maybe the most important newly added call. Reason: When dblclicking on one document in Briefauswahl,
+		//           after another whas open,  the TextView window content would stall.
+		//           Underlying dispose() routines have been changed before to call TextView.java removeMe() for cleanup purposes.
+		//           They might also take care of saving before closing if needed.
+		//But this is apparently too much: If I use that, the window content will stay grey even after the first loading:
+		//System.out.println("\njs ch.elexis.views/TextView.java unserviceCurrentlyServicedDocument: about to txt.dispose()...\n");
+		//txt.dispose();
+		//Same result - still too much:
+		//txt.getPlugin().dispose();	
+		//Similar result: clears the TextView window content to white, but still not working. 
+		//txt.getPlugin().clear();
+		
+		//!!!!!
+		//CAVE: We may return early in the next block. So any dispose(); further below might only be used under certain conditions.
+		//!!!
+		
+		if (vorigerBrief == null) {
+			System.out.println("\njs ch.elexis.views/TextView.java unserviceCurrentlyServicedDocument: INFO: vorigerBrief == null; about to return early.\n");
+			return null;
+		}
+		
+		System.out.println("\njs ch.elexis.views/TextView.java unserviceCurrentlyServicedDocument: INFO: vorigerBrief=="+vorigerBrief.toString()+": "+vorigerBrief.getLabel());
+		System.out.println("\njs ch.elexis.views/TextView.java unserviceCurrentlyServicedDocument: about to StatusMonitor.removeMonitorEntry(vorigerBrief)...");
 		ch.elexis.util.StatusMonitor.removeMonitorEntry(vorigerBrief);
 		
+		System.out.println("\njs ch.elexis.views/TextView.java unserviceCurrentlyServicedDocument: about to txt.getPlugin().setBriefServicedByThis(null)...");
+		txt.getPlugin().setBriefServicedByThis(null);
+		
+		//20131026js: Noch ein Versuch, den Zustand vom schon vorher geladenen 1. Dokument, mit welchem ein weiteres Load fehlschlägt,
+		//auf denjenigen zu bringen, der besteht, wenn ein zuvor geleadenes Dokument via [x] Close Button im Window geschlossen wurde,
+		//oder direkt nach dem Programmstart...
+		//txt.getPlugin().dispose();
+		//GRRR. After rewiring openDocument() to return false immediately after this,
+		//I saw that this actually leaves the Briefe Frame with greay background - with the previous tab title still in place -
+		//And Trying to load anything therein again,
+		//still results in another error, and OO showing the next doc open result in a separate window, after xyz dialog.
+		//Very very very funny.
+		//This doesn't help much either:
+		//  txt.dispose();
+		//This doesn't help much either (ok, it's a bit far off, too):
+		/*
+		TextContainer newTxt=null;
+		try {
+			newTxt = txt.getClass().newInstance();
+		} catch (Exception e) {
+		}
+		txt.dispose();
+		try { 
+			txt = newTxt.getClass().newInstance();
+		} catch (Exception e) {
+		}
+		*/
+		
+		
+		
+		
+		
+		
+		//Isn't there any way to get to the frame and "simply" close it?
+		//(TextView) IViewSite org.eclipse.ui.part.ViewPart.getViewSite().getPage().showView(TextView.ID);
+		//tv = (TextView) getSite().getPage().showView(TextView.ID
+		/*
+				 * ,StringTool.unique
+				 * ("textView")
+				 * ,IWorkbenchPage
+				 * .VIEW_ACTIVATE
+				 */
+		//);		 
+		//getSite().getPage().findView(TextView.ID).
+		//getSite().getPage().closeEditor()
+		//getSite().getPage().getActiveEditor();
+		
+		/* Well, this is ANOTHER way to NOT achieve what I wanted:
+
+		//Importing IEditorReference to get there;	
+		System.out.println("\njs ch.elexis.views/TextView.java unserviceCurrentlyServicedDocument: about to findEditors(null,TextView.ID,...MATCH_ID)");
+		IEditorReference[] textViewEditorRefs = getSite().getPage().findEditors(null,TextView.ID,IWorkbenchPage.MATCH_ID);
+		if (textViewEditorRefs != null && textViewEditorRefs.length > 0) {
+			System.out.println("\njs ch.elexis.views/TextView.java unserviceCurrentlyServicedDocument: found "+textViewEditorRefs.length+" TextView EditorRefs...");
+			for (IEditorReference textViewEditorRef:textViewEditorRefs) {
+				IEditorPart textViewEditor = textViewEditorRef.getEditor(true);
+				if (textViewEditor != null) {			
+					System.out.println("\njs ch.elexis.views/TextView.java unserviceCurrentlyServicedDocument: about to doSave(null) for "+textViewEditor.toString()+": "+textViewEditor.getTitle());
+					textViewEditor.doSave(null);
+					System.out.println("\njs ch.elexis.views/TextView.java unserviceCurrentlyServicedDocument: about to dispose "+textViewEditor.toString()+": "+textViewEditor.getTitle());
+					textViewEditor.dispose();
+					System.out.println("\njs ch.elexis.views/TextView.java unserviceCurrentlyServicedDocument: returned from dispose "+textViewEditor.toString()+": "+textViewEditor.getTitle());
+				}
+			}
+		}
+		*/
+		
+		/* And another.
+	
+		org.eclipse.swt.widgets.Event event;
+		event = new org.eclipse.swt.widgets.Event();
+		event.type = WINDOW_DESTROY;
+		display.post(event);
+		textViewEditor.getEditorSite().post(event);
+		
+		*/
+					
+		/* And another
+		 
+		//First activate our target window...
+		//(Import StringTool only for this.)
+		//TextView tv = (TextView) getSite().getPage().showView(TextView.ID,StringTool.unique("textView"),IWorkbenchPage.VIEW_ACTIVATE);
+		//Then send a WINDOW_DESTROY event - it might go to that window if everything works as expected...		
+		new Thread() {
+		org.eclipse.swt.widgets.Event event;
+		public void run() {
+		event = new org.eclipse.swt.widgets.Event();
+		event.type = WINDOW_DESTROY;
+		tv.post(event);
+		}
+		}.start();
+		
+		*/
+
+		//First activate our target window...
+		//(Import StringTool only for this.)
+		//TextView tv = (TextView) getSite().getPage().showView(TextView.ID,StringTool.unique("textView"),IWorkbenchPage.VIEW_ACTIVATE);
+		//Then throw a WINDOW_CLOSING at the event queue of the application:
+		
+		//Therefore, import WindowEvent from ...swt....WindowBrowser
+		//WindowEvent event = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
+		//TextView tv = (TextView) getSite().getPage().showView(TextView.ID,StringTool.unique("textView"),IWorkbenchPage.VIEW_ACTIVATE);
+		//frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING)));
+		//tv.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING)));
+		
+		//Das geht logischerweise auch nicht:
+		//(Also es compiliert, aber bringt "Null poiner exception", das Fenster bleibt bestehen,
+		//beim nächsten Mal immer noch Fehler etc.)
+		//this.dispose();
+	
+		
+		/* Another way to not get done what I want. setVisible() is not a method of tv; and dispose is, but does not what is needed. etc.
+		TextView tv = (TextView) getSite().getPage().showView(TextView.ID,StringTool.unique("textView"),IWorkbenchPage.VIEW_ACTIVATE);
+		tv.setVisible(false);
+		*/
+		
+		
+		//Auch das ist nicht (alleine oder gemeinsam) das gewünschte:
+		//textContainer.setVisible(false);
+		//textContainer.dispose();
+		
+		//Also, damit passiert nichts leicht erkennbares:
+		/*
+		if (textContainer != null && (!textContainer.isDisposed())) {
+			org.eclipse.swt.widgets.Event event;
+			event = new org.eclipse.swt.widgets.Event();
+			//event.type = WINDOW_DESTROY;
+			event.type = SWT.Dispose;
+			textContainer.getShell().getDisplay().post(event);
+		}
+		*/
+
+		/*
+		//20131026js: This comes close to working:
+		//I tried before to issue the post() attempts in a parallel thread and let the main thread wait below.
+		//But concurrency for ressources was NOT the problem why I haven't observed success.
+		//Instead: This throws an Exception invalid thread access.
+		//Have observed it before, elsewhere - maybe: All UI actions must be done in a GUI thread... Will try that below.
+		System.out.println("\njs ch.elexis.views/TextView.java unserviceCurrentlyServicedDocument: (New) Thread trying to post an event to textContainer.xyz\n");
+		new Thread() {
+			public void run() {
+				if (textContainer != null && (!textContainer.isDisposed())) {
+					org.eclipse.swt.widgets.Event event;
+					event = new org.eclipse.swt.widgets.Event();
+					//event.type = WINDOW_DESTROY;		//gibt's irgendwie nicht, obwohl der mal in einer Auswahlliste/Popup-Hilfe zu sehen war?
+					//event.type = SWT.Dispose;
+					//textContainer.getShell().getDisplay().post(event);
+					//textContainer.getDisplay().post(event);
+					//textContainer.getParent().getDisplay().post(event);
+					event.type = SWT.Close;
+					textContainer.getShell().getDisplay().post(event);
+					textContainer.getDisplay().post(event);
+					textContainer.getParent().getDisplay().post(event);
+				}
+			}
+		}.start();
+		
+		System.out.println("\njs ch.elexis.views/TextView.java unserviceCurrentlyServicedDocument: (Main) Thread sleep...\n");
+		try { Thread.sleep(1000); } catch (Exception e) {};
+		*/
+		
+		
+		/*
+		 * Das hier färbt schon mal Teile um, aber die geposteten Close und Dispose haben anscheinend KEINE Auswirkung.
+		 * 
+		System.out.println("\njs ch.elexis.views/TextView.java unserviceCurrentlyServicedDocument: getDisplay().syncExec() trying to post an event to textContainer.xyz\n");
+		//textContainer.getShell().getDisplay().syncExec( new Runnable() {
+		textContainer.getDisplay().syncExec( new Runnable() {
+			@Override
+			public void run() {
+				System.out.println("\njs ch.elexis.views/TextView.java unserviceCurrentlyServicedDocument: if (textContainer != null && (!textContainer.isDisposed())) -> ...");
+				if (textContainer != null && (!textContainer.isDisposed())) {
+					System.out.println("\njs ch.elexis.views/TextView.java unserviceCurrentlyServicedDocument: textcontainer="+textContainer.toString()+": "+textContainer.getToolTipText());
+					System.out.println("\njs ch.elexis.views/TextView.java unserviceCurrentlyServicedDocument: textcontainer.getShell().="+textContainer.getShell().toString()+": "+textContainer.getShell().getToolTipText());
+					System.out.println("\njs ch.elexis.views/TextView.java unserviceCurrentlyServicedDocument: textcontainer.getParent().="+textContainer.getParent().toString()+": "+textContainer.getParent().getToolTipText());
+					//Das setBackground() funktioniert gut für textContainer (der mit OO Elementen und Text belegte Bereich innerhalb der View "Briefe")
+					//und für textContainer.getShell (das ganze Elexis aussenherum mit - ebenfalls grün umrahmt - einer Menge Unterabteilungen.
+					textContainer.setBackground(new Color(null,255,0,0));
+					textContainer.getShell().setBackground(new Color(null,0,255,0));
+					textContainer.getParent().setBackground(new Color(null,0,0,255));
+					
+					System.out.println("\njs ch.elexis.views/TextView.java unserviceCurrentlyServicedDocument: about to event=...; post(event)...\n");
+					org.eclipse.swt.widgets.Event event;
+					event = new org.eclipse.swt.widgets.Event();
+					//event.type = WINDOW_DESTROY;		//gibt's irgendwie nicht, obwohl der mal in einer Auswahlliste/Popup-Hilfe zu sehen war?
+					//event.type = SWT.Dispose;
+					//textContainer.getDisplay().post(event);
+					//textContainer.getShell().getDisplay().post(event);
+					//textContainer.getParent().getDisplay().post(event);
+					event.type = SWT.Close;
+					textContainer.getDisplay().post(event);
+					textContainer.getShell().getDisplay().post(event);
+					textContainer.getParent().getDisplay().post(event);
+					System.out.println("\njs ch.elexis.views/TextView.java unserviceCurrentlyServicedDocument: event... posted.\n");
+					}
+			}
+		});
+		//System.out.println("\njs ch.elexis.views/TextView.java unserviceCurrentlyServicedDocument: (Main) Thread sleep...\n");
+		//try { Thread.sleep(1000); } catch (Exception e) {};
+		*/
+		
+		//********************************************************************************************************
+		//Das hier schliesst wirklich und ***endlich** "die View 'Briefe'" mit dem offenen Text!
+		//Ich weiss noch nicht, ob es 100% identisch zum simulierten click auf [x] close ist (laut www noch minimal unterschiedlich),
+		//aber hoffe, dass es trotzdem ausreichen könnte.
+		//
+		//Jetzt muss ich noch schauen, ob ich das an dieser Stelle brauchen kann, oder ob ich es weiter oben in die BriefAuswahl verlegen muss -
+		//(dort muss man etwas ganz anderes schreiben, aber das ist auch bekannt).
+		//Hinweis auf Lösung gefunden via: http://www.eclipsezone.com/eclipse/forums/t71597.html
+		//Voraussetzung dafür, dass hideView() "die" View schliesst, ist, dass nicht mehrere davon auf das gleiche Objekt offen sind.
+		//
+		//JA, es muss am besten in die BriefAuswahl hoch verlegt werden. Vor die Aufforderung, das nächste Dok zu laden.
+		//Dann sieht es dort so aus, wie wenn zuvor keine TextView offen var -> kein Weiterer Code erforderlich.
+		//Würde ich es hier stehen lassen, müsste ich erst wieder von hier aus durch den ganzen activate Krimskrams durch,
+		//und erstens müsste ich schauen, wie man das von hier aus aufruft, zweitens wäre das Ergebnis dann vielleicht mal wieder unterschiedlich...
+		//
+		//getViewSite().getPage().hideView(TextView.this);
+		//********************************************************************************************************3
+		
+		
+		//txt.getPlugin().getBriefServicedByThis().
+		//txt.getPlugin().createEmptyDocument();
+		
+		//forget voriger Brief: This is too little. Moreover, it should implicitly happen when this method ends.
+		//vorigerBrief=null;
+		
+		//Calling .dispose() here only adds to malfunction. The only place where it is beneficial is in .dispose()
+		
+		//20131011js: If there was still something loaded in the Briefe View, then get it out now - 
+		//normally that should not be needed, because who loads (later) would have to ensure that everything else is tidied up first -
+		//but that JUST DOES NOT WORK, and get's completely chaotic.
+		//System.out.println("\njs ch.elexis.views/TextView.java unserviceCurrentlyServicedDocument: about to txt.dispose();...\n");
+		//txt.dispose();
+		//txt.getPlugin().dispose();
+		
+		System.out.println("\njs ch.elexis.views/TextView.java unserviceCurrentlyServicedDocument: end - about to return vorigerBrief="+vorigerBrief.toString()+"\n");
+		return vorigerBrief;
+	}
+	
+	
+    public boolean openDocument(Brief doc){
+		//20130421js: Added more monitoring code to see what's happening...
+		System.out.println("\njs ch.elexis.views/TextView.java openDocument(Brief doc): begin");
+		System.out.println("js ch.elexis.views/TextView.java openDocument(Brief doc): about to txt.open("+doc.getBetreff().toString()+")");
+
+		System.out.println("js ch.elexis.views/TextView.java TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO js");
+		System.out.println("js ch.elexis.views/TextView.java Wenn das öffnen fehlschlägt, wird derzeit eine Meldung gezeigt,");
+		System.out.println("js ch.elexis.views/TextView.java   und danach irgendwas komplexes gemacht. DAS ist wahrscheinlich Unsinn!!!");
+		System.out.println("js ch.elexis.views/TextView.java TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO js");
+
+		//20131026js: NOW, I let unservice... return whether there was a Brief to unservice, or just null.
+		//If there was one, unservice will have called (among other things) txt.getPlugin().dispose();.
+		//In that case, we just exit early, and thereby should have the system in the same state - or close to the state -
+		//in which it would be after selecting close [x] in the document Window. And that should be a state from where on
+		//the next issued dblclick on a document in Briefauswahl should successfully work...
+		
+		
+		//NUR ZUM DEBUGGEN/wEG FÜR'S vIEW sCHLIESSEN FINDEN: damit es nach einem ggf. erfolgten Versuch,
+		//in unserviceCurrentlyServicedDocument eine View mit Inhalt zu schliessen,
+		//nicht gleich weitergeht mit dem Laden:
+		//if (unserviceCurrentlyServicedDocument() != null) return false;
+
+		//Für den Echtbetrieb statdessen erst mal einfacher (und möglicherweise obsolet, wenn sichergestellt wurde,
+		//das vor einem Öffnen eines neuen Dokuments weiter oben auch ein Schliessen der kompletten View erfolgt ist:
+		unserviceCurrentlyServicedDocument();
+		
+		
+		//20131026js: Wenn ich das hier einfüge, erscheint nur ein graues Window als Ergebnis schon des ersten öffnens.
+		//Hier ist es also deutlich zu spät, um klare Ausgangsbedingungen vor dem Laden des 2.Docs bei 1.geöffnetem zu schaffen.
+		//txt.dispose();
+				
 		if (txt.open(doc) == true) {		//"einen Brief einlesen" says javadoc...
 					
 			System.out.println("js ch.elexis.views/TextView.java openDocument(): txt.open(doc) returned TRUE.");
+		
 			System.out.println("js ch.elexis.views/TextView.java openDocument(): about to actBrief = doc...");
+			
+			System.out.println("js ch.elexis.views/TextView.java TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO js");
+			System.out.println("js ch.elexis.views/TextView.java ist actBrief=doc wirklich richtig???");
+			System.out.println("js ch.elexis.views/TextView.java oder müsste das etwas komplizierter werden???");
+			System.out.println("js ch.elexis.views/TextView.java TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO js");
+
 			actBrief = doc;
 			System.out.println("js ch.elexis.views/TextView.java openDocument(): about to setName()...");
 			setName();
@@ -349,6 +721,13 @@ public class TextView extends ViewPart implements IActivationListener {
 			return true;
 		} else {
 			System.out.println("js ch.elexis.views/TextView.java WARNING: txt.open(doc) returned FALSE.");
+
+			System.out.println("js ch.elexis.views/TextView.java TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO js");
+			System.out.println("js ch.elexis.views/TextView.java Ist dieser Teil für irgendwas nützliches nötig?");
+			System.out.println("js ch.elexis.views/TextView.java Ich meine: Ist das der einzige Weg, etwas nützliches zu erreichen?");
+			System.out.println("js ch.elexis.views/TextView.java Andernfalls würd ich hier sagen: was offen und gültig ist, prüfen, ob gespeichert,");
+			System.out.println("js ch.elexis.views/TextView.java speichern versuchen, schliessen, weg damit, TextView mit plugin/NOAText trennen, schliessen und fertig...");
+			System.out.println("js ch.elexis.views/TextView.java TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO js");
 
 			//SWTHelper.showError(
 			//Messages.getString("TextView.noTemplateSelected"), Messages.getString("TextView.pleaseSelectTemplate")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -517,8 +896,12 @@ public class TextView extends ViewPart implements IActivationListener {
 					"TextView Inhalt löschen, statt leeres Dokument zu erzeugen.", SWT.LEFT);
 
 			//Das bring t KEINE sichtbare Änderung des Inhalts...
+			//TODO: DAS MACHT AUCH NICHT WIRKLICH EIN "CLEAR THE DOCUMENT", wie javadoc zum abstrakten Clear behauptet,
+			//TODO: sondern in NOAText allenfalls: es probiert, ob ein texthandler das Dokument speichern kann,
+			//TODO: setzt in diesem Fall ismodified=false, und wenn das alles ging, liefert es true, sonst false zurück.
+			//TODO: Siehe meine erweiterte javadoc dort!!! js
 			//System.out.println("js ch.elexis.views/TextView.java About to txt.getPlugin().clear()...");
-			txt.getPlugin().clear();
+			//txt.getPlugin().clear();
 			
 			System.out.println("js ch.elexis.views/TextView.java TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO js");
 			System.out.println("js ch.elexis.views/TextView.java Question: Why would txt.getPlugin().clear() apparently not do anything like clearing?!? It appears to just clear the modified flag, nothing else!");
@@ -555,17 +938,7 @@ public class TextView extends ViewPart implements IActivationListener {
 			return false;
 		}
 
-		//201306250439js: Den ggf. vorhandenen Eintrag für ein Dokument in TextView, das gleich ersetzt wird, aus der StatusMonitoring Liste entfernen,
-		//und - falls das nachfolgende Laden schief geht - auch aus der zugehörigen Instanz von NOAText.briefServicedByThis entfernen.
-		//Falls noch gar kein Dokument geladen/verzeichnet war, sollte auch null richtig gehandelt werden.
-		//Normalerweise sollte das Entladen ja mit dispose() erfolgen - tut es aber nicht, weil dispose() beim Doppelklick auf ein anderes Dokument anscheinend nicht aufgerufen wird.
-		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: ********************************************************************************");
-		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: Normalerweise sollte das Entladen ja mit dispose() erfolgen - tut es aber nicht, weil dispose() beim Doppelklick auf ein anderes Dokument anscheinend nicht aufgerufen wird. Vielleicht müsste ich es auch an clean() o.ä. in NOAText ankoppeln...?");
-		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: Review auch weitere Auftretens von addMonitor...() - sicherstellen, dass vor denen auch erst bestehende Einträge gelöscht werden.");
-		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: ********************************************************************************");		
-		Brief vorigerBrief = txt.getPlugin().getBriefServicedByThis();
-		txt.getPlugin().setBriefServicedByThis(null);
-		ch.elexis.util.StatusMonitor.removeMonitorEntry(vorigerBrief);
+		unserviceCurrentlyServicedDocument();
 		
 		actBrief =
 			txt.createFromTemplate(Konsultation.getAktuelleKons(), template, Brief.UNKNOWN, null,
@@ -607,17 +980,7 @@ public class TextView extends ViewPart implements IActivationListener {
 			return false;
 		}
 
-		//201306250439js: Den ggf. vorhandenen Eintrag für ein Dokument in TextView, das gleich ersetzt wird, aus der StatusMonitoring Liste entfernen,
-		//und - falls das nachfolgende Laden schief geht - auch aus der zugehörigen Instanz von NOAText.briefServicedByThis entfernen.
-		//Falls noch gar kein Dokument geladen/verzeichnet war, sollte auch null richtig gehandelt werden.
-		//Normalerweise sollte das Entladen ja mit dispose() erfolgen - tut es aber nicht, weil dispose() beim Doppelklick auf ein anderes Dokument anscheinend nicht aufgerufen wird.
-		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: ********************************************************************************");
-		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: Normalerweise sollte das Entladen ja mit dispose() erfolgen - tut es aber nicht, weil dispose() beim Doppelklick auf ein anderes Dokument anscheinend nicht aufgerufen wird. Vielleicht müsste ich es auch an clean() o.ä. in NOAText ankoppeln...?");
-		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: Review auch weitere Auftretens von addMonitor...() - sicherstellen, dass vor denen auch erst bestehende Einträge gelöscht werden.");
-		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: ********************************************************************************");		
-		Brief vorigerBrief = txt.getPlugin().getBriefServicedByThis();
-		txt.getPlugin().setBriefServicedByThis(null);
-		ch.elexis.util.StatusMonitor.removeMonitorEntry(vorigerBrief);
+		unserviceCurrentlyServicedDocument();
 		
 		actBrief = txt.createFromTemplate(Konsultation.getAktuelleKons(), template, Brief.UNKNOWN, adressat, subject);
 		if (actBrief == null) {
@@ -647,11 +1010,12 @@ public class TextView extends ViewPart implements IActivationListener {
 						new DocumentSelectDialog(getViewSite().getShell(), actPatient,
 							DocumentSelectDialog.TYPE_LOAD_DOCUMENT);
 
-					System.out.println("js ch.elexis.views/TextView.java makeActions().briefLadenAction().run(): about to openDocument()");
+					System.out.println("js ch.elexis.views/TextView.java makeActions().briefLadenAction().run(): if (bs.open() == Dialog.OK) -> about to openDocument()...");
 					if (bs.open() == Dialog.OK) {
-						openDocument(bs.getSelectedDocument());
+					System.out.println("js ch.elexis.views/TextView.java makeActions().briefLadenAction().run(): about to openDocument(bs.getSelectedDocument())");
+							openDocument(bs.getSelectedDocument());
 					}
-					
+											
 					System.out.println("js ch.elexis.views/TextView.java makeActions().briefLadenAction().run(): end\n");
 				}
 				
@@ -666,8 +1030,9 @@ public class TextView extends ViewPart implements IActivationListener {
 						new DocumentSelectDialog(getViewSite().getShell(), Hub.actMandant,
 							DocumentSelectDialog.TYPE_LOAD_SYSTEMPLATE);
 
-					System.out.println("js ch.elexis.views/TextView.java makeActions().loadSysTemplateAction().run(): about to openDocument()");
+					System.out.println("js ch.elexis.views/TextView.java makeActions().loadSysTemplateAction().run(): if (bs.open() == Dialog.OK) -> about to openDocument()...");
 					if (bs.open() == Dialog.OK) {
+						System.out.println("js ch.elexis.views/TextView.java makeActions().loadSysTemplateAction().run(): about to openDocument(bs.getSelectedDocument())");
 						openDocument(bs.getSelectedDocument());					
 					}
 					
@@ -1082,13 +1447,17 @@ public class TextView extends ViewPart implements IActivationListener {
 		System.out.println("js ch.elexis.views/TextView.java visible(): WARNING: This function is called but has no code.");		
 	}
 	
+	/*
+	 * Set the window title of the TextView ("Briefe") view to something constructed
+	 * from the currently selected patient and the currently opened letter.  
+	 */
 	void setName(){
 		System.out.println("\njs ch.elexis.views/TextView.java setName(): begin");
 
 		String n = ""; //$NON-NLS-1$
 		
 		if (actBrief == null) {
-			System.out.println("js ch.elexis.views/TextView.java setName(): WARNING: actBrief==null; about to produce warning dialog...");
+			System.out.println("js ch.elexis.views/TextView.java setName(): WARNING: actBrief==null; about to setPartName to TextView.noLetterSelected...");
 
 			setPartName(Messages.getString("TextView.noLetterSelected")); //$NON-NLS-1$
 		} else {

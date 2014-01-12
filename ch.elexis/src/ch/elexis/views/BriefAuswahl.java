@@ -39,7 +39,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IPropertyListener;	//201306150113js - ensure edits in text documents are noted by Elexis and ultimately store
 import org.eclipse.ui.ISaveablePart2;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
@@ -94,6 +97,76 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 		tk = Desk.getToolkit();
 		if ( tk == null ) 	{	System.out.println("js ch.elexis.views/BriefAuswahl.java: BriefAuswahl.BriefAuswahl() - result: WARNING: tk == null"); }
 		else 				{	System.out.println("js ch.elexis.views/BriefAuswahl.java: BriefAuswahl.BriefAuswahl() - result: tk == "+tk.toString()); }
+	}
+	
+	/*
+	 * 20131026js: First check if a View for documents of the same type (e.g. "Briefe") is already open.
+	 * If yes, close it in (ALMOST, BUT SUFFICIENTLY SIMILAR) the same way it would be closed if a user clicks on its [x] close button.
+	 * 
+	 * This was needed to enable the user to directly and successfully load a new document,
+	 * even when a view with a document of the similar type was already open,
+	 * without closing the view of the already open document before,
+	 * after corrections of noas / OpenOffice createMe()/removeMe() related task loading/unloading handling.
+	 * Elexis 20130605js would not correctly keep track of OpenOffice usage and not unload soffice.bin/soffice.exe
+	 *   when no more documents were using them, or Elexis was closed - and Office usage would become instable over time.
+	 * Elexis 20130627js or so would have corrected track keeping, and office unloading, and reloading/reconnection,
+	 *   but not be usable - at least because when a new office document was loaded while another one of the same type
+	 *   was still open, the old connection/bridge to OpenOffice would be dropped,
+	 *   and the ongoing load attempt would throw a ...disposed or bridge disposed or similar Exception,
+	 *   and the resulting view would have an empty white space in its payload area, and soffice.bin/soffice.exe not be loaded.
+	 *   This could ONLY be avoided, if the user CLOSED the existing document with the [x] close button of the view first,
+	 *   and only afterwards loaded the new document. An empty Brief View, opened through the "OpenView" button,
+	 *   would in contrast be perfectly unproblematic. After loading Elexis, without any previously open Briefe View,
+	 *   no problems would appear either; and even after a problematic situation, just closing the view via [x] close,
+	 *   and loading the document through Briefauswahl again, would also fix the problem.
+	 *   It appears that the problem actually comes from OpenOffice - some other user of Office reported similar behaviour
+	 *   on the WWW - namely, that the connection/bridge to OpenOffice would be lost when one loaded one document
+	 *   while another was still loaded (even though doc.close() or similar was used before; there is no doc.dispose()
+	 *   and no doc=null, or any other attempts, would achieve the same necessary clearance of the internal state of Office.)  
+	 * Elexis 20131016js now, with this hideView approach:
+	 *   You can now load documents directly even when others are still open - Elexis will call hideView(),
+	 *   this will provide a sufficiently clean environment so that Office has NO TROUBLES loading the next document
+	 *   (in the next instance of Office, after noas.isempty / office.deactivate / terminate / disconnect tested elsewhere).
+	 *   Now, this "achievement" needs to be propagated through multiple places where document loading/creation can be
+	 *   triggered in BriefAuswahl/TextView; AUFZeugnis, Bestellblatt, Rezetpt... etc. We'll see.
+	 *   As this method does not use any local variable stuff, I moved it here to simplify propagation.
+	 * 
+	 * More details in comments inside the method, an around previous unsuccessful alternative approaches
+	 * throughout BriefAuswahl.java, TextView.java, NOAText.java, OfficePanel.java, BootStrap... etc.
+	 */			
+	private void  closePreExistingViewToEnsureOfficeCanHandleNewContentProperly() {
+	//20131026js: First check if a View "Briefe" is already open.
+	//If yes, close it in (ALMOST, BUT SUFFICIENTLY SIMILAR) the same way it would be closed if a user clicks on its [x] close button.
+	//We could check this via TextView tv = (TextView) getViewSite().getPage().findView(TextView.ID);
+	//if (tv != null)...
+	//But it's more convenient and simpler to just check wbpTextViewView != null.
+	//NOW, ONCE AGAIN... exactly like in previous attempts via other ways,
+	//this will NOT close the View Briefe Window, but only the stuff contained therein.
+	//http://www.eclipsezone.com/eclipse/forums/t71597.html
+	
+	//201310261531js: YES, this code at this position finally does it:
+	//Although the visible representation of the open, populated "View Briefe" remains still visible all the time,
+	//instead of disappearing completely (as if I used the close button, or hideView() from inside TextView.java),
+	//the view payload area becomes empty, AND NEW SUCCESS OF USING hideView(): with it's Title now changes to "Kein Brief geladen".
+	//This IS sufficient to ensure that the next document is properly loaded AND displayed.
+	//And compatible with pre-existing approaches to prepare a working OO environment to load/edit the document within,
+	//even though soffice.bin and soffice.exe can be (and have probably already been) unloaded from memory
+	//after the preceeding doc has been closed. 
+	
+	//Import org.eclipse.ui.IWorkbenchPage and ...PlatformUI and ...IViewPart only for this: 
+	System.out.println("js ch.elexis.views/BriefAuswahl.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): begin");
+	IWorkbenchPage wbp = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+	IViewPart wbpTextViewViewPart = wbp.findView(TextView.ID); 
+	if (wbpTextViewViewPart != null) {
+		System.out.println("js ch.elexis.views/BriefAuswahl.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): About to wbp.hideView(wbpTextViewViewPart)");
+		wbp.hideView(wbpTextViewViewPart); 
+		System.out.println("js ch.elexis.views/BriefAuswahl.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): Returned from wbp.hideView(wbpTextViewViewPart)");
+	} else {
+		//No preexisting populated viewPart (="View Briefe" in Elexis manual terminology) needed closing. Do nothing.
+		System.out.println("js ch.elexis.views/BriefAuswahl.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): NO matching wbpTextViewViewPart found - Nothing to do.");
+	} //if wbpTextViewView != null ; oder if tv!=null
+	
+	System.out.println("js ch.elexis.views/BriefAuswahl.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): end");
 	}
 	
 	@Override
@@ -243,6 +316,7 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 			return cv;
 		}
 		
+		
 		/*
 		 * 201306170128js: Attempt to add missing documentation - may be right, may be wrong.
 		 * This method probably constructs the list of selectable documents in the Briefauswahl view.
@@ -254,6 +328,7 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 		 */
 		sPage(final Composite parent, final String cat){
 			super(parent, SWT.NONE);
+				
 			System.out.println("js ch.elexis.views/BriefAuswahl.java: sPage.sPage() begin POST super(parent, SWT.NONE)");
 			setLayout(new GridLayout());
 			cv = new CommonViewer();
@@ -299,29 +374,36 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 				}
 			});
 			vc.getContentProvider().startListening();
-			Button bLoad =
-				tk.createButton(this, Messages.getString("BriefAuswahlLoadButtonText"), SWT.PUSH); //$NON-NLS-1$
+	
+			Button bLoad =	tk.createButton(this, Messages.getString("BriefAuswahlLoadButtonText"), SWT.PUSH); //$NON-NLS-1$
 			bLoad.addSelectionListener(new SelectionAdapter() {
 				@Override
 				//ToDo: 201306170133js: This might be refactored into a separate method
 				//to ensure that clicking on the "bLoad" button does quite the same stuff
 				//as a double click on an entry of the document list - "briefLadenAction". 
 				public void widgetSelected(final SelectionEvent e){
-					System.out.println("js ch.elexis.views/BriefAuswahl.java: sPage.sPage() bLoad.widgetSelected() begin");
-					try {
+					System.out.println("js ch.elexis.views/BriefAuswahl.java: sPage.sPage() bLoad.widgetSelected() (Via Button 'Laden') begin");
+
+					//20131026js: First check if a View for documents of the same type is already open.
+					//If yes, close it in (ALMOST, BUT SUFFICIENTLY SIMILAR) the same way it would be closed if a user clicks on its [x] close button.
+					closePreExistingViewToEnsureOfficeCanHandleNewContentProperly();
+					
+					try {					
 						TextView tv = (TextView) getViewSite().getPage().showView(TextView.ID);
+
 						Object[] o = cv.getSelection();
 						if ((o != null) && (o.length > 0)) {
 							Brief brief = (Brief) o[0];
-							System.out.println("js ch.elexis.views/BriefAuswahl.java: sPage.sPage() bLoad.widgetSelected() about to tv.openDocument(brief)...");
+							System.out.println("js ch.elexis.views/BriefAuswahl.java: sPage.sPage() bLoad.widgetSelected() about to tv.openDocument(brief) (Via Button 'Laden')...");
 							if (tv.openDocument(brief) == false) {
 								SWTHelper.alert(Messages.getString("BriefAuswahlErrorHeading"), //$NON-NLS-1$
 									Messages.getString("BriefAuswahlCouldNotLoadText")); //$NON-NLS-1$
 							}
 						} else {
-							System.out.println("js ch.elexis.views/BriefAuswahl.java: sPage.sPage() bLoad.widgetSelected() about to tv.createDocument()...");
+							System.out.println("js ch.elexis.views/BriefAuswahl.java: sPage.sPage() bLoad.widgetSelected() about to tv.createDocument() (Via Button 'Laden')...");
 							tv.createDocument(null, null);
 						}
+						
 					} catch (Throwable ex) {
 						System.out.println("js ch.elexis.views/BriefAuswahl.java: sPage.sPage() bLoad.widgetSelected() WARNING: Caught Exception!");
 						ExHandler.handle(ex);
@@ -386,11 +468,14 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 						}
 						ElexisEventDispatcher.fireSelectionEvent(k);
 					}
+
+					//20131026js: First check if a View for documents of the same type is already open.
+					//If yes, close it in (ALMOST, BUT SUFFICIENTLY SIMILAR) the same way it would be closed if a user clicks on its [x] close button.
+					closePreExistingViewToEnsureOfficeCanHandleNewContentProperly();
 					
-					System.out.println("js ch.elexis.views/BriefAuswahl.java: makeActions() briefNeuAction run() about to instantiate new TextView tv...");
-					TextView tv = null;
 					try {
-						tv = (TextView) getSite().getPage().showView(TextView.ID /*
+						System.out.println("js ch.elexis.views/BriefAuswahl.java: makeActions() briefNeuAction run() about to instantiate new TextView tv...");
+						TextView tv = (TextView) getSite().getPage().showView(TextView.ID /*
 																				 * ,StringTool.unique
 																				 * ("textView")
 																				 * ,IWorkbenchPage
@@ -405,6 +490,7 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 							Kontakt address = null;
 							if (DocumentSelectDialog.getDontAskForAddresseeForThisTemplate(bs.getSelectedDocument()))
 								address = Kontakt.load("-1");
+							System.out.println("js ch.elexis.views/BriefAuswahl.java: makeActions() briefNeuAction run() about to tv.createDocument(bs.getSelectedDocument(), bs.getBetreff(), address);...");
 							tv.createDocument(bs.getSelectedDocument(), bs.getBetreff(), address);
 							tv.setName();
 							CTabItem sel = ctab.getSelection();
@@ -429,21 +515,93 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 				//to ensure that clicking on the "bLoad" button does quite the same stuff
 				//as a double click on an entry of the document list - "briefLadenAction". 
 				public void run(){
-					System.out.println("js ch.elexis.views/BriefAuswahl.java: makeActions() briefLadenAction run() begin");
-
+					System.out.println("js ch.elexis.views/BriefAuswahl.java: makeActions() briefLadenAction run() begin (via DblClick or Menu)");
+					
+					/*
+					 * This will also completely mess up a even the first (!) attempt to open a document.
+					 
+					//20131011js:
+					//Theoretically, opening the next document should automatically smoothly replace a possibly open document in an OpenOffice TextView = View Briefe window.
+					//In reality - I can either have the functionality keeping track of opened docs NOT WORKING, so soffice.bin and soffice.exe are NEVER terminated.
+					//OR, I can have fixed this - but thereupon, I must either manually close the TextView Window before opening the next document -
+					//or get into trouble (of not precisely known mechanics, though I tried to track that down and avoid the problems literally for days by now!!!),
+					//when the last OO is closed - at some time during the load process for the next one, but NOT clearly before anything else starts.
+					//SO, I will now take care of closing the old document CLEARLY AND COMPLETELY BEFORE opening a new one, myself. Full stop.
+					//For testing: Open Elexis - Open a doc in briefauswahl - close it - open another doc in briefauswahl - close it - close Elexis: (Works without this taking care)
+					//In my Elexis 20131011js ff: When no doc open, soffice.bin and soffice.exe should NOT be in task manager, and when openig a doc, it should start, and doc should appear in editable way.
+					//In my Elexis e.g. 20130605 and before: soffice.bin, soffice.exe would not be terminated at any time,
+					//because NOAText removeMe(), noa.remove() would never be called, because doc.closeLisener() would never be called, for whatever reason.
+					//Testing 2: Open Elexis - Open a doc in briefauswahl, directly open another doc in briefauswahl.
+					//In Elexis 20131011js ff: with the fix for removeMe() - that would now cause a problem. Depending upon details elsewhere,
+					//chaos would either cause the result to appear white in the pre-existing frame, without started office at all;
+					//or this + office doc would appear in separate Windows plus additional dialogs, or whatever etc. pp.
+					//What should happen now with this additional care-taking-fix: Old document should close and office terminate (if that was last client). New doc should open in new frame where the old one had been.
+					//This would add stability in contrast to leaving oo run forever (and become more and more unreliable, finally requiring a machine restart/killing soffice.bin via taskman etc.).
+					System.out.println("js ch.elexis.views/BriefAuswahl.java: -------------------------------------------------------------");
+					System.out.println("js ch.elexis.views/BriefAuswahl.java: TODO: ENSURE THAT bload and briefLadenAction DO THE SAME HERE - close DocumentCompletelyIncludingFrame before opening the next one.");
+					System.out.println("js ch.elexis.views/BriefAuswahl.java: -------------------------------------------------------------");
 					try {
-						System.out.println("js ch.elexis.views/BriefAuswahl.java: makeActions() briefLadenAction run() about to: Textview tv = (TextView) getViewSite().getPage().showView(TextView.ID)...");
+						System.out.println("js ch.elexis.views/BriefAuswahl.java: If an old TextView exists, then let's dispose of it.");
+						TextView tvOld = (TextView) getViewSite().getPage().showView(TextView.ID);
+						if (tvOld != null)	tvOld.dispose();
+						//This does the same:
+						//getViewSite().getPage().showView(TextView.ID).dispose();
 						
-						TextView tv = (TextView) getViewSite().getPage().showView(TextView.ID);
+						//Das macht dann gleich mal das GANZE Elexis zu - getWorkbenchWindow(), no matter from where, liefert offenbar immer das ganze.
+						//getViewSite().getPage().showView(TextView.ID).getViewSite().getWorkbenchWindow().close();
+				        				
+					} catch (Exception ex) {
+						//Nop. Most probably: Just nothing to dispose of; i.e. we're directly after program start,
+						//no View Briefe = TextView.java Window open yet, or manually closed again before the next one is being opened here. 
+					}
+					*/
+					
+					
+					//20131026js: First check if a View for documents of the same type is already open.
+					//If yes, close it in (ALMOST, BUT SUFFICIENTLY SIMILAR) the same way it would be closed if a user clicks on its [x] close button.
+					closePreExistingViewToEnsureOfficeCanHandleNewContentProperly();
+					
+					//20131026js: Mal dieses hier von oben bei briefNeuAction übernommen... vielleicht merkt Java, dass ich ein ggf. schon existierendes
+					//altes tv loswerden möchte und entsorgt es komplett korrekt???
+					//Dürfte aber keinen Unterschied machen, da tv nach lokaler Variable ausschaut...
+					System.out.println("js ch.elexis.views/BriefAuswahl.java: about to TextView tv=null;");
+					TextView tv = null;
+					
+					try {
+						System.out.println("js ch.elexis.views/BriefAuswahl.java: makeActions() briefLadenAction run() about to: try tv = (TextView) getViewSite().getPage().showView(TextView.ID) (via DblCklick or Menu)...");
+						tv = (TextView) getViewSite().getPage().showView(TextView.ID);
+						
+						//20131026js: Wenn ich hier so etwas bringe, um ein neues Fenster zu erreichen, dann endet das in einem grauen Fensterinhalt,
+						//weil beim Dispose sowohl frame als auch irgendwelche Plugin-Strukturen/Zustände entsorgt werden, und nicht automatisch
+						//wiederhergestellt.
+						//Leider leider kommt das Plugin aber auch selbst nicht mit einem openDocument() zurecht,
+						//wenn zuvor schon ein Dokument offen ist. Also, ich kann seinen Zustand hier nicht von aussen zurücksetzen,
+						//auf denjenigen nach dem Startup oder nach Frame close via [x]; woraufhin nämlich ein Laden komplett korrekt funktioniert -
+						//und es kann sich selbst offenbar auch nicht in diesen Zustand (zurück)bringen, bevor es mit dem Ausführen des
+						//Ladebefehls beginnt, wenn es schon etwas geladen hat. Tolle Objektorientierte und wunderschön gekapselte Welt.
+						//
+						//if (tv.TextContainer != null) tv.TextContainer.dispose();
+						//if (tv.txt != null) tv.txt.dispose();
+						//
+						//System.out.println("js ch.elexis.views/BriefAuswahl.java: makeActions() briefLadenAction run() about to: try tv dispose()");
+						//tv.txt.dispose();
+						//System.out.println("js ch.elexis.views/BriefAuswahl.java: makeActions() briefLadenAction run() about to: try tv = (TextView) getViewSite().getPage().showView(TextView.ID)");
+						//tv = (TextView) getViewSite().getPage().showView(TextView.ID);
+						
+						System.out.println("js ch.elexis.views/BriefAuswahl.java: makeActions() briefLadenAction run() about to: CTabItem sel = ctab.getSelection();...");
+
 						CTabItem sel = ctab.getSelection();
+
+						System.out.println("js ch.elexis.views/BriefAuswahl.java: makeActions() briefLadenAction run() about to: if (sel != null)...");
+						//Check for a selection and process it if applicable.
 						if (sel != null) {
+							System.out.println("js ch.elexis.views/BriefAuswahl.java: makeActions() briefLadenAction run() (sel != null). -> about to: CommonViewer cv = (ComonViewer) sel.getData()...");
 							CommonViewer cv = (CommonViewer) sel.getData();
 							Object[] o = cv.getSelection();
 							if ((o != null) && (o.length > 0)) {
 								Brief brief = (Brief) o[0];
-
-								System.out.println("js ch.elexis.views/BriefAuswahl.java: makeActions() briefLadenAction run() about to tv.openDocument(brief)...");
 								
+								System.out.println("js ch.elexis.views/BriefAuswahl.java: makeActions() briefLadenAction run() about to tv.openDocument(brief) (via DblClick or Menu)...");
 								if (tv.openDocument(brief) == false) {
 									System.out.println("js ch.elexis.views/BriefAuswahl.java: makeActions() briefLadenAction run() WARNING: tv.openDocument(brief) failed.");
 									SWTHelper.alert(Messages.getString("BriefAuswahlErrorHeading"), //$NON-NLS-1$
@@ -503,7 +661,6 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 															
 							} else {
 								System.out.println("js ch.elexis.views/BriefAuswahl.java: makeActions() briefLadenAction run() about to tv.createDocument(null,null)...");
-
 								tv.createDocument(null, null);
 							}
 							System.out.println("js ch.elexis.views/BriefAuswahl.java: makeActions() briefLadenAction run() about to cv.notify(CommonViewer.Message.update)...");
@@ -536,8 +693,13 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 					while (continueStressTest) {
 					
 					stressTestPasses=stressTestPasses+1;
+					
+					System.out.println("stress test pass: "+stressTestPasses+" - about to closePreExistingView...");
+					//20131026js: First check if a View for documents of the same type is already open.
+					//If yes, close it in (ALMOST, BUT SUFFICIENTLY SIMILAR) the same way it would be closed if a user clicks on its [x] close button.
+					closePreExistingViewToEnsureOfficeCanHandleNewContentProperly();
+					
 					System.out.println("stress test pass: "+stressTestPasses+" - about to load document...");
-
 					try {
 						TextView tv = (TextView) getViewSite().getPage().showView(TextView.ID);
 						CTabItem sel = ctab.getSelection();
@@ -632,8 +794,14 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 								if ( brief != null ) {
 									
 									stressTestPasses=stressTestPasses+1;
-									System.out.println("stress test pass: "+stressTestPasses+" - about to load document...");
+									
+									System.out.println("stress test pass: "+stressTestPasses+" - about to closePreExistingView...");
+									
+									//20131026js: First check if a View for documents of the same type is already open.
+									//If yes, close it in (ALMOST, BUT SUFFICIENTLY SIMILAR) the same way it would be closed if a user clicks on its [x] close button.
+									closePreExistingViewToEnsureOfficeCanHandleNewContentProperly();
 								
+									System.out.println("stress test pass: "+stressTestPasses+" - about to load document...");
 									try {
 										TextView tv = (TextView) getViewSite().getPage().showView(TextView.ID);
 	
@@ -736,6 +904,13 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 						Object[] o = cv.getSelection();
 						if ((o != null) && (o.length > 0)) {
 							Brief brief = (Brief) o[0];
+
+							//20131026js: While we're at it: hideView() if it contains the document we're about to delete.
+							System.out.println("js ch.elexis.views/BriefAuswahl.java: TODO: ------------------------------------------------------------------------------------------------------------");
+							System.out.println("js ch.elexis.views/BriefAuswahl.java: TODO: makeActions() deleteAction: About to delete the currently edited document; so closing the editor beforehand.");
+							//if ... Brief = actBrief (oder ähnlich, wo auch immer es die Info gibt) then closePreExistingViewToEnsureOfficeCanHandleNewContentProperly();
+							System.out.println("js ch.elexis.views/BriefAuswahl.java: TODO: ------------------------------------------------------------------------------------------------------------");
+									
 							brief.delete();
 						}
 						cv.notify(CommonViewer.Message.update);

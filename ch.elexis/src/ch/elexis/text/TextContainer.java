@@ -118,7 +118,7 @@ public class TextContainer {
 	 * Fehlermeldung ausgibt)
 	 */
 	public TextContainer(){
-		System.out.println("js ch.elexis.views/TextContainer.java TextContainer(): begin");
+		System.out.println("js ch.elexis.views/TextContainer.java TextContainer(): begin (Constructor)");
 		if (plugin == null) {
 			System.out.println("js ch.elexis.views/TextContainer.java TextContainer(): Looking for the Textplugin defined in the settings...");
 			String ExtensionToUse = Hub.localCfg.get(PreferenceConstants.P_TEXTMODUL, null);
@@ -171,15 +171,19 @@ public class TextContainer {
 	}
 	
 	public ITextPlugin getPlugin(){
-		System.out.print("js ch.elexis.views/TextContainer.java getPlugin(): begin; ");
-		if (plugin == null)		System.out.println("WARNING: about to return plugin == null");
-		else					System.out.println("about to return plugin == " + plugin.toString());
+		//20131015js: Debug msgs mal weg, weil getplugin oft in anderen debug outputs gerufen wird,
+		//dann hat man die returns gleich zweimal und unübersichtlich... 
+		//System.out.print("js ch.elexis.views/TextContainer.java getPlugin(): begin; ");
+		//if (plugin == null)		System.out.println("WARNING: about to return plugin == null");
+		//else					System.out.println("about to return plugin == " + plugin.toString());
 		return plugin;
 	}
 	
 	public void dispose(){
-		System.out.println("js ch.elexis.views/TextContainer.java dispose(): begin; about to plugin.dispose()");
+		System.out.println("js ch.elexis.views/TextContainer.java dispose(): begin");
+		System.out.println("js ch.elexis.views/TextContainer.java dispose(): about to plugin.dispose()...");
 		plugin.dispose();
+		System.out.println("js ch.elexis.views/TextContainer.java dispose(): end()");
 	}
 	
 	private Brief loadTemplate(String name){
@@ -1010,7 +1014,7 @@ public class TextContainer {
 			return false;
 		}
 
-		System.out.println("js ch.elexisviews/TextContainer.java.open(): brief.getLabel())==" +brief.getLabel());
+		System.out.println("js ch.elexisviews/TextContainer.java.open(): brief.getLabel()==" +brief.getLabel());
 		System.out.println("js ch.elexisviews/TextContainer.java.open(): about to byte[] arr = brief.loadBinary()...");
 		
 		byte[] arr = brief.loadBinary();
@@ -1020,23 +1024,23 @@ public class TextContainer {
 			return false;
 		}
 		
-		//plugin and getPlugin() return the same within TextContainer.
-		System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: REMOVE THIS OUTPUT, Debugging/Testing only: ");
-		System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		//Please note: plugin and getPlugin() return the same within TextContainer.
+		//System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		//System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: REMOVE THIS OUTPUT, Debugging/Testing only: ");
+		//System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		if (plugin == null)		System.out.println("js ch.elexis.views/TextContainer.java open(): WARNING: plugin() == null ");
 		else	{
 				System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: plugin() = " + plugin.toString());
 				System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: plugin().getClass().toString() = " + plugin.getClass().toString());
 				System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: plugin().getClass().getName() = " + plugin.getClass().getName());
-				System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: ");
-				System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: getPlugin() = " + getPlugin().toString());
-				System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: getPlugin().getClass().toString() = " + getPlugin().getClass().toString());
-				System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: getPlugin().getClass().getName() = " + getPlugin().getClass().getName());
+				//System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: ");
+				//System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: getPlugin() = " + getPlugin().toString());
+				//System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: getPlugin().getClass().toString() = " + getPlugin().getClass().toString());
+				//System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: getPlugin().getClass().getName() = " + getPlugin().getClass().getName());
 				}
-		System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		//System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		
-		System.out.println("js ch.elexis.views/TextContainer.java open(): about to return plugin.loadFromByteArray(arr, false) and end...");
+		System.out.println("js ch.elexis.views/TextContainer.java open(): about to return plugin.loadFromByteArray(arr, false) [this is boolean] and end...");
 		return plugin.loadFromByteArray(arr, false);
 	}
 	

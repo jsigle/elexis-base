@@ -140,7 +140,7 @@ public class Brief extends PersistentObject {
 	
 	/** Speichern in Binärformat */
 	public boolean save(byte[] in, String mimetype){
-		System.out.println("js: Brief.java: save(byte[] in, String mimetype): begin");
+ 		System.out.println("js: Brief.java: save(byte[] in, String mimetype): begin");
 		if (in != null) {
 			System.out.println("js: Brief.java: save(byte[] in, String mimetype): in != null -> about to perform saving...");
 			// if(mimetype.equalsIgnoreCase(MIMETYPE_OO2)){

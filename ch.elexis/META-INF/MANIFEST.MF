@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name.0
 Bundle-SymbolicName: ch.elexis; singleton:=true
-Bundle-Version: 2.1.7.dev-qualifier-js-20131010
+Bundle-Version: 2.1.7.dev-qualifier-js-20131011
 Bundle-Activator: ch.elexis.Hub
 Bundle-Vendor: %Bundle-Vendor.0
 Bundle-Localization: plugin
