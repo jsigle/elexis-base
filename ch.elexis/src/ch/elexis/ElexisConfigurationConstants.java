@@ -46,12 +46,14 @@ public class ElexisConfigurationConstants {
 	public static String rezeptausgabe = RezeptBlatt.ID;
 	
 	public static boolean init(){
+		System.out.println("ElexisConfigurationConstants.java: init: begin");
 		InputStream istream =
 			ElexisConfigurationConstants.class.getClassLoader().getResourceAsStream(
 				CONFIG_FILE_NAME);
 		if (istream != null) {
 			properties = new Properties();
 			try {
+				System.out.println("ElexisConfigurationConstants.java: init: about to load properties from extConfigFile...");
 				properties.load(istream);
 				istream.close();
 				extConfigFile = true;
@@ -61,9 +63,11 @@ public class ElexisConfigurationConstants {
 				
 			} catch (IOException e) {
 				extConfigFile = false;
+				System.out.println("ElexisConfigurationConstants.java: init: caught exception - about to return extConfigFile="+extConfigFile);
 				return extConfigFile;
 			}
 		}
+		System.out.println("ElexisConfigurationConstants.java: init: end - about to return extConfigFile="+extConfigFile);
 		return extConfigFile;
 	}
 	
