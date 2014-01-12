@@ -1,11 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich, Daniel Lutz and Elexis
+ * Copyright (c) 2006-2009, G. Weirich, Daniel Lutz and Elexis; Portions (c) 2013 Joerg M. Sigle www.jsigle.com
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
+ *    Jörg M. Sigle - support disconnecting/unloading of OpenOffice after use if appropriate - also see calling code in PatientDetail
  *    Daniel Lutz - initial implementation based on RnPrintView
  *
  *******************************************************************************/
@@ -76,6 +77,14 @@ public class KGPrintView extends ViewPart {
 	@Override
 	public void dispose(){
 		clearItems();
+		
+		//20131027js: Die text.getPlugin().dispose(); eingefügt, auf Verdacht - analog wie bei TextView, RezeptBlatt, BestellBlatt, AUFZeugnis.
+		//andernfalls würde beim Schliessen der KGPrintView.java View weder soffice.bin per xDesktop.terminate entladen, noch soffice.exe per oooServer.xkill,
+		//also vermutlich auch kein noas.remove; noas.isEmpty() -> bootStrapConnector.disconnect() erfolgen.
+		//TODO: Die vor .dispose() geprüften Bedingungen homogenisieren zwischen allen ähnlich gebauten Modulen.
+		System.out.println("js ch.elexis.views/KGPrintView.java dispose(): about to txt.getPlugin().dispose()");
+		if (text != null && text.getPlugin() != null) text.getPlugin().dispose();		
+		
 		super.dispose();
 	}
 	
@@ -101,7 +110,7 @@ public class KGPrintView extends ViewPart {
 	}
 	
 	/**
-	 * Drukt die KG-Huelle anhand der Vorlage "KG"
+	 * Druckt die KG-Huelle anhand der Vorlage "KG" (oder eher "KG-Deckblatt"?!) //20131028js
 	 * 
 	 * @param pat
 	 *            der Patient

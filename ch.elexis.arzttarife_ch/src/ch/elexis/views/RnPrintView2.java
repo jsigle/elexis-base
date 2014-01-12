@@ -1,11 +1,55 @@
 /*******************************************************************************
- * Copyright (c) 2006-2010, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis; Portions (c) 2013 Joerg M. Sigle www.jsigle.com
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
+ * 	  J. Sigle   - added some closeTextContainer() openTextContainer() functionality
+ * 			       to get this usable at least with the current Elexis-20131029js/NOAText_jsl 1.4.17 version,
+ * 				   so far that printouts are produced and at least the first document assembly can be watched
+ *                 in a window. The remainders are currently generated and printed, but can't be watched.
+ *                 
+ *                 TODO: TOREVIEW: TOIMPROVE:
+ *                 
+ *                 In contrast to other TextContainer clients, RechnungsDrucker.java/RnPrintView2.java
+ *                 has the peculiarity that one call from RechnungsDrucker.java to RnPrintView2.doPrint()
+ *                 produces not only ONE editable or printable document, but 1..n. Namely, the cover page
+ *                 of the invoice/reminder with ESR slip: based upon templates Tarmedrechnung_EZ, Tarmedrechnung_M1 etc.
+ *                 the first page of the Tarmed Rückforderungsbeleg: based upon Tarmedrechnung_S1
+ *                 additional pages of the Tarmed Rückforderungsbeleg: based upon Tarmedrechnung_S2
+ *                 
+ *                 Each product can be optional, and all of them use the same data,
+ *                 so at least *for now*, I would NOT want to split the production into doPrintEZMn(),doPrintS1(),doPrintS2()
+ *                 which would be a cleaner solution, because then, RechnungsDrucker could use a call to
+ *                 closePreExistingViewToEnsureOfficeCanHandleNewContentProperly() between the documents.
+ *                 
+ *                 So in between these documents, I need to do some careful partial closing of stuff,
+ *                 so that the next document can be created using some of the loade plugin ressources
+ *                 from the previous one. A side effect is, that the follow up documents of the same pass
+ *                 cannot be watched during creation any more - this was different in Elexis-20130605js,
+ *                 but the capability was lost when improving OO/NOA/createMe(),removeMe(),noas.isEmpty()
+ *                 based usage tracking and connection handling.
+ *                 
+ *                 TODO: The best options would be:
+ *                 
+ *                 Either: To understand NOA/OO further, and maybe overcome the
+ *                 limitations of OO re opening one doc while another is still open -> bridge lost; then
+ *                 no more need to close stuff far down between documents.
+ *                 
+ *                 OR: To split multipart doc generation doPrint into three sections, maybe plus one
+ *                 preceeding one generating the required data stuff in advance for all three,
+ *                 if just-in-time-generation is not feasible.
+ *                 
+ *                 TODO: Printjob names are created using current patient because content creation
+ *                 involves usage of temp files in OO/LO whose names are created based upon current
+ *                 patient when Einstellungen so set (originally a NOAText_jsl feature to simplify
+ *                 file attachments to e-mail etc.).
+ *                 
+ *                 TODO: Even Rechnungsliste etc. get such temp filenames..
+ *                 
+ *                  
  *    G. Weirich - initial implementation
  * 
  *******************************************************************************/
@@ -21,6 +65,9 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -31,6 +78,7 @@ import ch.elexis.StringConstants;
 import ch.elexis.TarmedRechnung.TarmedACL;
 import ch.elexis.TarmedRechnung.XMLExporter;
 import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.actions.GlobalEventDispatcher;
 import ch.elexis.arzttarife_schweiz.Messages;
 import ch.elexis.banking.ESR;
 import ch.elexis.data.Brief;
@@ -80,39 +128,78 @@ public class RnPrintView2 extends ViewPart {
 	private String paymentMode;
 	private Brief actBrief;
 	TextContainer text;
+	private Composite textContainerParent=null;
+	private Composite textContainerComposite=null;
 	TarmedACL ta = TarmedACL.getInstance();
 	
-	public RnPrintView2(){
-		
+	public RnPrintView2(){	
 	}
 	
-	@Override
-	public void createPartControl(final Composite parent){
-		text = new TextContainer(getViewSite());
-		text.getPlugin().createContainer(parent, new ITextPlugin.ICallback() {
-			
+	//20131028js: Das hier ausgelagert aus createPartControl, damit ich es von mehreren Stellen aufrufen kann:
+	private void openTextContainer() {
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java: openTextContainer(): begin");
+		
+		if (text==null) text =  new TextContainer (getViewSite());
+		
+		textContainerComposite = text.getPlugin().createContainer(textContainerParent, new ITextPlugin.ICallback() {		
 			public void save(){
-				// TODO Auto-generated method stub
-				
+				// TODO Auto-generated method stub		
 			}
 			
 			public boolean saveAs(){
 				// TODO Auto-generated method stub
 				return false;
 			}
-		});
+		});		
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java: openTextContainer(): end");
+	}
+	
+	//20131028js: Und hier nun das Gegenstück zum kontrollierten SCHLIESSEN des TextContainer-Teils mit allem Zubehör:
+	private void closeTextContainer() {
+	  System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java: closeTextContainer(): begin");
+	  
+	  if (text != null && text.getPlugin() != null) {
+		  if (!textContainerComposite.isDisposed()) {  textContainerComposite.dispose(); }
+		  textContainerComposite=null;
+		  //text.dispose();
+		  //text.getPlugin().clear();
+		  
+	  }
+	  System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java: dispose(): end");
+	}
+	
+	@Override
+	public void createPartControl(final Composite parent){
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java createPartControl(): begin");
+		//openTextContainer(parent);
+		//We don't do it here any more, but rather in createBrief() below, if possible - because we need that twice,
+		//and *nothing* in between, so creation of both produced output Briefe will start from a plain environment.
+		textContainerParent=parent;		//20131028js: Save this info; we will need it in openTextContainer twice...
+		//20131026js: Open the TextContainer for the document created from the first template...
+		openTextContainer();		
+
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java createPartControl(): end");
 	}
 	
 	private void createBrief(final String template, final Kontakt adressat){
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java createBrief(): begin");
+		
+		//if (text == null) openTextContainer();
+		if (textContainerComposite==null) openTextContainer();
+		
 		actBrief =
 			text.createFromTemplateName(null, template, Brief.RECHNUNG, adressat,
 				Messages.RnPrintView_tarmedBill);
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java createBrief(): end");
 	}
 	
 	private boolean deleteBrief(){
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java deleteBrief(): begin");
 		if (actBrief != null) {
+			System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java deleteBrief(): about to return actBrief.delete()");
 			return actBrief.delete();
 		}
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java deleteBrief(): about to return true");
 		return true;
 	}
 	
@@ -127,39 +214,91 @@ public class RnPrintView2 extends ViewPart {
 	 * und die unterhalb von 170 mm leer ist. (Papier mit EZ-Schein wird erwartet) Zweite und
 	 * Folgeseiten müssen gem Tarmedrechnung formatiert sein.
 	 * 
+	 * Darin gibt's eine Menge möglichkeiten für early return false (Fehler)
+	 * oder early return true (Rückforderungsbeleg soll nicht gedruckt werden).
+	 * Also bitte innendrin NICHTS öffnen, was am Ende auch wieder geschlossen werden muss -
+	 * oder entsprechend aufmerksam die Schliessungen an diversen Stellen vorsehen.
+	 * 
 	 * @param rn
 	 *            die Rechnung
 	 * @param saveFile
 	 *            Filename für eine XML-Kopie der Rechnung oder null: Keine Kopie
 	 * @param withForms
 	 * @param monitor
+	 * 			  A progress monitor provided by the caller; or null if none has been provided - comment and null option added 20131030js
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public boolean doPrint(final Rechnung rn, final IRnOutputter.TYPE rnType,
 		final String saveFile, final boolean withESR, final boolean withForms,
 		final boolean doVerify, final IProgressMonitor monitor){
+
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): begin");
+
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): ********************************************************************************************************************");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): PLEASE NOTE: If one or two printouts don't appear as expected,");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): PLEASE NOTE: OO/LO might have loaded another default printer with one or two document templates.");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): PLEASE NOTE: Even if you DON'T see a created/processed document in the window, it may still be produced and printed.");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): PLEASE NOTE: To fix this problem: ");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): PLEASE NOTE: Open the template in OO Writer while options;load/save;'load default printer from document = off'");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): PLEASE NOTE: Re-Save the template again into the Elexis Systemvorlagen collection.");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): PLEASE NOTE: BE SURE YOU HAVE A BACKUP, the current work in progress version as of Elexis-20131029js can easily");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): PLEASE NOTE: lose templates while storing them into Elexis; without producing any error message on the way - TODO/js");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): ********************************************************************************************************************");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): PLEASE NOTE: TODO: TO REVIEW: 20131029js: TODO: TO REVIEW: 20131029js: TODO: TO REVIEW: 20131029js:  TODO: TO REVIEW");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): PLEASE NOTE: Underlying is the problem with Elexis above 20130627js (or so) that NOA may load a document into");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): PLEASE NOTE: a Composite, Panel, Whatever that may NOT become visible in front of the containing frame.");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): PLEASE NOTE: but still see no error and also be able to work with it. That's why I (mostly for editing-viewParts,");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): PLEASE NOTE: rather not for print-only-dialogs) try to quite completely close/dispose of the container,");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): PLEASE NOTE: to trigger a completely new buildup of the NOA constructs, to ensure that following documents");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): PLEASE NOTE: are processed correctly, and can be seen/edited by the user. This is NOT possible in RnPrintView2,");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): PLEASE NOTE: because we create/control/populate/manipulate ViewParts and from the same module where we use it,");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): PLEASE NOTE: and still all this in a ViewPart, so there's no proper separation like RezepteView/RezepteBlatt");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): PLEASE NOTE: or xyz/GeneralPrintoutView which made the provision of text.getPlugin().dispose OUTSIDE the code");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): PLEASE NOTE: also interrupted as a consequence of that disposal possible.");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): PLEASE NOTE: In RnPrintView2, I need to use a less intensive approach, that will ensure that the following portions");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): PLEASE NOTE: can actually be processed (via text.dispose; text.getPlugin().dispose; text=... (reOpen) in between.");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): PLEASE NOTE: OTHERWISE, you would get intense 'find-and-replace: missing doc msgs ");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): ********************************************************************************************************************");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): PLEASE NOTE: It's not so much a problem in RnPrintView2, as users don't intend to check or edit the generated doc.");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): PLEASE NOTE: Main drawback is that you can't visually see your invoice pages beyond the first one being assembled.");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): ********************************************************************************************************************");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): PLEASE NOTE: To ensure the first assembled doc is visible at least, ensure that openTextContainer() is called from");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): PLEASE NOTE: createPartControl() already. If I don't err, later - especially anywhere in doPrint() - is TOO LATE.");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): PLEASE NOTE: TODO: REVIEW: WHY? (Printing will still work, but visibility not even for the first one.)");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): PLEASE NOTE: TODO: REVIEW: WHY? If we'd get this fixed, we might also know why almost-complete-close[x]equivalents");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): PLEASE NOTE: TODO: REVIEW: WHY? in between documents are needed for other clients of TextContainer. 20131029js");
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): ********************************************************************************************************************");
+				
 		Mandant mSave = Hub.actMandant;
-		monitor.subTask(rn.getLabel());
+		if (monitor!=null) monitor.subTask(rn.getLabel());			//20131030js: explicit null support added
 		Fall fall = rn.getFall();
 		Mandant mnd = rn.getMandant();
 		if (fall == null || mnd == null) {
+			System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): fall == null || mnd == null -> early return false");
+			closeTextContainer();	//20131029js
 			return false;
 		}
 		Patient pat = fall.getPatient();
 		Hub.setMandant(mnd);
 		Rechnungssteller rs = mnd.getRechnungssteller();
 		if (pat == null || rs == null) {
+			System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): pat == null || rs == null -> early return false");
+			closeTextContainer();	//20131029js
 			return false;
 		}
 		
 		String printer = null;
+		
 		XMLExporter xmlex = new XMLExporter();
 		DecimalFormat df = new DecimalFormat(StringConstants.DOUBLE_ZERO);
 		Document xmlRn = xmlex.doExport(rn, saveFile, rnType, doVerify);
 		if (rn.getStatus() == RnStatus.FEHLERHAFT) {
+			System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): rn.getStatus() == RnStatus.FEHLERHAFT -> early return false");
+			closeTextContainer();	//20131029js
 			return false;
 		}
+		
 		Element invoice =
 			xmlRn.getRootElement().getChild(XMLExporter.ELEMENT_INVOICE, XMLExporter.ns);
 		Element balance = invoice.getChild(XMLExporter.ELEMENT_BALANCE, XMLExporter.ns);
@@ -176,6 +315,8 @@ public class RnPrintView2 extends ViewPart {
 		} else if (paymentMode.equals(XMLExporter.TIERS_PAYANT)) {
 			tcCode = "01";
 		}
+		
+	
 		ElexisEventDispatcher.fireSelectionEvents(rn, fall, pat, rs);
 		
 		// make sure the Textplugin can replace all fields
@@ -215,7 +356,12 @@ public class RnPrintView2 extends ViewPart {
 		Money mEZDue = new Money(mDue); // XMLTool.xmlDoubleToMoney(balance.getAttributeValue("amount_obligations"));
 		Money mEZBrutto = new Money(mDue);
 		mEZDue.addMoney(mPaid);
+		
+		//----Teil 1: Tarmedrechnung_EZ / Tarmedrechnung_M1..M3---------------------------------------
+		
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): withESR == "+withESR);
 		if (withESR == true) {
+			
 			String tmpl = "Tarmedrechnung_EZ"; //$NON-NLS-1$
 			if ((rn.getStatus() == RnStatus.MAHNUNG_1)
 				|| (rn.getStatus() == RnStatus.MAHNUNG_1_GEDRUCKT)) {
@@ -227,6 +373,9 @@ public class RnPrintView2 extends ViewPart {
 				|| (rn.getStatus() == RnStatus.MAHNUNG_3_GEDRUCKT)) {
 				tmpl = "Tarmedrechnung_M3"; //$NON-NLS-1$
 			}
+
+			System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): Erzeuge Brief aus Vorlage "+tmpl);
+
 			createBrief(tmpl, adressat);
 			
 			List<Zahlung> extra = rn.getZahlungen();
@@ -275,8 +424,11 @@ public class RnPrintView2 extends ViewPart {
 				deleteBrief();
 				;
 				Hub.setMandant(mSave);
+				System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): esr.printBESR(...) == false -> early return false");
+				closeTextContainer();	//20131029js
 				return false;
 			}
+			
 			printer = Hub.localCfg.get("Drucker/A4ESR/Name", null); //$NON-NLS-1$
 			String esrTray = Hub.localCfg.get("Drucker/A4ESR/Schacht", null); //$NON-NLS-1$
 			if (StringTool.isNothing(esrTray)) {
@@ -297,23 +449,50 @@ public class RnPrintView2 extends ViewPart {
 				deleteBrief();
 				;
 				Hub.setMandant(mSave);
+				System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): text.getPlugin().print(printer,esrTray,false) == false -> Rechnung.REJECTED: Druckerfehler-> early return false");
+				closeTextContainer();	//20131029js
 				return false;
 			}
 			
-			monitor.worked(2);
+			if (monitor!=null) monitor.worked(2);
+
+			//20131026js: Close the TextContainer for the document created from the first template... 
+			closeTextContainer();	//20131029js
 		}
+		
 		if (withForms == false) {
 			// avoid dead letters
 			deleteBrief();
 			;
 			Hub.setMandant(mSave);
+			System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): withForms == false -> early return true");
+		
+			//20131029js: NO closeTextContainer here, because: (see below)
+			//EITHER we have just finished and printed the first document, so we would need closeTextContainer(), but that has been included in if withESR...
+			//OR we have NOT generated any document so far, so the open textContainer can very well be used by the following Tarmedrechnung,
+			//   which will only appear in an actually watchable window, if we don't use closeTextContainer();openTextcontainer() after
+			//   the initial openTextContainer() which appeared as part of createPart... - Why, I don't really know yet, but I observed it that way. js
+			//TODO: TO REVIEW: research for the reasons why, maybe make it better. Especially, in Elexis-20130605js, any doc would still appear,
+			//TODO: TO REVIEW: but we added some code to rather ensure that OO/LO connections were disconnected, oo/lo servers unloaded,
+			//TODO: TO REVIEW: where appropriate, by correct usage of NOAText: createMe() removeMe() noas; noas.isEmpty etc. 20131029js
 			return true;
 		}
+
+		//20131029js: NO closeTextContainer here either - similar reason as above.
+
+		//----Teil 2: Tarmedrechnung_S1---------------------------------------------------------------
+
 		printer = Hub.localCfg.get("Drucker/A4/Name", null); //$NON-NLS-1$
 		String tarmedTray = Hub.localCfg.get("Drucker/A4/Schacht", null); //$NON-NLS-1$
 		if (StringTool.isNothing(tarmedTray)) {
 			tarmedTray = null;
 		}
+		
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): Erzeuge Brief aus Vorlage Tarmedrechnung_S1");
+
+		//20131029js: NO OpenTextContainer() here. Reasons see above, PLUS createBrief() contains an if text == null -> openTextContainer or similar.
+		//So we can put closeContainer() wherever we think it's appropriate, just not where it should be avoided for good reason
+		//(i.e. AFTER createPart and BEFORE first document is assembled, whichever that will be), and still be sure we have one when it's needed. 
 		createBrief("Tarmedrechnung_S1", adressat);
 		
 		StringBuilder sb = new StringBuilder();
@@ -372,6 +551,7 @@ public class RnPrintView2 extends ViewPart {
 				}
 			}
 		}
+		
 		String[] eanArray = getEANArray(eanUniqueSet);
 		HashMap<String, String> eanMap = getEANHashMap(eanArray);
 		text.replace("\\[F98\\]", getEANList(eanArray));
@@ -396,6 +576,7 @@ public class RnPrintView2 extends ViewPart {
 				}
 			});
 		}
+		
 		replaceHeaderFields(text, rn);
 		text.replace("\\[F.+\\]", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		Object cursor = text.getPlugin().insertText("[Rechnungszeilen]", "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
@@ -407,7 +588,9 @@ public class RnPrintView2 extends ViewPart {
 		double sumTotal = 0.0;
 		ITextPlugin tp = text.getPlugin();
 		cmAvail = cmFirstPage;
-		monitor.worked(2);
+		
+		if (monitor!=null) monitor.worked(2);
+		
 		for (Element s : ls) {
 			tp.setFont("Helvetica", SWT.BOLD, 7); //$NON-NLS-1$
 			cursor = tp.insertText(cursor, "\t" + s.getText() + "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
@@ -477,6 +660,8 @@ public class RnPrintView2 extends ViewPart {
 				;
 				log.log("Fehlerhaftes Format für amount bei " + sb.toString(), Log.ERRORS);
 				Hub.setMandant(mSave);
+				System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): CAUGHT NumberFormatException -> early return false");
+				closeTextContainer();	//20131029js
 				return false;
 			}
 			sumTotal += dLine;
@@ -511,16 +696,20 @@ public class RnPrintView2 extends ViewPart {
 					deleteBrief();
 					;
 					Hub.setMandant(mSave);
+					System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): text.getPlugin().print(printer,tarmedTray,false) 1 == false - Druckerfehler -> early return false");
+					closeTextContainer();	//20131029js
 					return false;
 				}
 				
 				insertPage(++page, adressat, rn);
 				cursor = text.getPlugin().insertText("[Rechnungszeilen]", "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
 				cmAvail = cmMiddlePage;
-				monitor.worked(2);
+				
+				if (monitor!=null) monitor.worked(2);
 			}
 			
 		}
+		
 		cursor = tp.insertText(cursor, "\n", SWT.LEFT); //$NON-NLS-1$
 		if (cmAvail < cmFooter) {
 			if (tcCode != null) {
@@ -531,12 +720,16 @@ public class RnPrintView2 extends ViewPart {
 				deleteBrief();
 				;
 				Hub.setMandant(mSave);
+				System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): text.getPlugin().print(printer,tarmedTray,false) 2 == false - Druckerfehler -> early return false");
+				closeTextContainer();	//20131029js
 				return false;
 			}
 			insertPage(++page, adressat, rn);
 			cursor = text.getPlugin().insertText("[Rechnungszeilen]", "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
-			monitor.worked(2);
+			
+			if (monitor!=null) monitor.worked(2);
 		}
+		
 		StringBuilder footer = new StringBuilder(100);
 		//Element balance=invoice.getChild("balance",ns); //$NON-NLS-1$
 		
@@ -644,18 +837,29 @@ public class RnPrintView2 extends ViewPart {
 			deleteBrief();
 			;
 			Hub.setMandant(mSave);
+			System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): text.getPlugin().print(printer,tarmedTray,false) 3 == false - Druckerfehler -> early return false");
+			closeTextContainer();	//20131029js
 			return false;
 		}
-		monitor.worked(2);
+		
+		//20131026js: Close the TextContainer for the document created from the second template... 
+		//closeTextContainer();
+		
+		if (monitor!=null) monitor.worked(2);
+
 		// avoid dead letters
 		deleteBrief();
 		;
 		Hub.setMandant(mSave);
 		try {
 			Thread.sleep(5);
+			//Thread.sleep(1);	//js tried this... may be too small to achieve anything.
 		} catch (InterruptedException e) {
 			// never mind
 		}
+
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java doPrint(): about to return true");
+		closeTextContainer();	//20131029js
 		return true;
 	}
 	
@@ -683,9 +887,18 @@ public class RnPrintView2 extends ViewPart {
 	}
 	
 	private void insertPage(final int page, final Kontakt adressat, final Rechnung rn){
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java insertPage(): begin");
+
+		//20131026js: Close the TextContainer for the previous document... 
+		closeTextContainer();
+		//The new one will be opened automatically  in createBrief()
+
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java insertPage(): about to createBrief(\"Tarmedrechnung_S2\", adressat");
+
 		createBrief("Tarmedrechnung_S2", adressat);
 		replaceHeaderFields(text, rn);
 		text.replace("\\[Seite\\]", StringTool.pad(StringTool.LEFT, '0', Integer.toString(page), 2)); //$NON-NLS-1$
+		System.out.println("js ch.elexis.arzttarife_ch/ch.elexis.views/RnPrintView2.java insertPage(): end");
 	}
 	
 	/*

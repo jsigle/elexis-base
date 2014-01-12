@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2010, G. Weirich and Elexis; Portions (c) 2013 Joerg Sigle www.jsigle.com
+ * Copyright (c) 2006-2010, G. Weirich and Elexis; Portions (c) 2013 Joerg M. Sigle www.jsigle.com
  * All rights reserved.
  *
  * Contributors:
@@ -7,6 +7,10 @@
  *    G. Weirich - initial implementation
  *    
  *******************************************************************************/
+
+/**
+ * TODO: 20131027js: I noticed that before - but: Please review naming conventions: Briefauswahl.java (document selection/controller dialog) and TextView.java (document display/editor), vs. RezepteView.java (selection/controller) and RezeptBlatt.java (display/editor), etc. for Bestellung, AUFZeugnis and maybe more similar combinations. This inconsistency is highly confusing if you want to do updates throughout all external document processing plugins/classes/etc. 
+ */
 
 package ch.elexis.views;
 
@@ -86,6 +90,10 @@ public class TextView extends ViewPart implements IActivationListener {
 	//der Zugriff auf actBrief aber auch nicht besser als auf das dort ebenfalls erreichbare doc ist;
 	//weil ja hier actBrief auf doc gesetzt wird. Also lasse ich es mal private.
 	private Brief actBrief;
+	//20131028js:
+	//Weil actBrief dann auch null ist, mach ich eine extra-Variable genau für den Fall eines in TextView schon erstellten, leeren Dokuments.
+	//Siehe unten wo's abgefragt wird für den Zweck der Übung.
+	private boolean NewDocumentCreated = false;
 		
 	private Log log = Log.get("TextView"); //$NON-NLS-1$
 	private IAction briefLadenAction, loadTemplateAction, loadSysTemplateAction,
@@ -351,10 +359,13 @@ public class TextView extends ViewPart implements IActivationListener {
 
 		System.out.println("js ch.elexis.views/TextView.java dispose(): about to GlobalEventDispatcher.removeActivationListener()...");
 		GlobalEventDispatcher.removeActivationListener(this, this);
+		
+		//TODO: 20131028js: Schauen, ob wir überall actBrief=null reinschreiben wollen, ob das redundant ist, auch beim Initialisieren/Deklaration der Variable etc.
 		System.out.println("js ch.elexis.views/TextView.java dispose(): about to actBrief = null; super.dispose()...");
 		actBrief = null;
 		
 		//20131010js: super zeigt nach org.eclipse.ui.part.ViewPart.java/class. Also wohl NICHT nach NOAText!
+		//Vielleicht eher auf die enthaltende Composite? View = Tab Briefe? 
 		super.dispose();
 
 		System.out.println("js ch.elexis.views/TextView.java dispose(): end\n");
@@ -642,6 +653,20 @@ public class TextView extends ViewPart implements IActivationListener {
 		//Würde ich es hier stehen lassen, müsste ich erst wieder von hier aus durch den ganzen activate Krimskrams durch,
 		//und erstens müsste ich schauen, wie man das von hier aus aufruft, zweitens wäre das Ergebnis dann vielleicht mal wieder unterschiedlich...
 		//
+		//In der Tat braucht es auch hier etwas ähnliches an manchen Stellen - und zwar in TextView. Weil TextView ein eigenes ViewMenu hat,
+		//von wo actions das NeuErstellen, Öffnen, etc. von Vorlagen, Dokumenten, etc. ermöglichen. Dafür kann ich dann NICHT aus BriefAuswahl heraus
+		//erst die schon vorhandene TextView schliessen. Sondern muss es eben hier in TextView selbst erledigen.
+		//
+		//Ich lasse die Aufgabe ansonsten trotzdem bevorzugt bei BriefAuswahl, weil ich NACH diesem Schliessen
+		//möglicherweise auch das in BriefAuswahl bereits erfolgte tv...ShowView() nochmals nachträglich anfordern müsste.
+		//Da will ich HEUTE nicht durchdenken / schauen / was genau nötig ist. So rüste ich NUR ein TextView-Internes hideView() nach
+		//für die Abläufe, die aus dem ViewMenü von TextView vollkommen innerhalb von TextView erfolgen.
+		//OH, da fällt mir auf: WENN ICH INNERHALB VON TEXTVIEW das TextView Fenster schliesse - endet auch das Objekt, und somit wird die Menüfunktion NIE ausgeführt.
+		//ALSO Frage (und da sind wir wieder auf Anfang): WAS MUSS ICH SCHLIESSEN, weniger als TextViewViewPart, damit Office das nächste Dokument irgendwo gut unterbringen kann, und nicht nur weissen Bildschirm zeigt?
+		//TESTCASE: Im TextView=Briefe View: ViewMenü: NeuesDokument, danach: ViewMenü: VorlageLaden, irgendeine auswählen.
+		//
+		//TODO: 20131027js: hideView() aus Briefauwahl.java und TextView.java vermutlich IN TextView.java vereinheitlichen, das ganze auf Bestellung, Rezept, AUF etc. pp übertragen... das wird dann einiges an Arbeit.
+		//
 		//getViewSite().getPage().hideView(TextView.this);
 		//********************************************************************************************************3
 		
@@ -665,6 +690,48 @@ public class TextView extends ViewPart implements IActivationListener {
 		return vorigerBrief;
 	}
 	
+	/**
+	 * 20131028js:
+	 * Temporary Workaround: Hier fangen wir Versuche ab, via TexteView ViewMenü Actions ein Dokument in ein schonmal benutztes Fenster zu laden.
+	 * Problem ist, dass ich das Fenster vorher nicht in einen stabilen brauchbaren Zusatnd zurückversetzen kann,
+	 * wie ich es derzeit vor Actions tun kann, die aus Briefauswahl aufgerufen werden. Siehe weitere Infos in openDocument() weiter unten. 
+	 * 
+	 * @return false, wenn eine unerlaubte Operation begonnen wurde, true, wenn alles ok ist = das Zielfenster noch leer, und es weitergehen darf..
+	 */
+	//zwar etwas roh, aber hoffentlich stabilitätsfördernd - anderenfalls würde der Ladeversuch eh nicht nutzbar ankommen mit NOAText_jsl
+	//in der aktuellen Fassung.
+	private boolean isThisAnUnsupportedAttemptToReUseAnAlreadyPopulatedViewFromInsideTextView() {
+		if (NewDocumentCreated 
+			|| 
+			(
+			textContainer != null
+			&& !textContainer.isDisposed()
+			&& txt != null && txt.getPlugin() != null
+			//das nachfolende ist für vorangegangenes "Neues Document" NICHT erfüllt, trotzdem sollte unterbrochen werden.  
+			&&  ( txt.getPlugin().getBriefServicedByThis() != null	//Das sollte nach vorangegangenem BriefAuswahl.java closePre... schon == null sein
+				//Stattdessen nach entsprechender Initialisierung mit actBrief = null als Default:
+				//HMPF. Das ändert sich für nur ein "neues Dokument" dann aber nicht, sondern wird dort auch gerade auf null gesetzt!
+			    || actBrief != null )
+			//OK: Wenn gar kein Text geladen ist, gibt's keinen Cursor. Hoffe ich.
+			//&& textContainer.getCursor() != null
+			//NEIN, das geht auch nicht. Also mach ich eine neue Variable und setze die, wenn die View mit NewDocumentCreate benutzt wurde.
+			//Könnte auch eine nehmen, die bei allen entsprechendne Aktionen gesetzt wird, aber actBrief != null sollte es sonst abdecken. 
+			)
+		) {
+			//TODO: 20131028js: französische Fehlermeldung, ODER die Menüpunkte nach Briefauswahl verschieben, ODER sie wenigstens dorthin kopieren. Dort dann volle stabile Unterstützung machen.
+			SWTHelper
+			.showError(
+					Messages.getString("TextView.couldNotReUseTextViewFromInsideTextView"),
+					Messages.getString("TextView.couldNotReUseTextViewFromInsideTextView")); //$NON-NLS-1$ //$NON-NLS-2$
+
+			//Hier könnten wir das Fenster dann auch gleich schliessen,
+			//aber das wäre vielleicht etwas zu brutal. Vielleicht entscheidet sich userin ja doch noch um und will mit dem Inhalt etwas anderes anfangen.
+			//Ausserdem würde das den Programmablauf in diesem Modul mitsamt dem laufenden Objekt gleich beenden. 
+			//getViewSite().getPage().hideView(TextView.this);
+			return true;
+		} else {return false;}
+	}
+
 	
     public boolean openDocument(Brief doc){
 		//20130421js: Added more monitoring code to see what's happening...
@@ -681,8 +748,7 @@ public class TextView extends ViewPart implements IActivationListener {
 		//In that case, we just exit early, and thereby should have the system in the same state - or close to the state -
 		//in which it would be after selecting close [x] in the document Window. And that should be a state from where on
 		//the next issued dblclick on a document in Briefauswahl should successfully work...
-		
-		
+				
 		//NUR ZUM DEBUGGEN/wEG FÜR'S vIEW sCHLIESSEN FINDEN: damit es nach einem ggf. erfolgten Versuch,
 		//in unserviceCurrentlyServicedDocument eine View mit Inhalt zu schliessen,
 		//nicht gleich weitergeht mit dem Laden:
@@ -690,8 +756,73 @@ public class TextView extends ViewPart implements IActivationListener {
 
 		//Für den Echtbetrieb statdessen erst mal einfacher (und möglicherweise obsolet, wenn sichergestellt wurde,
 		//das vor einem Öffnen eines neuen Dokuments weiter oben auch ein Schliessen der kompletten View erfolgt ist:
-		unserviceCurrentlyServicedDocument();
+		unserviceCurrentlyServicedDocument();			
 		
+/*-----------------------------------------------------------------------------------------------------
+ *  TODO 20131028js:
+ *  Das nachfolgende war ein Versuch, auch für aus dem ViewMenü von TextView=Briefe aufgerufenes Laden/Create etc.
+ *  eine definierte gute Ausgangssituation mit Stabilität zu erreichen. Ging aber nicht. Muss ggf. die Befehle "nach oben" in Briefauswahl.java verlagern. 
+ *  WENN ich es hier schaffen würde, das Äquivalent der Nebenwirkungen von hideView() wie in Briefauswahl zu bekommen,
+ *  DANN könnte ich diese Nebenwirkungen *immer* von hier aus (bzw. bei create...)  anordnen, und auf closePre... in Briefauswahl verzichten.
+ *  Korrespondierend für die anderen: Rezept, AUF, Bestellung,... etc. 
+ * 		
+ * NB: Wenn das wieder aktiviert würde: ggf. unservice weiter oben wieder raus, wirdhier gedoppelt.
+ *
+		//201310280040js: Das hier auch noch eingefügt, da ich bei einer action (Neues Dokument, Dokument/Vorlage laden/erstellen,
+		//aufgrund von ViewMenu innerhalb von TextView.java) das zuvorige Closen der View, um mit dem Textplugin in einen sauberen Zustand zu kommen,
+		//nicht bringen kann.  Sonst ist ja die action abgebrochen. Also muss ich mich hier immer noch drum kümmern, dass ein ggf.
+		//offenes Dokument gespeichert, geschlossen, und auch die Verbindung zum Office oder das geladene Textplugin disconnected/entladen wird,
+		//sofern das adäquat wäre.
+		//Mit den ganzen Bedingungen hier am Anfang sollte dieses extra unload/rebuild für den TextView Nettoinhalt=Payload
+		//an dieser Stelle nur dann erfolgen, wenn nicht schon BriefAuswahl zuvor so etwas ausgelöst hat, woraufhin dann nämlich
+		//MINDESTENS getBriefServicedByThis == null sein sollte.
+		//Insofern sollte also dieses extra unload/rebuild nun einmal nur für reloads/recreates aufgrund von TextView-ViewMenu-Actions erfolgen.
+		//TODO: Möglicherweise kann man damit dann auch die Methode und deren Aufrufe für closePreExisting... in BriefAuswahl.java ganz entfernen,
+		//TODO: falls das hier dann wirklich äquivalent ist. Nur ist es nicht so lang getestet, und nicht so ganz sicher das selbe. Mal nachprüfen.
+		if (textContainer != null
+			&& !textContainer.isDisposed()
+			&& txt != null && txt.getPlugin() != null
+			&& txt.getPlugin().getBriefServicedByThis() != null		//Das sollte nach vorangegangenem unserviceCurrentlyServicedDocument schon == null sein...
+			) {
+
+			//NUR ZUM DEBUGGEN/wEG FÜR'S vIEW sCHLIESSEN FINDEN: damit es nach einem ggf. erfolgten Versuch,
+			//in unserviceCurrentlyServicedDocument eine View mit Inhalt zu schliessen,
+			//nicht gleich weitergeht mit dem Laden:
+			//if (unserviceCurrentlyServicedDocument() != null) return false;
+
+			//Für den Echtbetrieb statdessen erst mal einfacher (und möglicherweise obsolet, wenn sichergestellt wurde,
+			//das vor einem Öffnen eines neuen Dokuments weiter oben auch ein Schliessen der kompletten View erfolgt ist:
+			unserviceCurrentlyServicedDocument();
+
+			//Nachfolgendes ist bei unservice... schon dabei.
+			//if (actBrief != null) ch.elexis.util.StatusMonitor.removeMonitorEntry(actBrief);
+
+			Composite oldParent = textContainer.getParent();
+			
+			GlobalEventDispatcher.removeActivationListener(this, this);
+			//textContainer.dispose();
+			//txt.getPlugin().dispose();
+			txt.dispose();
+			
+			txt = new TextContainer(getViewSite());
+			textContainer = txt.getPlugin().createContainer(oldParent, new SaveHandler());
+			if (textContainer == null) {
+				SWTHelper
+					.showError(
+						Messages.getString("TextView.couldNotCreateTextView"), Messages.getString("TextView.couldNotLoadTextPlugin")); //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				GlobalEventDispatcher.addActivationListener(this, this);
+				setName();
+			}
+
+			//vermutlich müsst ich auch txt neu machen, oder Teile davon, was dann passiert - 
+			//insofern versuche ich mal, ob ich createPartControl() hier nochmal aufrufen darf...
+			//NAY, das verdoppelt tatsächlich die Menüeinträge. Also bleibt das "part" trotz textContainer.dispose() und txt.dispose() bestehen.
+			//createPartControl(oldParent);
+		}
+*
+* -----------------------------------------------------------------------------------------------------*/
+
 		
 		//20131026js: Wenn ich das hier einfüge, erscheint nur ein graues Window als Ergebnis schon des ersten öffnens.
 		//Hier ist es also deutlich zu spät, um klare Ausgangsbedingungen vor dem Laden des 2.Docs bei 1.geöffnetem zu schaffen.
@@ -1003,7 +1134,13 @@ public class TextView extends ViewPart implements IActivationListener {
 		briefLadenAction = new Action(Messages.getString("TextView.openLetter")) { //$NON-NLS-1$
 				@Override
 				public void run(){
+				if (!isThisAnUnsupportedAttemptToReUseAnAlreadyPopulatedViewFromInsideTextView()) {		//20131028js
 					System.out.println("js ch.elexis.views/TextView.java makeActions().briefLadenAction().run(): begin");
+					
+					//20131027j0028s: Kann aber auch sein, dass das zu viel ist - vielleicht killt es ja das laufende TextView Objekt gleich mit?
+					//Ja genau. Und die hier laufende Action bricht auch sofort ab. Deshalb ist das hier SO nicht brauchbar. Sorry.
+					//Siehe dazu auch den ersten Kommentar zu hideView() in diesem File, und das closePre... in BriefAuswahl.
+					//getViewSite().getPage().hideView(TextView.this);
 					
 					Patient actPatient = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
 					DocumentSelectDialog bs =
@@ -1018,14 +1155,21 @@ public class TextView extends ViewPart implements IActivationListener {
 											
 					System.out.println("js ch.elexis.views/TextView.java makeActions().briefLadenAction().run(): end\n");
 				}
+				}
 				
 			};
 		
 		loadSysTemplateAction = new Action(Messages.getString("TextView.openSysTemplate")) { //$NON-NLS-1$
 				@Override
 				public void run(){
+					if (!isThisAnUnsupportedAttemptToReUseAnAlreadyPopulatedViewFromInsideTextView()) {		//20131028js
 					System.out.println("\njs ch.elexis.views/TextView.java makeActions().loadSysTemplateAction().run(): begin");
 
+					//20131027j0028s: Kann aber auch sein, dass das zu viel ist - vielleicht killt es ja das laufende TextView Objekt gleich mit?
+					//Ja genau. Und die hier laufende Action bricht auch sofort ab. Deshalb ist das hier SO nicht brauchbar. Sorry.
+					//Siehe dazu auch den ersten Kommentar zu hideView() in diesem File, und das closePre... in BriefAuswahl.
+					//getViewSite().getPage().hideView(TextView.this);
+					
 					DocumentSelectDialog bs =
 						new DocumentSelectDialog(getViewSite().getShell(), Hub.actMandant,
 							DocumentSelectDialog.TYPE_LOAD_SYSTEMPLATE);
@@ -1038,12 +1182,19 @@ public class TextView extends ViewPart implements IActivationListener {
 					
 					System.out.println("js ch.elexis.views/TextView.java makeActions().loadSysTemplateAction().run(): end\n");
 				}
+				}
 			};
 
 		loadTemplateAction = new Action(Messages.getString("TextView.openTemplate")) { //$NON-NLS-1$
 				@Override
 				public void run(){
+					if (!isThisAnUnsupportedAttemptToReUseAnAlreadyPopulatedViewFromInsideTextView()) {		//20131028js
 					System.out.println("\njs ch.elexis.views/TextView.java makeActions().loadTemplateAction().run(): begin");
+
+					//20131027j0028s: Kann aber auch sein, dass das zu viel ist - vielleicht killt es ja das laufende TextView Objekt gleich mit?
+					//Ja genau. Und die hier laufende Action bricht auch sofort ab. Deshalb ist das hier SO nicht brauchbar. Sorry.
+					//Siehe dazu auch den ersten Kommentar zu hideView() in diesem File, und das closePre... in BriefAuswahl.
+					//getViewSite().getPage().hideView(TextView.this);
 
 					DocumentSelectDialog bs =
 						new DocumentSelectDialog(getViewSite().getShell(), Hub.actMandant,
@@ -1055,6 +1206,7 @@ public class TextView extends ViewPart implements IActivationListener {
 					}
 					
 					System.out.println("js ch.elexis.views/TextView.java makeActions().loadTemplateAction().run(): end\n");
+				}
 				}
 			};
 			
@@ -1101,6 +1253,7 @@ public class TextView extends ViewPart implements IActivationListener {
 		importAction = new Action(Messages.getString("TextView.importText")) { //$NON-NLS-1$
 				@Override
 				public void run(){
+				if (!isThisAnUnsupportedAttemptToReUseAnAlreadyPopulatedViewFromInsideTextView()) {		//20131028js
 					System.out.println("\njs ch.elexis.views/TextView.java makeActions().importAction().run(): begin");
 
 					try {
@@ -1129,6 +1282,7 @@ public class TextView extends ViewPart implements IActivationListener {
 					}
 
 				System.out.println("js ch.elexis.views/TextView.java makeActions().importAction.run(): end\n");
+				}
 				}
 			};
 		
@@ -1179,6 +1333,7 @@ public class TextView extends ViewPart implements IActivationListener {
 				}
 				
 				public void run(){
+					if (!isThisAnUnsupportedAttemptToReUseAnAlreadyPopulatedViewFromInsideTextView()) {		//20131028js
 					System.out.println("\njs ch.elexis.views/TextView.java makeActions().newDocAction().run(): begin");
 
 					Patient pat = ElexisEventDispatcher.getSelectedPatient();
@@ -1212,8 +1367,17 @@ public class TextView extends ViewPart implements IActivationListener {
 							ElexisEventDispatcher.fireSelectionEvent(k);
 						}
 						
+						//20131027j0028s: Kann aber auch sein, dass das zu viel ist - vielleicht killt es ja das laufende TextView Objekt gleich mit?
+						//Ja genau. Und die hier laufende Action bricht auch sofort ab. Deshalb ist das hier SO nicht brauchbar. Sorry.
+						//Siehe dazu auch den ersten Kommentar zu hideView() in diesem File, und das closePre... in BriefAuswahl.
+						//getViewSite().getPage().hideView(TextView.this);
+
+						
+						
 						System.out.println("js ch.elexis.views/TextView.java makeActions().newDocAction().run(): about to actBrief=null;");
 						actBrief = null;
+						System.out.println("js ch.elexis.views/TextView.java makeActions().newDocAction().run(): about to NewDocumentCreated=true, so we can see the View is already used even though actBrief==null.");
+						NewDocumentCreated = true;
 						System.out.println("js ch.elexis.views/TextView.java makeActions().newDocAction().run(): about to setName()");
 						setName();
 						System.out.println("js ch.elexis.views/TextView.java makeActions().newDocAction().run(): about to txt.getPlugin().createEmptyDocument()");
@@ -1225,6 +1389,7 @@ public class TextView extends ViewPart implements IActivationListener {
 					}
 				
 				System.out.println("js ch.elexis.views/TextView.java makeActions().newDocAction().run(): end\n");
+				}
 				}
 				
 			};

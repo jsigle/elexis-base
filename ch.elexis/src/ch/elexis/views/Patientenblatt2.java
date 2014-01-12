@@ -1,6 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008-2010, G. Weirich and Elexis
- * Portions (c) 2012-2013, Joerg M. Sigle (js, jsigle)
+ * Copyright (c) 2008-2010, G. Weirich and Elexis; Portions (c) 2012-2013, Joerg M. Sigle (js, jsigle)
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,8 +7,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    G. Weirich -  initial implementation
+ *    Joerg Sigle - Support improved OO/LO Textplugin usage tracking / disconnecting / unloading / where appropriate;
+ *                  close previously used document containing ViewPart before re-opening another for printing (coded elsewhere)
  *    Joerg Sigle - Added ability to copy selected addresses to the clipboard
+ *    G. Weirich -  initial implementation
  *    
  *******************************************************************************/
 

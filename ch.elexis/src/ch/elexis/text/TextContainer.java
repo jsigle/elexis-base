@@ -113,14 +113,14 @@ public class TextContainer {
 	public static final String MATCH_SCRIPT = "\\[" + Script.SCRIPT_MARKER + "[^\\[]+\\]"; //$NON-NLS-1$
 	
 	/**
-	 * Der Konstruktor sucht nach dem in den Settings definierten Textplugin Wenn er kein Textplugin
-	 * findet, wählt er ein rudimentäres Standardplugin aus (das in der aktuellen Version nur eine
-	 * Fehlermeldung ausgibt)
+	 * Der Konstruktor sucht nach dem in den Settings definierten Textplugin.
+	 * Wenn er kein Textplugin findet, wählt er ein rudimentäres Standardplugin aus
+	 * (das in der aktuellen Version nur eine Fehlermeldung ausgibt).
 	 */
 	public TextContainer(){
 		System.out.println("js ch.elexis.views/TextContainer.java TextContainer(): begin (Constructor)");
 		if (plugin == null) {
-			System.out.println("js ch.elexis.views/TextContainer.java TextContainer(): Looking for the Textplugin defined in the settings...");
+			System.out.println("js ch.elexis.views/TextContainer.java TextContainer(): plugin == null. So we look for the Textplugin defined in the settings...");
 			String ExtensionToUse = Hub.localCfg.get(PreferenceConstants.P_TEXTMODUL, null);
 			IExtensionRegistry exr = Platform.getExtensionRegistry();
 			IExtensionPoint exp = exr.getExtensionPoint(EXTENSION_POINT_TEXT);
@@ -131,8 +131,9 @@ public class TextContainer {
 					for (IConfigurationElement el : elems) {
 						if ((ExtensionToUse == null) || el.getAttribute("name").equals( //$NON-NLS-1$
 							ExtensionToUse)) {
+							System.out.println("js ch.elexis.views/TextContainer.java TextContainer(): trying to use the Textplugin found: ");
 							try {
-								System.out.println("js ch.elexis.views/TextContainer.java TextContainer(): trying to use the Textplugin found...");
+								System.out.println("js ch.elexis.views/TextContainer.java TextContainer(): about to plugin = (ITextPlugin) el.createExecutableExtension(\"Klasse\");");
 								plugin = (ITextPlugin) el.createExecutableExtension("Klasse"); //$NON-NLS-1$
 							} catch (/* Core */Exception e) {
 								System.out.println("js ch.elexis.views/TextContainer.java TextContainer(): WARNING: Caught Exception!");
@@ -142,10 +143,13 @@ public class TextContainer {
 						
 					}
 				}
+			} else {
+				System.out.println("js ch.elexis.views/TextContainer.java TextContainer(): exp == null; so no suitable extension available.");				
 			}
 		} else {
-			System.out.println("js ch.elexis.views/TextContainer.java TextContainer(): plugin != null; so a Textplugin is already installed.");
+			System.out.println("js ch.elexis.views/TextContainer.java TextContainer(): plugin != null; so a Textplugin is already created as executable extension.");
 		}
+
 		if (plugin == null) {
 			System.out.println("js ch.elexis.views/TextContainer.java TextContainer(): Using the default Textplugin (a dummy, only showing an error message).");
 			plugin = new DefaultTextPlugin();
@@ -183,6 +187,8 @@ public class TextContainer {
 		System.out.println("js ch.elexis.views/TextContainer.java dispose(): begin");
 		System.out.println("js ch.elexis.views/TextContainer.java dispose(): about to plugin.dispose()...");
 		plugin.dispose();
+		if (plugin==null) System.out.println("js ch.elexis.views/TextContainer.java dispose(): after plugin.dispose(): OK: plugin == null");
+		else 			  System.out.println("js ch.elexis.views/TextContainer.java dispose(): after plugin.dispose(): WARNING: null != plugin == "+plugin.toString());
 		System.out.println("js ch.elexis.views/TextContainer.java dispose(): end()");
 	}
 	
@@ -226,18 +232,29 @@ public class TextContainer {
 	
 	public Brief createFromTemplateName(final Konsultation kons, final String templatenameRaw,
 		final String typ, final Kontakt adressat, final String subject){
-		System.out.println("js ch.elexis.views/TextContainer.java createFromTemplateName(): about to return template");
+		System.out.println("js ch.elexis.views/TextContainer.java createFromTemplateName(): begin");
 
 		String suffix = Hub.localCfg.get(TextTemplatePreferences.SUFFIX_STATION, "");
+
+		if (templatenameRaw == null)	System.out.println("js ch.elexis.views/TextContainer.java createFromTemplateName(): WARNING: templatenameRaw == null");
+		else 							System.out.println("js ch.elexis.views/TextContainer.java createFromTemplateName(): templatenameRaw == "+templatenameRaw);
+		if (suffix == null)				System.out.println("js ch.elexis.views/TextContainer.java createFromTemplateName(): WARNING: suffix == null");
+		else 							System.out.println("js ch.elexis.views/TextContainer.java createFromTemplateName(): suffix == "+suffix);
+
+		System.out.println("js ch.elexis.views/TextContainer.java createFromTemplateName(): Bevorzugt eine (optionale) Variante des Templates mit dem (optionalen) Suffix der lokalen Station verwenden:");
+		
+		System.out.println("js ch.elexis.views/TextContainer.java createFromTemplateName(): about to Brief template = loadTemplate(templatenameRaw + suffix);");
 		Brief template = loadTemplate(templatenameRaw + suffix);
+		
 		if (template == null && suffix.length() > 0) {
-			System.out.println("js ch.elexis.views/TextContainer.java createFromTemplateName(): template == null -> about to loadTemplate()");
+			System.out.println("js ch.elexis.views/TextContainer.java createFromTemplateName(): template == null -> about to loadTemplate(templatenameRaw)");
 			template = loadTemplate(templatenameRaw);
 		}
+
 		if (template == null) {
 			SWTHelper.showError(TEMPLATE_NOT_FOUND_HEADER, TEMPLATE_NOT_FOUND_BODY
 				+ templatenameRaw);
-			System.out.println("js ch.elexis.views/TextContainer.java createFromTemplateName(): template == null -> about to return null");
+			System.out.println("js ch.elexis.views/TextContainer.java createFromTemplateName(): template == null -> about to Fehlermeldung und return null");
 			return null;
 		}
 		

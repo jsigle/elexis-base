@@ -1,14 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2006-2010, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis; Portions (c) 2013 Joerg M. Sigle www.jsigle.com
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
+ *    J. Sigle   - added closePreExistingViewToEnsureOfficeCanHandleNewContentProperly and TerminateListener via Bootstrap.java;  
  *    G. Weirich - initial implementation
  * 
  *******************************************************************************/
+
+/**
+ * TODO: 20131027js: I noticed that before - but: Please review naming conventions: Briefauswahl.java (document selection/controller dialog) and TextView.java (document display/editor), vs. RezepteView.java (selection/controller) and RezeptBlatt.java (display/editor), etc. for Bestellung, AUFZeugnis and maybe more similar combinations. This inconsistency is highly confusing if you want to do updates throughout all external document processing plugins/classes/etc. 
+ */
 
 package ch.elexis.views;
 
@@ -39,7 +44,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.ISaveablePart2;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
@@ -135,6 +143,28 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 			
 		}
 	};
+	
+	/*
+	 * 20131026js: First check if a View for documents of the same type (e.g. "Briefe") is already open.
+	 * If yes, close it in (ALMOST, BUT SUFFICIENTLY SIMILAR) the same way it would be closed if a user clicks on its [x] close button.
+	 * See BriefAuswahl.java/TextView.java for additional information.
+	 */			
+	private void  closePreExistingViewToEnsureOfficeCanHandleNewContentProperly() {
+	//Import org.eclipse.ui.IWorkbenchPage and ...PlatformUI and ...IViewPart only for this: 
+	System.out.println("js ch.elexis.views/RezepteView.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): begin");
+	IWorkbenchPage wbp = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+	IViewPart wbpRezeptBlattViewPart = wbp.findView(RezeptBlatt.ID); 
+	if (wbpRezeptBlattViewPart != null) {
+		System.out.println("js ch.elexis.views/RezepteView.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): About to wbp.hideView(wbpRezeptBlattViewPart)");
+		wbp.hideView(wbpRezeptBlattViewPart); 
+		System.out.println("js ch.elexis.views/RezepteView.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): Returned from wbp.hideView(wbpRezeptBlattViewPart)");
+	} else {
+		//No preexisting populated viewPart (="View RezeptBlatt" in Elexis manual terminology) needed closing. Do nothing.
+		System.out.println("js ch.elexis.views/RezepteView.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): NO matching wbpRezeptBlattViewPart found - Nothing to do.");
+	} //if wbpRezeptBlattView != null ; oder if tv!=null
+	
+	System.out.println("js ch.elexis.views/RezepteView.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): end");
+	}
 	
 	@Override
 	public void createPartControl(final Composite parent){
@@ -285,6 +315,10 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 			@Override
 			public void doubleClick(DoubleClickEvent event){
 				try {
+					//20131026js: First check if a View for documents of the same type is already open.
+					//If yes, close it in (ALMOST, BUT SUFFICIENTLY SIMILAR) the same way it would be closed if a user clicks on its [x] close button.
+					closePreExistingViewToEnsureOfficeCanHandleNewContentProperly();
+
 					RezeptBlatt rp = (RezeptBlatt) getViewSite().getPage().showView(RezeptBlatt.ID);
 					Rezept actR = (Rezept) ElexisEventDispatcher.getSelected(Rezept.class);
 					Brief rpBrief = actR.getBrief();
@@ -313,6 +347,8 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 	public void dispose(){
 		GlobalEventDispatcher.removeActivationListener(this, this);
 		tv.removeSelectionChangedListener(GlobalEventDispatcher.getInstance().getDefaultListener());
+		
+		//TODO: 20131027js: RezepteView.dispose vs. BestellView.dispose wieder völlig anders. Please review, auch über andere NOAText/Textplugin-Clients. Warum? Ist das ok? Was wäre wohl "richtig"?
 	}
 	
 	public void refresh(){
@@ -363,6 +399,9 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 				}
 			};
 		deleteRpAction = new Action(Messages.getString("RezepteView.deletePrescriptionActiom")) { //$NON-NLS-1$
+				//TODO: 20131027js: ggf. dafür sorgen, dass eine Textplugin-Editor-View, die zu entfernendes Dokument zeigt, auch geschlossen wird.
+				//TODO: 20131027js: ggf. über alle Textplugin clients homogenisieren: Mal heisst es deleteRpAction, mal removeAction...
+			
 				@Override
 				public void run(){
 					Rezept rp = (Rezept) ElexisEventDispatcher.getSelected(Rezept.class);
@@ -417,6 +456,10 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 				@Override
 				public void run(){
 					try {
+						//20131026js: First check if a View for documents of the same type is already open.
+						//If yes, close it in (ALMOST, BUT SUFFICIENTLY SIMILAR) the same way it would be closed if a user clicks on its [x] close button.
+						closePreExistingViewToEnsureOfficeCanHandleNewContentProperly();
+
 						RezeptBlatt rp =
 							(RezeptBlatt) getViewSite().getPage().showView(RezeptBlatt.ID);
 						Rezept actR = (Rezept) ElexisEventDispatcher.getSelected(Rezept.class);

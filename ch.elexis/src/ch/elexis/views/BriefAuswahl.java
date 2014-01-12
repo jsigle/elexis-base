@@ -1,16 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2006-2010, G. Weirich and Elexis
- * Portions Copyright (c) 2013, Joerg M. Sigle www.jsigle.com
+ * Copyright (c) 2006-2010, G. Weirich and Elexis; Portions (c) 2013 Joerg M. Sigle www.jsigle.com
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    G. Weirich - initial implementation
+ *    J. Sigle   - added closePreExistingViewToEnsureOfficeCanHandleNewContentProperly and TerminateListener via Bootstrap.java;  
  *    J. Sigle - added stress test feature to aid stabilizing NOAText_jsl and/or other text plugins.
+ *    G. Weirich - initial implementation
  *    
  *******************************************************************************/
+
+/**
+ * TODO: 20131027js: I noticed that before - but: Please review naming conventions: Briefauswahl.java (document selection/controller dialog) and TextView.java (document display/editor), vs. RezepteView.java (selection/controller) and RezeptBlatt.java (display/editor), etc. for Bestellung, AUFZeugnis and maybe more similar combinations. This inconsistency is highly confusing if you want to do updates throughout all external document processing plugins/classes/etc. 
+ */
 
 package ch.elexis.views;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2010, G. Weirich and Elexis; Portions (c) 2013 Joerg Sigle www.jsigle.com
+ * Copyright (c) 2006-2010, G. Weirich and Elexis; Portions (c) 2013 Joerg M. Sigle www.jsigle.com
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,10 @@
  *    G. Weirich - initial implementation
  * 
  *******************************************************************************/
+
+/**
+ * TODO: 20131027js: I noticed that before - but: Please review naming conventions: Briefauswahl.java (document selection/controller dialog) and TextView.java (document display/editor), vs. RezepteView.java (selection/controller) and RezeptBlatt.java (display/editor), etc. for Bestellung, AUFZeugnis and maybe more similar combinations. This inconsistency is highly confusing if you want to do updates throughout all external document processing plugins/classes/etc. 
+ */
 
 package ch.elexis.views;
 
@@ -59,9 +63,10 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 		System.out.println("js ch.elexis.views/RezeptBlatt.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
 		//201306161401js
-		ch.elexis.util.StatusMonitor.removeMonitorEntry(actBrief);	//hopefully, this is a suitable variable here.
+		//20131026js: Das konnte == null sein zumindest im Rahmen der Versuche beobachtet, das TextView Fenster zu schliessen. -> Exception.
+		if (actBrief != null) ch.elexis.util.StatusMonitor.removeMonitorEntry(actBrief);	//hopefully, this is a suitable variable here.
 		
-		//20130425js: Nach Einfügen der folgenden Zeile wird er NOText closeListener mit queryClosing() und notifyClosing() tatsächlich aufgerufen,
+		//20130425js: Nach Einfügen der folgenden Zeile wird der NOText closeListener mit queryClosing() und notifyClosing() tatsächlich aufgerufen,
 		//in der Folge wird dann auch OO beendet, wenn das Letzte NOAText Fenster geschlossen wurde.
 		//UND ich kann danach sogar Elexis beenden, ohne dass es hängenbleibt, weil es selbst erst noch OO beenden wollte...
 		//Jippieh - zumindest folgendes funktioniert jetzt (as of 201304250337js):
@@ -78,8 +83,14 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 		System.out.println("js ch.elexis.views/RezeptBlatt.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		System.out.println("js ch.elexis.views/RezeptBlatt.java dispose(): ToDo: SOLLTE hier ein plugin().dispose() rein - siehe Kommentare - oder würde das im Betrieb nur unerwünscht Exceptions werfen (gerade gesehen)?");
 		System.out.println("js ch.elexis.views/RezeptBlatt.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		//System.out.println("js ch.elexis.views/RezeptBlatt.java dispose(): about to txt.getPlugin().dispose()");
-		//text.getPlugin().dispose();		
+		
+		//20131027js: Die text.getPlugin().dispose(); wieder aktiviert,
+		//andernfalls würde beim Schliessen der RezeptBlatt.java View weder soffice.bin per xDesktop.terminate entladen, noch soffice.exe per oooServer.xkill,
+		//also vermutlich auch kein noas.remove; noas.isEmpty() -> bootStrapConnector.disconnect() erfolgen.
+		//YEP, seit ich das wieder aktiviert habe, verschwinden das geladene soffice.bin und soffice.exe nach Schliessen der RezeptBlatt View,
+		//jedenfalls bei nur einem offenen Elexis, und nur diesem offenen OO Dokument - so ist das auch gedacht. 
+		System.out.println("js ch.elexis.views/RezeptBlatt.java dispose(): about to txt.getPlugin().dispose()");
+		text.getPlugin().dispose();		
 		
 		System.out.println("js ch.elexis.views/RezeptBlatt.java dispose(): about to GlobalEventDispatcher.removeActivationListener()...");
 		GlobalEventDispatcher.removeActivationListener(this, this);
@@ -88,6 +99,12 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 		System.out.println("js ch.elexis.views/RezeptBlatt.java dispose(): about super.dispose()... - warum hier im Ggs. zu TextView NICHT actBrief = null?");
 		System.out.println("js ch.elexis.views/RezeptBlatt.java dispose(): about PLEASE NOTE: ein paar Zeilen weiter oben bei removeMonitorEntry() hab ich actBrief übergeben, wie in TextView.java.dispose() auch. Korrekt?");
 		System.out.println("js ch.elexis.views/RezeptBlatt.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		//20131027js:
+		//Was nun das super.dispose genau macht, kann (will) ich im Moment nicht nachvollziehen. in Texteview.java steht das nicht / stand das wohl nie.
+		//Vielleicht soll es tatsächlich den View-Rahmen (Composite, xyz, Tab mit Titel "Rezept") entsorgen, nachdem das Rezept fertig gedruckt ist?
+		//Wofür ich extra das closePreviouslyOpen... in RezepteView bzw. in Briefauswahl.java erfunden habe?
+		//Ich hoffe einmal, dass das nicht stört.
+		//TODO: 20131027js: review: Was macht in RezeptBlatt.dispose() das super.dispose()? Braucht's das auch in TextView.java? Cave: Modulnamen-Verwirrung beachten, siehe intro comment von js.
 		super.dispose();
 	}
 	
@@ -170,12 +187,14 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 	public void createPartControl(Composite parent){
 		text = new TextContainer(getViewSite());
 		text.getPlugin().createContainer(parent, this);
+		//TODO: 20131027js: In TextView gibt es hier eine Fehlermeldung, falls getPlugin failt. Ausserdem andere Bezeichnungen. Bitte homogenisieren.
 		GlobalEventDispatcher.addActivationListener(this, this);
 	}
 	
 	@Override
 	public void setFocus(){
 		// TODO Automatisch erstellter Methoden-Stub
+		//TODO: 20131027js: In TextView gibt es hier mehr. Bitte review und homogenisieren.
 		
 	}
 	

@@ -323,6 +323,8 @@ public class GlobalActions {
 				
 				@Override
 				public void run(){
+					System.out.println("js ch.elexis.actions/GlobalActions.java: printKontaktEtikette run() begin");
+
 					Kontakt kontakt = (Kontakt) ElexisEventDispatcher.getSelected(Kontakt.class);
 					if (kontakt == null) {
 						SWTHelper.showInfo("Kein Kontakt ausgewählt",
@@ -347,6 +349,8 @@ public class GlobalActions {
 						dlg.setBlockOnOpen(true);
 						dlg.open();
 					}
+
+					System.out.println("js ch.elexis.actions/GlobalActions.java: printKontaktEtikette run() end");
 				}
 			};
 		
@@ -358,10 +362,12 @@ public class GlobalActions {
 				
 				@Override
 				public void run(){
+					System.out.println("js ch.elexis.actions/GlobalActions.java: printAdresse run() begin");
+
 					Patient actPatient = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
 					if (actPatient == null) {
 						SWTHelper.showInfo("Kein Patient ausgewählt",
-							"Bitte wählen Sie vor dem Drucken einen Patient!");
+							"Bitte wählen Sie vor dem Drucken einen Patienten!");	//20131028js Grammatik
 						return;
 					}
 					
@@ -384,6 +390,8 @@ public class GlobalActions {
 						dlg.setBlockOnOpen(true);
 						dlg.open();
 					}
+
+					System.out.println("js ch.elexis.actions/GlobalActions.java: printAdresse run() end");
 				}
 			};
 		
@@ -396,10 +404,12 @@ public class GlobalActions {
 				
 				@Override
 				public void run(){
+					System.out.println("js ch.elexis.actions/GlobalActions.java: printVersionedEtikette run() begin");
+
 					Patient actPatient = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
 					if (actPatient == null) {
 						SWTHelper.showInfo("Kein Patient ausgewählt",
-							"Bitte wählen Sie vor dem Drucken einen Patient!");
+							"Bitte wählen Sie vor dem Drucken einen Patienten!");	//20131028js Grammatik 
 						return;
 					}
 					EtiketteDruckenDialog dlg =
@@ -421,6 +431,8 @@ public class GlobalActions {
 						dlg.setBlockOnOpen(true);
 						dlg.open();
 					}
+
+					System.out.println("js ch.elexis.actions/GlobalActions.java: printVersionedEtikette run() end");
 				}
 			};
 		
@@ -432,10 +444,12 @@ public class GlobalActions {
 				
 				@Override
 				public void run(){
+					System.out.println("js ch.elexis.actions/GlobalActions.java: printEtikette run() begin");
+
 					Patient actPatient = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
 					if (actPatient == null) {
 						SWTHelper.showInfo("Kein Patient ausgewählt",
-							"Bitte wählen Sie vor dem Drucken einen Patient!");
+							"Bitte wählen Sie vor dem Drucken einen Patienten!");	//20131028js Grammatik
 						return;
 					}
 					EtiketteDruckenDialog dlg =
@@ -457,12 +471,16 @@ public class GlobalActions {
 						dlg.setBlockOnOpen(true);
 						dlg.open();
 					}
+
+					System.out.println("js ch.elexis.actions/GlobalActions.java: printEtikette run() end");
 				}
 			};
 		
 		printBlatt = new Action(Messages.getString("GlobalActions.PrintEMR")) { //$NON-NLS-1$
 				@Override
 				public void run(){
+					System.out.println("js ch.elexis.actions/GlobalActions.java: printBlatt run() begin");
+
 					Patient actPatient = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
 					String printer = Hub.localCfg.get("Drucker/Einzelblatt/Name", null); //$NON-NLS-1$
 					String tray = Hub.localCfg.get("Drucker/Einzelblatt/Schacht", null); //$NON-NLS-1$
@@ -475,16 +493,22 @@ public class GlobalActions {
 					if (mb.open() == SWT.OK) {
 						new TemplateDrucker("KG-Deckblatt", printer, tray).doPrint(actPatient); //$NON-NLS-1$
 					}
+
+					System.out.println("js ch.elexis.actions/GlobalActions.java: printBlatt run() end");
 				}
 			};
 		printRoeBlatt = new Action(Messages.getString("GlobalActions.PrintXRay")) { //$NON-NLS-1$
 				@Override
 				public void run(){
+					System.out.println("js ch.elexis.actions/GlobalActions.java: printRoeBlatt run() begin");
+
 					Patient actPatient = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
 					String printer = Hub.localCfg.get("Drucker/A4/Name", null); //$NON-NLS-1$
 					String tray = Hub.localCfg.get("Drucker/A4/Schacht", null); //$NON-NLS-1$
 					
 					new TemplateDrucker("Roentgen-Blatt", printer, tray).doPrint(actPatient); //$NON-NLS-1$
+
+					System.out.println("js ch.elexis.actions/GlobalActions.java: printRoeBlatt run() end");
 				}
 			};
 		

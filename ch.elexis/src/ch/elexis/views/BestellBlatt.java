@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis; Portions (c) 2013 Joerg Sigle www.jsigle.com
+ * Copyright (c) 2006-2009, G. Weirich and Elexis; Portions (c) 2013 Joerg M. Sigle www.jsigle.com
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,10 @@
  *    G. Weirich - initial implementation
  *    
  *******************************************************************************/
+
+/**
+ * TODO: 20131027js: I noticed that before - but: Please review naming conventions: Briefauswahl.java (document selection/controller dialog) and TextView.java (document display/editor), vs. RezepteView.java (selection/controller) and RezeptBlatt.java (display/editor), etc. for Bestellung, AUFZeugnis and maybe more similar combinations. This inconsistency is highly confusing if you want to do updates throughout all external document processing plugins/classes/etc. 
+ */
 
 package ch.elexis.views;
 
@@ -85,14 +89,21 @@ public class BestellBlatt extends ViewPart implements ICallback, IStatusMonitorC
 		System.out.println("js ch.elexis.views/BestellBlatt.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		System.out.println("js ch.elexis.views/BestellBlatt.java dispose(): ToDo: SOLLTE hier ein plugin().dispose() rein - siehe Kommentare - oder würde das im Betrieb nur unerwünscht Exceptions werfen (gerade gesehen)?");
 		System.out.println("js ch.elexis.views/BestellBlatt.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		//System.out.println("js ch.elexis.views/BestellBlatt.java dispose(): about to txt.getPlugin().dispose()");
-		//text.getPlugin().dispose();		
+
+		//20131027js: Die text.getPlugin().dispose(); wieder aktiviert,
+		//andernfalls würde beim Schliessen der RezeptBlatt.java View weder soffice.bin per xDesktop.terminate entladen, noch soffice.exe per oooServer.xkill,
+		//also vermutlich auch kein noas.remove; noas.isEmpty() -> bootStrapConnector.disconnect() erfolgen.
+		//YEP, seit ich das wieder aktiviert habe, verschwinden das geladene soffice.bin und soffice.exe nach Schliessen der RezeptBlatt View,
+		//jedenfalls bei nur einem offenen Elexis, und nur diesem offenen OO Dokument - so ist das auch gedacht. 
+		System.out.println("js ch.elexis.views/BestellBlatt.java dispose(): about to txt.getPlugin().dispose()");
+		text.getPlugin().dispose();		
 		
 		System.out.println("js ch.elexis.views/BestellBlatt.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		System.out.println("js ch.elexis.views/BestellBlatt.java dispose(): ToDo: WARNING / PLEASE REVIEW: The method GlobalEventDispatcher.removeActivationListener(BestellBlatt, BestellBlatt) is not applicable.");
 		System.out.println("js ch.elexis.views/BestellBlatt.java dispose(): ToDo: Das BestellBlatt hat auch 1 Jahr älteres Copyright - wird das dort nicht benötigt, oder wurde es nur noch nicht nachgetragen?");
 		System.out.println("js ch.elexis.views/BestellBlatt.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
+		//TODO: Bitte bei BestellBlatt.dispose() nachschauen, ob GlobalEventDispatcher.removeActivationListener(this,this) aktivierbar ist - siehe dort TODO notes in System.out.printl(), und vergleiche mit Rezepte.View!
 		//System.out.println("js ch.elexis.views/BestellBlatt.java dispose(): about to GlobalEventDispatcher.removeActivationListener()...");
 		//GlobalEventDispatcher.removeActivationListener(this, this);
 

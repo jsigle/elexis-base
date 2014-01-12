@@ -1,15 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2005-2009, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis; Portions (c) 2013 Joerg Sigle www.jsigle.com
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    G. Weirich - initial implementation
+ *    J. Sigle   - added closePreExistingViewToEnsureOfficeCanHandleNewContentProperly and TerminateListener via Bootstrap.java;  
  *    Joerg M. Sigle (js, jsigle) - bug fixes
+ *    G. Weirich - initial implementation
  *    
  *******************************************************************************/
+
+/**
+ * TODO: 20131027js: I noticed that before - but: Please review naming conventions: Briefauswahl.java (document selection/controller dialog) and TextView.java (document display/editor), vs. RezepteView.java (selection/controller) and RezeptBlatt.java (display/editor), etc. for Bestellung, AUFZeugnis and maybe more similar combinations. This inconsistency is highly confusing if you want to do updates throughout all external document processing plugins/classes/etc. 
+ */
 
 package ch.elexis.views;
 
@@ -45,7 +50,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.ISaveablePart2;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
@@ -80,6 +88,28 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 	private IAction removeAction, wizardAction, countAction, loadAction, saveAction, printAction,
 			sendAction, newAction;
 	private IAction exportClipboardAction, checkInAction;
+	
+	/*
+	 * 20131026js: First check if a View for documents of the same type (e.g. "Briefe") is already open.
+	 * If yes, close it in (ALMOST, BUT SUFFICIENTLY SIMILAR) the same way it would be closed if a user clicks on its [x] close button.
+	 * See BriefAuswahl.java/TextView.java for additional information.
+	 */			
+	private void  closePreExistingViewToEnsureOfficeCanHandleNewContentProperly() {
+	//Import org.eclipse.ui.IWorkbenchPage and ...PlatformUI and ...IViewPart only for this: 
+	System.out.println("js ch.elexis.views/BestellView.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): begin");
+	IWorkbenchPage wbp = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+	IViewPart wbpBestellBlattViewPart = wbp.findView(BestellBlatt.ID); 
+	if (wbpBestellBlattViewPart != null) {
+		System.out.println("js ch.elexis.views/BestellView.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): About to wbp.hideView(wbpBestellBlattViewPart)");
+		wbp.hideView(wbpBestellBlattViewPart); 
+		System.out.println("js ch.elexis.views/BestellView.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): Returned from wbp.hideView(wbpBestellBlattViewPart)");
+	} else {
+		//No preexisting populated viewPart (="View BestellBlatt" in Elexis manual terminology) needed closing. Do nothing.
+		System.out.println("js ch.elexis.views/BestellView.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): NO matching wbpBestellBlattViewPart found - Nothing to do.");
+	} //if wbpBestellBlattView != null ; oder if tv!=null
+	
+	System.out.println("js ch.elexis.views/BestellView.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): end");
+	}
 	
 	@Override
 	public void createPartControl(final Composite parent){
@@ -197,6 +227,8 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 		 * cv.getConfigurer().getContentProvider().stopListening();
 		 */
 		super.dispose();
+
+		//TODO: 20131027js: RezepteView.dispose vs. BestellView.dispose wieder völlig anders. Please review, auch über andere NOAText/Textplugin-Clients. Warum? Ist das ok? Was wäre wohl "richtig"?
 	}
 	
 	@Override
@@ -232,6 +264,9 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 	
 	private void makeActions(){
 		removeAction = new Action(Messages.getString("BestellView.RemoveArticle")) { //$NON-NLS-1$
+				//TODO: 20131027js: ggf. dafür sorgen, dass eine Textplugin-Editor-View, die zu entfernendes Dokument zeigt, auch geschlossen wird.
+				//TODO: 20131027js: ggf. über alle Textplugin clients homogenisieren: Mal heisst es deleteRpAction, mal removeAction...
+
 				@Override
 				public void run(){
 					IStructuredSelection sel = (IStructuredSelection) tv.getSelection();
@@ -369,6 +404,10 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 								iter.remove();
 							}
 						}
+
+						//20131026js: First check if a View for documents of the same type is already open.
+						//If yes, close it in (ALMOST, BUT SUFFICIENTLY SIMILAR) the same way it would be closed if a user clicks on its [x] close button.
+						closePreExistingViewToEnsureOfficeCanHandleNewContentProperly();
 						
 						try {
 							BestellBlatt bb =

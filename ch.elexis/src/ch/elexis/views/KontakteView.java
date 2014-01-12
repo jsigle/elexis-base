@@ -1,15 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2005-2010, G. Weirich and Elexis
- * Portions (c) 2012, Joerg M. Sigle (js, jsigle)
+ * Copyright (c) 2005-2010, G. Weirich and Elexis; Portions (c) 2012-2013 Joerg M. Sigle (js, jsigle)
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
+ *    J. Sigle   - added closePreExistingViewToEnsureOfficeCanHandleNewContentProperly and TerminateListener via Bootstrap.java;  
  *    G. Weirich - initial implementation
  * 
  *******************************************************************************/
+
+/**
+ * TODO: 20131027js: I noticed that before - but: Please review naming conventions: Briefauswahl.java (document selection/controller dialog) and TextView.java (document display/editor), vs. RezepteView.java (selection/controller) and RezeptBlatt.java (display/editor), etc. for Bestellung, AUFZeugnis and maybe more similar combinations. This inconsistency is highly confusing if you want to do updates throughout all external document processing plugins/classes/etc. 
+ */
 
 package ch.elexis.views;
 
@@ -31,7 +35,10 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISaveablePart2;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Desk;
@@ -84,6 +91,28 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 	private ViewMenus menu;
 	
 	public KontakteView(){}
+	
+	/*
+	 * 20131026js: First check if a View for documents of the same type (e.g. "Briefe") is already open.
+	 * If yes, close it in (ALMOST, BUT SUFFICIENTLY SIMILAR) the same way it would be closed if a user clicks on its [x] close button.
+	 * See BriefAuswahl.java/TextView.java for additional information.
+	 */			
+	private void  closePreExistingViewToEnsureOfficeCanHandleNewContentProperly() {
+	//Import org.eclipse.ui.IWorkbenchPage and ...PlatformUI and ...IViewPart only for this: 
+	System.out.println("js ch.elexis.views/KontakteView.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): begin");
+	IWorkbenchPage wbp = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+	IViewPart wbpKontaktBlattViewPart = wbp.findView("Adressliste"); 
+	if (wbpKontaktBlattViewPart != null) {
+		System.out.println("js ch.elexis.views/KontakteView.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): About to wbp.hideView(wbpKontaktBlattViewPart)");
+		wbp.hideView(wbpKontaktBlattViewPart); 
+		System.out.println("js ch.elexis.views/KontakteView.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): Returned from wbp.hideView(wbpKontaktBlattViewPart)");
+	} else {
+		//No preexisting populated viewPart (="View KontaktBlatt" in Elexis manual terminology) needed closing. Do nothing.
+		System.out.println("js ch.elexis.views/KontakteView.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): NO matching wbpKontaktBlattViewPart found - Nothing to do.");
+	} //if wbpKontaktBlattView != null ; oder if tv!=null
+	
+	System.out.println("js ch.elexis.views/KontakteView.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): end");
+	}	
 	
 	@Override
 	public void createPartControl(Composite parent){
@@ -206,6 +235,9 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 	
 	private void makeActions(){
 		delKontakt =
+			//TODO: 20131027js: ggf. dafür sorgen, dass eine Textplugin-Editor-View, die zu entfernendes Dokument zeigt, auch geschlossen wird.
+			//TODO: 20131027js: ggf. über alle Textplugin clients homogenisieren: Mal heisst es deleteRpAction, mal removeAction...
+
 			new RestrictedAction(AccessControlDefaults.KONTAKT_DELETE,
 				Messages.getString("KontakteView.delete")) { //$NON-NLS-1$
 				@Override
@@ -265,6 +297,10 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 			}
 			
 			public void run(){
+				//20131026js: First check if a View for documents of the same type is already open.
+				//If yes, close it in (ALMOST, BUT SUFFICIENTLY SIMILAR) the same way it would be closed if a user clicks on its [x] close button.
+				closePreExistingViewToEnsureOfficeCanHandleNewContentProperly();
+
 				Object[] sel = cv.getSelection();
 				String[][] adrs = new String[sel.length][];
 				if (sel != null && sel.length > 0) {

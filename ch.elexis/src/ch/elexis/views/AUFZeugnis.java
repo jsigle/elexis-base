@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2010, G. Weirich and Elexis; Portions (c) 2013 Joerg Sigle www.jsigle.com
+ * Copyright (c) 2006-2010, G. Weirich and Elexis; Portions (c) 2013 Joerg M. Sigle www.jsigle.com
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,8 +66,14 @@ public class AUFZeugnis extends ViewPart implements ICallback, IActivationListen
 		System.out.println("js ch.elexis.views/AUFZeugnis.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		System.out.println("js ch.elexis.views/AUFZeugnis.java dispose(): ToDo: SOLLTE hier ein plugin().dispose() rein - siehe Kommentare - oder würde das im Betrieb nur unerwünscht Exceptions werfen (gerade gesehen)?");
 		System.out.println("js ch.elexis.views/AUFZeugnis.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		//System.out.println("js ch.elexis.views/AUFZeugnis.java dispose(): about to txt.getPlugin().dispose()");
-		//text.getPlugin().dispose();		
+
+		//20131027js: Die text.getPlugin().dispose(); wieder aktiviert,
+		//andernfalls würde beim Schliessen der RezeptBlatt.java View weder soffice.bin per xDesktop.terminate entladen, noch soffice.exe per oooServer.xkill,
+		//also vermutlich auch kein noas.remove; noas.isEmpty() -> bootStrapConnector.disconnect() erfolgen.
+		//YEP, seit ich das wieder aktiviert habe, verschwinden das geladene soffice.bin und soffice.exe nach Schliessen der RezeptBlatt View,
+		//jedenfalls bei nur einem offenen Elexis, und nur diesem offenen OO Dokument - so ist das auch gedacht. 
+		System.out.println("js ch.elexis.views/AUFZeugnis.java dispose(): about to txt.getPlugin().dispose()");
+		text.getPlugin().dispose();		
 		
 		System.out.println("js ch.elexis.views/AUFZeugnis.java dispose(): about to GlobalEventDispatcher.removeActivationListener()...");
 		GlobalEventDispatcher.removeActivationListener(this, this);

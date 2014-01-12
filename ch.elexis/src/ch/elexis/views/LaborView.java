@@ -1,14 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2005-2010, G. Weirich and Elexis
+ * Copyright (c) 2005-2010, G. Weirich and Elexis; Portions (c) 2013 Joerg M. Sigle www.jsigle.com
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
+ *    J. Sigle   - added closePreExistingViewToEnsureOfficeCanHandleNewContentProperly and TerminateListener via Bootstrap.java;  
  *    G. Weirich - initial implementation
  *    
  *******************************************************************************/
+
+/**
+ * TODO: 20131027js: I noticed that before - but: Please review naming conventions: Briefauswahl.java (document selection/controller dialog) and TextView.java (document display/editor), vs. RezepteView.java (selection/controller) and RezeptBlatt.java (display/editor), etc. for Bestellung, AUFZeugnis and maybe more similar combinations. This inconsistency is highly confusing if you want to do updates throughout all external document processing plugins/classes/etc. 
+ */
 
 package ch.elexis.views;
 
@@ -60,6 +65,9 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISaveablePart2;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
@@ -176,6 +184,28 @@ public class LaborView extends ViewPart implements IActivationListener, ISaveabl
 			});
 		}
 	};
+	
+	/*
+	 * 20131026js: First check if a View for documents of the same type (e.g. "Briefe") is already open.
+	 * If yes, close it in (ALMOST, BUT SUFFICIENTLY SIMILAR) the same way it would be closed if a user clicks on its [x] close button.
+	 * See BriefAuswahl.java/TextView.java for additional information.
+	 */			
+	private void  closePreExistingViewToEnsureOfficeCanHandleNewContentProperly() {
+	//Import org.eclipse.ui.IWorkbenchPage and ...PlatformUI and ...IViewPart only for this: 
+	System.out.println("js ch.elexis.views/LaborView.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): begin");
+	IWorkbenchPage wbp = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+	IViewPart wbpLaborblattViewViewPart = wbp.findView(LaborblattView.ID); 
+	if (wbpLaborblattViewViewPart != null) {
+		System.out.println("js ch.elexis.views/LaborView.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): About to wbp.hideView(wbpLaborblattViewViewPart)");
+		wbp.hideView(wbpLaborblattViewViewPart); 
+		System.out.println("js ch.elexis.views/LaborView.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): Returned from wbp.hideView(wbpLaborblattViewViewPart)");
+	} else {
+		//No preexisting populated viewPart (="View LaborBlatt" in Elexis manual terminology) needed closing. Do nothing.
+		System.out.println("js ch.elexis.views/LaborView.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): NO matching wbpLaborblattViewViewPart found - Nothing to do.");
+	} //if wbpLaborBlattView != null ; oder if tv!=null
+	
+	System.out.println("js ch.elexis.views/LaborView.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): end");
+	}
 	
 	@Override
 	public void createPartControl(final Composite parent){
@@ -889,6 +919,10 @@ public class LaborView extends ViewPart implements IActivationListener, ISaveabl
 				@Override
 				public void run(){
 					try {
+						//20131026js: First check if a View for documents of the same type is already open.
+						//If yes, close it in (ALMOST, BUT SUFFICIENTLY SIMILAR) the same way it would be closed if a user clicks on its [x] close button.
+						closePreExistingViewToEnsureOfficeCanHandleNewContentProperly();
+
 						LaborblattView lb =
 							(LaborblattView) getViewSite().getPage().showView(LaborblattView.ID);
 						Patient pat =

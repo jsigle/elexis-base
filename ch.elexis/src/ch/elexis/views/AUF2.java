@@ -1,11 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006-2010, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis; Portions (c) 2013 Joerg M. Sigle www.jsigle.com
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
+ *    J. Sigle   - added closePreExistingViewToEnsureOfficeCanHandleNewContentProperly and TerminateListener via Bootstrap.java;  
  *    G. Weirich - initial implementation
  *    
  *******************************************************************************/
@@ -23,6 +24,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import ch.elexis.Desk;
 import ch.elexis.actions.ElexisEvent;
@@ -79,6 +83,28 @@ public class AUF2 extends ViewPart implements IActivationListener {
 	
 	public AUF2(){
 		setTitleImage(Desk.getImage(ICON));
+	}
+	
+	/*
+	 * 20131026js: First check if a View for documents of the same type (e.g. "Briefe") is already open.
+	 * If yes, close it in (ALMOST, BUT SUFFICIENTLY SIMILAR) the same way it would be closed if a user clicks on its [x] close button.
+	 * See BriefAuswahl.java/TextView.java for additional information.
+	 */			
+	private void  closePreExistingViewToEnsureOfficeCanHandleNewContentProperly() {
+	//Import org.eclipse.ui.IWorkbenchPage and ...PlatformUI and ...IViewPart only for this: 
+	System.out.println("js ch.elexis.views/AUF2.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): begin");
+	IWorkbenchPage wbp = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+	IViewPart wbpAUFZeugnisViewPart = wbp.findView(AUFZeugnis.ID); 
+	if (wbpAUFZeugnisViewPart != null) {
+		System.out.println("js ch.elexis.views/AUF2.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): About to wbp.hideView(wbpAUFZeugnisViewPart)");
+		wbp.hideView(wbpAUFZeugnisViewPart); 
+		System.out.println("js ch.elexis.views/AUF2.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): Returned from wbp.hideView(wbpAUFZeugnisViewPart)");
+	} else {
+		//No preexisting populated viewPart (="View AUFZeugnis" in Elexis manual terminology) needed closing. Do nothing.
+		System.out.println("js ch.elexis.views/AUF2.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): NO matching wbpAUFZeugnisViewPart found - Nothing to do.");
+	} //if wbpAUFZeugnisView != null ; oder if tv!=null
+	
+	System.out.println("js ch.elexis.views/AUF2.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): end");
 	}
 	
 	@Override
@@ -160,6 +186,9 @@ public class AUF2 extends ViewPart implements IActivationListener {
 				}
 			};
 		delAUF = new Action(Messages.getString("AUF2.delete")) { //$NON-NLS-1$
+				//TODO: 20131027js: ggf. dafür sorgen, dass eine Textplugin-Editor-View, die zu entfernendes Dokument zeigt, auch geschlossen wird.
+				//TODO: 20131027js: ggf. über alle Textplugin clients homogenisieren: Mal heisst es deleteRpAction, mal removeAction...
+
 				{
 					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
 					setToolTipText(Messages.getString("AUF2.deleteCertificate")); //$NON-NLS-1$
@@ -202,6 +231,10 @@ public class AUF2 extends ViewPart implements IActivationListener {
 				
 				@Override
 				public void run(){
+					//20131026js: First check if a View for documents of the same type is already open.
+					//If yes, close it in (ALMOST, BUT SUFFICIENTLY SIMILAR) the same way it would be closed if a user clicks on its [x] close button.
+					closePreExistingViewToEnsureOfficeCanHandleNewContentProperly();
+
 					try {
 						AUFZeugnis az =
 							(AUFZeugnis) getViewSite().getPage().showView(AUFZeugnis.ID);

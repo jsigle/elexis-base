@@ -15,7 +15,9 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "ch.elexis.TarmedRechnung.messages"; //$NON-NLS-1$
-	
+		
+	public static String RechnungsDrucker_UIUpdatesMayStopNoWorries;
+
 	public static String RechnungsDrucker_AllFinishedNoErrors;
 	
 	public static String RechnungsDrucker_AskSaveForTrustCenter;

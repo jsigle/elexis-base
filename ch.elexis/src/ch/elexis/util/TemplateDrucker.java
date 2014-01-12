@@ -1,11 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006-2010, G. Weirich, Daniel Lutz and Elexis
+ * Copyright (c) 2006-2010, G. Weirich, Daniel Lutz and Elexis; Portions (c) 2013 Joerg M. Sigle www.jsigle.com
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
+ *    J. Sigle   - added closePreExistingViewToEnsureOfficeCanHandleNewContentProperly and TerminateListener via Bootstrap.java;  
  *    Daniel Lutz - initial implementation, based on RechnungsDrucker
  * 
  *******************************************************************************/
@@ -17,6 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
@@ -26,6 +28,7 @@ import ch.elexis.Hub;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.data.Patient;
 import ch.elexis.status.ElexisStatus;
+import ch.elexis.views.RezeptBlatt;
 import ch.elexis.views.TemplatePrintView;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
@@ -38,6 +41,29 @@ public class TemplateDrucker {
 	String template;
 	String printer;
 	String tray;
+	
+	/*
+	 * 20131026js: First check if a View for documents of the same type (e.g. "Briefe") is already open.
+	 * If yes, close it in (ALMOST, BUT SUFFICIENTLY SIMILAR) the same way it would be closed if a user clicks on its [x] close button.
+	 * See BriefAuswahl.java/TextView.java for additional information.
+	 */			
+	private void  closePreExistingViewToEnsureOfficeCanHandleNewContentProperly() {
+	//Import org.eclipse.ui.IWorkbenchPage and ...PlatformUI and ...IViewPart only for this: 
+	System.out.println("js ch.elexis.util/TemplateDrucker.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): begin");
+	IWorkbenchPage wbp = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+	IViewPart wbpTemplatePrintViewViewPart = wbp.findView(TemplatePrintView.ID); 
+	if (wbpTemplatePrintViewViewPart != null) {
+		System.out.println("js ch.elexis.util/TemplateDrucker.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): About to wbp.hideView(wbpTemplatePrintViewViewPart)");
+		wbp.hideView(wbpTemplatePrintViewViewPart); 
+		System.out.println("js ch.elexis.util/TemplateDrucker.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): Returned from wbp.hideView(wbpTemplatePrintViewViewPart)");
+	} else {
+		//No preexisting populated viewPart (="View TemplatePrintView" in Elexis manual terminology) needed closing. Do nothing.
+		System.out.println("js ch.elexis.util/TemplateDrucker.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): NO matching wbpTemplatePrintViewViewPart found - Nothing to do.");
+	} //if wbpTemplatePrintViewView != null ; oder if tv!=null
+	
+	System.out.println("js ch.elexis.util/TemplateDrucker.java: closePreExistingViewToEnsureOfficeCanHandleNewContentProperly(): end");
+	}
+
 	
 	public TemplateDrucker(String template, String printer, String tray){
 		this.template = template;
@@ -53,10 +79,14 @@ public class TemplateDrucker {
 	}
 	
 	public void doPrint(Patient pat){
+		//20131026js: First check if a View for documents of the same type is already open.
+		//If yes, close it in (ALMOST, BUT SUFFICIENTLY SIMILAR) the same way it would be closed if a user clicks on its [x] close button.
+	//	closePreExistingViewToEnsureOfficeCanHandleNewContentProperly();
+		
 		this.patient = pat;
 		page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
-		
+				
 		try {
 			tpw = (TemplatePrintView) page.showView(TemplatePrintView.ID);
 			progressService.runInUI(PlatformUI.getWorkbench().getProgressService(),
