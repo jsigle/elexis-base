@@ -17,6 +17,8 @@ import java.io.InputStream;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.swt.widgets.Composite;
 
+import ch.elexis.data.Brief;
+
 /**
  * Contract for embedding a text plugin Warning: Preliminary interface
  * 
@@ -255,4 +257,18 @@ public interface ITextPlugin extends IExecutableExtension {
 		public boolean saveAs();
 	}
 	
+
+	/**
+	 * 20130625js added this to store a backlink to the Brief that this instance of the plugin is saving.
+	 * Can't just specify a Brief field in NOAText, because that implements ITextPlugin,
+	 * and client code can only access through ITextPlugin replacements what ITextPlugin defines.
+	 * Can't just specify a Brief field in ITextPlugin, because that is an interface, so the field would be static final.
+	 * 
+	 * TODO: Maybe we want to add Callback Interface for ShowView here as well,
+	 *       maybe even directly add it to ICallback, or change ICallback into ICallbackSave and ICallbackShowview or so,
+	 *       instead of having that in some separate StatusMonitor related file.
+	 */
+	//
+	public void setBriefServicedByThis(Brief suppliedBriefServicedByThis);
+	public Brief getBriefServicedByThis();
 }

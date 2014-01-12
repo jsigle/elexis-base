@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import ch.elexis.Hub;
+import ch.elexis.data.Brief;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.text.ITextPlugin;
 import ch.elexis.text.ReplaceCallback;
@@ -1114,4 +1115,23 @@ public class OOText implements ITextPlugin {
 		return false;
 	}
 	
+	
+	/**
+	 * 201306250243js: Adding infrastructure to keep track of the ch.elexis.data.Brief serviced by this instance of NOAText
+	 * This needs an updated version of ITextView, so this plugin probably becomes incompatible with all previous versions of Elexis.
+	 * It is all required to be able to set the window activation to the *correct* of multiple text plugin windows;
+	 * and to maintain tracking of last user modification time on a per text-document-window basis in statusMonitor etc. 
+	 */	
+	private Brief briefServicedByThis = null;
+	
+	@Override
+	public void setBriefServicedByThis(Brief suppliedBriefServicedByThis) {
+		//TODO: 20130625js: Would there be any use for / any advantage in returning the previous value of that variable instead?
+		briefServicedByThis = suppliedBriefServicedByThis;
+	}
+
+	@Override
+	public Brief getBriefServicedByThis() {
+		return briefServicedByThis;
+	}
 }

@@ -57,7 +57,7 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 		System.out.println("js ch.elexis.views/RezeptBlatt.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
 		//201306161401js
-		ch.elexis.util.StatusMonitor.removeMonitorEntry("TextView");
+		ch.elexis.util.StatusMonitor.removeMonitorEntry(actBrief);	//hopefully, this is a suitable variable here.
 		
 		//20130425js: Nach Einfügen der folgenden Zeile wird er NOText closeListener mit queryClosing() und notifyClosing() tatsächlich aufgerufen,
 		//in der Folge wird dann auch OO beendet, wenn das Letzte NOAText Fenster geschlossen wurde.
@@ -84,6 +84,7 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 
 		System.out.println("js ch.elexis.views/RezeptBlatt.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		System.out.println("js ch.elexis.views/RezeptBlatt.java dispose(): about super.dispose()... - warum hier im Ggs. zu TextView NICHT actBrief = null?");
+		System.out.println("js ch.elexis.views/RezeptBlatt.java dispose(): about PLEASE NOTE: ein paar Zeilen weiter oben bei removeMonitorEntry() hab ich actBrief übergeben, wie in TextView.java.dispose() auch. Korrekt?");
 		System.out.println("js ch.elexis.views/RezeptBlatt.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		super.dispose();
 	}
@@ -102,9 +103,37 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): about Warum ist loadRezeptFromDatabase() so kurz, aeber TextView openDocument() viel länger?");
 		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
-		actBrief = brief;
+		//201306250439js: Den ggf. vorhandenen Eintrag für ein Dokument in TextView, das gleich ersetzt wird, aus der StatusMonitoring Liste entfernen,
+		//und - falls das nachfolgende Laden schief geht - auch aus der zugehörigen Instanz von NOAText.briefServicedByThis entfernen.
+		//Falls noch gar kein Dokument geladen/verzeichnet war, sollte auch null richtig gehandelt werden.
+		//Normalerweise sollte das Entladen ja mit dispose() erfolgen - tut es aber nicht, weil dispose() beim Doppelklick auf ein anderes Dokument anscheinend nicht aufgerufen wird.
+		System.out.println("js ch.elexis.views/RezeptBlatt.java TODO / TO REVIEW: ********************************************************************************");
+		System.out.println("js ch.elexis.views/RezeptBlatt.java TODO / TO REVIEW: Normalerweise sollte das Entladen ja mit dispose() erfolgen - tut es aber nicht, weil dispose() beim Doppelklick auf ein anderes Dokument anscheinend nicht aufgerufen wird. Vielleicht müsste ich es auch an clean() o.ä. in NOAText ankoppeln...?");
+		System.out.println("js ch.elexis.views/RezeptBlatt.java TODO / TO REVIEW: Review auch weitere Auftretens von addMonitor...() - sicherstellen, dass vor denen auch erst bestehende Einträge gelöscht werden.");
+		System.out.println("js ch.elexis.views/RezeptBlatt.java TODO / TO REVIEW: ********************************************************************************");		
+		Brief vorigerBrief = text.getPlugin().getBriefServicedByThis();
+		text.getPlugin().setBriefServicedByThis(null);
+		ch.elexis.util.StatusMonitor.removeMonitorEntry(vorigerBrief);		
+		
+		actBrief = brief;		
 		text.open(brief);
 		rp.setBrief(actBrief);
+		
+		//201306161205js: Now also create a status monitor thread:
+		//In TextView.java, SaveHandler was a separate class implementing ICallback with its save() and saveAs() methods.
+		//Also, I added ShowViewHandler as another separate class implementing IStatusMonitorCallback with its showView method.
+		//There, we used:
+		//ch.elexis.util.StatusMonitor.addMonitorEntry("RezeptBlatt", new SaveHandler(), new ShowViewHandler());
+		//In RezeptBlatt.java, RezeptBlatt directly implements ICallback, and I added that it also directly implements IStatusMonitorCallback.
+		//Especially, because supplying ShowViewHandler() to RezeptBlatt...addMonitoring would activate the TextView window (Briefe),
+		//but not the RezetpBlatt window (Rezept). No, sorry - that was more probably because the NOAText based isModified() event handler set
+		//the isModified() flag always for the TextView related statusMonitor entry, and not for the RezeptBlatt related entry.
+		
+		//So RezeptBlatt() has to replace both SaveHandler() and ShowViewHandler().
+		//And as we do not want a *new* RezeptBlatt to be called, but the existing one instead, we might just as well supply (..., this, this).
+		//ToDo: Please homogenize, if possible. Quite possibly, Textview might be changed to become similar to RezeptBlatt etc.
+		text.getPlugin().setBriefServicedByThis(actBrief);
+		ch.elexis.util.StatusMonitor.addMonitorEntry(actBrief, this, this);
 		
 		//What element could we record to tell NOAText which entry to update on addDocumentModifyListener() / isModified() events?
 		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): actBrief.getId() == " + actBrief.getId());
@@ -132,21 +161,6 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 		//class ch.elexis.text.TextContainer
 		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): text.getClass().toString() == " + text.getClass().toString());
 
-		//201306161205js: Now also create a status monitor thread:
-		//In TextView.java, SaveHandler was a separate class implementing ICallback with its save() and saveAs() methods.
-		//Also, I added ShowViewHandler as another separate class implementing IStatusMonitorCallback with its showView method.
-		//There, we used:
-		//ch.elexis.util.StatusMonitor.addMonitorEntry("RezeptBlatt", new SaveHandler(), new ShowViewHandler());
-		//In RezeptBlatt.java, RezeptBlatt directly implements ICallback, and I added that it also directly implements IStatusMonitorCallback.
-		//Especially, because supplying ShowViewHandler() to RezeptBlatt...addMonitoring would activate the TextView window (Briefe),
-		//but not the RezetpBlatt window (Rezept). No, sorry - that was more probably because the NOAText based isModified() event handler set
-		//the isModified() flag always for the TextView related statusMonitor entry, and not for the RezeptBlatt related entry.
-		
-		//So RezeptBlatt() has to replace both SaveHandler() and ShowViewHandler().
-		//And as we do not want a *new* RezeptBlatt to be called, but the existing one instead, we might just as well supply (..., this, this).
-		//ToDo: Please homogenize, if possible. Quite possibly, Textview might be changed to become similar to RezeptBlatt etc.
-		ch.elexis.util.StatusMonitor.addMonitorEntry("RezeptBlatt", this, this);
-
 		System.out.println("\njs ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(Rezept rp, Brief brief): end");
 	}
 	
@@ -166,6 +180,18 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 	public boolean createList(Rezept rp, String template, String replace){
 		System.out.println("\njs ch.elexis.views/RezeptBlatt.java createList(Rezept rp, String template, String replace): begin");
 
+		//201306250439js: Den ggf. vorhandenen Eintrag für ein Dokument in TextView, das gleich ersetzt wird, aus der StatusMonitoring Liste entfernen,
+		//und - falls das nachfolgende Laden schief geht - auch aus der zugehörigen Instanz von NOAText.briefServicedByThis entfernen.
+		//Falls noch gar kein Dokument geladen/verzeichnet war, sollte auch null richtig gehandelt werden.
+		//Normalerweise sollte das Entladen ja mit dispose() erfolgen - tut es aber nicht, weil dispose() beim Doppelklick auf ein anderes Dokument anscheinend nicht aufgerufen wird.
+		System.out.println("js ch.elexis.views/RezeptBlatt.java TODO / TO REVIEW: ********************************************************************************");
+		System.out.println("js ch.elexis.views/RezeptBlatt.java TODO / TO REVIEW: Normalerweise sollte das Entladen ja mit dispose() erfolgen - tut es aber nicht, weil dispose() beim Doppelklick auf ein anderes Dokument anscheinend nicht aufgerufen wird. Vielleicht müsste ich es auch an clean() o.ä. in NOAText ankoppeln...?");
+		System.out.println("js ch.elexis.views/RezeptBlatt.java TODO / TO REVIEW: Review auch weitere Auftretens von addMonitor...() - sicherstellen, dass vor denen auch erst bestehende Einträge gelöscht werden.");
+		System.out.println("js ch.elexis.views/RezeptBlatt.java TODO / TO REVIEW: ********************************************************************************");		
+		Brief vorigerBrief = text.getPlugin().getBriefServicedByThis();
+		text.getPlugin().setBriefServicedByThis(null);
+		ch.elexis.util.StatusMonitor.removeMonitorEntry(vorigerBrief);		
+
 		actBrief =
 			text.createFromTemplateName(Konsultation.getAktuelleKons(), template, Brief.RP,
 				(Patient) ElexisEventDispatcher.getSelected(Patient.class),
@@ -176,6 +202,10 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 			System.out.println("js ch.elexis.views/RezeptBlatt.java createDocument(3): WARNING: returning false\n");
 			return false;
 		}
+
+		//201306161205js: Now also add a statusMonitor entry:
+		text.getPlugin().setBriefServicedByThis(actBrief);
+		ch.elexis.util.StatusMonitor.addMonitorEntry(actBrief, this, this);		
 
 		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		System.out.println("js ch.elexis.views/RezeptBlatt.java loadRezeptFromDatabase(): Schauen, wie das mit TextView.createDocument korrespondiert. Dort: setName(); hier unten: setBrief(),->setLetterID oder ähnlich...?");
@@ -203,14 +233,6 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 		
 		rp.setBrief(actBrief);
 
-		//201306161205js: Now also create a status monitor thread:
-		//In TextView.java, SaveHandler was a separate class implementing ICallback with its save() and saveAs() methods.
-		//There, we used:
-		//ch.elexis.util.StatusMonitor.addMonitorEntry("RezeptBlatt", new SaveHandler(), new ShowViewHandler());
-		//In RezeptBlatt.java, RezeptBlatt directly implements ICallback. So RezeptBlatt() has to replace SaveHandler().
-		//ToDo: Please homogenize, if possible. Quite possibly, Textview might be changed to become similar to RezeptBlatt etc.
-		ch.elexis.util.StatusMonitor.addMonitorEntry("RezeptBlatt", this, this);
-		
 		if (text.getPlugin().insertTable(replace, 0, fields, wt)) {
 			if (text.getPlugin().isDirectOutput()) {
 				text.getPlugin().print(null, null, true);
@@ -296,10 +318,10 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 				//YEP. DAS macht die View aktiv, incl. hervorgehobenem Rahmen, und Focus, in dem der Text drinnen steckt.
 				//Im Moment leider noch alle Zeit, also auch dann, wenn gerade NICHT isModified() durch neue Eingaben immer wieder gesetzt würde.
 				//TextView.ID liefert: ch.elexis.TextView
-				TextView tv = null;
+				RezeptBlatt rb = null;
 				try {
-					System.out.println("js com.jsigle.noa/RezeptBlatt.java - run() - Thread: " + Thread.currentThread().getName() + " - about to tv.showView(RezeptBlatt.ID) with TextView.ID == " + TextView.ID);
-					tv = (TextView) getViewSite().getPage().showView(RezeptBlatt.ID /*,StringTool.unique("textView"),IWorkbenchPage.VIEW_ACTIVATE*/);
+					System.out.println("js com.jsigle.noa/RezeptBlatt.java - run() - Thread: " + Thread.currentThread().getName() + " - about to rb.showView(RezeptBlatt.ID) with RezeptBlatt.ID == " + RezeptBlatt.ID);
+					rb = (RezeptBlatt) getViewSite().getPage().showView(RezeptBlatt.ID /*,StringTool.unique("textView"),IWorkbenchPage.VIEW_ACTIVATE*/);
 				} catch (PartInitException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

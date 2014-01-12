@@ -192,7 +192,7 @@ public class TextView extends ViewPart implements IActivationListener {
 		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO REVIEW TODO");			
 		
 		//201306161401js
-		ch.elexis.util.StatusMonitor.removeMonitorEntry("TextView");
+		ch.elexis.util.StatusMonitor.removeMonitorEntry(actBrief);
 
 		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		System.out.println("js ch.elexis.views/TextView.java dispose(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
@@ -249,19 +249,32 @@ public class TextView extends ViewPart implements IActivationListener {
 		//20130421js: Added more monitoring code to see what's happening...
 		System.out.println("\njs ch.elexis.views/TextView.java openDocument(Brief doc): begin");
 		System.out.println("js ch.elexis.views/TextView.java openDocument(Brief doc): about to txt.open("+doc.getBetreff().toString()+")");
-
+	
+		//201306250439js: Den ggf. vorhandenen Eintrag für ein Dokument in TextView, das gleich ersetzt wird, aus der StatusMonitoring Liste entfernen,
+		//und - falls das nachfolgende Laden schief geht - auch aus der zugehörigen Instanz von NOAText.briefServicedByThis entfernen.
+		//Falls noch gar kein Dokument geladen/verzeichnet war, sollte auch null richtig gehandelt werden.
+		//Normalerweise sollte das Entladen ja mit dispose() erfolgen - tut es aber nicht, weil dispose() beim Doppelklick auf ein anderes Dokument anscheinend nicht aufgerufen wird.
+		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: ********************************************************************************");
+		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: Normalerweise sollte das Entladen ja mit dispose() erfolgen - tut es aber nicht, weil dispose() beim Doppelklick auf ein anderes Dokument anscheinend nicht aufgerufen wird. Vielleicht müsste ich es auch an clean() o.ä. in NOAText ankoppeln...?");
+		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: Review auch weitere Auftretens von addMonitor...() - sicherstellen, dass vor denen auch erst bestehende Einträge gelöscht werden.");
+		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: ********************************************************************************");
+		Brief vorigerBrief = txt.getPlugin().getBriefServicedByThis();
+		txt.getPlugin().setBriefServicedByThis(null);
+		ch.elexis.util.StatusMonitor.removeMonitorEntry(vorigerBrief);
+		
 		if (txt.open(doc) == true) {		//"einen Brief einlesen" says javadoc...
-			
+					
 			System.out.println("js ch.elexis.views/TextView.java openDocument(): txt.open(doc) returned TRUE.");
 			System.out.println("js ch.elexis.views/TextView.java openDocument(): about to actBrief = doc...");
 			actBrief = doc;
 			System.out.println("js ch.elexis.views/TextView.java openDocument(): about to setName()...");
 			setName();
 			System.out.println("js ch.elexis.views/TextView.java openDocument(): actBrief == ("+actBrief.getBetreff().toString()+")...");
-			
-			//201306161205js: Now also create a status monitor thread:
-			ch.elexis.util.StatusMonitor.addMonitorEntry("TextView", new SaveHandler(), new ShowViewHandler());
 
+			//201306161205js: Now also add a status monitor entry:					
+			txt.getPlugin().setBriefServicedByThis(actBrief);
+			ch.elexis.util.StatusMonitor.addMonitorEntry(actBrief, new SaveHandler(), new ShowViewHandler());
+			
 			System.out.println("js ch.elexis.views/TextView.java openDocument(Brief doc) successful. Returning true; actBrief == ("+actBrief.getBetreff().toString()+")...");
 			return true;
 		} else {
@@ -471,6 +484,19 @@ public class TextView extends ViewPart implements IActivationListener {
 			System.out.println("js ch.elexis.views/TextView.java createDocument(2): WARNING: returning false\n");
 			return false;
 		}
+
+		//201306250439js: Den ggf. vorhandenen Eintrag für ein Dokument in TextView, das gleich ersetzt wird, aus der StatusMonitoring Liste entfernen,
+		//und - falls das nachfolgende Laden schief geht - auch aus der zugehörigen Instanz von NOAText.briefServicedByThis entfernen.
+		//Falls noch gar kein Dokument geladen/verzeichnet war, sollte auch null richtig gehandelt werden.
+		//Normalerweise sollte das Entladen ja mit dispose() erfolgen - tut es aber nicht, weil dispose() beim Doppelklick auf ein anderes Dokument anscheinend nicht aufgerufen wird.
+		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: ********************************************************************************");
+		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: Normalerweise sollte das Entladen ja mit dispose() erfolgen - tut es aber nicht, weil dispose() beim Doppelklick auf ein anderes Dokument anscheinend nicht aufgerufen wird. Vielleicht müsste ich es auch an clean() o.ä. in NOAText ankoppeln...?");
+		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: Review auch weitere Auftretens von addMonitor...() - sicherstellen, dass vor denen auch erst bestehende Einträge gelöscht werden.");
+		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: ********************************************************************************");		
+		Brief vorigerBrief = txt.getPlugin().getBriefServicedByThis();
+		txt.getPlugin().setBriefServicedByThis(null);
+		ch.elexis.util.StatusMonitor.removeMonitorEntry(vorigerBrief);
+		
 		actBrief =
 			txt.createFromTemplate(Konsultation.getAktuelleKons(), template, Brief.UNKNOWN, null,
 				subject);
@@ -480,8 +506,9 @@ public class TextView extends ViewPart implements IActivationListener {
 			return false;
 		}
 		
-		//201306161205js: Now also create a status monitor thread:
-		ch.elexis.util.StatusMonitor.addMonitorEntry("TextView", new SaveHandler(), new ShowViewHandler());
+		//201306161205js: Now also add a status monitor entry:					
+		txt.getPlugin().setBriefServicedByThis(actBrief);
+		ch.elexis.util.StatusMonitor.addMonitorEntry(actBrief, new SaveHandler(), new ShowViewHandler());
 		
 		System.out.println("js ch.elexis.views/TextView.java createDocument(2): returning true\n");
 		return true;
@@ -510,6 +537,18 @@ public class TextView extends ViewPart implements IActivationListener {
 			return false;
 		}
 
+		//201306250439js: Den ggf. vorhandenen Eintrag für ein Dokument in TextView, das gleich ersetzt wird, aus der StatusMonitoring Liste entfernen,
+		//und - falls das nachfolgende Laden schief geht - auch aus der zugehörigen Instanz von NOAText.briefServicedByThis entfernen.
+		//Falls noch gar kein Dokument geladen/verzeichnet war, sollte auch null richtig gehandelt werden.
+		//Normalerweise sollte das Entladen ja mit dispose() erfolgen - tut es aber nicht, weil dispose() beim Doppelklick auf ein anderes Dokument anscheinend nicht aufgerufen wird.
+		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: ********************************************************************************");
+		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: Normalerweise sollte das Entladen ja mit dispose() erfolgen - tut es aber nicht, weil dispose() beim Doppelklick auf ein anderes Dokument anscheinend nicht aufgerufen wird. Vielleicht müsste ich es auch an clean() o.ä. in NOAText ankoppeln...?");
+		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: Review auch weitere Auftretens von addMonitor...() - sicherstellen, dass vor denen auch erst bestehende Einträge gelöscht werden.");
+		System.out.println("js ch.elexis.views/TextView.java TODO / TO REVIEW: ********************************************************************************");		
+		Brief vorigerBrief = txt.getPlugin().getBriefServicedByThis();
+		txt.getPlugin().setBriefServicedByThis(null);
+		ch.elexis.util.StatusMonitor.removeMonitorEntry(vorigerBrief);
+		
 		actBrief = txt.createFromTemplate(Konsultation.getAktuelleKons(), template, Brief.UNKNOWN, adressat, subject);
 		if (actBrief == null) {
 			System.out.println("js ch.elexis.views/TextView.java createDocument(3): WARNING: returning false\n");
@@ -517,8 +556,9 @@ public class TextView extends ViewPart implements IActivationListener {
 		}
 		setName();
 		
-		//201306161205js: Now also create a status monitor thread:
-		ch.elexis.util.StatusMonitor.addMonitorEntry("TextView", new SaveHandler(), new ShowViewHandler());
+		//201306161205js: Now also add a status monitor entry:					
+		txt.getPlugin().setBriefServicedByThis(actBrief);
+		ch.elexis.util.StatusMonitor.addMonitorEntry(actBrief, new SaveHandler(), new ShowViewHandler());
 
 		System.out.println("js ch.elexis.views/TextView.java createDocument(3): returning true\n");
 		return true;

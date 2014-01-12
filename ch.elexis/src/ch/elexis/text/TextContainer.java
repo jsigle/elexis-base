@@ -149,7 +149,7 @@ public class TextContainer {
 			System.out.println("js ch.elexis.views/TextContainer.java TextContainer(): Using the default Textplugin (a dummy, only showing an error message).");
 			plugin = new DefaultTextPlugin();
 		}
-		System.out.println("js ch.elexis.views/TextContainer.java TextContainer(): begin");
+		System.out.println("js ch.elexis.views/TextContainer.java TextContainer(): end");
 	}
 	
 	public TextContainer(final IViewSite s){
@@ -170,7 +170,7 @@ public class TextContainer {
 	}
 	
 	public ITextPlugin getPlugin(){
-		System.out.println("js ch.elexis.views/TextContainer.java getPlugin(): begin; about to return plugin");
+		System.out.println("js ch.elexis.views/TextContainer.java getPlugin(): begin; about to return plugin == " + plugin.toString());
 		return plugin;
 	}
 	
@@ -255,41 +255,41 @@ public class TextContainer {
 	 */
 	public Brief createFromTemplate(final Konsultation kons, final Brief template,
 		final String typ, Kontakt adressat, final String subject){
-System.out.println("\njs ch.elexis.text/TextContainer.java Brief createFromTemplate(final Konsultation kons, final Brief template, final String typ, Kontakt adressat, final String subject): begin");
+		System.out.println("\njs ch.elexis.text/TextContainer.java Brief createFromTemplate(final Konsultation kons, final Brief template, final String typ, Kontakt adressat, final String subject): begin");
 
 		if (adressat == null) {
-System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): adressat == null; about to show dialog");
+			System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): adressat == null; about to show dialog");
 			KontaktSelektor ksel =
 				new KontaktSelektor(shell, Kontakt.class,
 					Messages.TextContainer_SelectDestinationHeader,
 					Messages.TextContainer_SelectDestinationBody, Kontakt.DEFAULT_SORT);
 			if (ksel.open() != Dialog.OK) {
-System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): about to early return null");
+				System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): about to early return null");
 				return null;
 			}
 			adressat = (Kontakt) ksel.getSelection();
 		}
 		
 		
-if (adressat == null)	{ System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): WARNING: Still: adressat == null");}
-else					{ System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): adressat == "+adressat.toString());};
-//20130601js: Please note: Selbst wenn hier adressat == null ist - was passiert, wenn im Dialog KEINE Adresse ausgewählt,
-//aber trotzdem ok gedrückt wurde, dann ist nacher in saveBrief() trotzdem brief.getAdressat() == ch.elexis.data.Kontakt@0. 
+		if (adressat == null)	{ System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): WARNING: Still: adressat == null");}
+		else					{ System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): adressat == "+adressat.toString());};
+		//20130601js: Please note: Selbst wenn hier adressat == null ist - was passiert, wenn im Dialog KEINE Adresse ausgewählt,
+		//aber trotzdem ok gedrückt wurde, dann ist nacher in saveBrief() trotzdem brief.getAdressat() == ch.elexis.data.Kontakt@0. 
 		
 		// Konsultation kons=getBehandlung();
 		if (template == null) {
-System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): template == null; about to create new from empty document...");
+			System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): template == null; about to create new from empty document...");
 			if (plugin.createEmptyDocument()) {
 				Brief brief =
 					new Brief(subject == null ? Messages.TextContainer_EmptyDocument : subject,
 						null, Hub.actUser, adressat, kons, typ);
-System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): about to add brief to current consultation...");
+				System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): about to add brief to current consultation...");
 				addBriefToKons(brief, kons);
-System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): aboout to return brief...");
+				System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): aboout to return brief...");
 				return brief;
 			}
 		} else {
-System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): template != null; about to loadFromByteArray and modify content...");
+			System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): template != null; about to loadFromByteArray and modify content...");
 			if (plugin.loadFromByteArray(template.loadBinary(), true) == true) {
 				final Brief ret =
 					new Brief(subject == null ? template.getBetreff() : subject, null, Hub.actUser,
@@ -324,23 +324,22 @@ System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate():
 							in.replaceAll(MATCH_SQUARE_BRACKET, StringTool.leer));
 					}
 				});
-				plugin.findOrReplace(MATCH_SCRIPT, new ReplaceCallback() {
-					
+				plugin.findOrReplace(MATCH_SCRIPT, new ReplaceCallback() {			
 					@Override
 					public Object replace(String in){
 						return executeScript(ret,
 							in.replaceAll(MATCH_SQUARE_BRACKET, StringTool.leer));
 					}
 				});
-System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): about to saveBrief(ret, typ)");
+				System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): about to saveBrief(ret, typ)");
 				saveBrief(ret, typ);
-System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): about to add brief to current consultation...");
+				System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): about to add brief to current consultation...");
 				addBriefToKons(ret, kons);
-System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): aboout to return brief...");
+				System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): aboout to return brief...");
 				return ret;
 			}
 		}
-System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): end - aboout to return null");
+		System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate(): end - aboout to return null");
 		return null;
 	}
 	
@@ -872,7 +871,7 @@ System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate():
 	 * @param brief
 	 *            das zu speichernde Dokument
 	 * @param typ
-	 *            Typ des Dokuments
+	 *            Typ des DokumentsConfiguration location:
 	 */
 	public void saveBrief(Brief brief, final String typ){
 		System.out.println("js ch.elexis.views/TextContainer.java saveBrief(Brief brief, final String typ): begin");
@@ -1017,7 +1016,20 @@ System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate():
 			log.log(Messages.TextContainer_ErroneousLetter + brief.getLabel(), Log.WARNINGS);
 			return false;
 		}
-
+		
+		//plugin and getPlugin() return the same within TextContainer.
+		System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: REMOVE THIS OUTPUT, Debugging/Testing only: ");
+		System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: plugin() = " + plugin.toString());
+		System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: plugin().getClass().toString() = " + plugin.getClass().toString());
+		System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: plugin().getClass().getName() = " + plugin.getClass().getName());
+		System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: ");
+		System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: getPlugin() = " + getPlugin().toString());
+		System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: getPlugin().getClass().toString() = " + getPlugin().getClass().toString());
+		System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: getPlugin().getClass().getName() = " + getPlugin().getClass().getName());
+		System.out.println("js ch.elexis.views/TextContainer.java open(): TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		
 		System.out.println("js ch.elexis.views/TextContainer.java open(): about to return plugin.loadFromByteArray(arr, false) and end...");
 		return plugin.loadFromByteArray(arr, false);
 	}
@@ -1354,6 +1366,25 @@ System.out.println("\njs ch.elexis.text/TextContainer.java createFromTemplate():
 		@Override
 		public boolean isDirectOutput(){
 			return false;
+		}
+		
+		/**
+		 * 201306250243js: Adding infrastructure to keep track of the ch.elexis.data.Brief serviced by this instance of NOAText
+		 * This needs an updated version of ITextView, so this plugin probably becomes incompatible with all previous versions of Elexis.
+		 * It is all required to be able to set the window activation to the *correct* of multiple text plugin windows;
+		 * and to maintain tracking of last user modification time on a per text-document-window basis in statusMonitor etc. 
+		 */	
+		private Brief briefServicedByThis = null;
+		
+		@Override
+		public void setBriefServicedByThis(Brief suppliedBriefServicedByThis) {
+			//TODO: 20130625js: Would there be any use for / any advantage in returning the previous value of that variable instead?
+			briefServicedByThis = suppliedBriefServicedByThis;
+		}
+
+		@Override
+		public Brief getBriefServicedByThis() {
+			return briefServicedByThis;
 		}
 	}
 	

@@ -19,6 +19,7 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.widgets.Composite;
 
+import ch.elexis.data.Brief;
 import ch.elexis.util.IKonsExtension;
 import ch.rgw.compress.CompEx;
 import ch.rgw.tools.ExHandler;
@@ -196,5 +197,23 @@ public class ETFTextPlugin implements ITextPlugin {
 	public boolean isDirectOutput(){
 		return false;
 	}
+		
+	/**
+	 * 201306250243js: Adding infrastructure to keep track of the ch.elexis.data.Brief serviced by this instance of NOAText
+	 * This needs an updated version of ITextView, so this plugin probably becomes incompatible with all previous versions of Elexis.
+	 * It is all required to be able to set the window activation to the *correct* of multiple text plugin windows;
+	 * and to maintain tracking of last user modification time on a per text-document-window basis in statusMonitor etc. 
+	 */	
+	private Brief briefServicedByThis = null;
 	
+	@Override
+	public void setBriefServicedByThis(Brief suppliedBriefServicedByThis) {
+		//TODO: 20130625js: Would there be any use for / any advantage in returning the previous value of that variable instead?
+		briefServicedByThis = suppliedBriefServicedByThis;
+	}
+
+	@Override
+	public Brief getBriefServicedByThis() {
+		return briefServicedByThis;
+	}
 }

@@ -3,6 +3,8 @@ package ch.elexis.util;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PartInitException;
 
+import ch.elexis.data.Brief;
+import ch.elexis.text.ITextPlugin;
 import ch.elexis.text.ITextPlugin.ICallback;
 import ch.elexis.views.TextView;
 import ch.rgw.tools.StringTool;
@@ -46,16 +48,15 @@ public class StatusMonitor implements Runnable {
 	public static Thread statusMonitorThread = null;
 	
 	static class MonitoredDocument {
-		public boolean					isValid = false;
-		public String					docURL = null;
-		public ICallback				docSaveHandler = null;
-		public IStatusMonitorCallback	docShowViewHandler = null;
-		public boolean					docIsModified = false;
-		public long 					timestampOfLastChangeOfIsModified = 0;
-		public long 					timestampOfLastDocumentModifyListenerReactOnUnspecifiedEvent = 0;
-		
-		public MonitoredDocument() {
-		}
+		public boolean					isActive = false;			//ToDo: MaybeRemoveThis. It may be easily understandable - but probably is a redundant representation of (docPlugin != null).
+		public Brief					docDoc = null;														//Identifier of this entry usable from TextView(etc.) - TextContainer - maybe Brief			
+		public ICallback				docSaveHandler = null;												//Callback method implemented in, and using methods available to in TextView(etc.)
+		public IStatusMonitorCallback	docShowViewHandler = null;											//Callback method implemented in, and using methods available to in TextView(etc.)
+		public boolean					docIsModified = false;												//Updated from the isModified() handler from NOAtext
+		public long 					timestampOfLastChangeOfIsModified = 0;								//Updated from the isModified() handler from NOAtext 
+		public long 					timestampOfLastDocumentModifyListenerReactOnUnspecifiedEvent = 0;	//Updated from the isModified() handler from NOAtext
+	
+		private MonitoredDocument() {}		
 	}
 	
 	//We might rather implement this as a linked list, but I don't want to try that now.
@@ -64,62 +65,74 @@ public class StatusMonitor implements Runnable {
 	//nor need we ensure that all used slots are kept at the beginning of the array.
 	
 	public static MonitoredDocument[] monitoredDocuments = new MonitoredDocument[10];
+	//TODO: Simply supplying a (suitable) Constructor for the class StatusMonitor will NOT ensure
+	//that entries for MonitoredDocument[] are allocated before use. Although "the runtime system should call static constructors in time...",
+	//apparently it doesn't. So, for now, I supply a specifically named initialization method, a flag, and call it before the array is used.
+	
+	static private boolean	monitoredDocumentEntriesAllocated = false;
+	static private void	monitoredDocumentAllocateEntries() {
+		//If the array entries are not allocated yet, then do that.
+    	System.out.println("js com.jsigle.noa/StatusMonitor.java StatusMonitor(): allocating entries in monitoredDocuments...");		
+		for (int i = 0; i<monitoredDocuments.length; i++) {
+			monitoredDocuments[i] = new MonitoredDocument();
+		}
+		monitoredDocumentEntriesAllocated = true;
+	}
 
 	/*
-	 * Add and initialize an entry for a document to be monitored, if it is not already there, and if there is a free slot.
+	 * Add and activate an entry for a document to be monitored, if it is not already there, and if there is a free slot.
+	 * Also ensure that entries within the array have been allocated first.
+	 * If it was the first entry to be activated, also start the actual status monitoring thread.
 	 * 
-	 * @ param: String newURL = The URL of the document to be monitored. Hopefully, both TextView.java and NOAText.java can obtain this.
+	 * @ param: Brief suppliedDoc = The Brief doc to be monitored. Hopefully, as of 20130625js, NOAText has received a public variable where its clients can store a reference to that as well.
 	 * 
 	 * @ return: Currently none. Later on, might return some status information - at least three outcomes could happen. 
 	 */
-	public static void addMonitorEntry(String newURL,  ICallback newSaveHandler, IStatusMonitorCallback newShowViewHandler) {
-    	System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() begin");
-    	System.out.println("js com.jsigle.noa/StatusMonitor.java supplied newURL == " + newURL);
-    	
-		if (StringTool.isNothing(newURL)) { 
-			System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() StringToo.isNothing(newURL) -> nop; early return");
+	public static void addMonitorEntry(Brief suppliedDoc, ICallback suppliedSaveHandler, IStatusMonitorCallback suppliedShowViewHandler) {
+    	System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() begin");   	
+
+    	if (suppliedDoc == null) { 
+			System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() suppliedDoc == null) -> nop; early return");
 			return; 
 		}
-		
-		
-		//If the array is not initialized, then do that.
-		if (monitoredDocuments[0] == null) {
-			for (int i = 0; i<monitoredDocuments.length; i++) {
-				monitoredDocuments[i] = new MonitoredDocument();
-			}
-		}
-		
+    	System.out.println("js com.jsigle.noa/StatusMonitor.java supplied suppliedDoc == " + suppliedDoc.toString());		
+
+    	//Ensure that array entries are allocated before use
+    	if ( !monitoredDocumentEntriesAllocated ) { monitoredDocumentAllocateEntries(); }
+    	
 		//Just some debugging output:
 		if ( monitoredDocuments[0] == null) { System.out.println("xyz: WARNING: monitoredDocuments[0] == null!"); return;}
-		System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() DEBUG: monitoredDocuments[0].isValid == " + monitoredDocuments[0].isValid);
-		System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() DEBUG: monitoredDocuments[0].docURL == " + monitoredDocuments[0].docURL);
+		System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() DEBUG: monitoredDocuments[0].isActive == " + monitoredDocuments[0].isActive);
+		if (monitoredDocuments[0].docDoc == null)	{ System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() DEBUG: monitoredDocuments[0].docDoc == null"); }
+		else										{ System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() DEBUG: monitoredDocuments[0].docDoc == " + monitoredDocuments[0].docDoc.toString()); }
 		
-		//If a valid entry already exists for the same URL, then return
+		//If an entry already exists for the same Plugin, then return
+		//This entry needs NOT be active yet, because it might have been prepared and not activated.
+		//If we would remove an entry, we would usually sett all its fields to null, to differentiate it from a prepared, but yet inactive one.
 		for (MonitoredDocument entry : monitoredDocuments) {
-			if (entry.isValid) {
-				if (entry.docURL.equals(newURL)) { 
-					System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() An entry for the same newURL already exists -> early return");
-					return; 
-				}
+			if (entry.docDoc == suppliedDoc) { 
+				System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() An entry for the same suppliedDoc already exists -> early return");
+				return; 
 			}
 		}
 
-		//If a free slot exists, then add the new URL to that slot and initialize all entries
+		//If a free (i.e.: NOT yet prepared && NOT yet activated) slot exists, then add the new Plugin to that slot and initialize all entries
 		for (MonitoredDocument entry : monitoredDocuments) {
-			if (!entry.isValid) {
+			if ( (!entry.isActive) ) {
 				System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() About to add the new entry in slot x of the monitoring list...");
 				
-				entry.docURL=new String(newURL);
-				entry.docSaveHandler=newSaveHandler;
-				entry.docShowViewHandler=newShowViewHandler;
+				entry.docDoc=suppliedDoc;				//I want another pointer to the existing doc; new space needs not be allocated.
+				entry.docSaveHandler=suppliedSaveHandler;
+				entry.docShowViewHandler=suppliedShowViewHandler;
 				entry.timestampOfLastDocumentModifyListenerReactOnUnspecifiedEvent = System.currentTimeMillis();
 				entry.timestampOfLastChangeOfIsModified = entry.timestampOfLastDocumentModifyListenerReactOnUnspecifiedEvent;
 				entry.docIsModified = false;
-				entry.isValid = true;
+				entry.isActive = true;
 				
-				System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() newURL == " + newURL);
-				System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() entry.docURL == " + entry.docURL);
-				
+				//System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() suppliedDoc == " + suppliedDoc.toString());
+				System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() entry.docDoc == " + entry.docDoc.toString());
+				System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() entry.isActive == " + entry.isActive);
+
 				//If the statusMonitorThread is not yet running, then start it!
 				if (statusMonitorThread == null) {
 					System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() About to create and start the monitoring thread...");
@@ -128,38 +141,26 @@ public class StatusMonitor implements Runnable {
 				} else {
 					System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() The status monitor thread is already running.");
 				}
-				
+
 				System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() About to return normally.");
 				return;
 			}
 		}
 
 		/*
-		//If a free slot exists, then add the new URL to that slot and initialize all entries
-		//We cannot use the for (entry : monitoredDocuments) loop here,
-		//because that will apparently supply copies of the original entries - 
-		//modifications to these would not persist.
-		//UPDATE: DOCH, DAS GEHT DURCHAUS. ES IST OFFENBAR PASS EIN BY ADDRESS.  
+		//If a free slot exists, then add the new Plugin to that slot and initialize all entries
+		//Due to a problem I observed, I thought we could not use a
+		//  for (entry : monitoredDocuments)
+		//loop, because that might apparently supply copies of the original entries - 
+		//and modifications to these would not persist.
+		//But alas - the observed problem had another reason.
+		//for (entry : monitoredDocuments) would really use pass by reference, and we can actually use it.
+		//Nevertheless, the temporarily used alternative loop and its accesses are kept here:  
 		for (int i = 0; i<monitoredDocuments.length; i++) {
-			if (!monitoredDocuments[i].isValid) {
+			if (!monitoredDocuments[i].isActive) {
 				System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() About to add the new entry in slot "+i+" of the monitoring list...");
-				monitoredDocuments[i].docURL=new String(newURL);
-				System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() newURL == " + newURL);
-				System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() monitoredDocuments["+i+"].docURL == " + monitoredDocuments[i].docURL);
-				monitoredDocuments[i].timestampOfLastDocumentModifyListenerReactOnUnspecifiedEvent = System.currentTimeMillis();
-				monitoredDocuments[i].timestampOfLastChangeOfIsModified = monitoredDocuments[i].timestampOfLastDocumentModifyListenerReactOnUnspecifiedEvent;
-				monitoredDocuments[i].docIsModified = false;
-				monitoredDocuments[i].isValid = true;
-				
-				//If the statusMonitorThread is not yet running, then start it!
-				if (statusMonitorThread == null) {
-					System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() About to create and start the monitoring thread...");
-					statusMonitorThread = new Thread(new StatusMonitor()); 
-					statusMonitorThread.start();
-				} else {
-					System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() The status monitor thread is already running.");
-				}
-				
+				monitoredDocuments[i].docPlugin=new String(suppliedDoc);
+				...
 				System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() About to return normally.");
 				return;
 			}
@@ -176,91 +177,98 @@ public class StatusMonitor implements Runnable {
 		System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() WARNING: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");		
 	}
 
+		
 	/*
 	 * Remove an entry for a document to be monitored, if it is there.
-	 * If the last entry is removed, then stop the monitoring thread.
+	 * If this was the last active entry, then activate the actual monitoring thread.
 	 * 
-	 * @ param: String newURL = The URL of the document to be monitored. Hopefully, both TextView.java and NOAText.java can obtain this.
+	 * @ param: ITextPlugin suppliedDoc = The Plugin of the document to be monitored. Hopefully, both TextView.java and NOAText.java can obtain this.
 	 * 
 	 * @ return: Currently none. Later on, might return some status information - at least three outcomes could happen. 
 	 */
-	public static void removeMonitorEntry(String newURL) {
+	public static void removeMonitorEntry(Brief suppliedDoc) {
     	System.out.println("js com.jsigle.noa/StatusMonitor.java removeMonitorEntry() begin");
-    	System.out.println("js com.jsigle.noa/StatusMonitor.java supplied newURL == " + newURL);
     	
-		if (StringTool.isNothing(newURL)) { 
-			System.out.println("js com.jsigle.noa/StatusMonitor.java removeMonitorEntry() StringToo.isNothing(newURL) -> nop; early return");
+		if (suppliedDoc == null) { 
+			System.out.println("js com.jsigle.noa/StatusMonitor.java removeMonitorEntry() WARNING: suppliedDoc == null) -> nop; early return");
 			return; 
 		}
+    	System.out.println("js com.jsigle.noa/StatusMonitor.java supplied suppliedDoc == " + suppliedDoc.toString());
+
+    	//Ensure that array entries are allocated before use - if not, we won't find anything to remove.
+    	if ( !monitoredDocumentEntriesAllocated ) {
+			System.out.println("js com.jsigle.noa/StatusMonitor.java removeMonitorEntry() WARNING: array entries have not been initialized yet. -> nop; early return.");
+    		return;
+    	}
 		
-		//If a valid entry already exists for the same URL, then remove it.
-		//Also, count all (remaining) valid entries.
-		int numValidEntries = 0;
-		//We cannot use the for (entry : monitoredDocuments) loop here,
-		//because that will apparently supply copies of the original entries - 
-		//modifications to these would not persist.  
+		//If an entry already exists for the same Plugin, then deactivate it and reset its data fields to null.
+		//Please note: This loop does not break afterwards, because it also counts all remaining active entries.
+		//As a side effect, it would disable multiple entries referencing the same entry.docDoc (which should never happen to exist).
+		//This simple implementation is well suited for small arrays.
+		int numActiveEntries = 0;
 		for (MonitoredDocument entry : monitoredDocuments) {
-			if (entry.isValid) {
-					numValidEntries = numValidEntries + 1; 
-					if (entry.docURL.equals(newURL)) { 
-						System.out.println("js com.jsigle.noa/StatusMonitor.java removeMonitorEntry(): removing entry");
-						entry.isValid = false;
-						entry.docURL = null; 
-						entry.docSaveHandler = null;		//The static array will stay in existence, so nulling content		
-						entry.docShowViewHandler = null;	//might allow objects containing callbacks to be disposed of.
-						numValidEntries = numValidEntries - 1; 
-					}
+			if (entry.docDoc == suppliedDoc) { 
+				System.out.println("js com.jsigle.noa/StatusMonitor.java removeMonitorEntry(): removing entry");
+				entry.isActive = false;
+				//The remainder would not be needed so urgently, but better keep our memory clean, than leak information...
+				entry.docDoc = null;
+				entry.docSaveHandler = null;		//The static array will stay in existence, so nulling content		
+				entry.docShowViewHandler = null;	//might allow objects containing callbacks to be disposed of.
+				entry.docIsModified = false;											//Updated from the isModified() handler from NOAtext
+				entry.timestampOfLastChangeOfIsModified = 0;							//Updated from the isModified() handler from NOAtext 
+				entry.timestampOfLastDocumentModifyListenerReactOnUnspecifiedEvent = 0;	//Updated from the isModified() handler from NOAtext
+			}
+
+			if (entry.isActive) {
+				numActiveEntries = numActiveEntries + 1;
 			}
 		}	
 		
-		//If no valid entries remain, stop the monitoring thread.
-		if (numValidEntries == 0) {
-			System.out.println("js com.jsigle.noa/StatusMonitor.java removeMonitorEntry() No valid entries remain. Stopping the monitoring thread.");
+		//If no active entries remain, stop the monitoring thread.
+		if (numActiveEntries == 0) {
+			System.out.println("js com.jsigle.noa/StatusMonitor.java removeMonitorEntry() No active entries remain. Stopping the monitoring thread.");
 			statusMonitorThread.interrupt();
 			statusMonitorThread = null;			
 		}
+
+		System.out.println("js com.jsigle.noa/StatusMonitor.java removeMonitorEntry() end");
 	}
 	
 	/*
 	 * Update an entry for a supplied document with the supplied isModified() status, and current timestamps.
+	 * This is usually called from the NOAText isModified() handler.
+	 * This caller does NOT know entry.docDoc (i.e. the actBrief which it works for), but (hopefully) the filename of the document??? Or maybe not even that... :-)  
 	 * 
-	 * @ param: String newURL = The URL of the document to be updated. Hopefully, both TextView.java and NOAText.java can obtain this.
+	 * @ param: ITextPlugin suppliedDoc = The Plugin of the document to be updated. Hopefully, both TextView.java and NOAText.java can obtain this.
 	 * 
 	 * @ return: Currently none. Later on, might return some status information - at least three outcomes could happen. 
 	 */
-	public static void updateMonitorEntry(String newURL, boolean newIsModified) {
+	public static void updateMonitorEntry(Brief suppliedDoc, boolean suppliedIsModified) {
     	System.out.println("js com.jsigle.noa/StatusMonitor.java updateMonitorEntry() begin");
-    	System.out.println("js com.jsigle.noa/StatusMonitor.java supplied newURL == " + newURL);
     	
-		if (StringTool.isNothing(newURL)) { 
-			System.out.println("js com.jsigle.noa/StatusMonitor.java updateMonitorEntry() StringToo.isNothing(newURL) -> nop; early return");
+		if (suppliedDoc == null) { 
+			System.out.println("js com.jsigle.noa/StatusMonitor.java updateMonitorEntry() StringToo.isNothing(suppliedDoc) -> nop; early return");
 			return; 
 		}
+    	System.out.println("js com.jsigle.noa/StatusMonitor.java supplied suppliedDoc == " + suppliedDoc.toString());
 		
-		//If a valid entry already exists for the same URL, then update it.
-		//We cannot use the for (entry : monitoredDocuments) loop here,
-		//because that will apparently supply copies of the original entries - 
-		//modifications to these would not persist.  
+		//If an active entry already exists for the same Brief suppliedDoc, then update it.
 		for (MonitoredDocument entry : monitoredDocuments) {
-			if (entry.isValid) { 
-				if (entry.docURL.equals(newURL) ) { 
-					System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() Matching entry found; updating...");
-					entry.timestampOfLastDocumentModifyListenerReactOnUnspecifiedEvent = System.currentTimeMillis();
-					if ( entry.docIsModified != newIsModified ) {
-						entry.docIsModified = newIsModified;
-						entry.timestampOfLastChangeOfIsModified = entry.timestampOfLastDocumentModifyListenerReactOnUnspecifiedEvent;
-					}
-					return; 
+			if ( (entry.isActive) && (entry.docDoc == suppliedDoc) ) {
+				System.out.println("js com.jsigle.noa/StatusMonitor.java updateMonitorEntry() Matching entry found; updating...");
+				entry.timestampOfLastDocumentModifyListenerReactOnUnspecifiedEvent = System.currentTimeMillis();
+				if (entry.docIsModified != suppliedIsModified) {
+					entry.docIsModified = suppliedIsModified;
+					entry.timestampOfLastChangeOfIsModified = entry.timestampOfLastDocumentModifyListenerReactOnUnspecifiedEvent;
 				}
+				System.out.println("js com.jsigle.noa/StatusMonitor.java updateMonitorEntry() ...and about to return");
+				return; 
 			}
 		}
 		
-		System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() WARNING: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");		
-		System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() WARNING: A matching entry was not found -> return");		   
-		System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() WARNING: ToDo: Please add entries from other sources, RezeptBlatt.java etc.");		
-		System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() WARNING: ToDo: Use the actual Document URL instead of just TextView, if desired,");		
-		System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() WARNING: ToDo: or change the (otherwise misleading) variable names in StatusMonitor.java");		
-		System.out.println("js com.jsigle.noa/StatusMonitor.java addMonitorEntry() WARNING: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");		
+		System.out.println("js com.jsigle.noa/StatusMonitor.java updateMonitorEntry() WARNING: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");		
+		System.out.println("js com.jsigle.noa/StatusMonitor.java updateMonitorEntry() WARNING: A matching entry was not found.");		   
+		System.out.println("js com.jsigle.noa/StatusMonitor.java updateMonitorEntry() WARNING: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");		
 	}
 
 	/*
@@ -268,97 +276,105 @@ public class StatusMonitor implements Runnable {
 	 * 
 	 * @see java.lang.Runnable#run()
 	 */
+	public static long statusMonitoringIntervall = 1000; 
 	public void run() {
-    	System.out.println("js com.jsigle.noa/StatusMonitor.java run() begin");
+    	System.out.println("js com.jsigle.noa/StatusMonitor.java run() [The actual StatusMonitor working thread] begin");
     	    	
 		while (true) {
-			System.out.println("js com.jsigle.noa/StatusMonitor.java statusMonitor() - Thread: " + Thread.currentThread().getName() + " - about to do NOAText statusMonitoring work...");
-			
-			//Process all monitoredDocuments...
-			int i=0;
-			for (MonitoredDocument entry : monitoredDocuments) {
-				if (entry.isValid) {
-					System.out.println("js com.jsigle.noa/StatusMonitor.java - Processing slot "+i+" with docURL == " + entry.docURL);
-					
-					//entry.docURL = newURL;
-					//entry.timestampOfLastDocumentModifyListenerReactOnUnspecifiedEvent = System.currentTimeMillis();
-					//entry.timestampOfLastChangeOfIsModified = entry.timestampOfLastDocumentModifyListenerReactOnUnspecifiedEvent;
-					//entry.docIsModified = false;
-					//entry.isValid = true;
-
-					long timeSinceLastIsModifiedChange = System.currentTimeMillis() - entry.timestampOfLastChangeOfIsModified;
-					long timeSinceLastDocumentModifyListenerReactOnUnspecifiedEvent = System.currentTimeMillis() - entry.timestampOfLastDocumentModifyListenerReactOnUnspecifiedEvent;;
-					
-					System.out.println("js com.jsigle.noa/StatusMonitor.java - statusMonitorisModified / statusMonitorLastIsModifiedChange / statusMonitorLastDocumentModifyListenerReactOnUnspecifiedEvent");
-					System.out.println("js com.jsigle.noa/StatusMonitor.java - "
-						+ entry.docIsModified 
-						+ " / " + entry.timestampOfLastChangeOfIsModified + " (" + timeSinceLastIsModifiedChange/1000 + " secs ago)" 
-					    + " / " + entry.timestampOfLastDocumentModifyListenerReactOnUnspecifiedEvent + " (" + timeSinceLastDocumentModifyListenerReactOnUnspecifiedEvent/1000 + " secs ago)");					
-							
-					try {					
+			try {
+				System.out.println("js com.jsigle.noa/StatusMonitor.java statusMonitor() - Thread: " + Thread.currentThread().getName() + " - about to do NOAText statusMonitoring work...");
+				
+				//Process all monitoredDocuments...
+				int i=0;
+				for (MonitoredDocument entry : monitoredDocuments) {
+					if (entry.isActive) {
+						System.out.println("js com.jsigle.noa/StatusMonitor.java - Processing slot "+i+" with entry.docDoc == " + entry.docDoc.toString());
+						System.out.println("js com.jsigle.noa/StatusMonitor.java - = entry.docDoc.getLabel() == " + entry.docDoc.getLabel());
 						
-						//--------------------------------------------------------------------------------
-						//If the document has just been modified, then activate the respective view.
-						//As de-activation a text-plugin-served Window traditionally triggers saving in Elexis,
-						//but activation of text-plugin-served Windows does not work if a user clicks directly into the text,
-						//this helps to ensure that user edited content is finally saved. E.g. when they load another document
-						//before the new regular time-intervall/isModified-based saving routine would kick in.
-						//--------------------------------------------------------------------------------
+						long timeSinceLastIsModifiedChange = System.currentTimeMillis() - entry.timestampOfLastChangeOfIsModified;
+						long timeSinceLastDocumentModifyListenerReactOnUnspecifiedEvent = System.currentTimeMillis() - entry.timestampOfLastDocumentModifyListenerReactOnUnspecifiedEvent;;
 						
-						if (entry.docIsModified && (timeSinceLastDocumentModifyListenerReactOnUnspecifiedEvent < 1000) ) {
-							if (entry.docURL.equals("TextView")) {
-								entry.docShowViewHandler.showView();
-							}
-						} // if entry.isModified, <2 secs ago 
-						
-						//--------------------------------------
-						//Ensure the monitored document is saved,
-						//either at regular maximum intervals - even if the user is still modifying along,
-						//or, after the user has stopped typing/modifying for some time,
-						//    the longer the time since the last saving; the shorter need that pause after the last modification be.
-						//--------------------------------------
-						
-
-						//if the document has been modified
-						if (entry.docIsModified) {											
-							//save unconditionally after 300 seconds
-							if (     (timeSinceLastIsModifiedChange >= 300000)
-							//or conditionally: if the last unsaved modification is >= 20 sec old, and the user has stopped typing for 15 seconds
-								|| ( (timeSinceLastIsModifiedChange >=  20000) && (timeSinceLastDocumentModifyListenerReactOnUnspecifiedEvent >= 15000) )
-							//or conditionally: if the last unsaved modification is >= 2 minute old, and the user has stopped typing for 10 seconds
-								|| ( (timeSinceLastIsModifiedChange >= 120000) && (timeSinceLastDocumentModifyListenerReactOnUnspecifiedEvent >= 10000) )
-							//or conditionally: if the last unsaved modification is >= 3 minutes old, and the user has stopped typing for 5 seconds
-								|| ( (timeSinceLastIsModifiedChange >= 180000) && (timeSinceLastDocumentModifyListenerReactOnUnspecifiedEvent >=  5000) )
-							//or conditionally: if the last unsaved modification is >= 4 minutes old, and the user has stopped typing for 3 seconds
-								|| ( (timeSinceLastIsModifiedChange >= 240000) && (timeSinceLastDocumentModifyListenerReactOnUnspecifiedEvent >=  3000) )
-								) {
-								System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");								
-								System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - WE SHOULD TRY TO SAVE THIS DOCUMENT NOW!");								
-								System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - PLEASE IMPLEMENT THIS!");								
-								System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - Done: TextView.java");								
-								System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - ToDo: RezeptBlatt.java et al.");								
-								System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");								
-
-								if (entry.docURL.equals("TextView")) {
-									entry.docSaveHandler.save();
-								}
+						System.out.println("js com.jsigle.noa/StatusMonitor.java - statusMonitorisModified / statusMonitorLastIsModifiedChange / statusMonitorLastDocumentModifyListenerReactOnUnspecifiedEvent");
+						System.out.println("js com.jsigle.noa/StatusMonitor.java - "
+							+ entry.docIsModified 
+							+ " / " + entry.timestampOfLastChangeOfIsModified + " (" + timeSinceLastIsModifiedChange/1000 + " secs ago)" 
+						    + " / " + entry.timestampOfLastDocumentModifyListenerReactOnUnspecifiedEvent + " (" + timeSinceLastDocumentModifyListenerReactOnUnspecifiedEvent/1000 + " secs ago)");					
 								
-								//Wieso geht hier save() nicht, im Gegensatz zu RezeptBlatt.java? Siehe die unterschiedliche Einbettung in Klassen etc.
-								//save();
-								//actBrief.save(txt.getPlugin().storeToByteArray(), txt.getPlugin().getMimeType());
-							}				
+						try {					
+							
+							//--------------------------------------------------------------------------------
+							//If the document has just been modified, then activate the respective view.
+							//As de-activation a text-plugin-served Window traditionally triggers saving in Elexis,
+							//but activation of text-plugin-served Windows does not work if a user clicks directly into the text,
+							//this helps to ensure that user edited content is finally saved. E.g. when they load another document
+							//before the new regular time-intervall/isModified-based saving routine would kick in.
+							//--------------------------------------------------------------------------------
+							
+							if (entry.docIsModified && (timeSinceLastDocumentModifyListenerReactOnUnspecifiedEvent < statusMonitoringIntervall) ) {
+								entry.docShowViewHandler.showView();
+							} // if entry.isModified, <2 secs ago 
+							
+							//--------------------------------------
+							//Ensure the monitored document is saved,
+							//either at regular maximum intervals - even if the user is still modifying along,
+							//or, after the user has stopped typing/modifying for some time,
+							//    the longer the time since the last saving; the shorter need that pause after the last modification be.
+							//--------------------------------------
+							
+	
+							//if the document has been modified
+							if (entry.docIsModified) {											
+								//save unconditionally after 300 seconds
+								if (     (timeSinceLastIsModifiedChange >= 300000)
+								//or conditionally: if the last unsaved modification is >= 20 sec old, and the user has stopped typing for 15 seconds
+									|| ( (timeSinceLastIsModifiedChange >=  20000) && (timeSinceLastDocumentModifyListenerReactOnUnspecifiedEvent >= 15000) )
+								//or conditionally: if the last unsaved modification is >= 2 minute old, and the user has stopped typing for 10 seconds
+									|| ( (timeSinceLastIsModifiedChange >= 120000) && (timeSinceLastDocumentModifyListenerReactOnUnspecifiedEvent >= 10000) )
+								//or conditionally: if the last unsaved modification is >= 3 minutes old, and the user has stopped typing for 5 seconds
+									|| ( (timeSinceLastIsModifiedChange >= 180000) && (timeSinceLastDocumentModifyListenerReactOnUnspecifiedEvent >=  5000) )
+								//or conditionally: if the last unsaved modification is >= 4 minutes old, and the user has stopped typing for 3 seconds
+									|| ( (timeSinceLastIsModifiedChange >= 240000) && (timeSinceLastDocumentModifyListenerReactOnUnspecifiedEvent >=  3000) )
+									) {
+									System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");								
+									System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - WE SHOULD TRY TO SAVE THIS DOCUMENT NOW!");								
+									System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - PLEASE IMPLEMENT THIS!");								
+									System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - Done: TextView.java");								
+									System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - ToDo: RezeptBlatt.java et al.");								
+									System.out.println("js com.jsigle.noa/StatusMonitor.java - run() - !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");								
+	
+									entry.docSaveHandler.save();
+									
+									//Wieso geht hier save() nicht, im Gegensatz zu RezeptBlatt.java? Siehe die unterschiedliche Einbettung in Klassen etc.
+									//save();
+									//actBrief.save(txt.getPlugin().storeToByteArray(), txt.getPlugin().getMimeType());
+								}				
+							}
+							
+							//Put the running thread to sleep for a while - after each checked entry (see Thread.sleep() below for alternative behaviour)
+							//If you completely remove the Thread.sleep() here, you also need to change the try/catch block, so better just use a short sleep period.
+							Thread.sleep(0);
+	
+						} catch (InterruptedException irEx) {
+							//if the thread is interrupted, then return from it; i.e. stop running it.
+					    	System.out.println("js com.jsigle.noa/StatusMonitor.java run() [The actual StatusMonitor working thread] interrupted, about to return.");
+							return;
 						}
-						
-						//Put the running thread to sleep for a while.
-						Thread.sleep(1000);
-					} catch (InterruptedException irEx) {
-						//if the thread is interrupted, then return from it; i.e. stop running it.
-						return;
-					}
+	
+					} // if entry.isActive
+					i = i + 1;
+				} // for entry
+				
+				//Put the running thread to sleep for a while - after each completely checked list of entries (see Thread.sleep() above for alternative behaviour)
+				//If you completely remove the Thread.sleep() here, you also need to change the try/catch block, so better just use a short sleep period.
+				//If you chose a long delay, then don't forget to raise the threshold for the showView() above as well, above! 
+				Thread.sleep(statusMonitoringIntervall);
 
-				} // if entry.isValid
-				i = i + 1;
-			} // for entry
+			} catch (InterruptedException irEx) {
+				//if the thread is interrupted, then return from it; i.e. stop running it.
+		    	System.out.println("js com.jsigle.noa/StatusMonitor.java run() [The actual StatusMonitor working thread] interrupted, about to return.");
+				return;
+			}
+			
 		} // while true
 	} // public void run() 
 }
