@@ -6,7 +6,7 @@
  * 
  * Contributors:
  *    J. Sigle   - added method stubs for briefServicedByThis required by elexis 2.1.7.dev-qualifier-js-2013060625 for StatusMonitor
-
+ *
  *    bogdan314 - initial implementation
  * Sponsor: 
  *    G. Weirich
