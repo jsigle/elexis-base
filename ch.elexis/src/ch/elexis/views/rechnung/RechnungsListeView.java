@@ -218,8 +218,12 @@ public class RechnungsListeView extends ViewPart implements ElexisEventListener 
 		actions = new RnActions(this);
 		menu.createToolbar(actions.reloadAction, actions.mahnWizardAction, actions.rnFilterAction,
 			null, actions.rnExportAction);
-		menu.createMenu(actions.expandAllAction, actions.collapseAllAction,
-			actions.printListeAction, actions.addAccountExcessAction);
+		menu.createMenu(
+			actions.expandAllAction,
+			actions.collapseAllAction,
+			actions.printListeAction,
+			actions.exportListAction,			//20151013js
+			actions.addAccountExcessAction);
 		MenuManager mgr = new MenuManager();
 		mgr.setRemoveAllWhenShown(true);
 		mgr.addMenuListener(new RnMenuListener(this));
